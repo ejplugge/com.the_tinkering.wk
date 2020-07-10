@@ -1,3 +1,37 @@
+# License terms
+
+The source code for this project is licensed under the Apache License 2.0,
+which is included in its entirety below. You may use, distribute and modify
+the code in conformance with the terms of this license.
+
+Note that the license only covers the files contained in this project.
+The name I have chosen to publish this app under is explicitly NOT included
+in this license agreement. "Flaming Durtles" is a trademark of Ernst Jan
+Plugge. You may not use this name in any derived products you create, and
+you may not name me (Ernst Jan Plugge) as the primary author of any derived
+products you create.
+
+To facilitate this, all mentions of the app's name and the name of the
+primary author are isolated in two files (Identification.java and strings.xml)
+that you will have to create yourself for your derivative product. See the
+file README.md for instructions on what to do with these two files.
+
+It's fine if you mention that your app is based on Flaming Durtles, or that
+it is based on work done by me. But you MUST NOT use the name Flaming Durtles
+in any way to identify your app, not even if it is only a part of the name or
+other identification of your app, and you MUST NOT use the name Ernst Jan
+Plugge as the name of the primary author in your app itself, in store
+listings, marketing materials, or anywhere else, other than in the copyright
+notice that is required to be retained as part of the Apache License 2.0.
+
+To be completely clear, these restrictions ONLY apply to the name Flaming
+Durtles and my name, since they are not part of this project. The software
+itself is completely open source and can be used however you like as long as
+you stick to the modest requirements of the Apache License 2.0.
+
+
+## Apache License 2.0
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -186,7 +220,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright [yyyy] [name of copyright owner]
+   Copyright (yyyy) (name of copyright owner)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

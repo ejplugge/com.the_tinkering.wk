@@ -1,0 +1,272 @@
+/*
+ * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.the_tinkering.wk;
+
+import android.content.res.Resources;
+import android.os.AsyncTask;
+
+import androidx.multidex.MultiDexApplication;
+
+import com.the_tinkering.wk.db.AppDatabase;
+import com.the_tinkering.wk.enums.NotificationPriority;
+import com.the_tinkering.wk.enums.SessionType;
+import com.the_tinkering.wk.enums.SubjectInfoDump;
+import com.the_tinkering.wk.components.EncryptedPreferenceDataStore;
+import com.the_tinkering.wk.enums.ActiveTheme;
+import com.the_tinkering.wk.livedata.LiveBurnedItems;
+import com.the_tinkering.wk.livedata.LiveCriticalCondition;
+import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
+import com.the_tinkering.wk.livedata.LiveJlptProgress;
+import com.the_tinkering.wk.livedata.LiveJoyoProgress;
+import com.the_tinkering.wk.livedata.LiveLevelDuration;
+import com.the_tinkering.wk.livedata.LiveLevelProgress;
+import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
+import com.the_tinkering.wk.livedata.LiveSearchPresets;
+import com.the_tinkering.wk.livedata.LiveSessionProgress;
+import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
+import com.the_tinkering.wk.livedata.LiveSrsSystems;
+import com.the_tinkering.wk.livedata.LiveTaskCounts;
+import com.the_tinkering.wk.livedata.LiveVacationMode;
+import com.the_tinkering.wk.livedata.LiveWorkInfos;
+import com.the_tinkering.wk.model.Session;
+import com.the_tinkering.wk.util.DbLogger;
+import com.the_tinkering.wk.util.Logger;
+
+import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+
+/**
+ * Global application object to handle some global concerns.
+ */
+public final class WkApplication extends MultiDexApplication {
+    private static final Logger LOGGER = Logger.get(WkApplication.class);
+
+    private static @Nullable WkApplication instance = null;
+    private static @Nullable AppDatabase database = null;
+    private static @Nullable EncryptedPreferenceDataStore encryptedPreferenceDataStore = null;
+
+    private @Nullable ActiveTheme currentTheme = null;
+    private @Nullable Resources.Theme createdTheme = null;
+
+    /**
+     * Get the singleton application instance.
+     *
+     * @return the application instance
+     */
+    public static WkApplication getInstance() {
+        return requireNonNull(instance);
+    }
+
+    /**
+     * Get the singleton database instance.
+     *
+     * @return the database instance
+     */
+    public static AppDatabase getDatabase() {
+        return requireNonNull(database);
+    }
+
+    /**
+     * Get the singleton store for encrypted settings.
+     *
+     * @return the store instance
+     */
+    public static EncryptedPreferenceDataStore getEncryptedPreferenceDataStore() {
+        return requireNonNull(encryptedPreferenceDataStore);
+    }
+
+    private static void initialize(final WkApplication application) {
+        instance = application;
+        database = AppDatabase.getInstance();
+        DbLogger.initializeInstance(database);
+        encryptedPreferenceDataStore = new EncryptedPreferenceDataStore();
+        encryptedPreferenceDataStore.getString("api_key", null);
+        encryptedPreferenceDataStore.getString("web_password", null);
+        GlobalSettings.setApplication(application);
+
+        try {
+            LiveTaskCounts.getInstance().initialize();
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+
+        try {
+            LiveWorkInfos.getInstance().initialize();
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+
+        try {
+            LiveSearchPresets.getInstance().initialize();
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initialize(this);
+        new Task().execute();
+    }
+
+    /**
+     * Get the current theme based on user settings.
+     *
+     * @return the theme
+     */
+    @Override
+    public @Nullable Resources.Theme getTheme() {
+        if (currentTheme != GlobalSettings.Display.getTheme()) {
+            createdTheme = null;
+            currentTheme = GlobalSettings.Display.getTheme();
+        }
+        if (createdTheme == null) {
+            try {
+                createdTheme = super.getTheme();
+                if (createdTheme != null) {
+                    createdTheme.applyStyle(ActiveTheme.getCurrentTheme().getStyleId(), true);
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+            }
+        }
+        return createdTheme;
+    }
+
+    /**
+     * After a theme setting change, forget the current one so it gets recreated.
+     */
+    public void resetTheme() {
+        createdTheme = null;
+    }
+
+    private static final class Task extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected @Nullable Void doInBackground(final Void... params) {
+            final AppDatabase db = requireNonNull(database);
+
+            try {
+                db.propertiesDao().deleteProperty("migration_done_audio1");
+                db.propertiesDao().deleteProperty("self_study_configuration");
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+            }
+
+            try {
+                if (!db.propertiesDao().getMigrationDoneAnkiSplit()) {
+                    db.propertiesDao().setMigrationDoneAnkiSplit(true);
+                    final boolean ankiLesson = GlobalSettings.AdvancedLesson.getAnkiMode();
+                    GlobalSettings.AdvancedLesson.setAnkiModeMeaning(ankiLesson);
+                    GlobalSettings.AdvancedLesson.setAnkiModeReading(ankiLesson);
+                    final boolean ankiReview = GlobalSettings.AdvancedReview.getAnkiMode();
+                    GlobalSettings.AdvancedReview.setAnkiModeMeaning(ankiReview);
+                    GlobalSettings.AdvancedReview.setAnkiModeReading(ankiReview);
+                    final boolean ankiSelfStudy = GlobalSettings.AdvancedSelfStudy.getAnkiMode();
+                    GlobalSettings.AdvancedSelfStudy.setAnkiModeMeaning(ankiSelfStudy);
+                    GlobalSettings.AdvancedSelfStudy.setAnkiModeReading(ankiSelfStudy);
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+            }
+
+            try {
+                if (!db.propertiesDao().getMigrationDoneAudio2()) {
+                    db.propertiesDao().setMigrationDoneAudio2(true);
+                    final boolean audioLessonPresentation = GlobalSettings.getAutoPlay(SessionType.LESSON);
+                    GlobalSettings.Audio.setAutoplayLessonPresentation(audioLessonPresentation);
+                    final boolean audioAnkiReveal = GlobalSettings.getAutoPlay(SessionType.REVIEW);
+                    GlobalSettings.Audio.setAutoplayAnkiReveal(audioAnkiReveal);
+                    final int maxSize = GlobalSettings.Font.getMaxFontSizeQuizText();
+                    if (maxSize == 250) {
+                        GlobalSettings.Font.setMaxFontSizeQuizText(100);
+                    }
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+            }
+
+            try {
+                if (!db.propertiesDao().getMigrationDoneNotif()) {
+                    db.propertiesDao().setMigrationDoneNotif(true);
+                    final boolean low = GlobalSettings.Other.getNotificationLowPriority();
+                    GlobalSettings.Other.setNotificationPriority(low ? NotificationPriority.LOW : NotificationPriority.DEFAULT);
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+            }
+
+            try {
+                if (!db.propertiesDao().getMigrationDoneDump()) {
+                    db.propertiesDao().setMigrationDoneDump(true);
+                    final SubjectInfoDump dump1 = GlobalSettings.Review.getMeaningInfoDump();
+                    GlobalSettings.Review.setMeaningInfoDumpIncorrect(dump1);
+                    final SubjectInfoDump dump2 = GlobalSettings.Review.getReadingInfoDump();
+                    GlobalSettings.Review.setReadingInfoDumpIncorrect(dump2);
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+            }
+
+            try {
+                if (LiveSrsSystems.getInstance().hasNullValue()) {
+                    LiveSrsSystems.getInstance().update();
+                }
+                if (LiveVacationMode.getInstance().hasNullValue()) {
+                    LiveVacationMode.getInstance().update();
+                }
+                if (LiveSrsBreakDown.getInstance().hasNullValue()) {
+                    LiveSrsBreakDown.getInstance().update();
+                }
+                if (LiveLevelDuration.getInstance().hasNullValue()) {
+                    LiveLevelDuration.getInstance().update();
+                }
+                if (LiveLevelProgress.getInstance().hasNullValue()) {
+                    LiveLevelProgress.getInstance().update();
+                }
+                if (LiveJoyoProgress.getInstance().hasNullValue()) {
+                    LiveJoyoProgress.getInstance().update();
+                }
+                if (LiveJlptProgress.getInstance().hasNullValue()) {
+                    LiveJlptProgress.getInstance().update();
+                }
+                if (LiveRecentUnlocks.getInstance().hasNullValue()) {
+                    LiveRecentUnlocks.getInstance().update();
+                }
+                if (LiveCriticalCondition.getInstance().hasNullValue()) {
+                    LiveCriticalCondition.getInstance().update();
+                }
+                if (LiveBurnedItems.getInstance().hasNullValue()) {
+                    LiveBurnedItems.getInstance().update();
+                }
+                if (LiveFirstTimeSetup.getInstance().hasNullValue()) {
+                    LiveFirstTimeSetup.getInstance().update();
+                }
+                if (LiveSessionProgress.getInstance().hasNullValue()) {
+                    LiveSessionProgress.getInstance().update();
+                }
+
+                Session.getInstance().load();
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+            }
+
+            return null;
+        }
+    }
+}

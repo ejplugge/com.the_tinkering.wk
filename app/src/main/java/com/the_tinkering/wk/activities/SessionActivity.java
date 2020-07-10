@@ -1,0 +1,376 @@
+/*
+ * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.the_tinkering.wk.activities;
+
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.text.Html;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+
+import com.the_tinkering.wk.GlobalSettings;
+import com.the_tinkering.wk.R;
+import com.the_tinkering.wk.db.model.SessionItem;
+import com.the_tinkering.wk.db.model.Subject;
+import com.the_tinkering.wk.enums.CloseEnoughAction;
+import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
+import com.the_tinkering.wk.enums.SessionState;
+import com.the_tinkering.wk.fragments.AbstractFragment;
+import com.the_tinkering.wk.fragments.AbstractSessionFragment;
+import com.the_tinkering.wk.livedata.LiveSessionProgress;
+import com.the_tinkering.wk.livedata.LiveSessionState;
+import com.the_tinkering.wk.model.AnswerVerdict;
+import com.the_tinkering.wk.model.FloatingUiState;
+import com.the_tinkering.wk.model.Question;
+import com.the_tinkering.wk.model.Session;
+import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.util.AudioUtil;
+import com.the_tinkering.wk.util.Logger;
+import com.the_tinkering.wk.util.TextUtil;
+
+import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.Constants.LANDSCAPE_ACTION_BAR_HEIGHT;
+
+/**
+ * The core activity for session handling. This class combines the full session workflow,
+ * from lesson presentation to summary.
+ *
+ * <p>
+ *     This activity heavily relies on the Session singleton for the workflow logic.
+ * </p>
+ */
+public final class SessionActivity extends AbstractActivity {
+    private static final Logger LOGGER = Logger.get(SessionActivity.class);
+
+    private final Session session = Session.getInstance();
+    private boolean finished = false;
+
+    private final ViewProxy levelUpToastText = new ViewProxy();
+    private final ViewProxy closeToastText = new ViewProxy();
+    private final ViewProxy closeMessageText = new ViewProxy();
+
+    /**
+     * The constructor.
+     */
+    public SessionActivity() {
+        super(R.layout.activity_session, R.menu.generic_options_menu);
+    }
+
+    @Override
+    protected void onCreateLocal(final @Nullable Bundle savedInstanceState) {
+        LiveSessionProgress.getInstance().observe(this, new Observer<Object>() {
+            @Override
+            public void onChanged(final Object t) {
+                try {
+                    new ViewProxy(SessionActivity.this, R.id.progress).setText(session.getProgressText());
+                    if (session.getCurrentQuestion() == null && session.isActive()) {
+                        LOGGER.info("Current question has been yanked from under our feet - move to next one");
+                        disableInteraction();
+                        if (session.isAnswered()) {
+                            session.advanceQuietly();
+                        }
+                        FloatingUiState.setCurrentAnswer("");
+                    }
+                    updateFragment();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
+                }
+            }
+        });
+
+        LiveSessionState.getInstance().observe(this, new Observer<SessionState>() {
+            @Override
+            public void onChanged(final SessionState t) {
+                try {
+                    updateFragment();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
+                }
+            }
+        });
+
+        // If the device is in landscape mode, make some changes to make the view less tall.
+        // The toolbar becomes smaller, and the question type view is hidden, replaced with
+        // hint for the question type.
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            final @Nullable Toolbar toolbar = getToolbar();
+            if (toolbar != null) {
+                toolbar.getLayoutParams().height = dp2px(LANDSCAPE_ACTION_BAR_HEIGHT);
+            }
+        }
+
+        updateFragment();
+    }
+
+    @Override
+    protected void onResumeLocal() {
+        updateFragment();
+    }
+
+    @Override
+    protected void onPauseLocal() {
+        //
+    }
+
+    @Override
+    protected void enableInteractionLocal() {
+        final @Nullable AbstractFragment fragment = getCurrentFragment();
+        if (fragment != null) {
+            fragment.enableInteraction();
+        }
+    }
+
+    @Override
+    protected void disableInteractionLocal() {
+        final @Nullable AbstractFragment fragment = getCurrentFragment();
+        if (fragment != null) {
+            fragment.disableInteraction();
+        }
+    }
+
+    private void playAudio(final @Nullable Question question, final @Nullable Subject subject, final @Nullable String lastMatchedAnswer) {
+        if (FloatingUiState.audioPlayed || question == null || subject == null || !question.getType().isReading()) {
+            return;
+        }
+
+        if (GlobalSettings.getAutoPlay(session.getType())) {
+            FloatingUiState.audioPlayed = true;
+            AudioUtil.playAudio(subject, lastMatchedAnswer);
+        }
+    }
+
+    private void updateFragment() {
+        session.chooseQuestion();
+
+        final @Nullable AbstractFragment currentFragment = getCurrentFragment();
+        final @Nullable AbstractSessionFragment currentSessionFragment =
+                (currentFragment instanceof AbstractSessionFragment) ? (AbstractSessionFragment) currentFragment : null;
+        final @Nullable Question question = session.getCurrentQuestion();
+        final @Nullable SessionItem item = session.getCurrentItem();
+        final @Nullable Subject subject = (item == null) ? null : item.getSubject();
+
+        if (session.isInactive()) {
+            if (!finished) {
+                finished = true;
+                goToMainActivity();
+            }
+            return;
+        }
+
+        final boolean lightningMode = GlobalSettings.Review.getEnableLightningMode();
+        final boolean ankiMode = question != null && GlobalSettings.getAnkiMode(session.getType(), question.getType());
+
+        final @Nullable AnswerVerdict lastVerdict = FloatingUiState.lastVerdict;
+        if (lightningMode && session.isAnswered() && session.isCorrect()
+                && lastVerdict != null && lastVerdict.isNearMatch()
+                && GlobalSettings.Review.getCloseEnoughAction() == CloseEnoughAction.ACCEPT_WITH_TOAST_NO_LM) {
+            FloatingUiState.lingerOnAnswer = true;
+        }
+
+        if (session.isAnswered() && session.isCorrect()) {
+            playAudio(question, subject, ankiMode ? null : FloatingUiState.getLastMatchedAnswer());
+            if (lightningMode && !FloatingUiState.lingerOnAnswer) {
+                session.advance();
+                updateFragment();
+                return;
+            }
+        }
+
+        final AbstractSessionFragment newFragment = session.getNewFragment(currentSessionFragment, ankiMode);
+        final FragmentTransitionAnimation animation = (currentSessionFragment == null || currentFragment == newFragment)
+                ? FragmentTransitionAnimation.NONE
+                : currentSessionFragment.getAnimation(newFragment);
+
+        if (newFragment != currentFragment) {
+            collapseSearchBox();
+            final FragmentManager manager = getSupportFragmentManager();
+            final FragmentTransaction transaction = manager.beginTransaction();
+            if (GlobalSettings.Display.getSlideAnimations()) {
+                animation.apply(transaction);
+            }
+            transaction.replace(R.id.fragment, newFragment);
+            transaction.commitNow();
+        }
+
+        newFragment.showOrHideSoftInput();
+        newFragment.updateViews();
+
+        levelUpToastText.setDelegate(this, R.id.levelUpToastText);
+        showSrsStageChangeToast(levelUpToastText);
+
+        final @Nullable Menu menu = getMenu();
+        if (menu != null) {
+            final @Nullable MenuItem viewLastFinishedItem = menu.findItem(R.id.action_view_last_finished);
+            if (viewLastFinishedItem != null) {
+                viewLastFinishedItem.setVisible(session.getLastFinishedSubjectId() != -1);
+            }
+        }
+
+        if (lightningMode && !FloatingUiState.lingerOnAnswer) {
+            closeToastText.setDelegate(this, R.id.closeToastText);
+            showCloseToast(closeToastText);
+        }
+        else {
+            closeMessageText.setDelegate(this, R.id.closeMessageText);
+            showCloseMessage(closeMessageText);
+        }
+
+        updateCurrentSubject();
+        enableInteraction();
+    }
+
+    private static void showCloseToast(final ViewProxy view) {
+        if (FloatingUiState.lastVerdict == null || !FloatingUiState.lastVerdict.isOk()
+                || !FloatingUiState.lastVerdict.isNearMatch()
+                || !GlobalSettings.Review.getCloseEnoughAction().isShowToast()) {
+            FloatingUiState.lastVerdict = null;
+            return;
+        }
+
+        final String message = String.format("Your answer ('%s') was a bit off, the closest correct answer was '%s'. "
+                + "Check the meaning to make sure you are correct.",
+                FloatingUiState.lastVerdict.getGivenAnswer(),
+                FloatingUiState.lastVerdict.getMatchedAnswer());
+        view.setText(message);
+
+        final Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setDuration(500);
+
+        final Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartOffset(3000);
+        fadeOut.setDuration(1500);
+
+        final AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(fadeIn);
+        animationSet.addAnimation(fadeOut);
+        animationSet.setRepeatCount(0);
+
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(final Animation animation) {
+                //
+            }
+
+            @Override
+            public void onAnimationEnd(final Animation animation) {
+                view.setVisibility(View.GONE);
+                view.clearAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(final Animation animation) {
+                view.setVisibility(View.GONE);
+                view.clearAnimation();
+            }
+        });
+
+        view.setAnimation(animationSet);
+        view.setVisibility(View.VISIBLE);
+        FloatingUiState.lastVerdict = null;
+    }
+
+    private static void showCloseMessage(final ViewProxy view) {
+        if (FloatingUiState.lastVerdict == null || !FloatingUiState.lastVerdict.isOk()
+                || !FloatingUiState.lastVerdict.isNearMatch()
+                || !GlobalSettings.Review.getCloseEnoughAction().isShowToast()) {
+            view.setVisibility(false);
+            FloatingUiState.lastVerdict = null;
+            return;
+        }
+
+        final String message = String.format("Your answer ('%s') was a bit off, the closest correct answer was '%s'. "
+                + "Check the meaning to make sure you are correct.",
+                FloatingUiState.lastVerdict.getGivenAnswer(),
+                FloatingUiState.lastVerdict.getMatchedAnswer());
+        view.setText(message);
+        view.setVisibility(View.VISIBLE);
+        FloatingUiState.lastVerdict = null;
+    }
+
+    private void showSrsStageChangeToast(final ViewProxy view) {
+        if (!FloatingUiState.showSrsStageChangedToast
+                || FloatingUiState.toastOldSrsStage == FloatingUiState.toastNewSrsStage || !Session.getInstance().getType().isSrsRelevant()
+                || !GlobalSettings.Review.getEnableSrsToast()) {
+            FloatingUiState.showSrsStageChangedToast = false;
+            return;
+        }
+        FloatingUiState.showSrsStageChangedToast = false;
+
+        final String htmlMessage = String.format("<img src=\"*\"/>  %s", FloatingUiState.toastNewSrsStage.getName());
+        final CharSequence message = TextUtil.renderHtml(htmlMessage, new Html.ImageGetter() {
+            @Override
+            public Drawable getDrawable(final String source) {
+                final Drawable img = getResources().getDrawable(FloatingUiState.toastNewSrsStage.compareTo(FloatingUiState.toastOldSrsStage) > 0
+                        ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
+                img.setBounds(0, 0, dp2px(20), dp2px(20));
+                return img;
+            }
+        });
+        view.setText(message);
+
+        final Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setDuration(500);
+
+        final Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartOffset(750);
+        fadeOut.setDuration(1500);
+
+        final AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(fadeIn);
+        animationSet.addAnimation(fadeOut);
+        animationSet.setRepeatCount(0);
+
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(final Animation animation) {
+                //
+            }
+
+            @Override
+            public void onAnimationEnd(final Animation animation) {
+                view.setVisibility(View.GONE);
+                view.clearAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(final Animation animation) {
+                view.setVisibility(View.GONE);
+                view.clearAnimation();
+            }
+        });
+
+        view.setAnimation(animationSet);
+        view.setVisibility(View.VISIBLE);
+    }
+}

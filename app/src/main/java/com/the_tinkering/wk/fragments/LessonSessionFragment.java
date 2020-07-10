@@ -1,0 +1,263 @@
+/*
+ * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.the_tinkering.wk.fragments;
+
+import android.os.Bundle;
+import android.view.View;
+
+import com.the_tinkering.wk.GlobalSettings;
+import com.the_tinkering.wk.R;
+import com.the_tinkering.wk.db.model.SessionItem;
+import com.the_tinkering.wk.db.model.Subject;
+import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
+import com.the_tinkering.wk.model.FloatingUiState;
+import com.the_tinkering.wk.model.Question;
+import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.util.AudioUtil;
+import com.the_tinkering.wk.util.Logger;
+import com.the_tinkering.wk.views.SubjectInfoView;
+import com.the_tinkering.wk.views.SwipingScrollView;
+
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+/**
+ * Fragment for the lesson presentation.
+ */
+public final class LessonSessionFragment extends AbstractSessionFragment implements SwipingScrollView.OnSwipeListener {
+    private static final Logger LOGGER = Logger.get(LessonSessionFragment.class);
+
+    private @Nullable SessionItem item = null;
+    private @Nullable Subject subject = null;
+
+    private final ViewProxy previousButton = new ViewProxy();
+    private final ViewProxy nextButton = new ViewProxy();
+    private final ViewProxy progress = new ViewProxy();
+    private final ViewProxy scrollView = new ViewProxy();
+    private final ViewProxy subjectInfo = new ViewProxy();
+
+    /**
+     * The constructor.
+     */
+    public LessonSessionFragment() {
+        super(R.layout.fragment_lesson);
+    }
+
+    @Override
+    protected void onCreateLocal() {
+        final @Nullable Bundle args = getArguments();
+        if (args != null) {
+            final long subjectId = args.getLong("subjectId", -1);
+            item = session.findItemBySubjectId(subjectId);
+            if (item != null) {
+                subject = item.getSubject();
+            }
+        }
+    }
+
+    @Override
+    protected void onResumeLocal() {
+        nextButton.requestFocus();
+        playAudio();
+    }
+
+    @Override
+    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        try {
+            if (item == null || subject == null) {
+                return;
+            }
+
+            previousButton.setDelegate(view, R.id.previousButton);
+            nextButton.setDelegate(view, R.id.nextButton);
+            progress.setDelegate(view, R.id.progress);
+            scrollView.setDelegate(view, R.id.scrollView);
+            subjectInfo.setDelegate(view, R.id.subjectInfo);
+
+            scrollView.setSwipeListener(this);
+
+            final List<SessionItem> items = session.getItems();
+
+            subjectInfo.setMaxFontSize(GlobalSettings.Font.getMaxFontSizeLesson());
+            subjectInfo.setContainerType(SubjectInfoView.ContainerType.LESSON_PRESENTATION);
+            subjectInfo.setSubject(this, subject);
+
+            previousButton.setVisibility(!session.isOnFirstLessonItem());
+            nextButton.setText(session.isOnLastLessonItem() ? "Start quiz" : "Next");
+            progress.setTextFormat("%d/%d", items.indexOf(item)+1, items.size());
+
+            previousButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    try {
+                        if (!interactionEnabled) {
+                            return;
+                        }
+                        if (!session.isOnFirstLessonItem()) {
+                            disableInteraction();
+                            session.moveToPreviousLessonItem();
+                        }
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
+                    }
+                }
+            });
+
+            nextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    try {
+                        if (!interactionEnabled) {
+                            return;
+                        }
+                        disableInteraction();
+                        if (session.isOnLastLessonItem()) {
+                            session.startQuiz();
+                        }
+                        else {
+                            session.moveToNextLessonItem();
+                        }
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
+                    }
+                }
+            });
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+    }
+
+    @Override
+    public CharSequence getToolbarTitle() {
+        return subject == null ? "" : subject.getInfoTitle("", "");
+    }
+
+    @Override
+    public int getToolbarBackgroundColor() {
+        return subject == null ? 0 : subject.getBackgroundColor();
+    }
+
+    @Override
+    public void enableInteraction() {
+        try {
+            previousButton.enableInteraction();
+            nextButton.enableInteraction();
+            interactionEnabled = true;
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+    }
+
+    @Override
+    public void disableInteraction() {
+        try {
+            interactionEnabled = false;
+            previousButton.disableInteraction();
+            nextButton.disableInteraction();
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+    }
+
+    @SuppressWarnings("SuspiciousGetterSetter")
+    @Override
+    public Subject getCurrentSubject() {
+        return subject;
+    }
+
+    @Override
+    public @Nullable SessionItem getItem() {
+        return item;
+    }
+
+    @Override
+    public @Nullable Question getQuestion() {
+        return null;
+    }
+
+    @Override
+    public @Nullable Subject getSubject() {
+        return subject;
+    }
+
+    @Override
+    public void showOrHideSoftInput() {
+        hideSoftInput();
+    }
+
+    @Override
+    public void updateViews() {
+        //
+    }
+
+    @Override
+    public FragmentTransitionAnimation getAnimation(final AbstractSessionFragment newFragment) {
+        if (newFragment instanceof LessonSessionFragment && item != newFragment.getItem()) {
+            return session.getQuestionChoiceReason().getAnimation();
+        }
+        return FragmentTransitionAnimation.RTL;
+    }
+
+    @Override
+    public void onSwipeLeft(final SwipingScrollView view) {
+        try {
+            if (!interactionEnabled) {
+                return;
+            }
+            if (!session.isOnFirstLessonItem()) {
+                disableInteraction();
+                session.moveToPreviousLessonItem();
+            }
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+    }
+
+    @Override
+    public void onSwipeRight(final SwipingScrollView view) {
+        try {
+            if (!interactionEnabled) {
+                return;
+            }
+            disableInteraction();
+            if (session.isOnLastLessonItem()) {
+                session.startQuiz();
+            }
+            else {
+                session.moveToNextLessonItem();
+            }
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+    }
+
+    private void playAudio() {
+        if (item == null || subject == null) {
+            return;
+        }
+
+        if (FloatingUiState.audioPlayed) {
+            return;
+        }
+
+        if (GlobalSettings.Audio.getAutoplayLessonPresentation()) {
+            FloatingUiState.audioPlayed = true;
+            AudioUtil.playAudio(subject, null);
+        }
+    }
+}

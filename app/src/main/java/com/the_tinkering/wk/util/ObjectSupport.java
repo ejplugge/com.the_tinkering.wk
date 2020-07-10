@@ -1,0 +1,470 @@
+/*
+ * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.the_tinkering.wk.util;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.Constants.DAY;
+import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.Constants.MINUTE;
+
+/**
+ * Various generic object manipulation methods. These are mostly simple methods
+ * that in later Java versions are part of the standard library.
+ */
+public final class ObjectSupport {
+    private static final Random random = new Random(System.currentTimeMillis());
+
+    private ObjectSupport() {
+        //
+    }
+
+    /**
+     * Return the argument value or throw a NullPointerException if the value is null.
+     *
+     * @param value The value to check
+     * @param <T> The type of the value
+     * @return the original value if it is not null
+     */
+    public static <T> T requireNonNull(final @Nullable T value) {
+        if (value == null) {
+            throw new NullPointerException();
+        }
+        return value;
+    }
+
+    /**
+     * CharSequence.isEmpty(), but will return true if the value is null.
+     *
+     * @param value the string to check
+     * @return true if value is empty or null
+     */
+    public static boolean isEmpty(final @Nullable CharSequence value) {
+        return value == null || value.length() == 0;
+    }
+
+    /**
+     * String.equalsIgnoreCase(), but handle null values. null equals null, but
+     * null doesn't equal any other value.
+     *
+     * @param first the first string to compare
+     * @param second the second string to compare
+     * @return true of the strings are equals except for case
+     */
+    public static boolean isEqualIgnoreCase(final @Nullable String first, final @Nullable String second) {
+        if (first == null) {
+            return second == null;
+        }
+        if (second == null) {
+            return false;
+        }
+        return first.equalsIgnoreCase(second);
+    }
+
+    /**
+     * Object.equals(), but handle null values. null equals null, but
+     * null doesn't equal any other value.
+     *
+     * @param first the first object to compare
+     * @param second the second object to compare
+     * @return true if the objects are equal
+     */
+    public static boolean isEqual(final @Nullable Object first, final @Nullable Object second) {
+        if (first == null) {
+            return second == null;
+        }
+        if (second == null) {
+            return false;
+        }
+        return first.equals(second);
+    }
+
+    /**
+     * COmpute a hash code for an array of objects, any of which could be null.
+     *
+     * @param values the objects to calculate for
+     * @return the hash code
+     */
+    public static int hash(final Object... values) {
+        return Arrays.hashCode(values);
+    }
+
+    /**
+     * Return value if it's not empty and not null, otherwise return fallback.
+     *
+     * @param value the value to check
+     * @param fallback the fallback value in case value is empty
+     * @return value or fallback
+     */
+    public static String orElse(final @Nullable String value, final String fallback) {
+        if (isEmpty(value)) {
+            return fallback;
+        }
+        return value;
+    }
+
+    /**
+     * Build a string that concatenates all elements in the iterable of parts.
+     *
+     * @param delimiter the delimiter between elements
+     * @param prefix the prefix before the first element
+     * @param suffix the suffix after the last element
+     * @param parts the items to list
+     * @return the resulting string
+     */
+    public static String join(final String delimiter, final String prefix, final String suffix, final Iterable<?> parts) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(prefix);
+        boolean first = true;
+
+        for (final Object part: parts) {
+            if (!first) {
+                sb.append(delimiter);
+            }
+            sb.append(part);
+            first = false;
+        }
+
+        sb.append(suffix);
+        return sb.toString();
+    }
+
+    /**
+     * Remove all empty/null elements from the list in-place.
+     *
+     * @param list the list to alter
+     * @param <T> the type of elements
+     */
+    public static <T extends CharSequence> void removeEmpty(final List<T> list) {
+        int i = 0;
+        while (i < list.size()) {
+            final T value = list.get(i);
+            if (isEmpty(value)) {
+                list.remove(i);
+            }
+            else {
+                i++;
+            }
+        }
+    }
+
+    /**
+     * Edit a list in-place to remove duplicate elements.
+     *
+     * @param list the list to clean up
+     * @param <T> the type of elements in the list
+     */
+    public static <T> void removeDuplicates(final @Nullable List<T> list) {
+        if (list == null) {
+            return;
+        }
+        int i = 0;
+        while (i < list.size()) {
+            final T value = list.get(i);
+            final int pos = list.indexOf(value);
+            if (pos >= 0 && pos < i) {
+                list.remove(i);
+            }
+            else {
+                i++;
+            }
+        }
+    }
+
+    /**
+     * Generate a random permutation of a list.
+     *
+     * @param list the list to create a permutation for
+     * @param <T> the type of elements
+     * @return the randomized list
+     */
+    public static <T> List<T> shuffle(final List<? extends T> list) {
+        final List<T> todo = new ArrayList<>(list);
+        final List<T> result = new ArrayList<>();
+        while (!todo.isEmpty()) {
+            final T t = todo.remove(random.nextInt(todo.size()));
+            result.add(t);
+        }
+        return result;
+    }
+
+    /**
+     * Return the next random int in the range 0..bound (lower inclusive, upper exclusive).
+     * @param bound the upper bund for the returned number
+     * @return the random number
+     */
+    public static int nextRandomInt(final int bound) {
+        return random.nextInt(bound);
+    }
+
+    /**
+     * Helper for comparators: generate the order of two string values, either of which could be null.
+     *
+     * @param s1 left-hand value
+     * @param s2 right-hand value
+     * @return order as for compareTo()
+     */
+    public static int compareStrings(final @Nullable Comparable<? super String> s1, final @Nullable String s2) {
+        if (s1 == null) {
+            return s2 == null ? 0 : -1;
+        }
+        if (s2 == null) {
+            return 1;
+        }
+        return s1.compareTo(s2);
+    }
+
+    /**
+     * Helper for comparators: generate the order of long values.
+     *
+     * @param l1 left-hand value
+     * @param l2 right-hand value
+     * @return order as for compareTo()
+     */
+    public static int compareLongs(final long l1, final long l2) {
+        if (l1 < l2) {
+            return -1;
+        }
+        if (l1 > l2) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Helper for comparators: generate the order of int values.
+     *
+     * @param i1 left-hand value
+     * @param i2 right-hand value
+     * @return order as for compareTo()
+     */
+    public static int compareIntegers(final int i1, final int i2) {
+        if (i1 < i2) {
+            return -1;
+        }
+        if (i1 > i2) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Helper for comparators: generate the order of int values.
+     * The result is based on the values of i1 and i2 if they differ.
+     * If they are the same, use i3 and i4 instead.
+     *
+     * @param i1 left-hand value 1
+     * @param i2 right-hand value 1
+     * @param i3 left-hand value 2
+     * @param i4 right-hand value 2
+     * @return order as for compareTo()
+     */
+    public static int compareIntegers(final int i1, final int i2, final int i3, final int i4) {
+        if (i1 < i2) {
+            return -1;
+        }
+        if (i1 > i2) {
+            return 1;
+        }
+        if (i3 < i4) {
+            return -1;
+        }
+        if (i3 > i4) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Helper for comparators: generate the order of int/long values.
+     * The result is based on the values of i1 and i2 if they differ.
+     * If they are the same, use i3 and i4 instead.
+     *
+     * @param i1 left-hand value 1
+     * @param i2 right-hand value 1
+     * @param i3 left-hand value 2
+     * @param i4 right-hand value 2
+     * @return order as for compareTo()
+     */
+    public static int compareLongsAndIntegers(final long i1, final long i2, final int i3, final int i4) {
+        if (i1 < i2) {
+            return -1;
+        }
+        if (i1 > i2) {
+            return 1;
+        }
+        if (i3 < i4) {
+            return -1;
+        }
+        if (i3 > i4) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Helper for comparators: generate the order of int/long values.
+     * The result is based on the values of i1 and i2 if they differ.
+     * If they are the same, use i3 and i4 instead, or i5 and i6 if i3 and i4 are also equal.
+     *
+     * @param i1 left-hand value 1
+     * @param i2 right-hand value 1
+     * @param i3 left-hand value 2
+     * @param i4 right-hand value 2
+     * @param i5 left-hand value 3
+     * @param i6 right-hand value 3
+     * @return order as for compareTo()
+     */
+    public static int compareIntegersAndLongs(final int i1, final int i2, final int i3, final int i4, final long i5, final long i6) {
+        if (i1 < i2) {
+            return -1;
+        }
+        if (i1 > i2) {
+            return 1;
+        }
+        if (i3 < i4) {
+            return -1;
+        }
+        if (i3 > i4) {
+            return 1;
+        }
+        if (i5 < i6) {
+            return -1;
+        }
+        if (i5 > i6) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Helper for comparators: generate the order of boolean values, with false < true.
+     *
+     * @param b1 left-hand value
+     * @param b2 right-hand value
+     * @return order as for compareTo()
+     */
+    public static int compareBooleans(final boolean b1, final boolean b2) {
+        if (b1 == b2) {
+            return 0;
+        }
+        return b1 ? 1 : -1;
+    }
+
+    /**
+     * Create a comparator that will deliver the reverse results of the argument one.
+     *
+     * @param comparator the argument comparator
+     * @param <T> the type of objects it compares
+     * @return the new comparator
+     */
+    public static <T> Comparator<T> reversedComparator(final Comparator<? super T> comparator) {
+        return new Comparator<T>() {
+            @Override
+            public int compare(final T o1, final T o2) {
+                return comparator.compare(o2, o1);
+            }
+        };
+    }
+
+    /**
+     * Format a time interval in ms as an informal string such as "in 3 hours".
+     *
+     * @param waitTime the time to wait
+     * @return description of the time to wait
+     */
+    public static String getWaitTimeAsInformalString(final long waitTime) {
+        if (waitTime <= 0) {
+            return "now";
+        }
+        if (waitTime < HOUR * 2) {
+            return String.format(Locale.ROOT, "in %d min", (waitTime+ MINUTE/2) / MINUTE);
+        }
+        if (waitTime < DAY * 2) {
+            return String.format(Locale.ROOT, "in %d hours", (waitTime+ HOUR/2) / HOUR);
+        }
+        return String.format(Locale.ROOT, "in %d days", (waitTime+ DAY/2) / DAY);
+    }
+
+    /**
+     * Format a time interval in ms as a short informal string such as "3h".
+     *
+     * @param waitTime the time to wait
+     * @return description of the time to wait
+     */
+    public static String getShortWaitTimeAsInformalString(final long waitTime) {
+        if (waitTime <= 0) {
+            return "now";
+        }
+        if (waitTime < HOUR * 2) {
+            return String.format(Locale.ROOT, "%dm", (waitTime+ MINUTE/2) / MINUTE);
+        }
+        if (waitTime < DAY * 2) {
+            return String.format(Locale.ROOT, "%dh", (waitTime+ HOUR/2) / HOUR);
+        }
+        return String.format(Locale.ROOT, "in %dd", (waitTime+ DAY/2) / DAY);
+    }
+
+    /**
+     * Create a Date instance that represents the start of the hour represented by the argument.
+     *
+     * @param date the date to check
+     * @return the date with minute, second and millisecond set to 0
+     */
+    public static Date getTopOfHour(final Date date) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    /**
+     * Create a Date instance that represents the start of the hour represented by the argument.
+     *
+     * @param ts the timestamp to check
+     * @return the date with minute, second and millisecond set to 0
+     */
+    public static Date getTopOfHour(final long ts) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date(ts));
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    /**
+     * Check if value is a Boolean instance and that instance is true.
+     *
+     * @param value the value to check
+     * @return true if it is
+     */
+    public static boolean isTrue(final @Nullable Object value) {
+        return value instanceof Boolean && (boolean) value;
+    }
+}

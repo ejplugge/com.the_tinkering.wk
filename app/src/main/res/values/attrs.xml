@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <declare-styleable name="SynonymRowView">
+        <attr name="index" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="TaggedUrlPreference">
+        <attr name="defaultTag" format="string"/>
+    </declare-styleable>
+
+    <attr name="colorPrimaryInverse" format="reference"/>
+    <attr name="colorPrimaryLight" format="reference"/>
+    <attr name="colorPrimaryTonedDown" format="reference"/>
+    <attr name="colorBackground" format="reference"/>
+    <attr name="colorDivider" format="reference"/>
+    <attr name="toolbarColorBackground" format="reference"/>
+    <attr name="browseLevelButtonColorBackground" format="reference"/>
+    <attr name="tileColorBackground" format="reference"/>
+    <attr name="colorWaterfallLine" format="reference"/>
+    <attr name="colorLevelProgressTarget" format="reference"/>
+    <attr name="customToastColorPrimary" format="reference"/>
+    <attr name="correctColorBackground" format="reference"/>
+    <attr name="incorrectColorBackground" format="reference"/>
+    <attr name="meaningHintColor" format="reference"/>
+    <attr name="readingHintColor" format="reference"/>
+    <attr name="editTextHintColor" format="reference"/>
+    <attr name="editTextHintColorInverse" format="reference"/>
+    <attr name="ankiShowAnswerColor" format="reference"/>
+    <attr name="ankiNextColor" format="reference"/>
+    <attr name="ankiCorrectColor" format="reference"/>
+    <attr name="ankiIncorrectColor" format="reference"/>
+    <attr name="ankiButtonTextColor" format="reference"/>
+    <attr name="ankiAnswerColorBackground" format="reference"/>
+    <attr name="pitchInfoHeibanColor" format="reference"/>
+    <attr name="pitchInfoOdakaColor" format="reference"/>
+    <attr name="pitchInfoNakadakaColor" format="reference"/>
+    <attr name="pitchInfoAtamadakaColor" format="reference"/>
+    <attr name="buttonHighlightColor" format="reference"/>
+
+    <attr name="WK_TextView_BrowseLevelButton" format="reference"/>
+    <attr name="WK_TextView_Normal" format="reference"/>
+    <attr name="WK_TextView_Large" format="reference"/>
+    <attr name="WK_Button_Borderless" format="reference"/>
+</resources>

@@ -1,0 +1,103 @@
+/*
+ * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.the_tinkering.wk.livedata;
+
+import android.os.Handler;
+import android.os.Looper;
+
+import com.the_tinkering.wk.WkApplication;
+import com.the_tinkering.wk.db.AppDatabase;
+import com.the_tinkering.wk.db.model.Subject;
+import com.the_tinkering.wk.util.Logger;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import javax.annotation.Nullable;
+
+/**
+ * A watcher that keeps track of changes to subjects' assignments, statistics and study materials.
+ *
+ * <p>
+ *     Listeners are asked ahead of time if they are interested in updates for a specific subject ID.
+ * </p>
+ */
+public final class SubjectChangeWatcher {
+    private static final Logger LOGGER = Logger.get(SubjectChangeWatcher.class);
+    private static final SubjectChangeWatcher instance = new SubjectChangeWatcher();
+    private static final Object MARK = new Object();
+    private final Map<SubjectChangeListener, Object> map = Collections.synchronizedMap(new WeakHashMap<SubjectChangeListener, Object>());
+
+    /**
+     * Get the singleton instance.
+     *
+     * @return the instance
+     */
+    public static SubjectChangeWatcher getInstance() {
+        return instance;
+    }
+
+    private SubjectChangeWatcher() {
+        //
+    }
+
+    /**
+     * Add a listener that will be notified of changes to subjects.
+     *
+     * @param listener the listener to add
+     */
+    public void addListener(final SubjectChangeListener listener) {
+        map.put(listener, MARK);
+    }
+
+    /**
+     * Report a change to a subject.
+     *
+     * @param subjectId the ID of the subject that has been changed
+     */
+    public void reportChange(final long subjectId) {
+        try {
+            @Nullable Subject subject = null;
+            final Iterable<SubjectChangeListener> listeners = new ArrayList<>(map.keySet());
+            final AppDatabase db = WkApplication.getDatabase();
+            for (final SubjectChangeListener listener: listeners) {
+                if (listener.isInterestedInSubject(subjectId)) {
+                    if (subject == null) {
+                        subject = db.subjectDao().getById(subjectId);
+                    }
+                    if (subject != null) {
+                        final Subject theSubject = subject;
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    listener.onSubjectChange(theSubject);
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+    }
+}
