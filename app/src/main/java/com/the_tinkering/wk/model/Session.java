@@ -723,7 +723,7 @@ s     *
         }
 
         final AnswerVerdict verdict = currentQuestion.checkAnswer(matchingKanji, currentAnswer.trim(),
-                GlobalSettings.Other.getRequireOnInKatakana(), GlobalSettings.Review.getCloseEnoughAction());
+                GlobalSettings.Review.getCloseEnoughAction());
 
         if (verdict.isOk()) {
             currentQuestion.markCorrect();

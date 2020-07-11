@@ -742,7 +742,7 @@ public final class Subject implements PronunciationAudioOwner {
             }
         }
 
-        return (best == null) ? "" : orElse(best.getReading(), "");
+        return (best == null) ? "" : orElse(best.getValue(GlobalSettings.Other.getShowOnInKatakana()), "");
     }
 
     /**
@@ -1771,11 +1771,11 @@ public final class Subject implements PronunciationAudioOwner {
      * Get the accepted readings formatted as a piece of rich text.
      *
      * @param prefix prefix to add to the produced text
-     * @param showOnInKatakana true if on'yomi readings should be shown in katakana
      * @return the text
      */
-    public CharSequence getRegularReadingRichText(final String prefix, final boolean showOnInKatakana) {
+    public CharSequence getRegularReadingRichText(final String prefix) {
         final Collection<String> result = new ArrayList<>();
+        final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
 
         for (final Reading reading: getAcceptedReadings()) {
             if (reading.isPrimary() && getNumAcceptedReadings() > 1) {
@@ -1835,11 +1835,11 @@ public final class Subject implements PronunciationAudioOwner {
      * Get the accepted on'yomi readings formatted as a piece of rich text.
      *
      * @param prefix prefix to add to the produced text
-     * @param showOnInKatakana true if on'yomi readings should be shown in katakana
      * @return the text
      */
-    public CharSequence getAcceptedOnYomiRichText(final String prefix, final boolean showOnInKatakana) {
+    public CharSequence getAcceptedOnYomiRichText(final String prefix) {
         final Collection<String> result = new ArrayList<>();
+        final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
 
         for (final Reading reading: getOnYomiReadings()) {
             if (!hasAcceptedOnYomi() || reading.isAcceptedAnswer()) {
@@ -1873,11 +1873,11 @@ public final class Subject implements PronunciationAudioOwner {
     /**
      * Get the on'yomi readings formatted as a piece of rich text.
      *
-     * @param showOnInKatakana true if on'yomi readings should be shown in katakana
      * @return the text
      */
-    public CharSequence getOnYomiRichText(final boolean showOnInKatakana) {
+    public CharSequence getOnYomiRichText() {
         final Collection<String> result = new ArrayList<>();
+        final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
 
         for (final Reading reading: getOnYomiReadings()) {
             result.add(reading.getValue(showOnInKatakana));

@@ -248,7 +248,7 @@ public final class SubjectInfoHeadlineView extends ConstraintLayout {
             }
         }
         else {
-            reading.setText(subject.getRegularReadingRichText("", GlobalSettings.Other.getShowOnInKatakana()));
+            reading.setText(subject.getRegularReadingRichText(""));
             reading.setVisibility(showReadingAnswers && subject.hasReadings());
             reading.setJapaneseLocale();
         }
@@ -261,7 +261,7 @@ public final class SubjectInfoHeadlineView extends ConstraintLayout {
                     continue;
                 }
                 final Button playButton = new Button(getContext());
-                playButton.setText(r.getReading());
+                playButton.setText(r.getValue(GlobalSettings.Other.getShowOnInKatakana()));
                 playButton.setTextSize(FONT_SIZE_SMALL);
                 playButton.setCompoundDrawablesWithIntrinsicBounds(
                         ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_volume_up_24px), null, null, null);

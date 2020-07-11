@@ -581,7 +581,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
             headline.setSubject(subject);
 
             // Kanji on'yomi, kun'yomi, nanori
-            onYomi.setText(subject.getOnYomiRichText(GlobalSettings.Other.getShowOnInKatakana()));
+            onYomi.setText(subject.getOnYomiRichText());
             onYomi.setJapaneseLocale();
             onYomi.setVisibility(showReadingAnswers && subject.hasOnYomi());
             kunYomi.setText(subject.getKunYomiRichText());

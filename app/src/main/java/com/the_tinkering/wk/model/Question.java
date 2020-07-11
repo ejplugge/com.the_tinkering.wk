@@ -119,20 +119,17 @@ public final class Question {
      *
      * @param matchingKanji if this subject is a vocab item that consists of only one kanji character, this is that kanji.
      * @param answer the user's answer
-     * @param requireOnInKatakana are on'yomi answers required to be given in Katakana?
      * @param closeEnoughAction action for an answer that is close enough for typo lenience.
      * @return the verdict for this answer
      */
-    public AnswerVerdict checkAnswer(final @Nullable Subject matchingKanji,
-                                     final String answer, final boolean requireOnInKatakana,
-                                     final CloseEnoughAction closeEnoughAction) {
+    public AnswerVerdict checkAnswer(final @Nullable Subject matchingKanji, final String answer, final CloseEnoughAction closeEnoughAction) {
         if (ObjectSupport.isEmpty(answer)) {
             return AnswerVerdict.NOK_WITH_RETRY;
         }
 
         final Subject subject = requireNonNull(item.getSubject());
 
-        return type.checkAnswer(subject, matchingKanji, answer, requireOnInKatakana, closeEnoughAction);
+        return type.checkAnswer(subject, matchingKanji, answer, closeEnoughAction);
     }
 
     /**
