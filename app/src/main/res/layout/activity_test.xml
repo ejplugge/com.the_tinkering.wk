@@ -28,7 +28,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="?attr/toolbarColorBackground"
         android:theme="@style/WKToolbarTheme"
         android:elevation="4dp"
@@ -44,12 +44,7 @@
             android:id="@+id/testLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:padding="8dp"
             android:orientation="vertical"
             tools:ignore="UnusedIds">
 
@@ -57,8 +52,6 @@
                 android:id="@+id/downloadPitchInfoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:onClick="downloadPitchInfo"
                 android:text="Download pitch info"
                 style="@style/WK.Button.Normal"
@@ -68,8 +61,6 @@
                 android:id="@+id/generatePitchInfoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:onClick="generatePitchInfo"
                 android:text="Generate pitch info"
                 style="@style/WK.Button.Normal"
@@ -79,8 +70,6 @@
                 android:id="@+id/checkPitchInfoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:onClick="checkPitchInfo"
                 android:text="Check pitch info"
                 style="@style/WK.Button.Normal"
@@ -90,8 +79,6 @@
                 android:id="@+id/testButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:onClick="theButton"
                 android:text="Test"
                 style="@style/WK.Button.Normal"
@@ -101,8 +88,6 @@
                 android:id="@+id/testButton2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:onClick="theButton2"
                 android:text="Test 2"
                 style="@style/WK.Button.Normal"
@@ -112,18 +97,9 @@
                 android:id="@+id/document"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="4dp"
                 android:textIsSelectable="true"
                 style="@style/WK.TextView.Normal"/>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="16dp"/>
 
         </LinearLayout>
 

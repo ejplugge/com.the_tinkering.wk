@@ -18,7 +18,6 @@ package com.the_tinkering.wk.activities;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.widget.Space;
 import android.widget.TableLayout;
 
 import androidx.core.content.res.ResourcesCompat;
@@ -67,12 +66,6 @@ public final class FontSelectionActivity extends AbstractActivity {
         for (final String name: FontStorageUtil.getNames()) {
             addDynamicRow(fontList, name);
         }
-
-        final Space space = new Space(this);
-        final TableLayout.LayoutParams rowLayoutParams = new TableLayout.LayoutParams(0, 0);
-        rowLayoutParams.width = MATCH_PARENT;
-        rowLayoutParams.height = dp2px(16);
-        fontList.addView(space, rowLayoutParams);
     }
 
     @Override

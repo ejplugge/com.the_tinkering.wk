@@ -28,7 +28,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="?attr/toolbarColorBackground"
         android:theme="@style/WKToolbarTheme"
         android:elevation="4dp"
@@ -44,12 +44,7 @@
             android:id="@+id/fontList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:padding="8dp"
             android:orientation="vertical">
 
             <TextView
@@ -59,10 +54,6 @@
                 android:layout_marginBottom="8dp"
                 android:text="These fonts are used in lessons and reviews. If you choose multiple fonts, one will be chosen at random for each item."
                 style="@style/WK.TextView.Normal"/>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="16dp"/>
 
         </LinearLayout>
 

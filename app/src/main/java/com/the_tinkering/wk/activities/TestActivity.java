@@ -234,25 +234,7 @@ public final class TestActivity extends AbstractActivity {
 
             document.setText("Click 2!");
 
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected @Nullable Void doInBackground(final Void... params) {
-                    for (int i=1; i<=60; i++) {
-                        final Collection<Subject> subjects = WkApplication.getDatabase().subjectCollectionsDao().getByLevelRange(i, i);
-                        for (final Subject subject: subjects) {
-                            for (final Reading reading: subject.getReadings()) {
-                                if (reading.getReading() == null) {
-                                    continue;
-                                }
-                                if (reading.getReading().contains("ゃ")) {
-                                    LOGGER.debug("Subject: %s %s %s", subject.getCharacters(), subject.getOneMeaning(), reading.getReading());
-                                }
-                            }
-                        }
-                    }
-                    return null;
-                }
-            }.execute();
+            goToActivity(NoApiKeyHelpActivity.class);
         } catch (final Exception e) {
             LOGGER.uerr(e);
         }

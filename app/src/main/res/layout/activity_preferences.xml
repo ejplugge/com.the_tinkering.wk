@@ -28,7 +28,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="?attr/toolbarColorBackground"
         android:theme="@style/WKToolbarTheme"
         android:elevation="4dp"
@@ -38,10 +38,7 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
 </LinearLayout>
