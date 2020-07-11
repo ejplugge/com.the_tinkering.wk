@@ -725,7 +725,7 @@ public final class FuzzyMatching {
                     if (bestAcceptedScore > 0) {
                         return AnswerVerdict.NOK_WITH_RETRY;
                     }
-                    return new AnswerVerdict(true, false, false, answer, bestAcceptedAnswer);
+                    return new AnswerVerdict(true, false, false, answer, bestAcceptedAnswer, null);
                 }
                 return AnswerVerdict.NOK_WITHOUT_RETRY;
             case REJECT:
@@ -733,7 +733,7 @@ public final class FuzzyMatching {
                     if (bestAcceptedScore > 0) {
                         return AnswerVerdict.NOK_WITHOUT_RETRY;
                     }
-                    return new AnswerVerdict(true, false, false, answer, bestAcceptedAnswer);
+                    return new AnswerVerdict(true, false, false, answer, bestAcceptedAnswer, null);
                 }
                 return AnswerVerdict.NOK_WITHOUT_RETRY;
             case SILENTLY_ACCEPT:
@@ -742,9 +742,9 @@ public final class FuzzyMatching {
             default:
                 if (bestAcceptedScore < Integer.MAX_VALUE && bestAcceptedScore <= bestRejectedScore) {
                     if (bestAcceptedScore > 0) {
-                        return new AnswerVerdict(true, false, true, answer, bestAcceptedAnswer);
+                        return new AnswerVerdict(true, false, true, answer, bestAcceptedAnswer, null);
                     }
-                    return new AnswerVerdict(true, false, false, answer, bestAcceptedAnswer);
+                    return new AnswerVerdict(true, false, false, answer, bestAcceptedAnswer, null);
                 }
                 return AnswerVerdict.NOK_WITHOUT_RETRY;
         }

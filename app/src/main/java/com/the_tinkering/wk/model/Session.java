@@ -697,7 +697,7 @@ s     *
         }
 
         if (answered) {
-            final AnswerVerdict verdict = new AnswerVerdict(correct, false, false, null, null);
+            final AnswerVerdict verdict = new AnswerVerdict(correct, false, false, null, null, null);
             LOGGER.info("End submit: %s current question already answered", verdict);
             return verdict;
         }
@@ -736,6 +736,7 @@ s     *
             answered = true;
             correct = true;
             FloatingUiState.lastVerdict = verdict;
+            FloatingUiState.showCloseToast = verdict.isNearMatch();
             FloatingUiState.toastPlayed = false;
             LiveSessionProgress.getInstance().ping();
         }
@@ -745,6 +746,7 @@ s     *
             answered = true;
             correct = false;
             FloatingUiState.lastVerdict = verdict;
+            FloatingUiState.showCloseToast = false;
             lastTypedIncorrectAnswer = System.currentTimeMillis();
             FloatingUiState.toastPlayed = false;
             LiveSessionProgress.getInstance().ping();
@@ -772,6 +774,7 @@ s     *
         answered = true;
         correct = true;
         FloatingUiState.lastVerdict = null;
+        FloatingUiState.showCloseToast = false;
         LOGGER.info("Submit Anki correct: %s processed", currentQuestion);
         LiveSessionProgress.getInstance().ping();
     }
@@ -789,6 +792,7 @@ s     *
         answered = true;
         correct = false;
         FloatingUiState.lastVerdict = null;
+        FloatingUiState.showCloseToast = false;
         LOGGER.info("Submit Anki incorrect: %s processed", currentQuestion);
         LiveSessionProgress.getInstance().ping();
     }
@@ -807,6 +811,7 @@ s     *
         answered = true;
         correct = false;
         FloatingUiState.lastVerdict = null;
+        FloatingUiState.showCloseToast = false;
         FloatingUiState.toastPlayed = false;
         LOGGER.info("Submit Don't Know: %s processed", currentQuestion);
         LiveSessionProgress.getInstance().ping();

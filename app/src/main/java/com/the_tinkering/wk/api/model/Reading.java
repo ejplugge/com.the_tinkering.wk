@@ -18,6 +18,7 @@ package com.the_tinkering.wk.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.the_tinkering.wk.model.DigraphMatch;
 import com.the_tinkering.wk.util.PseudoIme;
 
 import javax.annotation.Nullable;
@@ -30,6 +31,9 @@ import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
  */
 @SuppressWarnings("unused")
 public final class Reading {
+    private static final String smallKana = "ぁぃぅぇぉっゃゅょゎゕゖァィゥェォッャュョヮヵヶ";
+    private static final String regularKana = "あいうえおつやゆよわかけアイウエオツヤユヨワカケ";
+
     private @Nullable String reading = null;
     private boolean primary = false;
     @JsonProperty("accepted_answer") private boolean acceptedAnswer = false;
@@ -97,6 +101,59 @@ public final class Reading {
         }
         else {
             return isEqual(reading, answer);
+        }
+    }
+
+    @JsonIgnore
+    private static @Nullable DigraphMatch matchesForDigraph(final CharSequence answer, final @Nullable CharSequence baseLine) {
+        if (baseLine == null || answer.length() != baseLine.length()) {
+            return null;
+        }
+        char regular = 0;
+        char small = 0;
+        for (int i=0; i<answer.length(); i++) {
+            final char c1 = answer.charAt(i);
+            final char c2 = baseLine.charAt(i);
+            if (c1 == c2) {
+                continue;
+            }
+            final int p1 = regularKana.indexOf(c1);
+            if (p1 >= 0 && smallKana.charAt(p1) == c2) {
+                regular = c1;
+                small = c2;
+                continue;
+            }
+            final int p2 = smallKana.indexOf(c1);
+            if (p2 >= 0 && regularKana.charAt(p2) == c2) {
+                regular = c2;
+                small = c1;
+                continue;
+            }
+            return null;
+        }
+        if (regular != 0) {
+            return new DigraphMatch(regular, small);
+        }
+        return null;
+    }
+
+    /**
+     * Check if an answer matches this reading except for a digraph mismatch.
+     *
+     * @param answer the answer to check
+     * @return the digraph match details if the answer is correct except for the digraph mismatch
+     */
+    @JsonIgnore
+    public @Nullable DigraphMatch matchesForDigraph(final CharSequence answer) {
+        if (isOnYomi()) {
+            final @Nullable DigraphMatch regularMatch = matchesForDigraph(answer, reading);
+            if (regularMatch != null) {
+                return regularMatch;
+            }
+            return matchesForDigraph(answer, PseudoIme.toKatakana(reading));
+        }
+        else {
+            return matchesForDigraph(answer, reading);
         }
     }
 

@@ -74,6 +74,11 @@ public final class FloatingUiState {
      */
     public static boolean lingerOnAnswer = false;
 
+    /**
+     * Should a 'not quite but close enough' toast be shown?.
+     */
+    public static boolean showCloseToast = false;
+
     private static String currentAnswer = "";
 
     private FloatingUiState() {

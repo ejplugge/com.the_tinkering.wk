@@ -28,18 +28,19 @@ public final class AnswerVerdict {
     /**
      * Predefined constant for common case: answer was incorrect, but user can retry.
      */
-    public static final AnswerVerdict NOK_WITH_RETRY = new AnswerVerdict(false, true, false, null, null);
+    public static final AnswerVerdict NOK_WITH_RETRY = new AnswerVerdict(false, true, false, null, null, null);
 
     /**
      * Predefined constant for common case: answer was incorrect, and user can not retry.
      */
-    public static final AnswerVerdict NOK_WITHOUT_RETRY = new AnswerVerdict(false, false, false, null, null);
+    public static final AnswerVerdict NOK_WITHOUT_RETRY = new AnswerVerdict(false, false, false, null, null, null);
 
     private final boolean ok;
     private final boolean retry;
     private final boolean nearMatch;
     private final @Nullable String givenAnswer;
     private final @Nullable String matchedAnswer;
+    private final @Nullable DigraphMatch digraphMatch;
 
     /**
      * The constructor.
@@ -49,14 +50,17 @@ public final class AnswerVerdict {
      * @param nearMatch value for nearMatch field
      * @param givenAnswer value for givenAnswer field
      * @param matchedAnswer value for matchedAnswer field
+     * @param digraphMatch vaule for digraphMatch field
      */
     public AnswerVerdict(final boolean ok, final boolean retry, final boolean nearMatch,
-                         final @Nullable String givenAnswer, final @Nullable String matchedAnswer) {
+                         final @Nullable String givenAnswer, final @Nullable String matchedAnswer,
+                         final @Nullable DigraphMatch digraphMatch) {
         this.ok = ok;
         this.retry = retry;
         this.nearMatch = nearMatch;
         this.givenAnswer = givenAnswer;
         this.matchedAnswer = matchedAnswer;
+        this.digraphMatch = digraphMatch;
     }
 
     /**
@@ -109,8 +113,17 @@ public final class AnswerVerdict {
         return matchedAnswer;
     }
 
+    /**
+     * Details of a near-match that differs from an OK because of a difference in regular/small kana.
+     *
+     * @return the match data, or null if not applicable
+     */
+    public @Nullable DigraphMatch getDigraphMatch() {
+        return digraphMatch;
+    }
+
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "Verdict:%s,%s,%s,%s,%s", ok, retry, nearMatch, givenAnswer, matchedAnswer);
+        return String.format(Locale.ROOT, "Verdict:%s,%s,%s,%s,%s,%s", ok, retry, nearMatch, givenAnswer, matchedAnswer, digraphMatch);
     }
 }

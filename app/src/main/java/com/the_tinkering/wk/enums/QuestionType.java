@@ -23,6 +23,7 @@ import com.the_tinkering.wk.api.model.Meaning;
 import com.the_tinkering.wk.api.model.Reading;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.model.AnswerVerdict;
+import com.the_tinkering.wk.model.DigraphMatch;
 import com.the_tinkering.wk.util.FuzzyMatching;
 import com.the_tinkering.wk.util.PseudoIme;
 import com.the_tinkering.wk.util.ThemeUtil;
@@ -278,7 +279,14 @@ public enum QuestionType {
                                          final CloseEnoughAction closeEnoughAction) {
             for (final Reading r: subject.getReadings()) {
                 if (r.matches(answer, requireOnInKatakana)) {
-                    return new AnswerVerdict(r.isAcceptedAnswer(), !r.isAcceptedAnswer(), false, answer, r.getReading());
+                    return new AnswerVerdict(r.isAcceptedAnswer(), !r.isAcceptedAnswer(), false, answer, r.getReading(), null);
+                }
+            }
+
+            for (final Reading r: subject.getAcceptedReadings()) {
+                final @Nullable DigraphMatch match = r.matchesForDigraph(answer);
+                if (match != null) {
+                    return new AnswerVerdict(false, false, false, answer, r.getReading(), match);
                 }
             }
 
@@ -326,7 +334,7 @@ public enum QuestionType {
                                          final CloseEnoughAction closeEnoughAction) {
             for (final Reading r: subject.getReadings()) {
                 if (r.matches(answer, requireOnInKatakana)) {
-                    return new AnswerVerdict(r.isAcceptedAnswer(), !r.isAcceptedAnswer(), false, answer, r.getReading());
+                    return new AnswerVerdict(r.isAcceptedAnswer(), !r.isAcceptedAnswer(), false, answer, r.getReading(), null);
                 }
             }
 
@@ -335,6 +343,13 @@ public enum QuestionType {
                     if (r.matches(answer, requireOnInKatakana)) {
                         return AnswerVerdict.NOK_WITH_RETRY;
                     }
+                }
+            }
+
+            for (final Reading r: subject.getReadings()) {
+                final @Nullable DigraphMatch match = r.matchesForDigraph(answer);
+                if (match != null) {
+                    return new AnswerVerdict(false, false, false, answer, r.getReading(), match);
                 }
             }
 
@@ -382,19 +397,26 @@ public enum QuestionType {
                                          final CloseEnoughAction closeEnoughAction) {
             for (final Reading r: subject.getOnYomiReadings()) {
                 if (r.isAcceptedAnswer() && r.matches(answer, requireOnInKatakana)) {
-                    return new AnswerVerdict(true, false, false, answer, r.getReading());
+                    return new AnswerVerdict(true, false, false, answer, r.getReading(), null);
                 }
             }
             if (!subject.hasAcceptedOnYomi()) {
                 for (final Reading r: subject.getOnYomiReadings()) {
                     if (r.matches(answer, requireOnInKatakana)) {
-                        return new AnswerVerdict(true, false, false, answer, r.getReading());
+                        return new AnswerVerdict(true, false, false, answer, r.getReading(), null);
                     }
                 }
             }
             for (final Reading r: subject.getReadings()) {
                 if (r.matches(answer, requireOnInKatakana)) {
                     return AnswerVerdict.NOK_WITH_RETRY;
+                }
+            }
+
+            for (final Reading r: subject.getReadings()) {
+                final @Nullable DigraphMatch match = r.matchesForDigraph(answer);
+                if (match != null) {
+                    return new AnswerVerdict(false, false, false, answer, r.getReading(), match);
                 }
             }
 
@@ -442,19 +464,26 @@ public enum QuestionType {
                                          final CloseEnoughAction closeEnoughAction) {
             for (final Reading r: subject.getKunYomiReadings()) {
                 if (r.isAcceptedAnswer() && r.matches(answer, requireOnInKatakana)) {
-                    return new AnswerVerdict(true, false, false, answer, r.getReading());
+                    return new AnswerVerdict(true, false, false, answer, r.getReading(), null);
                 }
             }
             if (!subject.hasAcceptedKunYomi()) {
                 for (final Reading r: subject.getKunYomiReadings()) {
                     if (r.matches(answer, requireOnInKatakana)) {
-                        return new AnswerVerdict(true, false, false, answer, r.getReading());
+                        return new AnswerVerdict(true, false, false, answer, r.getReading(), null);
                     }
                 }
             }
             for (final Reading r: subject.getReadings()) {
                 if (r.matches(answer, requireOnInKatakana)) {
                     return AnswerVerdict.NOK_WITH_RETRY;
+                }
+            }
+
+            for (final Reading r: subject.getAcceptedReadings()) {
+                final @Nullable DigraphMatch match = r.matchesForDigraph(answer);
+                if (match != null) {
+                    return new AnswerVerdict(false, false, false, answer, r.getReading(), match);
                 }
             }
 

@@ -45,7 +45,6 @@ import com.the_tinkering.wk.fragments.AbstractFragment;
 import com.the_tinkering.wk.fragments.AbstractSessionFragment;
 import com.the_tinkering.wk.livedata.LiveSessionProgress;
 import com.the_tinkering.wk.livedata.LiveSessionState;
-import com.the_tinkering.wk.model.AnswerVerdict;
 import com.the_tinkering.wk.model.FloatingUiState;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.model.Session;
@@ -187,9 +186,8 @@ public final class SessionActivity extends AbstractActivity {
         final boolean lightningMode = GlobalSettings.Review.getEnableLightningMode();
         final boolean ankiMode = question != null && GlobalSettings.getAnkiMode(session.getType(), question.getType());
 
-        final @Nullable AnswerVerdict lastVerdict = FloatingUiState.lastVerdict;
         if (lightningMode && session.isAnswered() && session.isCorrect()
-                && lastVerdict != null && lastVerdict.isNearMatch()
+                && FloatingUiState.lastVerdict != null && FloatingUiState.lastVerdict.isNearMatch()
                 && GlobalSettings.Review.getCloseEnoughAction() == CloseEnoughAction.ACCEPT_WITH_TOAST_NO_LM) {
             FloatingUiState.lingerOnAnswer = true;
         }
@@ -247,10 +245,9 @@ public final class SessionActivity extends AbstractActivity {
     }
 
     private static void showCloseToast(final ViewProxy view) {
-        if (FloatingUiState.lastVerdict == null || !FloatingUiState.lastVerdict.isOk()
-                || !FloatingUiState.lastVerdict.isNearMatch()
+        if (FloatingUiState.lastVerdict == null || !FloatingUiState.showCloseToast
                 || !GlobalSettings.Review.getCloseEnoughAction().isShowToast()) {
-            FloatingUiState.lastVerdict = null;
+            FloatingUiState.showCloseToast = false;
             return;
         }
 
@@ -295,15 +292,14 @@ public final class SessionActivity extends AbstractActivity {
 
         view.setAnimation(animationSet);
         view.setVisibility(View.VISIBLE);
-        FloatingUiState.lastVerdict = null;
+        FloatingUiState.showCloseToast = false;
     }
 
     private static void showCloseMessage(final ViewProxy view) {
-        if (FloatingUiState.lastVerdict == null || !FloatingUiState.lastVerdict.isOk()
-                || !FloatingUiState.lastVerdict.isNearMatch()
+        if (FloatingUiState.lastVerdict == null || !FloatingUiState.showCloseToast
                 || !GlobalSettings.Review.getCloseEnoughAction().isShowToast()) {
             view.setVisibility(false);
-            FloatingUiState.lastVerdict = null;
+            FloatingUiState.showCloseToast = false;
             return;
         }
 
@@ -313,7 +309,7 @@ public final class SessionActivity extends AbstractActivity {
                 FloatingUiState.lastVerdict.getMatchedAnswer());
         view.setText(message);
         view.setVisibility(View.VISIBLE);
-        FloatingUiState.lastVerdict = null;
+        FloatingUiState.showCloseToast = false;
     }
 
     private void showSrsStageChangeToast(final ViewProxy view) {

@@ -20,19 +20,20 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 
-import com.the_tinkering.wk.LegacyRadicals;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
+import com.the_tinkering.wk.api.model.Reading;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
-import com.the_tinkering.wk.model.PitchInfo;
 import com.the_tinkering.wk.enums.SubjectType;
+import com.the_tinkering.wk.model.PitchInfo;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.PitchInfoUtil;
 import com.the_tinkering.wk.util.ReferenceDataUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -221,16 +222,7 @@ public final class TestActivity extends AbstractActivity {
 
             document.setText("Click!");
 
-            final StringBuilder sb = new StringBuilder();
-            for (int i=0; i<10000; i++) {
-                if (LegacyRadicals.isLegacyRadical(i)) {
-                    sb.append(LegacyRadicals.getLegacyName(i));
-                    sb.append("<br/><br/>");
-                    sb.append(LegacyRadicals.getLegacyMnemonic(i));
-                    sb.append("<br/><br/>");
-                }
-            }
-            document.setTextHtml(sb.toString());
+            goToActivity(DigraphHelpActivity.class);
         } catch (final Exception e) {
             LOGGER.uerr(e);
         }
@@ -242,7 +234,25 @@ public final class TestActivity extends AbstractActivity {
 
             document.setText("Click 2!");
 
-            goToPreferencesActivity(null);
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected @Nullable Void doInBackground(final Void... params) {
+                    for (int i=1; i<=60; i++) {
+                        final Collection<Subject> subjects = WkApplication.getDatabase().subjectCollectionsDao().getByLevelRange(i, i);
+                        for (final Subject subject: subjects) {
+                            for (final Reading reading: subject.getReadings()) {
+                                if (reading.getReading() == null) {
+                                    continue;
+                                }
+                                if (reading.getReading().contains("ゃ")) {
+                                    LOGGER.debug("Subject: %s %s %s", subject.getCharacters(), subject.getOneMeaning(), reading.getReading());
+                                }
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }.execute();
         } catch (final Exception e) {
             LOGGER.uerr(e);
         }

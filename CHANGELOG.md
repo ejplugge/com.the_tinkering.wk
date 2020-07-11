@@ -1,4 +1,8 @@
 
+### Version 2.0.0, 2020-XX-XX:
+
+- Add a hint when answering a reading question incorrectly because of the common niyuu/nyuu にゆう/にゅう mistake.
+
 ### Version 1.26.0, 2020-07-10:
 
 - Update pitch info data for new vocab subjects

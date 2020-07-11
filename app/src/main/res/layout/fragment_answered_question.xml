@@ -214,6 +214,18 @@
                 android:layout_weight="0"
                 style="@style/WK.TextView.CustomToast"/>
 
+            <TextView
+                android:id="@+id/digraphMatchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text=""
+                android:background="@drawable/rounded_corners"
+                android:padding="6dp"
+                android:visibility="gone"
+                android:layout_weight="0"
+                style="@style/WK.TextView.CustomToast"/>
+
             <com.the_tinkering.wk.views.SubjectInfoView
                 android:id="@+id/subjectInfo"
                 android:layout_width="match_parent"

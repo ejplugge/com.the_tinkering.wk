@@ -320,6 +320,32 @@ public final class Constants {
             + "If the trick works, your keyboard will now automatically switch between Kana and ASCII for the rest of the session. "
             + "This trick doesn't work for every device, and it doesn't work for all keyboards, but it may work for you.";
 
+    /**
+     * Document to show on the digraph help screen, part 1.
+     */
+    public static final String DIGRAPH_HELP_DOCUMENT_1 = "<h3>Digraph information</h3><br/> "
+            + "While most kana (hiragana or katakana) stand on their own, it's possible for two kana to combine"
+            + " into a single unit called a 'digraph'. When this happens, one of the kana is written small."
+            + " The digraph represents a single sound that is distinct from the two sounds represented by the"
+            + " kana characters separately.<br/><br/>"
+            + "Example: にゆ is typed 'niyu' and pronounced 'ni-yu'. But にゅ is typed 'nyu' and pronounced"
+            + " a bit like the English word 'new'. Just leave out the i in ni, and the two sounds are contracted.<br/><br/>"
+            + "Another common case is the small つ. This indicates that the following consonant is doubled."
+            + " Example: にき is typed 'niki' and pronounced 'ni-ki'. But にっき is typed 'nikki' and pronounced"
+            + " with the 'k' lengthened.<br/><br/>"
+            + "As a beginner, it can be hard to notice the difference"
+            + " between regular and small kana, but over time you will get used to it.<br/><br/>"
+            + "A few practical examples:";
+
+    /**
+     * Document to show on the digraph help screen, part 2.
+     */
+    public static final String DIGRAPH_HELP_DOCUMENT_2 =
+            "For more information:<br/><br/>"
+            + "<a href=\"https://www.tofugu.com/japanese/how-to-type-in-japanese/\">Tofugu - How to type in Japanese</a><br/><br/>"
+            + "<a href=\"https://www.tofugu.com/japanese/learn-hiragana/\">Tofugu - Learn Hiragana</a><br/><br/>"
+            + "<a href=\"https://www.tofugu.com/japanese/learn-katakana/\">Tofugu - Learn Katakana</a>";
+
     private Constants() {
         //
     }

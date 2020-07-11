@@ -657,7 +657,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the list
      */
-    private List<Reading> getAcceptedReadings() {
+    public List<Reading> getAcceptedReadings() {
         final List<Reading> result = new ArrayList<>();
 
         for (final Reading reading: getReadings()) {

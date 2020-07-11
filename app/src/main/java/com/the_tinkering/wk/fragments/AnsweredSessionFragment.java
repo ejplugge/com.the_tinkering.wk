@@ -23,15 +23,19 @@ import android.widget.LinearLayout;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
+import com.the_tinkering.wk.activities.DigraphHelpActivity;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
+import com.the_tinkering.wk.model.DigraphMatch;
 import com.the_tinkering.wk.model.FloatingUiState;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 import com.the_tinkering.wk.views.SubjectInfoView;
+
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 
@@ -53,6 +57,7 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
     private final ViewProxy questionView = new ViewProxy();
     private final ViewProxy questionEdit = new ViewProxy();
     private final ViewProxy subjectInfo = new ViewProxy();
+    private final ViewProxy digraphMatchText = new ViewProxy();
 
     /**
      * The constructor.
@@ -99,6 +104,7 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
             questionView.setDelegate(view, R.id.questionView);
             questionEdit.setDelegate(view, R.id.questionEdit);
             subjectInfo.setDelegate(view, R.id.subjectInfo);
+            digraphMatchText.setDelegate(view, R.id.digraphMatchText);
 
             final @Nullable LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) questionView.getLayoutParams();
             if (params != null) {
@@ -151,6 +157,29 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
             };
             nextButton.setOnClickListener(listener);
             nextButton2.setOnClickListener(listener);
+
+            if (FloatingUiState.lastVerdict == null) {
+                digraphMatchText.setVisibility(false);
+            }
+            else {
+                final @Nullable DigraphMatch match = FloatingUiState.lastVerdict.getDigraphMatch();
+                if (match != null) {
+                    digraphMatchText.setText(String.format(Locale.ROOT, "Your answer was incorrect because you mixed up the regular kana %c"
+                            + " and the small kana %c. Tap this message for more information about the difference between small and regular kana.",
+                            match.getRegularKana(), match.getSmallKana()));
+                    digraphMatchText.setClickableAndNotFocusable(true);
+                    digraphMatchText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(final View v) {
+                            goToActivity(DigraphHelpActivity.class);
+                        }
+                    });
+                    digraphMatchText.setVisibility(true);
+                }
+                else {
+                    digraphMatchText.setVisibility(false);
+                }
+            }
         } catch (final Exception e) {
             LOGGER.uerr(e);
         }
