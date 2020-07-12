@@ -269,6 +269,15 @@ public final class SrsSystem implements Comparable<SrsSystem> {
     }
 
     /**
+     * Get the completed (i.e. burned) stage for this system.
+     *
+     * @return the stage
+     */
+    private Stage getCompletedStage() {
+        return getStage(completedStageId);
+    }
+
+    /**
      * A filter fragment for the critical condition view.
      *
      * @return the filter
@@ -488,11 +497,13 @@ public final class SrsSystem implements Comparable<SrsSystem> {
                     index -= (numIncorrect+1) / 2;
                 }
             }
-            if (index < startingStageId) {
+            final int startingIndex = stages.indexOf(getFirstStartedStage());
+            if (index < startingIndex) {
                 return getFirstStartedStage();
             }
-            if (index >= stages.size()) {
-                return stages.get(stages.size()-1);
+            final int burnedIndex = stages.indexOf(getCompletedStage());
+            if (index > burnedIndex) {
+                return getCompletedStage();
             }
             return stages.get(index);
         }
