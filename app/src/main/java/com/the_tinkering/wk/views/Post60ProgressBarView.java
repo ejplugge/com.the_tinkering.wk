@@ -43,6 +43,7 @@ public final class Post60ProgressBarView extends View {
     private int[] values = new int[0];
     private int[] colors = new int[0];
     private int[] textColors = new int[0];
+    private boolean[] textShadow = new boolean[0];
     private boolean dirty = true;
     private int height = 0;
     private int total = 0;
@@ -96,11 +97,13 @@ public final class Post60ProgressBarView extends View {
         }
 
         textColors = new int[colors.length];
+        textShadow = new boolean[colors.length];
         for (int i=0; i<colors.length; i++) {
             final int level = (colors[i] & 0xFF) + ((colors[i] >> 8) & 0xFF) + ((colors[i] >> 16) & 0xFF);
             textColors[i] = level > 0x140
                     ? ThemeUtil.getColor(R.attr.colorPrimaryDark)
                     : ThemeUtil.getColor(R.attr.colorPrimaryLight);
+            textShadow[i] = level <= 0x140;
         }
     }
 
@@ -133,6 +136,12 @@ public final class Post60ProgressBarView extends View {
 
                 if (total > 0) {
                     paint.setColor(textColors[i]);
+                    if (textShadow[i]) {
+                        paint.setShadowLayer(3, 0, 0, 0xFF000000);
+                    }
+                    else {
+                        paint.clearShadowLayer();
+                    }
                     paint.setTextSize(dp2px(10));
                     paint.setTextAlign(Paint.Align.CENTER);
                     final String longText = String.format(Locale.ROOT, "%.1f%%", (values[i] * 100.0f) / total);

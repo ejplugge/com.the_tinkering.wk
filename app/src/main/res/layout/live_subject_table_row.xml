@@ -29,6 +29,10 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:text=""
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="3"
         android:gravity="start"
         style="@style/WK.TextView.Normal"/>
 
@@ -43,6 +47,10 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:text=""
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="3"
         android:gravity="end"
         style="@style/WK.TextView.Normal"/>
 

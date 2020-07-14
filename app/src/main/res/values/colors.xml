@@ -16,6 +16,7 @@
   -->
 
 <resources>
+    <color name="black">#FF000000</color>
     <color name="transparent">#00000000</color>
     <color name="customToastColorBackground">#FFFF80</color>
 

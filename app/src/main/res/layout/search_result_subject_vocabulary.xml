@@ -60,6 +60,10 @@
             android:gravity="end"
             android:text=""
             android:textColor="?attr/colorPrimaryLight"
+            android:shadowColor="@color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="3"
             style="@style/WK.TextView.Small"/>
 
         <TextView
@@ -70,6 +74,10 @@
             android:gravity="end"
             android:text=""
             android:textColor="?attr/colorPrimaryLight"
+            android:shadowColor="@color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="3"
             style="@style/WK.TextView.Normal"/>
 
         <TextView
@@ -80,6 +88,10 @@
             android:gravity="end"
             android:text=""
             android:textColor="?attr/colorPrimaryLight"
+            android:shadowColor="@color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="3"
             style="@style/WK.TextView.Small"/>
 
     </LinearLayout>

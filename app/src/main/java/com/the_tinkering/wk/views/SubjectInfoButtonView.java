@@ -60,6 +60,7 @@ public final class SubjectInfoButtonView extends View {
     private String characters = "";
     private int textColor = 0;
     private @Nullable ColorFilter textColorFilter = null;
+    private @Nullable ColorFilter shadowColorFilter = null;
     private int backgroundColor = 0;
     private @Nullable Drawable image = null;
     private int sizeSp = -1;
@@ -337,11 +338,32 @@ public final class SubjectInfoButtonView extends View {
                 paint.setTextSize(textHeight);
                 paint.setColor(textColor);
                 paint.setTextAlign(Paint.Align.LEFT);
+                paint.setShadowLayer(3, 1, 1, 0xFF000000);
                 final int x = getPaddingLeft() + fontPaddingLeft;
                 final int y = getPaddingTop() + fontPaddingTop + textHeight / 2 - (int) (paint.ascent() + paint.descent()) / 2;
                 canvas.drawText(characters, x, y, paint);
             }
             else {
+                image.setBounds(
+                        getPaddingLeft() + fontPaddingLeft + 2,
+                        getPaddingTop() + fontPaddingTop + 2,
+                        getPaddingLeft() + fontPaddingLeft + textWidth + 2,
+                        getPaddingTop() + fontPaddingTop + textHeight + 2);
+                if (shadowColorFilter != null) {
+                    image.setColorFilter(shadowColorFilter);
+                }
+                image.draw(canvas);
+
+                image.setBounds(
+                        getPaddingLeft() + fontPaddingLeft - 1,
+                        getPaddingTop() + fontPaddingTop - 1,
+                        getPaddingLeft() + fontPaddingLeft + textWidth - 1,
+                        getPaddingTop() + fontPaddingTop + textHeight - 1);
+                if (shadowColorFilter != null) {
+                    image.setColorFilter(shadowColorFilter);
+                }
+                image.draw(canvas);
+
                 image.setBounds(
                         getPaddingLeft() + fontPaddingLeft,
                         getPaddingTop() + fontPaddingTop,
@@ -388,6 +410,7 @@ public final class SubjectInfoButtonView extends View {
             textColor = subject.getTextColor();
             if (image != null) {
                 textColorFilter = new SimpleColorFilter(textColor);
+                shadowColorFilter = new SimpleColorFilter(0xFF000000);
             }
             backgroundColor = subject.getButtonBackgroundColor();
             setTag(R.id.subjectId, subject.getId());

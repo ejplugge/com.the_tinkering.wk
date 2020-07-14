@@ -248,9 +248,23 @@ public final class WaniKaniTagHandler implements Html.TagHandler {
             }
 
             final int size = (int) paint.getTextSize();
+
+            drawable.setBounds(-1, -1, size - 1, size - 1);
+            drawable.setColorFilter(new SimpleColorFilter(0xFF000000));
+            canvas.save();
+            canvas.translate(x, bottom - drawable.getBounds().bottom - paint.getFontMetricsInt().descent / 2.0f);
+            drawable.draw(canvas);
+            canvas.restore();
+
+            drawable.setBounds(2, 2, size + 2, size + 2);
+            drawable.setColorFilter(new SimpleColorFilter(0xFF000000));
+            canvas.save();
+            canvas.translate(x, bottom - drawable.getBounds().bottom - paint.getFontMetricsInt().descent / 2.0f);
+            drawable.draw(canvas);
+            canvas.restore();
+
             drawable.setBounds(0, 0, size, size);
             drawable.setColorFilter(new SimpleColorFilter(paint.getColor()));
-
             canvas.save();
             canvas.translate(x, bottom - drawable.getBounds().bottom - paint.getFontMetricsInt().descent / 2.0f);
             drawable.draw(canvas);
