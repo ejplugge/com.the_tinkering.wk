@@ -415,6 +415,7 @@ public final class BrowseOverviewFragment extends AbstractFragment {
             button.setFocusable(false);
             button.setOnClickListener(onClick);
             button.setGravity(Gravity.CENTER_HORIZONTAL);
+            button.setShadowLayer(3, 0, 0, 0xFF000000);
             if (level == LiveLevelDuration.getInstance().get().getLevel()) {
                 button.setBackgroundColor(ThemeUtil.getColor(R.attr.buttonHighlightColor));
             }
