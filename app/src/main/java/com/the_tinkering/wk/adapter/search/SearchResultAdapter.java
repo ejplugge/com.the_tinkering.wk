@@ -27,8 +27,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.SearchSortOrder;
+import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.fragments.SearchResultFragment;
 import com.the_tinkering.wk.model.AdvancedSearchParameters;
+import com.the_tinkering.wk.model.SubjectCardBinder;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
@@ -57,6 +59,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
     private Collection<String> collapsedTags = new HashSet<>();
     private boolean showingForm = false;
     private @Nullable AdvancedSearchParameters parameters = null;
+    private final SubjectCardBinder binder = new SubjectCardBinder();
 
     /**
      * The constructor.
@@ -156,38 +159,42 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
     @Override
     public ResultItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         try {
-            final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             switch (viewType) {
                 case R.id.viewTypeRadical: {
-                    final View view = inflater.inflate(R.layout.search_result_subject_radical, parent, false);
-                    return new SubjectRadicalItemViewHolder(this, view, fragmentRef.get());
+                    final View view = binder.createView(SubjectType.WANIKANI_RADICAL, parent);
+                    return new SubjectItemViewHolder(this, view, binder, fragmentRef.get());
                 }
                 case R.id.viewTypeKanji: {
-                    final View view = inflater.inflate(R.layout.search_result_subject_kanji, parent, false);
-                    return new SubjectKanjiItemViewHolder(this, view, fragmentRef.get());
+                    final View view = binder.createView(SubjectType.WANIKANI_KANJI, parent);
+                    return new SubjectItemViewHolder(this, view, binder, fragmentRef.get());
                 }
                 case R.id.viewTypeVocabulary: {
-                    final View view = inflater.inflate(R.layout.search_result_subject_vocabulary, parent, false);
-                    return new SubjectVocabularyItemViewHolder(this, view, fragmentRef.get());
+                    final View view = binder.createView(SubjectType.WANIKANI_VOCAB, parent);
+                    return new SubjectItemViewHolder(this, view, binder, fragmentRef.get());
                 }
                 case R.id.viewTypeSearchForm: {
+                    final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.search_result_form, parent, false);
                     return new SearchFormItemViewHolder(this, view, requireNonNull(parameters), fragmentRef.get());
                 }
                 case R.id.viewTypeItemTypeHeader: {
+                    final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final int id = sortOrder.isSingleLevel() ? R.layout.search_result_top_header : R.layout.search_result_sub_header;
                     final View view = inflater.inflate(id, parent, false);
                     return new ItemTypeHeaderItemViewHolder(this, view);
                 }
                 case R.id.viewTypeLevelHeader: {
+                    final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.search_result_top_header, parent, false);
                     return new LevelHeaderItemViewHolder(this, view);
                 }
                 case R.id.viewTypeAvailableAtHeader: {
+                    final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.search_result_top_header, parent, false);
                     return new AvailableAtHeaderItemViewHolder(this, view, searchTime);
                 }
                 case R.id.viewTypeSrsStageHeader: {
+                    final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.search_result_top_header, parent, false);
                     return new SrsStageHeaderItemViewHolder(this, view);
                 }

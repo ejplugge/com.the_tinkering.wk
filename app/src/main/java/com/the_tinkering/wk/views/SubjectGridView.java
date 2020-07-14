@@ -20,7 +20,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Space;
@@ -35,8 +34,7 @@ import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.livedata.SubjectChangeListener;
 import com.the_tinkering.wk.livedata.SubjectChangeWatcher;
-import com.the_tinkering.wk.model.SrsSystem;
-import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.model.SubjectCardBinder;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
@@ -54,6 +52,7 @@ import javax.annotation.Nullable;
 public final class SubjectGridView extends GridLayout implements SubjectChangeListener, View.OnClickListener {
     private static final Logger LOGGER = Logger.get(SubjectGridView.class);
 
+    private final SubjectCardBinder binder = new SubjectCardBinder();
     private @Nullable WeakLcoRef<Actment> actmentRef = null;
     private List<Long> currentSubjectIds = Collections.emptyList();
     private int spans = 1;
@@ -96,77 +95,6 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
         }
     }
 
-    private void bind(final View view, final Subject subject) {
-        final ViewProxy button = new ViewProxy(view, R.id.button);
-        final ViewProxy details1 = new ViewProxy(view, R.id.details1);
-        final ViewProxy details2 = new ViewProxy(view, R.id.details2);
-        final ViewProxy details3 = new ViewProxy(view, R.id.details3);
-
-        view.setBackgroundColor(subject.getButtonBackgroundColor());
-
-        button.setSubject(subject);
-        button.setSizeSp(24);
-        button.setTransparent(true);
-
-        final String details1Text = subject.getOneMeaning();
-        details1.setText(details1Text);
-
-        if (subject.getType().isRadical()) {
-            final String details2Text;
-            final SrsSystem.Stage stage = subject.getSrsStage();
-            if (stage.isLocked()) {
-                details2Text = "";
-                details2.setVisibility(false);
-            }
-            else if (subject.getAvailableAt() == null) {
-                details2Text = stage.getShortName();
-            }
-            else {
-                details2Text = stage.getShortName() + " - " + subject.getShortNextReviewWaitTime();
-            }
-            details2.setText(details2Text);
-        }
-        else if (subject.getType().isKanji()) {
-            final String details2Text = subject.getOneReading();
-            details2.setText(details2Text);
-
-            final String details3Text;
-            final SrsSystem.Stage stage = subject.getSrsStage();
-            if (stage.isLocked()) {
-                details3Text = "";
-                details3.setVisibility(false);
-            }
-            else if (subject.getAvailableAt() == null) {
-                details3Text = stage.getShortName();
-            }
-            else {
-                details3Text = stage.getShortName() + " - " + subject.getShortNextReviewWaitTime();
-            }
-            details3.setText(details3Text);
-        }
-        else {
-            final String details2Text = subject.getOneReading();
-            details2.setText(details2Text);
-
-            final String details3Text;
-            final SrsSystem.Stage stage = subject.getSrsStage();
-            if (stage.isLocked()) {
-                details3Text = "";
-                details3.setVisibility(false);
-            }
-            else if (subject.getAvailableAt() == null) {
-                details3Text = stage.getName();
-            }
-            else {
-                details3Text = stage.getName() + " - " + subject.getShortNextReviewWaitTime();
-            }
-            details3.setText(details3Text);
-        }
-
-        view.setOnClickListener(this);
-        button.setOnClickListener(this);
-    }
-
     private void addSpace() {
         final Space space = new Space(getContext());
         final LayoutParams params = new LayoutParams(spec(currentRow, 1, FILL, 1), spec(currentColumn, 1, FILL, 1));
@@ -197,24 +125,20 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
     }
 
     private View createSubjectCellView(final Subject subject) {
-        final LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View view;
+        final View view = binder.createView(subject.getType(), this);
         final int numSpans;
         if (subject.getType().isRadical()) {
-            view = inflater.inflate(R.layout.search_result_subject_radical, this, false);
             numSpans = 1;
         }
         else if (subject.getType().isKanji()) {
-            view = inflater.inflate(R.layout.search_result_subject_kanji, this, false);
             numSpans = 1;
         }
         else {
-            view = inflater.inflate(R.layout.search_result_subject_vocabulary, this, false);
             numSpans = spans >= 6 ? 3 : spans;
         }
         assignSpecs(view, numSpans);
         view.setTag(R.id.subjectId, subject.getId());
-        bind(view, subject);
+        binder.bind(view, subject, this);
         return view;
     }
 
@@ -301,7 +225,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
     public void onSubjectChange(final Subject subject) {
         final @Nullable View cell = getViewBySubjectId(subject.getId());
         if (cell != null) {
-            bind(cell, subject);
+            binder.bind(cell, subject, this);
         }
     }
 

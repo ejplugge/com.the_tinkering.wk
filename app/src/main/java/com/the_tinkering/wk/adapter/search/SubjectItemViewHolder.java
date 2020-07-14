@@ -19,12 +19,11 @@ package com.the_tinkering.wk.adapter.search;
 import android.view.View;
 
 import com.the_tinkering.wk.Actment;
-import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.livedata.SubjectChangeListener;
 import com.the_tinkering.wk.livedata.SubjectChangeWatcher;
-import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.model.SubjectCardBinder;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
@@ -33,19 +32,11 @@ import javax.annotation.Nullable;
 /**
  * View holder class for subject items.
  */
-public abstract class SubjectItemViewHolder extends ResultItemViewHolder implements View.OnClickListener, SubjectChangeListener {
+public final class SubjectItemViewHolder extends ResultItemViewHolder implements View.OnClickListener, SubjectChangeListener {
     private static final Logger LOGGER = Logger.get(SubjectItemViewHolder.class);
 
-    @SuppressWarnings("JavaDoc")
-    protected final ViewProxy button = new ViewProxy();
-    @SuppressWarnings("JavaDoc")
-    protected final ViewProxy details1 = new ViewProxy();
-    @SuppressWarnings("JavaDoc")
-    protected final ViewProxy details2 = new ViewProxy();
-    @SuppressWarnings("JavaDoc")
-    protected final ViewProxy details3 = new ViewProxy();
-    @SuppressWarnings("JavaDoc")
-    protected @Nullable Subject subject = null;
+    private final SubjectCardBinder binder;
+    private @Nullable Subject subject = null;
     private final WeakLcoRef<Actment> actmentRef;
 
     /**
@@ -53,45 +44,42 @@ public abstract class SubjectItemViewHolder extends ResultItemViewHolder impleme
      *
      * @param adapter the adapter this holder was created for
      * @param view the view
+     * @param binder the binder to bind subjects to the view
      * @param actment the actment this view belongs to
      */
     @SuppressWarnings("ThisEscapedInObjectConstruction")
-    protected SubjectItemViewHolder(final SearchResultAdapter adapter, final View view, final Actment actment) {
+    public SubjectItemViewHolder(final SearchResultAdapter adapter, final View view,
+                                    final SubjectCardBinder binder, final Actment actment) {
         super(adapter, view);
+        this.binder = binder;
         actmentRef = new WeakLcoRef<>(actment);
-        button.setDelegate(view, R.id.button);
-        details1.setDelegate(view, R.id.details1);
-        details2.setDelegate(view, R.id.details2);
-        details3.setDelegate(view, R.id.details3);
         SubjectChangeWatcher.getInstance().addListener(this);
-        view.setOnClickListener(this);
-        button.setOnClickListener(this);
     }
 
     @Override
-    public final void bind(final ResultItem newItem) {
+    public void bind(final ResultItem newItem) {
         if (!(newItem instanceof SubjectItem)) {
             return;
         }
         subject = ((SubjectItem) newItem).getSubject();
-        bind();
+        binder.bind(itemView, subject, this);
     }
 
     @Override
-    public final void onSubjectChange(@SuppressWarnings("ParameterHidesMemberVariable") final Subject subject) {
+    public void onSubjectChange(@SuppressWarnings("ParameterHidesMemberVariable") final Subject subject) {
         if (this.subject != null && subject.getId() == this.subject.getId()) {
             this.subject = subject;
         }
-        bind();
+        binder.bind(itemView, subject, this);
     }
 
     @Override
-    public final boolean isInterestedInSubject(final long subjectId) {
+    public boolean isInterestedInSubject(final long subjectId) {
         return subject != null && subject.getId() == subjectId;
     }
 
     @Override
-    public final void onClick(final View v) {
+    public void onClick(final View v) {
         try {
             final @Nullable Actment theActment = actmentRef.getOrElse(null);
             if (theActment == null || subject == null) {
@@ -102,9 +90,4 @@ public abstract class SubjectItemViewHolder extends ResultItemViewHolder impleme
             LOGGER.uerr(e);
         }
     }
-
-    /**
-     * Do the bind after the subject has been set on this instance.
-     */
-    protected abstract void bind();
 }
