@@ -89,7 +89,7 @@ public final class SrsBreakDownView extends ConstraintLayout {
             for (int i=0; i<5; i++) {
                 views.get(i).setBackgroundColor(ActiveTheme.getShallowStageBucketColors5()[i]);
                 if (ActiveTheme.getCurrentTheme() == ActiveTheme.LIGHT) {
-                    counts.get(i).setShadowLayer(3, 0, 0, 0xFF000000);
+                    counts.get(i).setShadowLayer(3, 1, 1, 0xFF000000);
                 }
                 else {
                     counts.get(i).setShadowLayer(0, 0, 0, 0);
