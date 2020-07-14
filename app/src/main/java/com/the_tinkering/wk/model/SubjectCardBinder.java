@@ -38,9 +38,9 @@ public final class SubjectCardBinder {
      * The constructor.
      */
     public SubjectCardBinder() {
-        layoutIds.add(R.layout.search_result_subject_radical);
-        layoutIds.add(R.layout.search_result_subject_kanji);
-        layoutIds.add(R.layout.search_result_subject_vocabulary);
+        layoutIds.add(R.layout.subject_card_radical);
+        layoutIds.add(R.layout.subject_card_kanji);
+        layoutIds.add(R.layout.subject_card_vocabulary);
     }
 
     /**
@@ -82,7 +82,7 @@ public final class SubjectCardBinder {
         button.setTransparent(true);
 
         if (subject.hasMeanings()) {
-            meaning.setText(subject.getOneReading());
+            meaning.setText(subject.getOneMeaning());
             meaning.setVisibility(true);
         }
         else {

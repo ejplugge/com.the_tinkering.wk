@@ -41,7 +41,7 @@
         android:layout_gravity="center_horizontal"/>
 
     <TextView
-        android:id="@+id/details1"
+        android:id="@+id/meaning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -55,7 +55,7 @@
         style="@style/WK.TextView.Small"/>
 
     <TextView
-        android:id="@+id/details2"
+        android:id="@+id/reading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -68,7 +68,7 @@
         style="@style/WK.TextView.Normal"/>
 
     <TextView
-        android:id="@+id/details3"
+        android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
