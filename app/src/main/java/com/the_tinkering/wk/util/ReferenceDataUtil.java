@@ -20,8 +20,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.Converters;
-import com.the_tinkering.wk.model.PitchInfo;
 import com.the_tinkering.wk.enums.SubjectType;
+import com.the_tinkering.wk.model.PitchInfo;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -30,7 +30,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Utility class for determining reference data for a subject, backed by JSON files stored

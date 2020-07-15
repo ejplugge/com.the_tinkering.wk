@@ -53,7 +53,7 @@ import static com.the_tinkering.wk.util.FontStorageUtil.getTypefaceConfiguration
 import static com.the_tinkering.wk.util.FontStorageUtil.hasFontFile;
 import static com.the_tinkering.wk.util.FontStorageUtil.importFontFile;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An activity for importing fonts for quiz questions.

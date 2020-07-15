@@ -26,7 +26,7 @@ import com.the_tinkering.wk.util.PseudoIme;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Model class to represent one item of pitch information.

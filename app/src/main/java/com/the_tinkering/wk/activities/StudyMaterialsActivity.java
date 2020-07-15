@@ -41,7 +41,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Activity to show/edit the study materials for the current subject.

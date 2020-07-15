@@ -54,10 +54,10 @@ import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
 import static com.the_tinkering.wk.util.ObjectSupport.join;
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
 import static com.the_tinkering.wk.util.ObjectSupport.removeDuplicates;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
 import static com.the_tinkering.wk.util.TextUtil.escapeHtml;
 import static com.the_tinkering.wk.util.TextUtil.formatTimestamp;
 import static com.the_tinkering.wk.util.TextUtil.renderHtml;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Data class for the subject table that encapsulates the entity data more cleanly than the raw entity does.

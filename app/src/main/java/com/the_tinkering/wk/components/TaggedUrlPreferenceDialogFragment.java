@@ -26,7 +26,7 @@ import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.Logger;
 
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A custom preference that combines two related edittext preferences: a URL and a name/tag describing it.

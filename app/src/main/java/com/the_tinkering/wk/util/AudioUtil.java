@@ -35,9 +35,9 @@ import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.PronunciationAudioOwner;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.db.model.SubjectPronunciationAudio;
+import com.the_tinkering.wk.enums.VoicePreference;
 import com.the_tinkering.wk.livedata.LiveAudioDownloadStatus;
 import com.the_tinkering.wk.model.GenderedFile;
-import com.the_tinkering.wk.enums.VoicePreference;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,8 +62,8 @@ import static com.the_tinkering.wk.enums.VoicePreference.FEMALE;
 import static com.the_tinkering.wk.enums.VoicePreference.MALE;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
 import static com.the_tinkering.wk.util.ObjectSupport.shuffle;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Utility methods related to pronunciation audio files.

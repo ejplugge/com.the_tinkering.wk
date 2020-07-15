@@ -26,7 +26,7 @@ import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nonnull;
 
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An intent service for running jobs. Jobs are tasks that have to be

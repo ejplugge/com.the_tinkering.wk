@@ -40,7 +40,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A simple activity with a few test views, for generic testing purposes.

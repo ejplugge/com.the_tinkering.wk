@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.util.ObjectSupport.getWaitTimeAsInformalString;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A custom view that describes the number of upcoming reviews and when they happen.

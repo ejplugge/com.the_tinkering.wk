@@ -43,7 +43,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * RecyclerView adapter for advanced search results.

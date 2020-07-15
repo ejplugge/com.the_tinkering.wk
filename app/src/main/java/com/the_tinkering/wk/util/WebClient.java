@@ -44,7 +44,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A singleton to hold some state related to the current web login, and code to access the web API.

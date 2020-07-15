@@ -47,7 +47,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.compareIntegersAndLongs;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Fragment for the session summary.

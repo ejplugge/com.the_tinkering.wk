@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Task to download pitch info for a single subject.

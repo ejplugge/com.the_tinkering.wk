@@ -19,6 +19,7 @@ package com.the_tinkering.wk.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -39,20 +40,6 @@ public final class ObjectSupport {
 
     private ObjectSupport() {
         //
-    }
-
-    /**
-     * Return the argument value or throw a NullPointerException if the value is null.
-     *
-     * @param value The value to check
-     * @param <T> The type of the value
-     * @return the original value if it is not null
-     */
-    public static <T> T requireNonNull(final @Nullable T value) {
-        if (value == null) {
-            throw new NullPointerException();
-        }
-        return value;
     }
 
     /**
@@ -297,6 +284,22 @@ public final class ObjectSupport {
             return n2;
         }
         return Long.compare(i5, i6);
+    }
+
+    /**
+     * Create a comparator that will deliver the reverse results of the argument one.
+     *
+     * @param comparator the argument comparator
+     * @param <T> the type of objects it compares
+     * @return the new comparator
+     */
+    public static <T> Comparator<T> reversedComparator(final Comparator<? super T> comparator) {
+        return new Comparator<T>() {
+            @Override
+            public int compare(final T o1, final T o2) {
+                return comparator.compare(o2, o1);
+            }
+        };
     }
 
     /**

@@ -69,7 +69,8 @@ import static com.the_tinkering.wk.enums.SessionType.NONE;
 import static com.the_tinkering.wk.enums.SessionType.REVIEW;
 import static com.the_tinkering.wk.enums.SessionType.SELF_STUDY;
 import static com.the_tinkering.wk.util.ObjectSupport.nextRandomInt;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static com.the_tinkering.wk.util.ObjectSupport.reversedComparator;
+import static java.util.Objects.requireNonNull;
 
 /**
  * The singleton object that represents the user's lesson/review/self-study session.
@@ -1100,7 +1101,7 @@ s     *
             meaningFirst = GlobalSettings.getMeaningFirst(type);
             comparator = GlobalSettings.getSubjectComparator(type);
             if (GlobalSettings.getOrderReversed(type)) {
-                comparator = comparator.reversed();
+                comparator = reversedComparator(comparator);
             }
             if (GlobalSettings.getOrderOverdueFirst(type)) {
                 final Comparator<Subject> old = comparator;
@@ -1338,7 +1339,7 @@ s     *
         final int maxSize = GlobalSettings.Review.gexMaxLessonSessionSize();
         comparator = GlobalSettings.AdvancedLesson.getOrder().getComparator();
         if (GlobalSettings.AdvancedLesson.getOrderReversed()) {
-            comparator = comparator.reversed();
+            comparator = reversedComparator(comparator);
         }
         final int userLevel = db.propertiesDao().getUserLevel();
         final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
@@ -1382,7 +1383,7 @@ s     *
         final int maxSize = GlobalSettings.Review.gexMaxReviewSessionSize();
         comparator = GlobalSettings.AdvancedReview.getOrder().getComparator();
         if (GlobalSettings.AdvancedReview.getOrderReversed()) {
-            comparator = comparator.reversed();
+            comparator = reversedComparator(comparator);
         }
         if (GlobalSettings.AdvancedReview.getOrderOverdueFirst()) {
             final Comparator<Subject> old = comparator;
@@ -1441,7 +1442,7 @@ s     *
         final int maxSize = GlobalSettings.Review.getMaxSelfStudySessionSize();
         comparator = GlobalSettings.AdvancedSelfStudy.getOrder().getComparator();
         if (GlobalSettings.AdvancedSelfStudy.getOrderReversed()) {
-            comparator = comparator.reversed();
+            comparator = reversedComparator(comparator);
         }
         if (GlobalSettings.AdvancedSelfStudy.getOrderOverdueFirst()) {
             final Comparator<Subject> old = comparator;

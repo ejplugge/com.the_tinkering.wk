@@ -21,12 +21,12 @@ import android.os.AsyncTask;
 
 import androidx.multidex.MultiDexApplication;
 
+import com.the_tinkering.wk.components.EncryptedPreferenceDataStore;
 import com.the_tinkering.wk.db.AppDatabase;
+import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.enums.NotificationPriority;
 import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.enums.SubjectInfoDump;
-import com.the_tinkering.wk.components.EncryptedPreferenceDataStore;
-import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
@@ -48,7 +48,7 @@ import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Global application object to handle some global concerns.

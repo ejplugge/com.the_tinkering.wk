@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.enums.SessionItemState.ACTIVE;
 import static com.the_tinkering.wk.enums.SessionItemState.PENDING;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A model class representing one question (meaning, reading, on'yomi, kun'yomi) in a session.

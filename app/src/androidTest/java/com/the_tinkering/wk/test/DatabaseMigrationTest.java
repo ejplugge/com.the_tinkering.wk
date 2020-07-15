@@ -30,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_48_49;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_49_50;
@@ -48,7 +49,7 @@ import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_61_62;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_62_63;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_63_64;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_64_65;
-import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
+import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 
 /**
