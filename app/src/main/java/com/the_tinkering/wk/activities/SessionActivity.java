@@ -53,6 +53,7 @@ import com.the_tinkering.wk.util.TextUtil;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.LANDSCAPE_ACTION_BAR_HEIGHT;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * The core activity for session handling. This class combines the full session workflow,
@@ -81,30 +82,20 @@ public final class SessionActivity extends AbstractActivity {
 
     @Override
     protected void onCreateLocal(final @Nullable Bundle savedInstanceState) {
-        LiveSessionProgress.getInstance().observe(this, t -> {
-            try {
-                new ViewProxy(this, R.id.progress).setText(session.getProgressText());
-                if (session.getCurrentQuestion() == null && session.isActive()) {
-                    LOGGER.info("Current question has been yanked from under our feet - move to next one");
-                    disableInteraction();
-                    if (session.isAnswered()) {
-                        session.advanceQuietly();
-                    }
-                    FloatingUiState.setCurrentAnswer("");
+        LiveSessionProgress.getInstance().observe(this, t -> safe(() -> {
+            new ViewProxy(this, R.id.progress).setText(session.getProgressText());
+            if (session.getCurrentQuestion() == null && session.isActive()) {
+                LOGGER.info("Current question has been yanked from under our feet - move to next one");
+                disableInteraction();
+                if (session.isAnswered()) {
+                    session.advanceQuietly();
                 }
-                updateFragment();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
+                FloatingUiState.setCurrentAnswer("");
             }
-        });
+            updateFragment();
+        }));
 
-        LiveSessionState.getInstance().observe(this, t -> {
-            try {
-                updateFragment();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        });
+        LiveSessionState.getInstance().observe(this, t -> safe(this::updateFragment));
 
         // If the device is in landscape mode, make some changes to make the view less tall.
         // The toolbar becomes smaller, and the question type view is hidden, replaced with

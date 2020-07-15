@@ -16,17 +16,17 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.lifecycle.Lifecycle;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
-import com.the_tinkering.wk.util.WeakLcoRef;
+import com.the_tinkering.wk.util.ObjectSupport;
 import com.the_tinkering.wk.util.WebClient;
 
 import java.util.ArrayList;
@@ -36,12 +36,12 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * An activity for resurrecting one or more subjects.
  */
 public final class ResurrectActivity extends AbstractActivity {
-    private static final Logger LOGGER = Logger.get(ResurrectActivity.class);
-
     private List<Long> subjectIds = Collections.emptyList();
     private int todo = 0;
     private int success = 0;
@@ -111,23 +111,108 @@ public final class ResurrectActivity extends AbstractActivity {
         //
     }
 
+    private @Nullable Void doInBackground(final ObjectSupport.ProgressPublisher<Object> publisher) throws Exception {
+        if (WebClient.getInstance().getLastLoginState() != 1) {
+            publisher.progress("Status: Logging in...", false, false, -1L);
+            WebClient.getInstance().doLogin();
+            publisher.progress("Status: " + WebClient.getInstance().getLastLoginMessage(), false, false, -1L);
+        }
+
+        final AppDatabase db = WkApplication.getDatabase();
+        int i = 0;
+        while (i < subjectIds.size()) {
+            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED) || stopped) {
+                break;
+            }
+            final long id = subjectIds.get(0);
+            final @Nullable Subject subject = db.subjectDao().getById(id);
+            if (WebClient.getInstance().getLastLoginState() != 1) {
+                publisher.progress(null, false, true, -1L);
+                i++;
+            }
+            else if (subject == null || !subject.isResurrectable()) {
+                publisher.progress(null, true, false, id);
+                subjectIds.remove(i);
+            }
+            else {
+                final CharSequence title = subject.getInfoTitle("Status: Resurrecting: ", "");
+                publisher.progress(title, false, false, -1L);
+                if (WebClient.getInstance().resurrect(subject)) {
+                    publisher.progress(null, true, false, id);
+                    subjectIds.remove(i);
+                }
+                else {
+                    publisher.progress(null, false, true, -1L);
+                    i++;
+                }
+            }
+            if (subject != null) {
+                db.subjectSyncDao().patchAssignment(id, subject.getSrsSystem().getFirstStartedStage().getId(),
+                        subject.getUnlockedAt(), subject.getStartedAt(), new Date(),
+                        subject.getPassedAt(), subject.getResurrectedAt(), new Date());
+            }
+        }
+        publisher.progress("Status: Finished", false, false, -1L);
+        return null;
+    }
+
+    private void onPublishProgress(final Object[] values) {
+        if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED) || stopped) {
+            return;
+        }
+        final @Nullable CharSequence newStatus = (CharSequence) values[0];
+        if (newStatus != null) {
+            status.setText(newStatus);
+        }
+        if ((boolean) values[1]) {
+            todo--;
+            success++;
+            todoCount.setText("To do: " + todo);
+            successCount.setText("Resurrected: " + success);
+            failCount.setText("Failed to resurrect: " + fail);
+        }
+        if ((boolean) values[2]) {
+            todo--;
+            fail++;
+            todoCount.setText("To do: " + todo);
+            successCount.setText("Resurrected: " + success);
+            failCount.setText("Failed to resurrect: " + fail);
+        }
+        final long id = (long) values[3];
+        if (id != -1) {
+            subjects.removeSubject(id);
+        }
+    }
+
+    private void onPostExecute() {
+        if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
+            return;
+        }
+        startButton.enableInteraction();
+        stopButton.disableInteraction();
+        if (subjectIds.isEmpty()) {
+            finish();
+        }
+    }
+
     /**
      * Handler for the start button.
      *
      * @param view the button
      */
     public void start(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             startButton.disableInteraction();
             stopButton.enableInteraction();
             todo = subjectIds.size();
             success = 0;
             fail = 0;
             stopped = false;
-            new Task(this, subjectIds).execute();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            ObjectSupport.<Void, Object, Void>runAsync(
+                    (publisher, params) -> doInBackground(publisher),
+                    this::onPublishProgress,
+                    result -> onPostExecute());
+        });
     }
 
     /**
@@ -136,115 +221,9 @@ public final class ResurrectActivity extends AbstractActivity {
      * @param view the button
      */
     public void stop(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             stopButton.disableInteraction();
             stopped = true;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-    }
-
-    private static final class Task extends AsyncTask<Void, Object, Void> {
-        private final WeakLcoRef<ResurrectActivity> activityRef;
-        private final List<Long> subjectIds;
-
-        private Task(final ResurrectActivity activity, final List<Long> subjectIds) {
-            activityRef = new WeakLcoRef<>(activity);
-            this.subjectIds = subjectIds;
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            try {
-                if (WebClient.getInstance().getLastLoginState() != 1) {
-                    publishProgress("Status: Logging in...", false, false, -1L);
-                    WebClient.getInstance().doLogin();
-                    publishProgress("Status: " + WebClient.getInstance().getLastLoginMessage(), false, false, -1L);
-                }
-
-                final AppDatabase db = WkApplication.getDatabase();
-                int i = 0;
-                while (i < subjectIds.size()) {
-                    final @Nullable ResurrectActivity activity = activityRef.getOrElse(null);
-                    if (activity == null || activity.stopped) {
-                        break;
-                    }
-                    final long id = subjectIds.get(0);
-                    final @Nullable Subject subject = db.subjectDao().getById(id);
-                    if (WebClient.getInstance().getLastLoginState() != 1) {
-                        publishProgress(null, false, true, -1L);
-                        i++;
-                    }
-                    else if (subject == null || !subject.isResurrectable()) {
-                        publishProgress(null, true, false, id);
-                        subjectIds.remove(i);
-                    }
-                    else {
-                        final CharSequence title = subject.getInfoTitle("Status: Resurrecting: ", "");
-                        publishProgress(title, false, false, -1L);
-                        if (WebClient.getInstance().resurrect(subject)) {
-                            publishProgress(null, true, false, id);
-                            subjectIds.remove(i);
-                        }
-                        else {
-                            publishProgress(null, false, true, -1L);
-                            i++;
-                        }
-                    }
-                    if (subject != null) {
-                        db.subjectSyncDao().patchAssignment(id, subject.getSrsSystem().getFirstStartedStage().getId(),
-                                subject.getUnlockedAt(), subject.getStartedAt(), new Date(),
-                                subject.getPassedAt(), subject.getBurnedAt(), new Date());
-                    }
-                }
-                publishProgress("Status: Finished", false, false, -1L);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(final Object... values) {
-            try {
-                final @Nullable CharSequence status = (CharSequence) values[0];
-                if (status != null) {
-                    activityRef.get().status.setText(status);
-                }
-                if ((boolean) values[1]) {
-                    activityRef.get().todo--;
-                    activityRef.get().success++;
-                    activityRef.get().todoCount.setText("To do: " + activityRef.get().todo);
-                    activityRef.get().successCount.setText("Resurrected: " + activityRef.get().success);
-                    activityRef.get().failCount.setText("Failed to resurrect: " + activityRef.get().fail);
-                }
-                if ((boolean) values[2]) {
-                    activityRef.get().todo--;
-                    activityRef.get().fail++;
-                    activityRef.get().todoCount.setText("To do: " + activityRef.get().todo);
-                    activityRef.get().successCount.setText("Resurrected: " + activityRef.get().success);
-                    activityRef.get().failCount.setText("Failed to resurrect: " + activityRef.get().fail);
-                }
-                final long id = (long) values[3];
-                if (id != -1) {
-                    activityRef.get().subjects.removeSubject(id);
-                }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final Void result) {
-            try {
-                activityRef.get().startButton.enableInteraction();
-                activityRef.get().stopButton.disableInteraction();
-                if (subjectIds.isEmpty()) {
-                    activityRef.get().finish();
-                }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
+        });
     }
 }

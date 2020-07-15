@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 
@@ -41,8 +40,6 @@ import com.the_tinkering.wk.services.BackgroundSyncWorker;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.services.NotificationAlarmReceiver;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
-import com.the_tinkering.wk.util.Logger;
-import com.the_tinkering.wk.util.WeakLcoRef;
 import com.the_tinkering.wk.views.AvailableSessionsView;
 import com.the_tinkering.wk.views.FirstTimeSetupView;
 import com.the_tinkering.wk.views.JlptProgressView;
@@ -62,6 +59,9 @@ import com.the_tinkering.wk.views.UpcomingReviewsView;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * The dashboard activity.
  *
@@ -72,8 +72,6 @@ import javax.annotation.Nullable;
  * </p>
  */
 public final class MainActivity extends AbstractActivity {
-    private static final Logger LOGGER = Logger.get(MainActivity.class);
-
     private final ViewProxy apiErrorView = new ViewProxy();
     private final ViewProxy apiKeyRejectedView = new ViewProxy();
     private final ViewProxy keyboardHelpView = new ViewProxy();
@@ -91,14 +89,10 @@ public final class MainActivity extends AbstractActivity {
         apiKeyRejectedView.setDelegate(this, R.id.apiKeyRejectedView);
         keyboardHelpView.setDelegate(this, R.id.keyboardHelpView);
 
-        LiveApiState.getInstance().observe(this, t -> {
-            try {
-                apiErrorView.setVisibility(t == ApiState.ERROR);
-                apiKeyRejectedView.setVisibility(t == ApiState.API_KEY_REJECTED);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        });
+        LiveApiState.getInstance().observe(this, t -> safe(() -> {
+            apiErrorView.setVisibility(t == ApiState.ERROR);
+            apiKeyRejectedView.setVisibility(t == ApiState.API_KEY_REJECTED);
+        }));
 
         final @Nullable AvailableSessionsView availableSessionsView = findViewById(R.id.availableSessionsView);
         if (availableSessionsView != null) {
@@ -186,7 +180,19 @@ public final class MainActivity extends AbstractActivity {
         NotificationAlarmReceiver.scheduleOrCancelAlarm();
         BackgroundSyncWorker.scheduleOrCancelWork();
 
-        new OnResumeTask().execute();
+        runAsync((publisher, params) -> {
+            LiveBurnedItems.getInstance().forceUpdate();
+            LiveCriticalCondition.getInstance().forceUpdate();
+            LiveLevelDuration.getInstance().forceUpdate();
+            LiveLevelProgress.getInstance().forceUpdate();
+            LiveRecentUnlocks.getInstance().forceUpdate();
+            LiveSrsBreakDown.getInstance().forceUpdate();
+            LiveTimeLine.getInstance().forceUpdate();
+            LiveJoyoProgress.getInstance().forceUpdate();
+            LiveJlptProgress.getInstance().forceUpdate();
+            SessionWidgetProvider.checkAndUpdateWidgets();
+            return null;
+        }, null, null);
 
         keyboardHelpView.setVisibility(!GlobalSettings.Tutorials.getKeyboardHelpDismissed());
 
@@ -221,11 +227,7 @@ public final class MainActivity extends AbstractActivity {
      */
     @SuppressWarnings("MethodMayBeStatic")
     public void retryApiError(@SuppressWarnings("unused") final View view) {
-        try {
-            JobRunnerService.schedule(RetryApiErrorJob.class, "");
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> JobRunnerService.schedule(RetryApiErrorJob.class, ""));
     }
 
     /**
@@ -234,11 +236,7 @@ public final class MainActivity extends AbstractActivity {
      * @param view the button
      */
     public void goToSettings(@SuppressWarnings("unused") final View view) {
-        try {
-            goToPreferencesActivity("api_settings");
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> goToPreferencesActivity("api_settings"));
     }
 
     /**
@@ -247,11 +245,7 @@ public final class MainActivity extends AbstractActivity {
      * @param view the button
      */
     public void viewKeyboardHelp(@SuppressWarnings("unused") final View view) {
-        try {
-            goToActivity(KeyboardHelpActivity.class);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> goToActivity(KeyboardHelpActivity.class));
     }
 
     /**
@@ -260,12 +254,10 @@ public final class MainActivity extends AbstractActivity {
      * @param view the button
      */
     public void dismissKeyboardHelp(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             GlobalSettings.Tutorials.setKeyboardHelpDismissed(true);
             keyboardHelpView.setVisibility(false);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -274,21 +266,22 @@ public final class MainActivity extends AbstractActivity {
      * @param view the button
      */
     public void startLessonSession(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             if (!interactionEnabled) {
                 return;
             }
             disableInteraction();
             final TimeLine timeLine = LiveTimeLine.getInstance().get();
             if (timeLine.hasAvailableLessons()) {
-                new StartLessonTask(this, timeLine).execute();
+                runAsync((publisher, params) -> {
+                    Session.getInstance().startNewLessonSession(timeLine.getAvailableLessons());
+                    return null;
+                }, null, result -> goToActivity(SessionActivity.class));
             }
             else {
                 enableInteraction();
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -297,21 +290,22 @@ public final class MainActivity extends AbstractActivity {
      * @param view the button
      */
     public void startReviewSession(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             if (!interactionEnabled) {
                 return;
             }
             disableInteraction();
             final TimeLine timeLine = LiveTimeLine.getInstance().get();
             if (timeLine.hasAvailableReviews()) {
-                new StartReviewTask(this, timeLine).execute();
+                runAsync((publisher, params) -> {
+                    Session.getInstance().startNewReviewSession(timeLine.getAvailableReviews());
+                    return null;
+                }, null, result -> goToActivity(SessionActivity.class));
             }
             else {
                 enableInteraction();
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -320,7 +314,7 @@ public final class MainActivity extends AbstractActivity {
      * @param view the button
      */
     public void resumeSession(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             if (!interactionEnabled) {
                 return;
             }
@@ -331,87 +325,6 @@ public final class MainActivity extends AbstractActivity {
             else {
                 goToActivity(SessionActivity.class);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-    }
-
-    private static final class OnResumeTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(final Void... params) {
-            try {
-                LiveBurnedItems.getInstance().forceUpdate();
-                LiveCriticalCondition.getInstance().forceUpdate();
-                LiveLevelDuration.getInstance().forceUpdate();
-                LiveLevelProgress.getInstance().forceUpdate();
-                LiveRecentUnlocks.getInstance().forceUpdate();
-                LiveSrsBreakDown.getInstance().forceUpdate();
-                LiveTimeLine.getInstance().forceUpdate();
-                LiveJoyoProgress.getInstance().forceUpdate();
-                LiveJlptProgress.getInstance().forceUpdate();
-                SessionWidgetProvider.checkAndUpdateWidgets();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-            return null;
-        }
-    }
-
-    private static final class StartLessonTask extends AsyncTask<Void, Void, Void> {
-        private final WeakLcoRef<MainActivity> activityRef;
-        private final TimeLine timeLine;
-
-        private StartLessonTask(final MainActivity activity, final TimeLine timeLine) {
-            activityRef = new WeakLcoRef<>(activity);
-            this.timeLine = timeLine;
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            try {
-                Session.getInstance().startNewLessonSession(timeLine.getAvailableLessons());
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final Void result) {
-            try {
-                activityRef.get().goToActivity(SessionActivity.class);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
-    }
-
-    private static final class StartReviewTask extends AsyncTask<Void, Void, Void> {
-        private final WeakLcoRef<MainActivity> activityRef;
-        private final TimeLine timeLine;
-
-        private StartReviewTask(final MainActivity activity, final TimeLine timeLine) {
-            activityRef = new WeakLcoRef<>(activity);
-            this.timeLine = timeLine;
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            try {
-                Session.getInstance().startNewReviewSession(timeLine.getAvailableReviews());
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final Void result) {
-            try {
-                activityRef.get().goToActivity(SessionActivity.class);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
+        });
     }
 }

@@ -18,11 +18,11 @@ package com.the_tinkering.wk.activities;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Lifecycle;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.the_tinkering.wk.R;
@@ -32,8 +32,7 @@ import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.jobs.SaveStudyMaterialJob;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.JobRunnerService;
-import com.the_tinkering.wk.util.Logger;
-import com.the_tinkering.wk.util.WeakLcoRef;
+import com.the_tinkering.wk.util.ObjectSupport;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +40,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -53,8 +53,6 @@ import static java.util.Objects.requireNonNull;
  * </p>
  */
 public final class StudyMaterialsActivity extends AbstractActivity {
-    private static final Logger LOGGER = Logger.get(StudyMaterialsActivity.class);
-
     private @Nullable Subject currentSubject = null;
     private boolean stateSaved = false;
 
@@ -95,7 +93,20 @@ public final class StudyMaterialsActivity extends AbstractActivity {
             final Uri uri = requireNonNull(getIntent().getData());
             final String[] path = requireNonNull(uri.getPath()).split("/");
             final long id = Long.parseLong(path[1]);
-            new Task(this, id).execute();
+            ObjectSupport.<Void, Void, Subject>runAsync(
+                    (task, params) -> WkApplication.getDatabase().subjectDao().getById(id),
+                    null,
+                    result -> {
+                        if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
+                            return;
+                        }
+                        if (result == null || !result.getType().canHaveStudyMaterials()) {
+                            finish();
+                            return;
+                        }
+                        currentSubject = result;
+                        populateForm(result);
+                    });
         }
     }
 
@@ -121,12 +132,10 @@ public final class StudyMaterialsActivity extends AbstractActivity {
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
-        try {
+        safe(() -> {
             super.onSaveInstanceState(outState);
             outState.putBoolean("stateSaved", stateSaved);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void populateForm(final Subject subject) {
@@ -164,7 +173,7 @@ public final class StudyMaterialsActivity extends AbstractActivity {
      * @param view the button
      */
     public void saveStudyMaterials(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             if (!interactionEnabled || currentSubject == null) {
                 return;
             }
@@ -185,43 +194,6 @@ public final class StudyMaterialsActivity extends AbstractActivity {
             }
             JobRunnerService.schedule(SaveStudyMaterialJob.class, dataString);
             finish();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-    }
-
-    private static final class Task extends AsyncTask<Void, Void, Subject> {
-        private final WeakLcoRef<StudyMaterialsActivity> activityRef;
-        private final long id;
-
-        private Task(final StudyMaterialsActivity activity, final long id) {
-            activityRef = new WeakLcoRef<>(activity);
-            this.id = id;
-        }
-
-        @Override
-        protected @Nullable Subject doInBackground(final Void... params) {
-            try {
-                return WkApplication.getDatabase().subjectDao().getById(id);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final @Nullable Subject result) {
-            try {
-                if (result == null || !result.getType().canHaveStudyMaterials()) {
-                    activityRef.get().finish();
-                    return;
-                }
-
-                activityRef.get().currentSubject = result;
-                activityRef.get().populateForm(result);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
+        });
     }
 }

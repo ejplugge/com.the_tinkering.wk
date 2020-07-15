@@ -89,6 +89,37 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
     }
 
     /**
+     * Create a new instance with arguments set.
+     *
+     * @param searchType the type for this search
+     * @param searchParameters the type-specific parameters for this search
+     * @param presetName the preset used to get here, or null if no preset
+     * @return the fragment
+     */
+    public static SearchResultFragment newInstance(final int searchType, final String searchParameters, final @Nullable String presetName) {
+        final SearchResultFragment fragment = new SearchResultFragment();
+
+        final Bundle args = new Bundle();
+        args.putInt("searchType", searchType);
+        args.putString("searchParameters", searchParameters);
+        if (searchType == 0) {
+            args.putString("searchDescription", "Level " + searchParameters);
+        }
+        else if (searchType == 1) {
+            args.putString("searchDescription", "'" + searchParameters + "'");
+        }
+        else if (searchType == 2) {
+            args.putString("searchDescription", "Advanced search");
+        }
+        if (presetName != null) {
+            args.putString("presetName", presetName);
+        }
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    /**
      * The name of the preset currently being shown.
      *
      * @return the name or null if this is a new search

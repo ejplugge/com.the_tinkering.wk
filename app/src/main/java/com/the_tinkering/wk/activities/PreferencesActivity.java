@@ -25,18 +25,16 @@ import androidx.preference.PreferenceScreen;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.fragments.PreferencesFragment;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Activity for the preferences.
  */
 public final class PreferencesActivity extends AbstractActivity implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
-    private static final Logger LOGGER = Logger.get(PreferencesActivity.class);
-
     /**
      * The constructor.
      */
@@ -88,7 +86,7 @@ public final class PreferencesActivity extends AbstractActivity implements Prefe
 
     @Override
     public boolean onPreferenceStartScreen(final PreferenceFragmentCompat caller, final PreferenceScreen pref) {
-        try {
+        safe(() -> {
             final PreferencesFragment fragment = new PreferencesFragment();
             final Bundle args = new Bundle();
             args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey());
@@ -100,10 +98,7 @@ public final class PreferencesActivity extends AbstractActivity implements Prefe
             transaction.setReorderingAllowed(true);
             transaction.addToBackStack(pref.getKey());
             transaction.commit();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-
+        });
         return true;
     }
 }

@@ -27,20 +27,18 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.NUM_THEME_CUSTOMIZATION_OPTIONS;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Activity for theme customization.
  */
 public final class ThemeCustomizationActivity extends AbstractActivity {
-    private static final Logger LOGGER = Logger.get(ThemeCustomizationActivity.class);
-
     private static final String EXTRA1 = "\nUsed on the timeline chart, the SRS breakdown, and the Post-60 progression bar";
     private static final String EXTRA2 = "\nUsed on the Post-60 progression bar with subsections enabled";
     private static final String EXTRA3 = "\nUsed on the Level progression chart";
@@ -160,11 +158,7 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
         colorPicker.setColorSelectionListener(new OnColorSelectionListener() {
             @Override
             public void onColorSelected(final int i) {
-                try {
-                    setColor(selection, i, true);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+                safe(() -> setColor(selection, i, true));
             }
 
             @Override
@@ -174,14 +168,14 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
 
             @Override
             public void onColorSelectionEnd(final int i) {
-                saveColors();
+                safe(() -> saveColors());
             }
         });
 
-        final View.OnClickListener listener = v -> {
+        final View.OnClickListener listener = v -> safe(() -> {
             final int index = (int) v.getTag(R.id.themeCustomizationIndex);
             setSelection(index);
-        };
+        });
 
         for (int i=0; i<NUM_THEME_CUSTOMIZATION_OPTIONS; i++) {
             selectionViews[i].setTag(R.id.themeCustomizationIndex, i);
@@ -222,12 +216,10 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
 
     @Override
     public void onSaveInstanceState(final Bundle outState, final PersistableBundle outPersistentState) {
-        try {
+        safe(() -> {
             super.onSaveInstanceState(outState, outPersistentState);
             outState.putInt("selection", selection);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private static int getBaseColor(final int index) {
@@ -330,11 +322,9 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
      * @param v the button
      */
     public void resetColor(@SuppressWarnings("unused") final View v) {
-        try {
+        safe(() -> {
             setColor(selection, 0, false);
             saveColors();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

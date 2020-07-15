@@ -24,11 +24,11 @@ import android.view.inputmethod.EditorInfo;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.NO_API_KEY_HELP_DOCUMENT;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A simple activity only used as a helper to get the user to supply an API key.
@@ -39,8 +39,6 @@ import static com.the_tinkering.wk.Constants.NO_API_KEY_HELP_DOCUMENT;
  * </p>
  */
 public final class NoApiKeyHelpActivity extends AbstractActivity {
-    private static final Logger LOGGER = Logger.get(NoApiKeyHelpActivity.class);
-
     private final ViewProxy saveButton = new ViewProxy();
     private final ViewProxy apiKey = new ViewProxy();
 
@@ -59,22 +57,18 @@ public final class NoApiKeyHelpActivity extends AbstractActivity {
         final ViewProxy document = new ViewProxy(this, R.id.document);
         document.setTextHtml(NO_API_KEY_HELP_DOCUMENT);
         document.setLinkMovementMethod();
-        apiKey.setOnEditorActionListener((v, actionId, event) -> {
-            try {
-                if (event == null && actionId == EditorInfo.IME_ACTION_DONE) {
-                    saveApiKey(v);
-                    return true;
-                }
-                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    saveApiKey(v);
-                    return true;
-                }
-                return false;
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-                return false;
+
+        apiKey.setOnEditorActionListener((v, actionId, event) -> safe(false, () -> {
+            if (event == null && actionId == EditorInfo.IME_ACTION_DONE) {
+                saveApiKey(v);
+                return true;
             }
-        });
+            if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                saveApiKey(v);
+                return true;
+            }
+            return false;
+        }));
     }
 
     @Override
@@ -103,15 +97,13 @@ public final class NoApiKeyHelpActivity extends AbstractActivity {
      * @param view the button
      */
     public void saveApiKey(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             if (!interactionEnabled) {
                 return;
             }
             disableInteraction();
             GlobalSettings.Api.setApiKey(apiKey.getText());
             goToMainActivity();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

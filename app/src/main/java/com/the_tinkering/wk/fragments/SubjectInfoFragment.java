@@ -52,6 +52,24 @@ public final class SubjectInfoFragment extends AbstractFragment implements Swipi
         super(R.layout.fragment_subject_info);
     }
 
+    /**
+     * Create a new instance with arguments set.
+     *
+     * @param id the subject ID
+     * @param ids the context list of subject IDs
+     * @return the fragment
+     */
+    public static SubjectInfoFragment newInstance(final long id, final @Nullable long[] ids) {
+        final SubjectInfoFragment fragment = new SubjectInfoFragment();
+        final Bundle args = new Bundle();
+        args.putLong("id", id);
+        if (ids != null) {
+            args.putLongArray("ids", ids);
+        }
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     protected void onCreateLocal() {
         //

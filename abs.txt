@@ -62,7 +62,6 @@ import com.the_tinkering.wk.livedata.LiveSessionProgress;
 import com.the_tinkering.wk.livedata.LiveSessionState;
 import com.the_tinkering.wk.livedata.LiveTaskCounts;
 import com.the_tinkering.wk.model.Session;
-import com.the_tinkering.wk.model.TaskCounts;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.services.NetworkStateBroadcastReceiver;
 import com.the_tinkering.wk.tasks.ApiTask;
@@ -125,39 +124,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
         return this;
     }
 
-    private void onCreateBaseLiveTaskCounts(final ActionBar actionBar, final @Nullable TaskCounts t) {
-        final OnlineStatus onlineStatus = ApiTask.getOnlineStatus();
-        final boolean hasApi = t != null && t.getApiCount() > 0 && onlineStatus.canCallApi();
-        final boolean hasAudio = t != null && t.getAudioCount() > 0 && onlineStatus.canDownloadAudio();
-        final boolean hasPitchInfo = t != null && t.getPitchInfoCount() > 0 && onlineStatus.canDownloadAudio();
-
-        final Collection<String> parts = new ArrayList<>();
-        if (hasApi) {
-            parts.add(String.format(Locale.ROOT, "%d background tasks", t.getApiCount()));
-        }
-        if (hasAudio) {
-            parts.add(String.format(Locale.ROOT, "%d audio download tasks", t.getAudioCount()));
-        }
-        if (hasPitchInfo) {
-            parts.add(String.format(Locale.ROOT, "%d pitch info download tasks", t.getPitchInfoCount()));
-        }
-
-        if (parts.isEmpty()) {
-            actionBar.setSubtitle(null);
-        }
-        else {
-            actionBar.setSubtitle(join(", ", "", "", parts) + "... ⌛");
-        }
-
-        final @Nullable Menu menu = getMenu();
-        if (menu != null) {
-            final @Nullable MenuItem flushTasksItem = menu.findItem(R.id.action_flush_tasks);
-            if (t != null && flushTasksItem != null) {
-                flushTasksItem.setVisible(!t.isEmpty());
-            }
-        }
-    }
-
     private void onCreateBase() {
         creationTheme = ActiveTheme.getCurrentTheme();
         setContentView(layoutId);
@@ -172,7 +138,42 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                     actionBar.setDisplayShowHomeEnabled(true);
                 }
 
-                LiveTaskCounts.getInstance().observe(this, t -> safe(() -> onCreateBaseLiveTaskCounts(actionBar, t)));
+                LiveTaskCounts.getInstance().observe(this, t -> {
+                    try {
+                        final OnlineStatus onlineStatus = ApiTask.getOnlineStatus();
+                        final boolean hasApi = t != null && t.getApiCount() > 0 && onlineStatus.canCallApi();
+                        final boolean hasAudio = t != null && t.getAudioCount() > 0 && onlineStatus.canDownloadAudio();
+                        final boolean hasPitchInfo = t != null && t.getPitchInfoCount() > 0 && onlineStatus.canDownloadAudio();
+
+                        final Collection<String> parts = new ArrayList<>();
+                        if (hasApi) {
+                            parts.add(String.format(Locale.ROOT, "%d background tasks", t.getApiCount()));
+                        }
+                        if (hasAudio) {
+                            parts.add(String.format(Locale.ROOT, "%d audio download tasks", t.getAudioCount()));
+                        }
+                        if (hasPitchInfo) {
+                            parts.add(String.format(Locale.ROOT, "%d pitch info download tasks", t.getPitchInfoCount()));
+                        }
+
+                        if (parts.isEmpty()) {
+                            actionBar.setSubtitle(null);
+                        }
+                        else {
+                            actionBar.setSubtitle(join(", ", "", "", parts) + "... ⌛");
+                        }
+
+                        final @Nullable Menu menu = getMenu();
+                        if (menu != null) {
+                            final @Nullable MenuItem flushTasksItem = menu.findItem(R.id.action_flush_tasks);
+                            if (t != null && flushTasksItem != null) {
+                                flushTasksItem.setVisible(!t.isEmpty());
+                            }
+                        }
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
+                    }
+                });
             }
         }
 
@@ -198,28 +199,36 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
             }
         }));
 
-        LiveSessionProgress.getInstance().observe(this, t -> safe(() -> {
-            final @Nullable Menu menu = getMenu();
-            final Session session = Session.getInstance();
+        LiveSessionProgress.getInstance().observe(this, t -> {
+            try {
+                final @Nullable Menu menu = getMenu();
+                final Session session = Session.getInstance();
 
-            if (menu != null) {
-                final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
-                if (wrapupSessionItem != null) {
-                    wrapupSessionItem.setVisible(session.canBeWrappedUp());
+                if (menu != null) {
+                    final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
+                    if (wrapupSessionItem != null) {
+                        wrapupSessionItem.setVisible(session.canBeWrappedUp());
+                    }
                 }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
-        }));
+        });
 
-        LiveLevelDuration.getInstance().observe(this, t -> safe(() -> {
-            final @Nullable Menu menu = getMenu();
-            if (menu != null) {
-                final @Nullable MenuItem testItem = menu.findItem(R.id.action_test);
-                if (testItem != null) {
-                    final @Nullable String username = t.getUsername();
-                    testItem.setVisible(!isEmpty(username) && username.equals(Identification.AUTHOR_USERNAME));
+        LiveLevelDuration.getInstance().observe(this, t -> {
+            try {
+                final @Nullable Menu menu = getMenu();
+                if (menu != null) {
+                    final @Nullable MenuItem testItem = menu.findItem(R.id.action_test);
+                    if (testItem != null) {
+                        final @Nullable String username = t.getUsername();
+                        testItem.setVisible(!isEmpty(username) && username.equals(Identification.AUTHOR_USERNAME));
+                    }
                 }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
-        }));
+        });
     }
 
     @Override

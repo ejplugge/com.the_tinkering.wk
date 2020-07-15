@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 
@@ -40,6 +39,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -93,148 +94,118 @@ public final class TestActivity extends AbstractActivity {
 
         activePitchInfoDownload = true;
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected @Nullable Void doInBackground(final Void... params) {
-                final AppDatabase db = WkApplication.getDatabase();
-                final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
+        runAsync((task, params) -> {
+            final AppDatabase db = WkApplication.getDatabase();
+            final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
 
-                LOGGER.info("Number of weblio files: %d", PitchInfoUtil.getNumWeblioFiles());
+            LOGGER.info("Number of weblio files: %d", PitchInfoUtil.getNumWeblioFiles());
 
-                try {
-                    int count = 0;
-                    final int max = 250;
-                    for (int i=1; i<=maxLevel; i++) {
-                        if (!activePitchInfoDownload || count >= max) {
-                            break;
-                        }
-                        final List<Subject> subjects = db.subjectCollectionsDao().getByLevelRange(i, i);
-                        for (final Subject subject: subjects) {
-                            if (!activePitchInfoDownload || count >= max) {
-                                break;
-                            }
-                            if (!subject.getType().canHavePitchInfo()) {
-                                continue;
-                            }
-//                            if (subject.getId() == 4549 || subject.getId() == 4551 || subject.getId() == 5294 || subject.getId() == 6091) {
-//                                continue;
-//                            }
-                            final String characters = requireNonNull(subject.getCharacters());
-
-                            if (!PitchInfoUtil.existsWeblioFile(characters)) {
-                                LOGGER.info("Subject: %s (%d) (%s)",
-                                        characters, subject.getId(), subject.getOneMeaning());
-                                PitchInfoUtil.downloadWeblioFile(characters);
-                                count++;
-                            }
-                        }
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+            int count = 0;
+            final int max = 250;
+            for (int i=1; i<=maxLevel; i++) {
+                if (!activePitchInfoDownload || count >= max) {
+                    break;
                 }
+                final List<Subject> subjects = db.subjectCollectionsDao().getByLevelRange(i, i);
+                for (final Subject subject: subjects) {
+                    if (!activePitchInfoDownload || count >= max) {
+                        break;
+                    }
+                    if (!subject.getType().canHavePitchInfo()) {
+                        continue;
+                    }
+//                    if (subject.getId() == 4549 || subject.getId() == 4551 || subject.getId() == 5294 || subject.getId() == 6091) {
+//                        continue;
+//                    }
+                    final String characters = requireNonNull(subject.getCharacters());
 
-                activePitchInfoDownload = false;
-                return null;
+                    if (!PitchInfoUtil.existsWeblioFile(characters)) {
+                        LOGGER.info("Subject: %s (%d) (%s)",
+                                characters, subject.getId(), subject.getOneMeaning());
+                        PitchInfoUtil.downloadWeblioFile(characters);
+                        count++;
+                    }
+                }
             }
-        }.execute();
+
+            activePitchInfoDownload = false;
+            return null;
+        }, null, null);
     }
 
     @SuppressWarnings("MethodMayBeStatic")
     public void generatePitchInfo(@SuppressWarnings("unused") final View view) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected @Nullable Void doInBackground(final Void... params) {
-                final AppDatabase db = WkApplication.getDatabase();
-                final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
+        runAsync((task, params) -> {
+            final AppDatabase db = WkApplication.getDatabase();
+            final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
 
-                LOGGER.info("Number of weblio files: %d", PitchInfoUtil.getNumWeblioFiles());
+            LOGGER.info("Number of weblio files: %d", PitchInfoUtil.getNumWeblioFiles());
 
-                try {
-                    final Map<String, List<PitchInfo>> map = new HashMap<>();
-                    for (int i=1; i<=maxLevel; i++) {
-                        final List<Subject> subjects = db.subjectCollectionsDao().getByLevelRange(i, i);
-                        // LOGGER.debug("%d: %d", System.currentTimeMillis(), subjects.size());
-                        for (final Subject subject: subjects) {
-                            if (!subject.getType().canHavePitchInfo()) {
-                                continue;
-                            }
-                            final String characters = requireNonNull(subject.getCharacters());
-
-                            if (subject.isPrefix() || subject.isSuffix()) {
-                                map.put(characters, Collections.emptyList());
-                            }
-                            else if (PitchInfoUtil.existsWeblioFile(characters)) {
-                                final Set<PitchInfo> pitchInfo = PitchInfoUtil.parseWeblioFile(characters);
-                                final List<PitchInfo> list = new ArrayList<>(pitchInfo);
-                                Collections.sort(list);
-                                map.put(characters, list);
-                            }
-                            else {
-                                map.put(characters, Collections.emptyList());
-                            }
-                        }
+            final Map<String, List<PitchInfo>> map = new HashMap<>();
+            for (int i=1; i<=maxLevel; i++) {
+                final List<Subject> subjects = db.subjectCollectionsDao().getByLevelRange(i, i);
+                // LOGGER.debug("%d: %d", System.currentTimeMillis(), subjects.size());
+                for (final Subject subject: subjects) {
+                    if (!subject.getType().canHavePitchInfo()) {
+                        continue;
                     }
-                    PitchInfoUtil.saveMap(map);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+                    final String characters = requireNonNull(subject.getCharacters());
 
-                return null;
+                    if (subject.isPrefix() || subject.isSuffix()) {
+                        map.put(characters, Collections.emptyList());
+                    }
+                    else if (PitchInfoUtil.existsWeblioFile(characters)) {
+                        final Set<PitchInfo> pitchInfo = PitchInfoUtil.parseWeblioFile(characters);
+                        final List<PitchInfo> list = new ArrayList<>(pitchInfo);
+                        Collections.sort(list);
+                        map.put(characters, list);
+                    }
+                    else {
+                        map.put(characters, Collections.emptyList());
+                    }
+                }
             }
-        }.execute();
+            PitchInfoUtil.saveMap(map);
+            return null;
+        }, null, null);
     }
 
     @SuppressWarnings("MethodMayBeStatic")
     public void checkPitchInfo(@SuppressWarnings("unused") final View view) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected @Nullable Void doInBackground(final Void... params) {
-                final AppDatabase db = WkApplication.getDatabase();
+        runAsync((task, params) -> {
+            final AppDatabase db = WkApplication.getDatabase();
 
-                LOGGER.info("Number of weblio files: %d", PitchInfoUtil.getNumWeblioFiles());
+            LOGGER.info("Number of weblio files: %d", PitchInfoUtil.getNumWeblioFiles());
 
-                final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
-                try {
-                    for (final Subject subject: db.subjectCollectionsDao().getByLevelRange(1, maxLevel)) {
-                        if (subject.getType().canHavePitchInfo()) {
-                            final @Nullable String pitchInfo =
-                                    ReferenceDataUtil.getPitchInfo(SubjectType.WANIKANI_VOCAB, subject.getCharacters());
-                            if (pitchInfo == null) {
-                                LOGGER.info("No pitch info for: %s (%d) (%s) (%s)", subject.getCharacters(), subject.getId(),
-                                        subject.getOneMeaning(), subject.getRawPitchInfo());
-                            }
-                        }
+            final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
+            for (final Subject subject: db.subjectCollectionsDao().getByLevelRange(1, maxLevel)) {
+                if (subject.getType().canHavePitchInfo()) {
+                    final @Nullable String pitchInfo =
+                            ReferenceDataUtil.getPitchInfo(SubjectType.WANIKANI_VOCAB, subject.getCharacters());
+                    if (pitchInfo == null) {
+                        LOGGER.info("No pitch info for: %s (%d) (%s) (%s)", subject.getCharacters(), subject.getId(),
+                                subject.getOneMeaning(), subject.getRawPitchInfo());
                     }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
                 }
-
-                return null;
             }
-        }.execute();
+
+            return null;
+        }, null, null);
     }
 
     public void theButton(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             LOGGER.info("Test button clicked!");
-
             document.setText("Click!");
-
             goToActivity(DigraphHelpActivity.class);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     public void theButton2(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             LOGGER.info("Test button 2 clicked!");
-
             document.setText("Click 2!");
-
             goToActivity(NoApiKeyHelpActivity.class);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

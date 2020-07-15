@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.util;
 
+import android.os.AsyncTask;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -30,12 +32,14 @@ import javax.annotation.Nullable;
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.Constants.MINUTE;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Various generic object manipulation methods. These are mostly simple methods
  * that in later Java versions are part of the standard library.
  */
 public final class ObjectSupport {
+    private static final Logger LOGGER = Logger.get(ObjectSupport.class);
     private static final Random random = new Random(System.currentTimeMillis());
 
     private ObjectSupport() {
@@ -373,5 +377,215 @@ public final class ObjectSupport {
      */
     public static boolean isTrue(final @Nullable Object value) {
         return value instanceof Boolean && (boolean) value;
+    }
+
+    /**
+     * Run some code that produces a non-null return value, while capturing and
+     * logging any exceptions thrown.
+     *
+     * @param supplier the supplier that produces the result, i.e. the code to run safely
+     * @param defaultValue the default value to return if the supplier throws an exception
+     * @param <T> the type of the return value
+     * @return the result from the supplier, or defaultValue if the supplier threw an exception
+     */
+    public static <T> T safe(final T defaultValue, final ThrowingSupplier<? extends T> supplier) {
+        try {
+            return requireNonNull(supplier.get());
+        }
+        catch (final Exception e) {
+            LOGGER.uerr(e);
+            return defaultValue;
+        }
+    }
+
+    /**
+     * A variation of safe() that can produce null values.
+     *
+     * @param supplier the supplier that produces the result, i.e. the code to run safely
+     * @param <T> the type of the return value
+     * @return the result from the supplier, or null if the supplier threw an exception
+     */
+    public static <T> @Nullable T safeNullable(final NullableThrowingSupplier<? extends T> supplier) {
+        try {
+            return supplier.get();
+        }
+        catch (final Exception e) {
+            LOGGER.uerr(e);
+            return null;
+        }
+    }
+
+    /**
+     * A variation of safe() that produces no return value.
+     *
+     * @param runnable the runnable that needs to be run, i.e. the code to run safely
+     */
+    public static void safe(final ThrowingRunnable runnable) {
+        try {
+            runnable.run();
+        }
+        catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
+    }
+
+    /**
+     * Run an AsyncTask with the supplied handler bodies.
+     *
+     * @param background run on the background thread, returns a result
+     * @param progress run on the UI thread to report progress
+     * @param post run on the UI thread to report the result
+     * @param params the parameters for background
+     * @param <Params> the type of the parameters
+     * @param <Progress> the type of the progress values
+     * @param <Result> the type of the result
+     */
+    @SafeVarargs
+    public static <Params, Progress, Result> void runAsync(final DoInBackground<? super Params, Progress, Result> background,
+                                                           final ObjectSupport.@Nullable OnProgressUpdate<? super Progress> progress,
+                                                           final @Nullable OnPostExecute<? super Result> post,
+                                                           final Params... params) {
+        new AsyncTask<Params, Progress, Result>() {
+            @SafeVarargs
+            @SuppressWarnings("AnonymousClassVariableHidesContainingMethodVariable")
+            @Override
+            protected final @Nullable Result doInBackground(final Params... params) {
+                return safeNullable(() -> {
+                    //noinspection Convert2MethodRef
+                    final ProgressPublisher<Progress> publisher = values -> publishProgress(values);
+                    return background.doInBackground(publisher, params);
+                });
+            }
+
+            @SafeVarargs
+            @Override
+            protected final void onProgressUpdate(final Progress... values) {
+                if (progress != null) {
+                    safe(() -> progress.onProgressUpdate(values));
+                }
+            }
+
+            @Override
+            protected void onPostExecute(final @Nullable Result result) {
+                if (post != null) {
+                    safe(() -> post.onPostExecute(result));
+                }
+            }
+        }.execute(params);
+    }
+
+    /**
+     * A Supplier variant that can throw exceptions.
+     *
+     * @param <T> the result type
+     */
+    @FunctionalInterface
+    public interface ThrowingSupplier<T> {
+        /**
+         * Supply a value of type T.
+         *
+         * @return the value, may not be null
+         * @throws Exception if anything went wrong
+         */
+        @SuppressWarnings({"RedundantThrows", "RedundantSuppression"})
+        T get() throws Exception;
+    }
+
+    /**
+     * A Supplier variant that can throw exceptions and return null.
+     *
+     * @param <T> the result type
+     */
+    @FunctionalInterface
+    public interface NullableThrowingSupplier<T> {
+        /**
+         * Supply a value of type T, possibly null.
+         *
+         * @return the value, may be null
+         * @throws Exception if anything went wrong
+         */
+        @SuppressWarnings({"RedundantThrows", "RedundantSuppression"})
+        @Nullable T get() throws Exception;
+    }
+
+    /**
+     * A Runnable variant that can throw exceptions.
+     */
+    @FunctionalInterface
+    public interface ThrowingRunnable {
+        /**
+         * Run the action.
+         *
+         * @throws Exception if anything went wrong
+         */
+        @SuppressWarnings({"RedundantThrows", "RedundantSuppression"})
+        void run() throws Exception;
+    }
+
+    /**
+     * A Consumer variant for AsyncTask.publishProgress().
+     *
+     * @param <Progress> the type of progress values
+     */
+    @FunctionalInterface
+    public interface ProgressPublisher<Progress> {
+        /**
+         * Publish progress.
+         *
+         * @param values the progress values
+         * @throws Exception if anything went wrong
+         */
+        @SuppressWarnings("unchecked")
+        void progress(Progress... values) throws Exception;
+    }
+
+    /**
+     * An interface for the work to do in doInBackground in an AsyncTask.
+     *
+     * @param <Params> the type of the parameters
+     * @param <Progress> the type of the progress values
+     * @param <Result> the type of the result
+     */
+    @FunctionalInterface
+    public interface DoInBackground<Params, Progress, Result> {
+        /**
+         * Run the background operation. Same as AsyncTask.doInBackground, but it gets an explicit reference to a publisher that can publish progress.
+         *
+         * @param publisher the publisher that can process progress values
+         * @param params the parameters
+         * @return the result
+         * @throws Exception if anything went wrong
+         */
+        @Nullable Result doInBackground(ProgressPublisher<Progress> publisher, Params[] params) throws Exception;
+    }
+
+    /**
+     * An interface for the work to do in onProgressUpdate in an AsyncTask.
+     *
+     * @param <Progress> the type of the progress values
+     */
+    @FunctionalInterface
+    public interface OnProgressUpdate<Progress> {
+        /**
+         * Report progress. Same as AsyncTask.onProgressUpdate, but it gets an explicit reference to the task.
+         *
+         * @param values the progress values
+         */
+        void onProgressUpdate(Progress[] values);
+    }
+
+    /**
+     * An interface for the work to do in onPostExecute in an AsyncTask.
+     *
+     * @param <Result> the type of the result
+     */
+    @FunctionalInterface
+    public interface OnPostExecute<Result> {
+        /**
+         * Report the result. Same as AsyncTask.onPostExecute.
+         *
+         * @param result the result
+         */
+        void onPostExecute(@Nullable Result result);
     }
 }

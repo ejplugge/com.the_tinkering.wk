@@ -20,7 +20,6 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -30,15 +29,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.Lifecycle;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.model.TypefaceConfiguration;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.FontStorageUtil;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ViewUtil;
-import com.the_tinkering.wk.util.WeakLcoRef;
 import com.the_tinkering.wk.views.FontImportRowView;
 
 import java.io.InputStream;
@@ -52,6 +50,9 @@ import static com.the_tinkering.wk.util.FontStorageUtil.getTypefaceConfiguration
 import static com.the_tinkering.wk.util.FontStorageUtil.hasFontFile;
 import static com.the_tinkering.wk.util.FontStorageUtil.importFontFile;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -67,8 +68,6 @@ import static java.util.Objects.requireNonNull;
  * </p>
  */
 public final class FontImportActivity extends AbstractActivity {
-    private static final Logger LOGGER = Logger.get(FontImportActivity.class);
-
     private final ViewProxy importWithSaf = new ViewProxy();
     private final ViewProxy fontTable = new ViewProxy();
 
@@ -120,7 +119,7 @@ public final class FontImportActivity extends AbstractActivity {
     }
 
     private @Nullable String resolveFileName(final Uri uri) {
-        try {
+        return safeNullable(() -> {
             @Nullable String fileName = uri.getPath();
             try (final @Nullable Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
@@ -131,7 +130,6 @@ public final class FontImportActivity extends AbstractActivity {
                     }
                 }
             }
-            //
 
             if (fileName != null) {
                 final int p = fileName.lastIndexOf('/');
@@ -145,15 +143,25 @@ public final class FontImportActivity extends AbstractActivity {
             }
 
             return fileName;
-        }
-        catch (final Exception e) {
-            LOGGER.error(e, "Error resolving file name for import: %s", uri);
-            return null;
-        }
+        });
     }
 
     private void importFile(final Uri uri, final String fileName) {
-        new Task(this, uri, fileName).execute();
+        runAsync((publisher, params) -> {
+            try (final @Nullable InputStream is = WkApplication.getInstance().getContentResolver().openInputStream(uri)) {
+                if (is != null) {
+                    importFontFile(is, fileName);
+                }
+            }
+            return null;
+        }, null, result -> {
+            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
+                return;
+            }
+            flushCache(fileName);
+            updateFileList();
+            Toast.makeText(this, "File imported", Toast.LENGTH_LONG).show();
+        });
     }
 
     /**
@@ -165,7 +173,7 @@ public final class FontImportActivity extends AbstractActivity {
      */
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final @Nullable Intent data) {
-        try {
+        safe(() -> {
             super.onActivityResult(requestCode, resultCode, data);
 
             if (requestCode == 3 && resultCode == RESULT_OK && data != null && data.getData() != null) {
@@ -179,24 +187,14 @@ public final class FontImportActivity extends AbstractActivity {
                             .setTitle("Overwrite file?")
                             .setMessage(String.format("A file named '%s' already exists. Do you want to overwrite it?", fileName))
                             .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", (dialog, which) -> {
-                                //
-                            })
-                            .setPositiveButton("Yes", (dialog, which) -> {
-                                try {
-                                    importFile(uri, fileName);
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
-                            }).create().show();
+                            .setNegativeButton("No", (dialog, which) -> {})
+                            .setPositiveButton("Yes", (dialog, which) -> safe(() -> importFile(uri, fileName))).create().show();
                 }
                 else {
                     importFile(uri, fileName);
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -205,18 +203,12 @@ public final class FontImportActivity extends AbstractActivity {
      * @param view the button.
      */
     public void importWithActionGetContent(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("*/*");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            try {
-                startActivityForResult(Intent.createChooser(intent, "Select a TTF font file to import"), 3);
-            } catch (final Exception e) {
-                LOGGER.error(e, "Error selecting file for import");
-            }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            startActivityForResult(Intent.createChooser(intent, "Select a TTF font file to import"), 3);
+        });
     }
 
     /**
@@ -226,19 +218,12 @@ public final class FontImportActivity extends AbstractActivity {
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void importWithSaf(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.setType("*/*");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-            try {
-                startActivityForResult(intent, 3);
-            } catch (final Exception e) {
-                LOGGER.error(e, "Error selecting file for import");
-            }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            startActivityForResult(intent, 3);
+        });
     }
 
     /**
@@ -247,7 +232,7 @@ public final class FontImportActivity extends AbstractActivity {
      * @param view the button.
      */
     public void showSample(final View view) {
-        try {
+        safe(() -> {
             final @Nullable FontImportRowView row = ViewUtil.getNearestEnclosingViewOfType(view, FontImportRowView.class);
             if (row != null && row.getName() != null) {
                 try {
@@ -264,23 +249,17 @@ public final class FontImportActivity extends AbstractActivity {
                             .setTitle("Font sample")
                             .setView(textView)
                             .setCancelable(false)
-                            .setPositiveButton("OK", (dialog, which) -> {
-                                //
-                            }).create().show();
+                            .setPositiveButton("OK", (dialog, which) -> {}).create().show();
                 }
                 catch (final Exception e) {
                     new AlertDialog.Builder(this)
                             .setTitle("Unable to load font")
                             .setMessage("There was an error attempting to load this font. You will not be able to use it in quizzes.")
                             .setCancelable(false)
-                            .setPositiveButton("OK", (dialog, which) -> {
-                                //
-                            }).create().show();
+                            .setPositiveButton("OK", (dialog, which) -> {}).create().show();
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -289,65 +268,20 @@ public final class FontImportActivity extends AbstractActivity {
      * @param view the button.
      */
     public void deleteFont(final View view) {
-        try {
+        safe(() -> {
             final @Nullable FontImportRowView row = ViewUtil.getNearestEnclosingViewOfType(view, FontImportRowView.class);
             if (row != null && row.getName() != null) {
                 new AlertDialog.Builder(this)
                         .setTitle("Delete file?")
                         .setMessage(String.format("Are you sure you want to delete '%s'", row.getName()))
                         .setIcon(R.drawable.ic_baseline_warning_24px)
-                        .setNegativeButton("No", (dialog, which) -> {
-                            //
-                        })
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            try {
-                                FontStorageUtil.deleteFont(row.getName());
-                                flushCache(row.getName());
-                                updateFileList();
-                            } catch (final Exception e) {
-                                LOGGER.uerr(e);
-                            }
-                        }).create().show();
+                        .setNegativeButton("No", (dialog, which) -> {})
+                        .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                            FontStorageUtil.deleteFont(row.getName());
+                            flushCache(row.getName());
+                            updateFileList();
+                        })).create().show();
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-    }
-
-    private static final class Task extends AsyncTask<Void, Void, Void> {
-        private final WeakLcoRef<FontImportActivity> activityRef;
-        private final Uri uri;
-        private final String fileName;
-
-        private Task(final FontImportActivity activity, final Uri uri, final String fileName) {
-            activityRef = new WeakLcoRef<>(activity);
-            this.uri = uri;
-            this.fileName = fileName;
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            try {
-                final @Nullable InputStream is = WkApplication.getInstance().getContentResolver().openInputStream(uri);
-                if (is != null) {
-                    importFontFile(is, fileName);
-                }
-            }
-            catch (final Exception e) {
-                LOGGER.error(e, "Error importing font file");
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final Void result) {
-            try {
-                flushCache(fileName);
-                activityRef.get().updateFileList();
-                Toast.makeText(activityRef.get(), "File imported", Toast.LENGTH_LONG).show();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
+        });
     }
 }

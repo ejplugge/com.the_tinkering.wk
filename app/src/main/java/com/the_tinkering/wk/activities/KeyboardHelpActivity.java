@@ -24,7 +24,6 @@ import androidx.appcompat.app.AlertDialog;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
 
@@ -34,13 +33,12 @@ import static com.the_tinkering.wk.Constants.KEYBOARD_HELP_DOCUMENT_3;
 import static com.the_tinkering.wk.Constants.KEYBOARD_HELP_DOCUMENT_4;
 import static com.the_tinkering.wk.Constants.KEYBOARD_HELP_DOCUMENT_5;
 import static com.the_tinkering.wk.Constants.KEYBOARD_HELP_DOCUMENT_INTRO;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Simple activity that shows some keyboard-related help.
  */
 public final class KeyboardHelpActivity extends AbstractActivity {
-    private static final Logger LOGGER = Logger.get(KeyboardHelpActivity.class);
-
     /**
      * The constructor.
      */
@@ -51,16 +49,17 @@ public final class KeyboardHelpActivity extends AbstractActivity {
     @Override
     protected void onCreateLocal(final @Nullable Bundle savedInstanceState) {
         final ViewProxy documentIntro = new ViewProxy(this, R.id.document_intro);
-        documentIntro.setTextHtml(KEYBOARD_HELP_DOCUMENT_INTRO);
         final ViewProxy document1 = new ViewProxy(this, R.id.document_1);
-        document1.setTextHtml(KEYBOARD_HELP_DOCUMENT_1);
         final ViewProxy document2 = new ViewProxy(this, R.id.document_2);
-        document2.setTextHtml(KEYBOARD_HELP_DOCUMENT_2);
         final ViewProxy document3 = new ViewProxy(this, R.id.document_3);
-        document3.setTextHtml(KEYBOARD_HELP_DOCUMENT_3);
         final ViewProxy document4 = new ViewProxy(this, R.id.document_4);
-        document4.setTextHtml(KEYBOARD_HELP_DOCUMENT_4);
         final ViewProxy document5 = new ViewProxy(this, R.id.document_5);
+
+        documentIntro.setTextHtml(KEYBOARD_HELP_DOCUMENT_INTRO);
+        document1.setTextHtml(KEYBOARD_HELP_DOCUMENT_1);
+        document2.setTextHtml(KEYBOARD_HELP_DOCUMENT_2);
+        document3.setTextHtml(KEYBOARD_HELP_DOCUMENT_3);
+        document4.setTextHtml(KEYBOARD_HELP_DOCUMENT_4);
         document5.setTextHtml(KEYBOARD_HELP_DOCUMENT_5);
     }
 
@@ -90,11 +89,7 @@ public final class KeyboardHelpActivity extends AbstractActivity {
      * @param view the button
      */
     public void goToKeyboardSettings(@SuppressWarnings("unused") final View view) {
-        try {
-            goToPreferencesActivity("keyboard_settings");
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> goToPreferencesActivity("keyboard_settings"));
     }
 
     /**
@@ -103,7 +98,7 @@ public final class KeyboardHelpActivity extends AbstractActivity {
      * @param view the button
      */
     public void doIt1(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             GlobalSettings.Keyboard.setForceVisiblePasswordMeaning(true);
             GlobalSettings.Keyboard.setForceVisiblePasswordReading(true);
             GlobalSettings.Keyboard.setEnableAutoCorrectMeaning(false);
@@ -112,12 +107,8 @@ public final class KeyboardHelpActivity extends AbstractActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Keyboard settings updated")
                     .setMessage("Your settings have been updated.")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        //
-                    }).create().show();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+                    .setPositiveButton("OK", (dialog, which) -> {}).create().show();
+        });
     }
 
     /**
@@ -126,7 +117,7 @@ public final class KeyboardHelpActivity extends AbstractActivity {
      * @param view the button
      */
     public void doIt2(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             GlobalSettings.Keyboard.setForceVisiblePasswordMeaning(true);
             GlobalSettings.Keyboard.setForceVisiblePasswordReading(true);
             GlobalSettings.Keyboard.setEnableAutoCorrectMeaning(false);
@@ -135,12 +126,8 @@ public final class KeyboardHelpActivity extends AbstractActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Keyboard settings updated")
                     .setMessage("Your settings have been updated.")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        //
-                    }).create().show();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+                    .setPositiveButton("OK", (dialog, which) -> {}).create().show();
+        });
     }
 
     /**
@@ -149,18 +136,14 @@ public final class KeyboardHelpActivity extends AbstractActivity {
      * @param view the button
      */
     public void doIt3(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             GlobalSettings.Keyboard.setForceVisiblePasswordMeaning(false);
             GlobalSettings.Keyboard.setForceVisiblePasswordReading(false);
             new AlertDialog.Builder(this)
                     .setTitle("Keyboard settings updated")
                     .setMessage("Your settings have been updated.")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        //
-                    }).create().show();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+                    .setPositiveButton("OK", (dialog, which) -> {}).create().show();
+        });
     }
 
     /**
@@ -169,16 +152,12 @@ public final class KeyboardHelpActivity extends AbstractActivity {
      * @param view the button
      */
     public void doIt4(@SuppressWarnings("unused") final View view) {
-        try {
+        safe(() -> {
             GlobalSettings.Keyboard.setForceAsciiMeaning(false);
             new AlertDialog.Builder(this)
                     .setTitle("Keyboard settings updated")
                     .setMessage("Your settings have been updated.")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        //
-                    }).create().show();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+                    .setPositiveButton("OK", (dialog, which) -> {}).create().show();
+        });
     }
 }

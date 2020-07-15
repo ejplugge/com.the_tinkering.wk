@@ -33,16 +33,15 @@ import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.fragments.BrowseOverviewFragment;
 import com.the_tinkering.wk.fragments.SearchResultFragment;
 import com.the_tinkering.wk.fragments.SubjectInfoFragment;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * An activity for browsing/searching the subject database.
  */
 public final class BrowseActivity extends AbstractActivity {
-    private static final Logger LOGGER = Logger.get(BrowseActivity.class);
-
     /**
      * The constructor.
      */
@@ -73,13 +72,11 @@ public final class BrowseActivity extends AbstractActivity {
                 if (s != null) {
                     final int p = s.lastIndexOf('/');
                     if (p >= 0) {
-                        try {
+                        safe(() -> {
                             final long searchId = Long.parseLong(s.substring(p+1));
                             loadSubjectInfoFragment(searchId, new long[0], FragmentTransitionAnimation.NONE);
-                            return;
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                        }
+                        });
+                        return;
                     }
                 }
             }
@@ -110,7 +107,6 @@ public final class BrowseActivity extends AbstractActivity {
 
     private void loadOverviewFragment() {
         final Fragment fragment = new BrowseOverviewFragment();
-
         final FragmentManager manager = getSupportFragmentManager();
         final FragmentTransaction transaction = manager.beginTransaction();
         if (getCurrentFragment() != null) {
@@ -130,24 +126,7 @@ public final class BrowseActivity extends AbstractActivity {
      * @param searchParameters the type-specific parameters for this search
      */
     public void loadSearchResultFragment(final @Nullable String presetName, final int searchType, final String searchParameters) {
-        final Fragment fragment = new SearchResultFragment();
-        final Bundle args = new Bundle();
-        args.putInt("searchType", searchType);
-        args.putString("searchParameters", searchParameters);
-        if (searchType == 0) {
-            args.putString("searchDescription", "Level " + searchParameters);
-        }
-        else if (searchType == 1) {
-            args.putString("searchDescription", "'" + searchParameters + "'");
-        }
-        else if (searchType == 2) {
-            args.putString("searchDescription", "Advanced search");
-        }
-        if (presetName != null) {
-            args.putString("presetName", presetName);
-        }
-        fragment.setArguments(args);
-
+        final Fragment fragment = SearchResultFragment.newInstance(searchType, searchParameters, presetName);
         final FragmentManager manager = getSupportFragmentManager();
         final FragmentTransaction transaction = manager.beginTransaction();
         if (getCurrentFragment() != null) {
@@ -166,14 +145,7 @@ public final class BrowseActivity extends AbstractActivity {
      * @param animation the transition animation to use for the transition
      */
     public void loadSubjectInfoFragment(final long id, final @Nullable long[] ids, final FragmentTransitionAnimation animation) {
-        final Fragment fragment = new SubjectInfoFragment();
-        final Bundle args = new Bundle();
-        args.putLong("id", id);
-        if (ids != null) {
-            args.putLongArray("ids", ids);
-        }
-        fragment.setArguments(args);
-
+        final Fragment fragment = SubjectInfoFragment.newInstance(id, ids);
         final FragmentManager manager = getSupportFragmentManager();
         final FragmentTransaction transaction = manager.beginTransaction();
         if (getCurrentFragment() != null) {
