@@ -160,32 +160,32 @@ public abstract class SubjectSyncDao {
             + " srsSystemId = :srsSystemId"
             + " WHERE id = :subjectId")
     protected abstract int tryUpdateHelper(final long subjectId,
-                                           final @Nullable String object,
-                                           final @Nullable String characters,
-                                           final @Nullable String slug,
-                                           final @Nullable String documentUrl,
-                                           final @Nullable String meaningMnemonic,
-                                           final @Nullable String meaningHint,
-                                           final @Nullable String readingMnemonic,
-                                           final @Nullable String readingHint,
-                                           final @Nullable String searchTarget,
-                                           final @Nullable String smallSearchTarget,
-                                           final @Nullable String meanings,
-                                           final @Nullable String auxiliaryMeanings,
-                                           final @Nullable String readings,
-                                           final @Nullable String componentSubjectIds,
-                                           final @Nullable String amalgamationSubjectIds,
-                                           final @Nullable String visuallySimilarSubjectIds,
-                                           final @Nullable String partsOfSpeech,
-                                           final @Nullable String contextSentences,
-                                           final @Nullable String pronunciationAudios,
+                                           final String object,
+                                           final String characters,
+                                           final String slug,
+                                           final String documentUrl,
+                                           final String meaningMnemonic,
+                                           final String meaningHint,
+                                           final String readingMnemonic,
+                                           final String readingHint,
+                                           final String searchTarget,
+                                           final String smallSearchTarget,
+                                           final String meanings,
+                                           final String auxiliaryMeanings,
+                                           final String readings,
+                                           final String componentSubjectIds,
+                                           final String amalgamationSubjectIds,
+                                           final String visuallySimilarSubjectIds,
+                                           final String partsOfSpeech,
+                                           final String contextSentences,
+                                           final String pronunciationAudios,
                                            final int lessonPosition,
                                            final int level,
-                                           final @Nullable Date hiddenAt,
+                                           final Date hiddenAt,
                                            final int frequency,
                                            final int joyoGrade,
                                            final int jlptLevel,
-                                           final @Nullable String pitchInfo,
+                                           final String pitchInfo,
                                            final long srsSystemId);
 
     /**
@@ -196,6 +196,7 @@ public abstract class SubjectSyncDao {
      */
     private boolean tryUpdate(final ApiSubject apiSubject) {
         final @Nullable SubjectType type = Converters.stringToSubjectType(apiSubject.getObject());
+        //noinspection ConstantConditions
         final int count = tryUpdateHelper(
                 apiSubject.getId(),
                 apiSubject.getObject(),
@@ -281,32 +282,32 @@ public abstract class SubjectSyncDao {
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
             + ")")
     protected abstract void tryInsertHelper(final long subjectId,
-                                            final @Nullable String object,
-                                            final @Nullable String characters,
-                                            final @Nullable String slug,
-                                            final @Nullable String documentUrl,
-                                            final @Nullable String meaningMnemonic,
-                                            final @Nullable String meaningHint,
-                                            final @Nullable String readingMnemonic,
-                                            final @Nullable String readingHint,
-                                            final @Nullable String searchTarget,
-                                            final @Nullable String smallSearchTarget,
-                                            final @Nullable String meanings,
-                                            final @Nullable String auxiliaryMeanings,
-                                            final @Nullable String readings,
-                                            final @Nullable String componentSubjectIds,
-                                            final @Nullable String amalgamationSubjectIds,
-                                            final @Nullable String visuallySimilarSubjectIds,
-                                            final @Nullable String partsOfSpeech,
-                                            final @Nullable String contextSentences,
-                                            final @Nullable String pronunciationAudios,
+                                            final String object,
+                                            final String characters,
+                                            final String slug,
+                                            final String documentUrl,
+                                            final String meaningMnemonic,
+                                            final String meaningHint,
+                                            final String readingMnemonic,
+                                            final String readingHint,
+                                            final String searchTarget,
+                                            final String smallSearchTarget,
+                                            final String meanings,
+                                            final String auxiliaryMeanings,
+                                            final String readings,
+                                            final String componentSubjectIds,
+                                            final String amalgamationSubjectIds,
+                                            final String visuallySimilarSubjectIds,
+                                            final String partsOfSpeech,
+                                            final String contextSentences,
+                                            final String pronunciationAudios,
                                             final int lessonPosition,
                                             final int level,
-                                            final @Nullable Date hiddenAt,
+                                            final Date hiddenAt,
                                             final int frequency,
                                             final int joyoGrade,
                                             final int jlptLevel,
-                                            final @Nullable String pitchInfo,
+                                            final String pitchInfo,
                                             final long srsSystemId);
 
     /**
@@ -318,6 +319,7 @@ public abstract class SubjectSyncDao {
     private boolean tryInsert(final ApiSubject apiSubject) {
         try {
             final @Nullable SubjectType type = Converters.stringToSubjectType(apiSubject.getObject());
+            //noinspection ConstantConditions
             tryInsertHelper(
                     apiSubject.getId(),
                     apiSubject.getObject(),
@@ -437,12 +439,12 @@ public abstract class SubjectSyncDao {
     protected abstract int tryUpdateHelperAssignment(final long subjectId,
                                                      final long assignmentId,
                                                      final long srsStageId,
-                                                     final @Nullable Date availableAt,
-                                                     final @Nullable Date burnedAt,
-                                                     final @Nullable Date passedAt,
-                                                     final @Nullable Date resurrectedAt,
-                                                     final @Nullable Date startedAt,
-                                                     final @Nullable Date unlockedAt);
+                                                     final Date availableAt,
+                                                     final Date burnedAt,
+                                                     final Date passedAt,
+                                                     final Date resurrectedAt,
+                                                     final Date startedAt,
+                                                     final Date unlockedAt);
 
     /**
      * Try to update a subject record from an API assignment instance.
@@ -451,6 +453,7 @@ public abstract class SubjectSyncDao {
      * @return true if there was a record to update
      */
     private boolean tryUpdateAssignment(final ApiAssignment apiAssignment) {
+        //noinspection ConstantConditions
         final int count = tryUpdateHelperAssignment(
                 apiAssignment.getSubjectId(),
                 apiAssignment.getId(),
@@ -498,9 +501,9 @@ public abstract class SubjectSyncDao {
             + " WHERE id = :subjectId")
     protected abstract int tryUpdateHelperStudyMaterial(final long subjectId,
                                                         final long studyMaterialId,
-                                                        final @Nullable String meaningNote,
-                                                        final @Nullable String meaningSynonyms,
-                                                        final @Nullable String readingNote);
+                                                        final String meaningNote,
+                                                        final String meaningSynonyms,
+                                                        final String readingNote);
 
     /**
      * Room-generated method: update a subject with data from a study material.
@@ -518,9 +521,9 @@ public abstract class SubjectSyncDao {
             + " studyMaterialPatched = 1"
             + " WHERE id = :subjectId")
     protected abstract int tryUpdateHelperStudyMaterial(final long subjectId,
-                                                        final @Nullable String meaningNote,
-                                                        final @Nullable String meaningSynonyms,
-                                                        final @Nullable String readingNote);
+                                                        final String meaningNote,
+                                                        final String meaningSynonyms,
+                                                        final String readingNote);
 
     /**
      * Try to update a subject record from an API study material instance.
@@ -530,6 +533,7 @@ public abstract class SubjectSyncDao {
      * @return true if there was a record to update
      */
     private boolean tryUpdateStudyMaterial(final ApiStudyMaterial apiStudyMaterial, final boolean patched) {
+        //noinspection ConstantConditions
         final int count = patched ? tryUpdateHelperStudyMaterial(
                 apiStudyMaterial.getSubjectId(),
                 apiStudyMaterial.getMeaningNote(),
@@ -677,12 +681,12 @@ public abstract class SubjectSyncDao {
             + " WHERE id = :subjectId")
     protected abstract void patchAssignmentHelper(final long subjectId,
                                                   final long srsStageId,
-                                                  final @Nullable Date unlockedAt,
-                                                  final @Nullable Date startedAt,
-                                                  final @Nullable Date availableAt,
-                                                  final @Nullable Date passedAt,
-                                                  final @Nullable Date burnedAt,
-                                                  final @Nullable Date resurrectedAt);
+                                                  final Date unlockedAt,
+                                                  final Date startedAt,
+                                                  final Date availableAt,
+                                                  final Date passedAt,
+                                                  final Date burnedAt,
+                                                  final Date resurrectedAt);
 
     /**
      * Locally patch the assignment data for a record.
@@ -706,6 +710,7 @@ public abstract class SubjectSyncDao {
                                       final @Nullable Date resurrectedAt) {
         LOGGER.info("Patch assignment: id:%d stage:%d unlockedAt:%s startedAt:%s availableAt:%s passedAt:%s burnedAt:%s resurrectedAt:%s",
                 subjectId, srsStageId, unlockedAt, startedAt, availableAt, passedAt, burnedAt, resurrectedAt);
+        //noinspection ConstantConditions
         patchAssignmentHelper(subjectId, unlockedAt == null ? -999 : srsStageId, unlockedAt, startedAt, availableAt, passedAt, burnedAt, resurrectedAt);
         SubjectChangeWatcher.getInstance().reportChange(subjectId);
     }
