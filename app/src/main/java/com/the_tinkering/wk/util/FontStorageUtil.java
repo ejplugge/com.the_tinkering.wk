@@ -104,12 +104,8 @@ public final class FontStorageUtil {
     public static void importFontFile(final InputStream source, final String fileName) throws IOException {
         try {
             assertBaseDirectoryExists();
-            final OutputStream os = new FileOutputStream(getFontFile(fileName));
-            try {
+            try (final OutputStream os = new FileOutputStream(getFontFile(fileName))) {
                 StreamUtil.pump(source, os);
-            }
-            finally {
-                os.close();
             }
         }
         finally {

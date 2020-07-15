@@ -323,12 +323,8 @@ public final class DbLogger {
             }
             connection.getResponseCode();
             connection.getHeaderFields();
-            final InputStream is = connection.getInputStream();
-            try {
+            try (final InputStream is = connection.getInputStream()) {
                 StreamUtil.slurp(is);
-            }
-            finally {
-                is.close();
             }
             return true;
         }

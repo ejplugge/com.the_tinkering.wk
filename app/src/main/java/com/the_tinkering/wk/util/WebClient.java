@@ -154,8 +154,7 @@ public final class WebClient {
 
     private boolean fetchLoginPage() {
         try {
-            final @Nullable Response response = getUrl(LOGIN_URL);
-            try {
+            try (final @Nullable Response response = getUrl(LOGIN_URL)) {
                 if (response == null || !response.isSuccessful()) {
                     lastLoginState = 3;
                     lastLoginMessage = "Login page could not be fetched";
@@ -167,11 +166,6 @@ public final class WebClient {
                     return false;
                 }
                 return true;
-            }
-            finally {
-                if (response != null) {
-                    response.close();
-                }
             }
         } catch (final Exception e) {
             lastLoginState = 3;
@@ -191,8 +185,7 @@ public final class WebClient {
                     .add("user[password]", password)
                     .add("user[remember_me]", "0")
                     .build();
-            final @Nullable Response response = postUrl(LOGIN_URL, formData);
-            try {
+            try (final @Nullable Response response = postUrl(LOGIN_URL, formData)) {
                 if (response == null) {
                     lastLoginState = 3;
                     lastLoginMessage = "Login failed";
@@ -219,11 +212,6 @@ public final class WebClient {
                 }
                 lastLoginState = 3;
                 lastLoginMessage = "Login failed";
-            }
-            finally {
-                if (response != null) {
-                    response.close();
-                }
             }
         } catch (final Exception e) {
             LOGGER.uerr(e);
@@ -261,8 +249,7 @@ public final class WebClient {
      */
     public boolean resurrect(final Subject subject) {
         final String url = isEmpty(subject.getDocumentUrl()) ? DASHBOARD_URL : subject.getDocumentUrl();
-        final @Nullable Response response1 = getUrl(url);
-        try {
+        try (final @Nullable Response response1 = getUrl(url)) {
             if (response1 == null) {
                 return false;
             }
@@ -270,27 +257,16 @@ public final class WebClient {
                 return false;
             }
         }
-        finally {
-            if (response1 != null) {
-                response1.close();
-            }
-        }
 
         final RequestBody formData = new FormBody.Builder()
                 .add("_method", "put")
                 .add("authenticity_token", authenticityToken)
                 .build();
-        final @Nullable Response response2 = postUrl(String.format(Locale.ROOT, RESURRECT_URL, subject.getId()), formData);
-        try {
+        try (final @Nullable Response response2 = postUrl(String.format(Locale.ROOT, RESURRECT_URL, subject.getId()), formData)) {
             if (response2 == null) {
                 return false;
             }
             return response2.isSuccessful();
-        }
-        finally {
-            if (response2 != null) {
-                response2.close();
-            }
         }
     }
 
@@ -302,8 +278,7 @@ public final class WebClient {
      */
     public boolean burn(final Subject subject) {
         final String url = isEmpty(subject.getDocumentUrl()) ? DASHBOARD_URL : subject.getDocumentUrl();
-        final @Nullable Response response1 = getUrl(url);
-        try {
+        try (final @Nullable Response response1 = getUrl(url)) {
             if (response1 == null) {
                 return false;
             }
@@ -311,27 +286,16 @@ public final class WebClient {
                 return false;
             }
         }
-        finally {
-            if (response1 != null) {
-                response1.close();
-            }
-        }
 
         final RequestBody formData = new FormBody.Builder()
                 .add("_method", "put")
                 .add("authenticity_token", authenticityToken)
                 .build();
-        final @Nullable Response response2 = postUrl(String.format(Locale.ROOT, BURN_URL, subject.getId()), formData);
-        try {
+        try (final @Nullable Response response2 = postUrl(String.format(Locale.ROOT, BURN_URL, subject.getId()), formData)) {
             if (response2 == null) {
                 return false;
             }
             return response2.isSuccessful();
-        }
-        finally {
-            if (response2 != null) {
-                response2.close();
-            }
         }
     }
 }

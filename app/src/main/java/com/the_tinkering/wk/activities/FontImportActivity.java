@@ -122,8 +122,7 @@ public final class FontImportActivity extends AbstractActivity {
     private @Nullable String resolveFileName(final Uri uri) {
         try {
             @Nullable String fileName = uri.getPath();
-            final @Nullable Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
+            try (final @Nullable Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     final int displayNameIndex = cursor.getColumnIndex("_display_name");
                     final @Nullable String displayName = displayNameIndex == -1 ? null : cursor.getString(displayNameIndex);
@@ -132,16 +131,7 @@ public final class FontImportActivity extends AbstractActivity {
                     }
                 }
             }
-            finally {
-                try {
-                    if (cursor != null) {
-                        cursor.close();
-                    }
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
+            //
 
             if (fileName != null) {
                 final int p = fileName.lastIndexOf('/');

@@ -65,11 +65,10 @@ public final class ReferenceDataUtil {
             return;
         }
 
-        @Nullable InputStream is = null;
-        try {
-            is = WkApplication.getInstance().getResources().openRawResource(resourceId);
-            final Map<String, Integer> json = Converters.getObjectMapper().readValue(is, new TypeReference<Map<String, Integer>>() {});
-            for (final Map.Entry<String, Integer> entry: json.entrySet()) {
+        try (final InputStream is = WkApplication.getInstance().getResources().openRawResource(resourceId)) {
+            final Map<String, Integer> json = Converters.getObjectMapper().readValue(is, new TypeReference<Map<String, Integer>>() {
+            });
+            for (final Map.Entry<String, Integer> entry : json.entrySet()) {
                 final @Nullable String key = entry.getKey();
                 final @Nullable Integer value = entry.getValue();
                 if (key != null && value != null) {
@@ -79,16 +78,7 @@ public final class ReferenceDataUtil {
         } catch (final Exception e) {
             LOGGER.uerr(e);
         }
-        finally {
-            if (is != null) {
-                try {
-                    is.close();
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
-        }
+        //
     }
 
     /**
@@ -133,11 +123,10 @@ public final class ReferenceDataUtil {
             return;
         }
 
-        @Nullable InputStream is = null;
-        try {
-            is = WkApplication.getInstance().getResources().openRawResource(R.raw.pitch_info);
-            final Map<String, List<PitchInfo>> json = Converters.getObjectMapper().readValue(is, new TypeReference<Map<String, List<PitchInfo>>>() {});
-            for (final Map.Entry<String, List<PitchInfo>> entry: json.entrySet()) {
+        try (final InputStream is = WkApplication.getInstance().getResources().openRawResource(R.raw.pitch_info)) {
+            final Map<String, List<PitchInfo>> json = Converters.getObjectMapper().readValue(is, new TypeReference<Map<String, List<PitchInfo>>>() {
+            });
+            for (final Map.Entry<String, List<PitchInfo>> entry : json.entrySet()) {
                 final @Nullable String key = entry.getKey();
                 final @Nullable List<PitchInfo> value = entry.getValue();
                 if (key != null && value != null) {
@@ -147,16 +136,7 @@ public final class ReferenceDataUtil {
         } catch (final Exception e) {
             LOGGER.uerr(e);
         }
-        finally {
-            if (is != null) {
-                try {
-                    is.close();
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
-        }
+        //
         pitchInfoMapLoaded = true;
     }
 

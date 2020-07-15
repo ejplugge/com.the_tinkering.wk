@@ -39,8 +39,7 @@ public final class StreamUtil {
      */
     public static byte[] slurp(final InputStream is) throws IOException {
         final byte[] buffer = new byte[256];
-        final ByteArrayBuilder builder = new ByteArrayBuilder();
-        try {
+        try (final ByteArrayBuilder builder = new ByteArrayBuilder()) {
             while (true) {
                 final int n = is.read(buffer);
                 if (n < 0) {
@@ -48,9 +47,6 @@ public final class StreamUtil {
                 }
                 builder.write(buffer, 0, n);
             }
-        }
-        finally {
-            builder.close();
         }
     }
 

@@ -165,18 +165,8 @@ public final class PitchInfoUtil {
             connection.setReadTimeout((int) MINUTE);
             connection.setInstanceFollowRedirects(true);
             connection.getHeaderFields();
-            final InputStream is = connection.getInputStream();
-            try {
-                final OutputStream os = new FileOutputStream(tempFile);
-                try {
-                    StreamUtil.pump(is, os);
-                }
-                finally {
-                    os.close();
-                }
-            }
-            finally {
-                is.close();
+            try (final InputStream is = connection.getInputStream(); final OutputStream os = new FileOutputStream(tempFile)) {
+                StreamUtil.pump(is, os);
             }
             if (file.exists()) {
                 //noinspection ResultOfMethodCallIgnored
@@ -212,14 +202,10 @@ public final class PitchInfoUtil {
             connection.setReadTimeout((int) MINUTE);
             connection.setInstanceFollowRedirects(true);
             connection.getHeaderFields();
-            final InputStream is = connection.getInputStream();
-            try {
+            try (final InputStream is = connection.getInputStream()) {
                 final byte[] body = StreamUtil.slurp(is);
                 LOGGER.info("Weblio fetch done");
                 return new String(body, "UTF-8");
-            }
-            finally {
-                is.close();
             }
         } catch (final Exception e) {
             LOGGER.error(e, "Exception downloading weblio page");
@@ -473,12 +459,8 @@ public final class PitchInfoUtil {
      */
     public static void saveMap(final Map<String, List<PitchInfo>> map) throws IOException {
         final File file = getMapFile();
-        final OutputStream os = new FileOutputStream(file);
-        try {
+        try (final OutputStream os = new FileOutputStream(file)) {
             Converters.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(os, map);
-        }
-        finally {
-            os.close();
         }
     }
 

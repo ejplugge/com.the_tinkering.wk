@@ -142,14 +142,10 @@ public abstract class ApiTask {
             connection.setReadTimeout((int) MINUTE);
             connection.getHeaderFields();
             LOGGER.info("Response code: %d %s", connection.getResponseCode(), connection.getResponseMessage());
-            final InputStream is = connection.getInputStream();
-            try {
+            try (final InputStream is = connection.getInputStream()) {
                 final JsonNode value = mapper.readTree(is);
                 LOGGER.info("Response body: %s", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(value));
                 return value;
-            }
-            finally {
-                is.close();
             }
         }
         catch (final Exception e) {
@@ -221,23 +217,15 @@ public abstract class ApiTask {
             connection.setAllowUserInteraction(false);
             connection.setConnectTimeout((int) (10 * SECOND));
             connection.setReadTimeout((int) MINUTE);
-            final OutputStream os = connection.getOutputStream();
-            try {
+            try (final OutputStream os = connection.getOutputStream()) {
                 mapper.writeValue(os, requestBody);
-            }
-            finally {
-                os.close();
             }
             connection.getHeaderFields();
             LOGGER.info("Response code: %d %s", connection.getResponseCode(), connection.getResponseMessage());
-            final InputStream is = connection.getInputStream();
-            try {
+            try (final InputStream is = connection.getInputStream()) {
                 final JsonNode value = mapper.readTree(is);
                 LOGGER.info("Response body: %s", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(value));
                 return value;
-            }
-            finally {
-                is.close();
             }
         }
         catch (final Exception e) {
@@ -421,20 +409,10 @@ public abstract class ApiTask {
             connection.setReadTimeout((int) MINUTE);
             connection.getHeaderFields();
             LOGGER.info("Response code: %d %s", connection.getResponseCode(), connection.getResponseMessage());
-            final InputStream is = connection.getInputStream();
-            try {
-                final OutputStream os = new FileOutputStream(tempFile);
-                try {
-                    StreamUtil.pump(is, os);
-                }
-                finally {
-                    os.close();
-                }
+            try (final InputStream is = connection.getInputStream(); final OutputStream os = new FileOutputStream(tempFile)) {
+                StreamUtil.pump(is, os);
                 //noinspection ResultOfMethodCallIgnored
                 tempFile.renameTo(outputFile);
-            }
-            finally {
-                is.close();
             }
         }
         catch (final Exception e) {
