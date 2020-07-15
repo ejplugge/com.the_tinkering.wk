@@ -16,15 +16,12 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.arch.core.util.Function;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.AudioDownloadStatus;
@@ -34,7 +31,6 @@ import com.the_tinkering.wk.jobs.ScanAudioDownloadStatusJob;
 import com.the_tinkering.wk.livedata.LiveAudioDownloadStatus;
 import com.the_tinkering.wk.livedata.LiveAudioMoveStatus;
 import com.the_tinkering.wk.livedata.LiveTaskCounts;
-import com.the_tinkering.wk.model.TaskCounts;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.AudioUtil;
@@ -42,9 +38,7 @@ import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.WeakLcoRef;
 import com.the_tinkering.wk.views.DownloadAudioBracketView;
 
-import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -87,53 +81,44 @@ public final class DownloadAudioActivity extends AbstractActivity {
 
         JobRunnerService.schedule(ScanAudioDownloadStatusJob.class, "");
 
-        LiveAudioDownloadStatus.getInstance().observe(this, new Observer<List<AudioDownloadStatus>>() {
-            @Override
-            public void onChanged(final @Nullable List<AudioDownloadStatus> t) {
-                try {
-                    if (t != null) {
-                        updateOverviewDisplay(t);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        LiveAudioDownloadStatus.getInstance().observe(this, t -> {
+            try {
+                if (t != null) {
+                    updateOverviewDisplay(t);
                 }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
-        LiveTaskCounts.getInstance().observe(this, new Observer<TaskCounts>() {
-            @Override
-            public void onChanged(final @Nullable TaskCounts t) {
-                try {
-                    LiveAudioDownloadStatus.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+        LiveTaskCounts.getInstance().observe(this, t -> {
+            try {
+                LiveAudioDownloadStatus.getInstance().ping();
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
-        LiveAudioMoveStatus.getInstance().observe(this, new Observer<Object>() {
-            @Override
-            public void onChanged(final Object t) {
-                try {
-                    if (LiveAudioMoveStatus.getInstance().isActive()) {
-                        moveButton.disableInteraction();
-                        abortMoveButton.enableInteraction();
-                        moveProgressBar.setVisibility(true);
-                    }
-                    else {
-                        moveButton.enableInteraction();
-                        abortMoveButton.disableInteraction();
-                        moveProgressBar.setVisibility(false);
-                    }
-                    final int total = LiveAudioMoveStatus.getInstance().getNumTotal();
-                    final int done = LiveAudioMoveStatus.getInstance().getNumDone();
-                    if (total != moveProgressBar.getMax() && total > 0) {
-                        moveProgressBar.setMax(total);
-                    }
-                    moveProgressBar.setProgress(Math.min(done, total));
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        LiveAudioMoveStatus.getInstance().observe(this, t -> {
+            try {
+                if (LiveAudioMoveStatus.getInstance().isActive()) {
+                    moveButton.disableInteraction();
+                    abortMoveButton.enableInteraction();
+                    moveProgressBar.setVisibility(true);
                 }
+                else {
+                    moveButton.enableInteraction();
+                    abortMoveButton.disableInteraction();
+                    moveProgressBar.setVisibility(false);
+                }
+                final int total = LiveAudioMoveStatus.getInstance().getNumTotal();
+                final int done = LiveAudioMoveStatus.getInstance().getNumDone();
+                if (total != moveProgressBar.getMax() && total > 0) {
+                    moveProgressBar.setMax(total);
+                }
+                moveProgressBar.setProgress(Math.min(done, total));
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
     }
@@ -226,20 +211,14 @@ public final class DownloadAudioActivity extends AbstractActivity {
                     .setTitle("Delete all audio?")
                     .setMessage(renderHtml(DELETE_AUDIO_WARNING))
                     .setIcon(R.drawable.ic_baseline_warning_24px)
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            //
-                        }
+                    .setNegativeButton("No", (dialog, which) -> {
+                        //
                     })
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            try {
-                                JobRunnerService.schedule(DeleteAllAudioJob.class, "");
-                            } catch (final Exception e) {
-                                LOGGER.uerr(e);
-                            }
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        try {
+                            JobRunnerService.schedule(DeleteAllAudioJob.class, "");
+                        } catch (final Exception e) {
+                            LOGGER.uerr(e);
                         }
                     }).create().show();
         } catch (final Exception e) {
@@ -296,14 +275,11 @@ public final class DownloadAudioActivity extends AbstractActivity {
                 LiveAudioMoveStatus.getInstance().setNumTotal(numTotal);
                 LiveAudioMoveStatus.getInstance().forceUpdate();
 
-                AudioUtil.iterateMisplacedAudioFiles(new Function<File, Boolean>() {
-                    @Override
-                    public Boolean apply(final File input) {
-                        AudioUtil.moveToPreferredLocation(input);
-                        LiveAudioMoveStatus.getInstance().setNumDone(LiveAudioMoveStatus.getInstance().getNumDone() + 1);
-                        LiveAudioMoveStatus.getInstance().forceUpdate();
-                        return !LiveAudioMoveStatus.getInstance().isActive();
-                    }
+                AudioUtil.iterateMisplacedAudioFiles(input -> {
+                    AudioUtil.moveToPreferredLocation(input);
+                    LiveAudioMoveStatus.getInstance().setNumDone(LiveAudioMoveStatus.getInstance().getNumDone() + 1);
+                    LiveAudioMoveStatus.getInstance().forceUpdate();
+                    return !LiveAudioMoveStatus.getInstance().isActive();
                 });
             } catch (final Exception e) {
                 LOGGER.uerr(e);

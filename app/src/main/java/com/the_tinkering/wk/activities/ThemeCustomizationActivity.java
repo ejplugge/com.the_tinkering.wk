@@ -178,12 +178,9 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
             }
         });
 
-        final View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                final int index = (int) v.getTag(R.id.themeCustomizationIndex);
-                setSelection(index);
-            }
+        final View.OnClickListener listener = v -> {
+            final int index = (int) v.getTag(R.id.themeCustomizationIndex);
+            setSelection(index);
         };
 
         for (int i=0; i<NUM_THEME_CUSTOMIZATION_OPTIONS; i++) {

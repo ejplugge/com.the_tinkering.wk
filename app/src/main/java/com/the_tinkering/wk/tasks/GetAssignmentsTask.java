@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.tasks;
 
-import androidx.core.util.Consumer;
-
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiAssignment;
@@ -78,12 +76,7 @@ public final class GetAssignmentsTask extends ApiTask {
             uri += "?updated_after=" + Converters.formatDate(lastGetAssignmentsSuccess);
         }
 
-        if (!collectionApiCall(uri, ApiAssignment.class, new Consumer<ApiAssignment>() {
-            @Override
-            public void accept(final ApiAssignment t) {
-                db.subjectSyncDao().insertOrUpdateAssignment(t);
-            }
-        })) {
+        if (!collectionApiCall(uri, ApiAssignment.class, t -> db.subjectSyncDao().insertOrUpdateAssignment(t))) {
             return;
         }
 

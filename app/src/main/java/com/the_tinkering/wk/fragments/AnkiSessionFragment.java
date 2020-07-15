@@ -157,64 +157,52 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
 
             updateViews();
 
-            ankiShowAnswerButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        showingAnswer = true;
-                        playAudio();
-                        updateViews();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            ankiShowAnswerButton.setOnClickListener(v -> {
+                try {
+                    showingAnswer = true;
+                    playAudio();
+                    updateViews();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            ankiNextButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        showingAnswer = false;
-                        session.advance();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            ankiNextButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    showingAnswer = false;
+                    session.advance();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            ankiCorrectButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        showingAnswer = false;
-                        session.submitAnkiCorrect();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            ankiCorrectButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    showingAnswer = false;
+                    session.submitAnkiCorrect();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            ankiIncorrectButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        showingAnswer = false;
-                        session.submitAnkiIncorrect();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            ankiIncorrectButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    showingAnswer = false;
+                    session.submitAnkiIncorrect();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

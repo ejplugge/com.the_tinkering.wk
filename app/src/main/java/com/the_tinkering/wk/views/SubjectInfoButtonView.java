@@ -123,87 +123,84 @@ public final class SubjectInfoButtonView extends View {
             absoluteMinTextHeight = sp2px(14);
 
             setLongClickable(true);
-            setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(final View v) {
-                    try {
-                        if (actionMode != null) {
-                            return false;
-                        }
-
-                        if (image != null) {
-                            Toast.makeText(getContext(), "This radical has no text character. Can't copy or search for an image-only radical.",
-                                    Toast.LENGTH_LONG).show();
-                            return false;
-                        }
-
-                        setSelected(true);
-
-                        actionMode = startActionMode(new ActionMode.Callback() {
-                            @Override
-                            public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-                                try {
-                                    menu.add(0, Menu.NONE, 1, "Copy title");
-
-                                    for (int i=1; i<=5; i++) {
-                                        if (GlobalSettings.Other.hasSearchEngine(i)) {
-                                            menu.add(0, Menu.NONE, i+1, GlobalSettings.Other.getSearchEngineName(i));
-                                        }
-                                    }
-                                    return true;
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                    return true;
-                                }
-                            }
-
-                            @Override
-                            public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
-                                try {
-                                    final int order = item.getOrder();
-                                    if (order == 1) {
-                                        final @Nullable ClipboardManager clipboard =
-                                                (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                                        if (clipboard != null) {
-                                            final ClipData clip = ClipData.newPlainText("title", characters);
-                                            clipboard.setPrimaryClip(clip);
-                                            Toast.makeText(getContext(), "Subject title copied", Toast.LENGTH_SHORT).show();
-                                        }
-                                        mode.finish();
-                                        return true;
-                                    }
-                                    if (order >= 2 && order <= 6 && GlobalSettings.Other.hasSearchEngine(order-1)) {
-                                        final String query = URLEncoder.encode(characters, "UTF-8");
-                                        final String urlPattern = GlobalSettings.Other.getSearchEngineUrl(order-1);
-                                        final String url = SEARCH_URL_PATTERN.matcher(urlPattern).replaceAll(query);
-                                        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                        getContext().startActivity(intent);
-                                        mode.finish();
-                                        return true;
-                                    }
-                                    return false;
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                    return false;
-                                }
-                            }
-
-                            @Override
-                            public void onDestroyActionMode(final ActionMode mode) {
-                                actionMode = null;
-                            }
-                        });
-
-                        return true;
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            setOnLongClickListener(v -> {
+                try {
+                    if (actionMode != null) {
                         return false;
                     }
+
+                    if (image != null) {
+                        Toast.makeText(getContext(), "This radical has no text character. Can't copy or search for an image-only radical.",
+                                Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+
+                    setSelected(true);
+
+                    actionMode = startActionMode(new ActionMode.Callback() {
+                        @Override
+                        public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+                            try {
+                                menu.add(0, Menu.NONE, 1, "Copy title");
+
+                                for (int i=1; i<=5; i++) {
+                                    if (GlobalSettings.Other.hasSearchEngine(i)) {
+                                        menu.add(0, Menu.NONE, i+1, GlobalSettings.Other.getSearchEngineName(i));
+                                    }
+                                }
+                                return true;
+                            } catch (final Exception e) {
+                                LOGGER.uerr(e);
+                                return true;
+                            }
+                        }
+
+                        @Override
+                        public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+                            try {
+                                final int order = item.getOrder();
+                                if (order == 1) {
+                                    final @Nullable ClipboardManager clipboard =
+                                            (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                                    if (clipboard != null) {
+                                        final ClipData clip = ClipData.newPlainText("title", characters);
+                                        clipboard.setPrimaryClip(clip);
+                                        Toast.makeText(getContext(), "Subject title copied", Toast.LENGTH_SHORT).show();
+                                    }
+                                    mode.finish();
+                                    return true;
+                                }
+                                if (order >= 2 && order <= 6 && GlobalSettings.Other.hasSearchEngine(order-1)) {
+                                    final String query = URLEncoder.encode(characters, "UTF-8");
+                                    final String urlPattern = GlobalSettings.Other.getSearchEngineUrl(order-1);
+                                    final String url = SEARCH_URL_PATTERN.matcher(urlPattern).replaceAll(query);
+                                    final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    getContext().startActivity(intent);
+                                    mode.finish();
+                                    return true;
+                                }
+                                return false;
+                            } catch (final Exception e) {
+                                LOGGER.uerr(e);
+                                return false;
+                            }
+                        }
+
+                        @Override
+                        public void onDestroyActionMode(final ActionMode mode) {
+                            actionMode = null;
+                        }
+                    });
+
+                    return true;
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
+                    return false;
                 }
             });
         } catch (final Exception e) {

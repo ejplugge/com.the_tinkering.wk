@@ -294,12 +294,7 @@ public final class ObjectSupport {
      * @return the new comparator
      */
     public static <T> Comparator<T> reversedComparator(final Comparator<? super T> comparator) {
-        return new Comparator<T>() {
-            @Override
-            public int compare(final T o1, final T o2) {
-                return comparator.compare(o2, o1);
-            }
-        };
+        return (o1, o2) -> comparator.compare(o2, o1);
     }
 
     /**

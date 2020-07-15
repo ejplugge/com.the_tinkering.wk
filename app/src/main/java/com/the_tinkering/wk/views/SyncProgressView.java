@@ -21,13 +21,11 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveTaskCounts;
-import com.the_tinkering.wk.model.TaskCounts;
 import com.the_tinkering.wk.util.Logger;
 
 import java.util.Locale;
@@ -64,36 +62,27 @@ public final class SyncProgressView extends AppCompatTextView {
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
         try {
-            LiveApiProgress.getInstance().observe(lifecycleOwner, new Observer<Object>() {
-                @Override
-                public void onChanged(final Object t) {
-                    try {
-                        update();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveApiProgress.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    update();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveTaskCounts.getInstance().observe(lifecycleOwner, new Observer<TaskCounts>() {
-                @Override
-                public void onChanged(final TaskCounts t) {
-                    try {
-                        update();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveTaskCounts.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    update();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        update();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    update();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

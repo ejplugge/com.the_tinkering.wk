@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.tasks;
 
-import androidx.core.util.Consumer;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
@@ -68,20 +66,17 @@ public final class GetSrsSystemsTask extends ApiTask {
 
         srsSystemDao.deleteAll();
         final String uri = "/v2/spaced_repetition_systems";
-        if (!collectionApiCall(uri, ApiSrsSystem.class, new Consumer<ApiSrsSystem>() {
-            @Override
-            public void accept(final ApiSrsSystem t) {
-                final SrsSystemDefinition definition = new SrsSystemDefinition();
-                definition.id = t.id;
-                definition.name = t.name;
-                definition.description = t.description;
-                definition.unlockingStagePosition = t.unlockingStagePosition;
-                definition.startingStagePosition = t.startingStagePosition;
-                definition.passingStagePosition = t.passingStagePosition;
-                definition.burningStagePosition = t.burningStagePosition;
-                definition.stages = serializeToJsonString(t.stages);
-                srsSystemDao.insert(definition);
-            }
+        if (!collectionApiCall(uri, ApiSrsSystem.class, t -> {
+            final SrsSystemDefinition definition = new SrsSystemDefinition();
+            definition.id = t.id;
+            definition.name = t.name;
+            definition.description = t.description;
+            definition.unlockingStagePosition = t.unlockingStagePosition;
+            definition.startingStagePosition = t.startingStagePosition;
+            definition.passingStagePosition = t.passingStagePosition;
+            definition.burningStagePosition = t.burningStagePosition;
+            definition.stages = serializeToJsonString(t.stages);
+            srsSystemDao.insert(definition);
         })) {
             return;
         }

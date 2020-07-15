@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.tasks;
 
-import androidx.core.util.Consumer;
-
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiSubject;
@@ -80,22 +78,19 @@ public final class GetSubjectsTask extends ApiTask {
 
         final Set<Long> existingSubjectIds = db.subjectViewsDao().getAllSubjectIds();
 
-        if (!collectionApiCall(uri, ApiSubject.class, new Consumer<ApiSubject>() {
-            @Override
-            public void accept(final ApiSubject t) {
-                if (!t.getReadings().isEmpty()) {
-                    int i = 0;
-                    while (i < t.getReadings().size()) {
-                        final Reading reading = t.getReadings().get(i);
-                        if (reading.isEmptyOrNone()) {
-                            t.getReadings().remove(i);
-                            continue;
-                        }
-                        i++;
+        if (!collectionApiCall(uri, ApiSubject.class, t -> {
+            if (!t.getReadings().isEmpty()) {
+                int i = 0;
+                while (i < t.getReadings().size()) {
+                    final Reading reading = t.getReadings().get(i);
+                    if (reading.isEmptyOrNone()) {
+                        t.getReadings().remove(i);
+                        continue;
                     }
+                    i++;
                 }
-                db.subjectSyncDao().insertOrUpdate(t, existingSubjectIds);
             }
+            db.subjectSyncDao().insertOrUpdate(t, existingSubjectIds);
         })) {
             return;
         }

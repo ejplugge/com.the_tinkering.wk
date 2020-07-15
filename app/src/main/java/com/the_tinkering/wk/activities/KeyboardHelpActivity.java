@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
@@ -113,11 +112,8 @@ public final class KeyboardHelpActivity extends AbstractActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Keyboard settings updated")
                     .setMessage("Your settings have been updated.")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            //
-                        }
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        //
                     }).create().show();
         } catch (final Exception e) {
             LOGGER.uerr(e);
@@ -139,11 +135,8 @@ public final class KeyboardHelpActivity extends AbstractActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Keyboard settings updated")
                     .setMessage("Your settings have been updated.")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            //
-                        }
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        //
                     }).create().show();
         } catch (final Exception e) {
             LOGGER.uerr(e);
@@ -162,11 +155,8 @@ public final class KeyboardHelpActivity extends AbstractActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Keyboard settings updated")
                     .setMessage("Your settings have been updated.")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            //
-                        }
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        //
                     }).create().show();
         } catch (final Exception e) {
             LOGGER.uerr(e);
@@ -184,11 +174,8 @@ public final class KeyboardHelpActivity extends AbstractActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Keyboard settings updated")
                     .setMessage("Your settings have been updated.")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            //
-                        }
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        //
                     }).create().show();
         } catch (final Exception e) {
             LOGGER.uerr(e);

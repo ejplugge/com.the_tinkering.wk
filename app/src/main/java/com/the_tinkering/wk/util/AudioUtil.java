@@ -365,44 +365,41 @@ public final class AudioUtil {
         final int level = subject.getLevel();
         final Iterable<String> locationValues = getLocationValues();
 
-        final Comparator<PronunciationAudio> comparator = new Comparator<PronunciationAudio>() {
-            @Override
-            public int compare(final PronunciationAudio o1, final PronunciationAudio o2) {
-                if (o1 == o2) {
-                    return 0;
-                }
-                if (hasAudioFileFor(level, o1, locationValues) && !hasAudioFileFor(level, o2, locationValues)) {
-                    return -1;
-                }
-                if (hasAudioFileFor(level, o2, locationValues) && !hasAudioFileFor(level, o1, locationValues)) {
-                    return 1;
-                }
-                if (subject.isPrimaryReading(o1.getMetadata().getPronunciation())
-                        && !subject.isPrimaryReading(o2.getMetadata().getPronunciation())) {
-                    return -1;
-                }
-                if (subject.isPrimaryReading(o2.getMetadata().getPronunciation())
-                        && !subject.isPrimaryReading(o1.getMetadata().getPronunciation())) {
-                    return 1;
-                }
-                if (malePreferred) {
-                    if (o1.getMetadata().isMale() && !o2.getMetadata().isMale()) {
-                        return -1;
-                    }
-                    if (o2.getMetadata().isMale() && !o1.getMetadata().isMale()) {
-                        return 1;
-                    }
-                }
-                if (femalePreferred) {
-                    if (o1.getMetadata().isFemale() && !o2.getMetadata().isFemale()) {
-                        return -1;
-                    }
-                    if (o2.getMetadata().isFemale() && !o1.getMetadata().isFemale()) {
-                        return 1;
-                    }
-                }
+        final Comparator<PronunciationAudio> comparator = (o1, o2) -> {
+            if (o1 == o2) {
                 return 0;
             }
+            if (hasAudioFileFor(level, o1, locationValues) && !hasAudioFileFor(level, o2, locationValues)) {
+                return -1;
+            }
+            if (hasAudioFileFor(level, o2, locationValues) && !hasAudioFileFor(level, o1, locationValues)) {
+                return 1;
+            }
+            if (subject.isPrimaryReading(o1.getMetadata().getPronunciation())
+                    && !subject.isPrimaryReading(o2.getMetadata().getPronunciation())) {
+                return -1;
+            }
+            if (subject.isPrimaryReading(o2.getMetadata().getPronunciation())
+                    && !subject.isPrimaryReading(o1.getMetadata().getPronunciation())) {
+                return 1;
+            }
+            if (malePreferred) {
+                if (o1.getMetadata().isMale() && !o2.getMetadata().isMale()) {
+                    return -1;
+                }
+                if (o2.getMetadata().isMale() && !o1.getMetadata().isMale()) {
+                    return 1;
+                }
+            }
+            if (femalePreferred) {
+                if (o1.getMetadata().isFemale() && !o2.getMetadata().isFemale()) {
+                    return -1;
+                }
+                if (o2.getMetadata().isFemale() && !o1.getMetadata().isFemale()) {
+                    return 1;
+                }
+            }
+            return 0;
         };
 
         Collections.sort(shuffled, comparator);
@@ -436,42 +433,39 @@ public final class AudioUtil {
         final int level = subject.getLevel();
         final Iterable<String> locationValues = getLocationValues();
 
-        final Comparator<PronunciationAudio> comparator = new Comparator<PronunciationAudio>() {
-            @Override
-            public int compare(final PronunciationAudio o1, final PronunciationAudio o2) {
-                if (o1 == o2) {
-                    return 0;
-                }
-                if (hasAudioFileFor(level, o1, locationValues) && !hasAudioFileFor(level, o2, locationValues)) {
-                    return -1;
-                }
-                if (hasAudioFileFor(level, o2, locationValues) && !hasAudioFileFor(level, o1, locationValues)) {
-                    return 1;
-                }
-                if (isEqual(o1.getMetadata().getPronunciation(), reading) && !isEqual(o2.getMetadata().getPronunciation(), reading)) {
-                    return -1;
-                }
-                if (isEqual(o2.getMetadata().getPronunciation(), reading) && !isEqual(o1.getMetadata().getPronunciation(), reading)) {
-                    return 1;
-                }
-                if (malePreferred) {
-                    if (o1.getMetadata().isMale() && !o2.getMetadata().isMale()) {
-                        return -1;
-                    }
-                    if (o2.getMetadata().isMale() && !o1.getMetadata().isMale()) {
-                        return 1;
-                    }
-                }
-                if (femalePreferred) {
-                    if (o1.getMetadata().isFemale() && !o2.getMetadata().isFemale()) {
-                        return -1;
-                    }
-                    if (o2.getMetadata().isFemale() && !o1.getMetadata().isFemale()) {
-                        return 1;
-                    }
-                }
+        final Comparator<PronunciationAudio> comparator = (o1, o2) -> {
+            if (o1 == o2) {
                 return 0;
             }
+            if (hasAudioFileFor(level, o1, locationValues) && !hasAudioFileFor(level, o2, locationValues)) {
+                return -1;
+            }
+            if (hasAudioFileFor(level, o2, locationValues) && !hasAudioFileFor(level, o1, locationValues)) {
+                return 1;
+            }
+            if (isEqual(o1.getMetadata().getPronunciation(), reading) && !isEqual(o2.getMetadata().getPronunciation(), reading)) {
+                return -1;
+            }
+            if (isEqual(o2.getMetadata().getPronunciation(), reading) && !isEqual(o1.getMetadata().getPronunciation(), reading)) {
+                return 1;
+            }
+            if (malePreferred) {
+                if (o1.getMetadata().isMale() && !o2.getMetadata().isMale()) {
+                    return -1;
+                }
+                if (o2.getMetadata().isMale() && !o1.getMetadata().isMale()) {
+                    return 1;
+                }
+            }
+            if (femalePreferred) {
+                if (o1.getMetadata().isFemale() && !o2.getMetadata().isFemale()) {
+                    return -1;
+                }
+                if (o2.getMetadata().isFemale() && !o1.getMetadata().isFemale()) {
+                    return 1;
+                }
+            }
+            return 0;
         };
 
         Collections.sort(shuffled, comparator);
@@ -643,29 +637,24 @@ public final class AudioUtil {
                 player.setDataSource(WkApplication.getInstance(), Uri.fromFile(audioFile));
                 player.prepare();
                 savedMediaPlayer = player;
-                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                player.setOnCompletionListener(mp -> new Timer().schedule(new TimerTask() {
                     @Override
-                    public void onCompletion(final MediaPlayer mp) {
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                try {
-                                    mp.reset();
-                                }
-                                catch (final Exception e) {
-                                    //
-                                }
-                                try {
-                                    mp.release();
-                                }
-                                catch (final Exception e) {
-                                    //
-                                }
-                                mp.release();
-                            }
-                        }, PLAYBACK_DELAY);
+                    public void run() {
+                        try {
+                            mp.reset();
+                        }
+                        catch (final Exception e) {
+                            //
+                        }
+                        try {
+                            mp.release();
+                        }
+                        catch (final Exception e) {
+                            //
+                        }
+                        mp.release();
                     }
-                });
+                }, PLAYBACK_DELAY));
                 player.start();
             } catch (final Exception e) {
                 LOGGER.uerr(e);

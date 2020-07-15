@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.views;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -396,16 +395,13 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
                 english.setText("-- Tap to reveal translation --");
                 english.setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
                 english.setClickableAndNotFocusable(true);
-                english.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        try {
-                            english.setText("- " + sentence.getEnglish());
-                            english.setClickableAndNotFocusable(false);
-                            english.setBackgroundColor(Constants.TRANSPARENT);
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                        }
+                english.setOnClickListener(v -> {
+                    try {
+                        english.setText("- " + sentence.getEnglish());
+                        english.setClickableAndNotFocusable(false);
+                        english.setBackgroundColor(Constants.TRANSPARENT);
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
                     }
                 });
             }
@@ -470,23 +466,17 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
                     final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                             .setTitle("Add synonym")
                             .setView(synonym)
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    //
-                                }
+                            .setNegativeButton("Cancel", (dialog, which) -> {
+                                //
                             })
-                            .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    try {
-                                        final @Nullable CharSequence text = synonym.getText();
-                                        if (text != null) {
-                                            addSynonym(text.toString().trim());
-                                        }
-                                    } catch (final Exception e) {
-                                        LOGGER.uerr(e);
+                            .setPositiveButton("Save", (dialog, which) -> {
+                                try {
+                                    final @Nullable CharSequence text = synonym.getText();
+                                    if (text != null) {
+                                        addSynonym(text.toString().trim());
                                     }
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
                                 }
                             }).create();
 
@@ -740,12 +730,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
 
             if (subject.isResurrectable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {
                 resurrectButton.setVisibility(true);
-                resurrectButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        goToResurrectActivity(subject.getId());
-                    }
-                });
+                resurrectButton.setOnClickListener(v -> goToResurrectActivity(subject.getId()));
             }
             else {
                 resurrectButton.setVisibility(false);
@@ -753,12 +738,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
 
             if (subject.isBurnable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {
                 burnButton.setVisibility(true);
-                burnButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        goToBurnActivity(subject.getId());
-                    }
-                });
+                burnButton.setOnClickListener(v -> goToBurnActivity(subject.getId()));
             }
             else {
                 burnButton.setVisibility(false);

@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.livedata;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
@@ -75,16 +74,13 @@ public final class LiveWorkInfos extends LiveData<List<WorkInfo>> {
         try {
             if (backing == null) {
                 backing = WorkManager.getInstance(WkApplication.getInstance()).getWorkInfosByTagLiveData(BackgroundSyncWorker.JOB_TAG);
-                backing.observeForever(new Observer<List<WorkInfo>>() {
-                    @Override
-                    public void onChanged(final List<WorkInfo> t) {
-                        try {
-                            if (t != null) {
-                                postValue(t);
-                            }
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
+                backing.observeForever(t -> {
+                    try {
+                        if (t != null) {
+                            postValue(t);
                         }
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
                     }
                 });
             }

@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.livedata;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
@@ -76,16 +75,13 @@ public final class LiveSearchPresets extends LiveData<List<SearchPreset>> {
             if (presets == null) {
                 final AppDatabase db = WkApplication.getDatabase();
                 presets = db.searchPresetDao().getLivePresets();
-                presets.observeForever(new Observer<List<SearchPreset>>() {
-                    @Override
-                    public void onChanged(final List<SearchPreset> t) {
-                        try {
-                            if (t != null) {
-                                postValue(t);
-                            }
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
+                presets.observeForever(t -> {
+                    try {
+                        if (t != null) {
+                            postValue(t);
                         }
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
                     }
                 });
             }

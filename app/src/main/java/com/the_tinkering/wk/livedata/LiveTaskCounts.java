@@ -19,7 +19,6 @@ package com.the_tinkering.wk.livedata;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
@@ -74,16 +73,13 @@ public final class LiveTaskCounts extends LiveData<TaskCounts> {
             if (counts == null) {
                 final AppDatabase db = WkApplication.getDatabase();
                 counts = db.taskDefinitionDao().getLiveCounts();
-                counts.observeForever(new Observer<TaskCounts>() {
-                    @Override
-                    public void onChanged(final TaskCounts t) {
-                        try {
-                            if (t != null) {
-                                postValue(t);
-                            }
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
+                counts.observeForever(t -> {
+                    try {
+                        if (t != null) {
+                            postValue(t);
                         }
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
                     }
                 });
                 new AsyncTask<Void, Void, Void>() {

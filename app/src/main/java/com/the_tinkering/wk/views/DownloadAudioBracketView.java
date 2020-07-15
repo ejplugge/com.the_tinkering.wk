@@ -18,7 +18,6 @@ package com.the_tinkering.wk.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.the_tinkering.wk.R;
@@ -127,15 +126,12 @@ public final class DownloadAudioBracketView extends LinearLayout {
                 downloadButton.enableInteraction();
             }
 
-            downloadButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        JobRunnerService.schedule(StartAudioDownloadJob.class,
-                                String.format(Locale.ROOT, "%d|%d", minLevel, maxLevel));
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            downloadButton.setOnClickListener(v -> {
+                try {
+                    JobRunnerService.schedule(StartAudioDownloadJob.class,
+                            String.format(Locale.ROOT, "%d|%d", minLevel, maxLevel));
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 

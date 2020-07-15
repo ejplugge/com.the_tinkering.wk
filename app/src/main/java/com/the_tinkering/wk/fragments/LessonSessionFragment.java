@@ -101,40 +101,34 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
             nextButton.setText(session.isOnLastLessonItem() ? "Start quiz" : "Next");
             progress.setTextFormat("%d/%d", items.indexOf(item)+1, items.size());
 
-            previousButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        if (!session.isOnFirstLessonItem()) {
-                            disableInteraction();
-                            session.moveToPreviousLessonItem();
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            previousButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    if (!session.isOnFirstLessonItem()) {
+                        disableInteraction();
+                        session.moveToPreviousLessonItem();
+                    }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            nextButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        if (session.isOnLastLessonItem()) {
-                            session.startQuiz();
-                        }
-                        else {
-                            session.moveToNextLessonItem();
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            nextButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    if (session.isOnLastLessonItem()) {
+                        session.startQuiz();
+                    }
+                    else {
+                        session.moveToNextLessonItem();
+                    }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

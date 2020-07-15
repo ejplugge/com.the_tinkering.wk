@@ -22,7 +22,6 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
 import androidx.preference.DialogPreference;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import com.the_tinkering.wk.R;
@@ -95,12 +94,7 @@ public final class TaggedUrlPreference extends DialogPreference {
         try {
             setPersistent(false);
             setDialogLayoutResource(R.layout.pref_tagged_url);
-            setSummaryProvider(new Preference.SummaryProvider<TaggedUrlPreference>() {
-                @Override
-                public CharSequence provideSummary(final TaggedUrlPreference preference) {
-                    return getTag();
-                }
-            });
+            setSummaryProvider((SummaryProvider<TaggedUrlPreference>) preference -> getTag());
 
             final TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.TaggedUrlPreference, 0, 0);
             try {

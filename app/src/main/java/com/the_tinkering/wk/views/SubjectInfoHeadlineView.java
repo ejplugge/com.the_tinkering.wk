@@ -19,7 +19,6 @@ package com.the_tinkering.wk.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -265,14 +264,11 @@ public final class SubjectInfoHeadlineView extends ConstraintLayout {
                 playButton.setTextSize(FONT_SIZE_SMALL);
                 playButton.setCompoundDrawablesWithIntrinsicBounds(
                         ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_volume_up_24px), null, null, null);
-                playButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        try {
-                            AudioUtil.playAudio(subject, r.getReading());
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                        }
+                playButton.setOnClickListener(v -> {
+                    try {
+                        AudioUtil.playAudio(subject, r.getReading());
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
                     }
                 });
                 final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, 0);
@@ -285,22 +281,19 @@ public final class SubjectInfoHeadlineView extends ConstraintLayout {
         revealButton.setText(getSubjectInfoDump().getRevealButtonLabel());
 
         // Show all button
-        revealButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    final @Nullable SubjectInfoDump dump = FloatingUiState.showDumpStage;
-                    if (dump != null) {
-                        FloatingUiState.showDumpStage = dump.getNextStage();
-                    }
-                    final @Nullable SubjectInfoView parent = getNearestEnclosingViewOfType(SubjectInfoHeadlineView.this, SubjectInfoView.class);
-                    if (parent != null) {
-                        parent.layoutSubject(true);
-                    }
-                    layoutSubject();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        revealButton.setOnClickListener(v -> {
+            try {
+                final @Nullable SubjectInfoDump dump = FloatingUiState.showDumpStage;
+                if (dump != null) {
+                    FloatingUiState.showDumpStage = dump.getNextStage();
                 }
+                final @Nullable SubjectInfoView parent = getNearestEnclosingViewOfType(this, SubjectInfoView.class);
+                if (parent != null) {
+                    parent.layoutSubject(true);
+                }
+                layoutSubject();
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
         revealButton.setVisibility(getSubjectInfoDump().getShowRevealButton());

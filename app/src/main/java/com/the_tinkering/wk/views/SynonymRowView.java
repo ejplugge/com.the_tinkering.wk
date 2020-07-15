@@ -105,30 +105,24 @@ public final class SynonymRowView extends LinearLayout {
                 }
             }
 
-            arrowDown.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    if (index < 9) {
-                        final @Nullable SynonymRowView nextRow = findRowByIndex(index + 1);
-                        if (nextRow != null) {
-                            final String tmp = getText();
-                            setText(nextRow.getText());
-                            nextRow.setText(tmp);
-                        }
+            arrowDown.setOnClickListener(v -> {
+                if (index < 9) {
+                    final @Nullable SynonymRowView nextRow = findRowByIndex(index + 1);
+                    if (nextRow != null) {
+                        final String tmp = getText();
+                        setText(nextRow.getText());
+                        nextRow.setText(tmp);
                     }
                 }
             });
 
-            arrowUp.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    if (index > 0) {
-                        final @Nullable SynonymRowView prevRow = findRowByIndex(index - 1);
-                        if (prevRow != null) {
-                            final String tmp = getText();
-                            setText(prevRow.getText());
-                            prevRow.setText(tmp);
-                        }
+            arrowUp.setOnClickListener(v -> {
+                if (index > 0) {
+                    final @Nullable SynonymRowView prevRow = findRowByIndex(index - 1);
+                    if (prevRow != null) {
+                        final String tmp = getText();
+                        setText(prevRow.getText());
+                        prevRow.setText(tmp);
                     }
                 }
             });

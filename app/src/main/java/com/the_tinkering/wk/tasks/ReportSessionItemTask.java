@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.tasks;
 
-import androidx.core.util.Consumer;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.WkApplication;
@@ -29,6 +27,7 @@ import com.the_tinkering.wk.api.model.ApiStartAssignment;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.db.model.TaskDefinition;
+import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
@@ -39,7 +38,6 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
 import com.the_tinkering.wk.util.Logger;
 
@@ -118,12 +116,7 @@ public final class ReportSessionItemTask extends ApiTask {
         }
 
         final String uri = "/v2/assignments?subject_ids=" + subjectId;
-        if (!collectionApiCall(uri, ApiAssignment.class, new Consumer<ApiAssignment>() {
-            @Override
-            public void accept(final ApiAssignment t) {
-                assignmentId = t.getId();
-            }
-        })) {
+        if (!collectionApiCall(uri, ApiAssignment.class, t -> assignmentId = t.getId())) {
             keepTask = true;
         }
     }

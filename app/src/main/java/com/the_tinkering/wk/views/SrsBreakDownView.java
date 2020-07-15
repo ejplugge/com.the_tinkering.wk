@@ -21,13 +21,12 @@ import android.util.AttributeSet;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
+import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
-import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.model.SrsBreakDown;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.Logger;
@@ -107,27 +106,21 @@ public final class SrsBreakDownView extends ConstraintLayout {
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
         try {
-            LiveSrsBreakDown.getInstance().observe(lifecycleOwner, new Observer<SrsBreakDown>() {
-                @Override
-                public void onChanged(final SrsBreakDown t) {
-                    try {
-                        if (t != null) {
-                            update(t);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            LiveSrsBreakDown.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    if (t != null) {
+                        update(t);
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        LiveSrsBreakDown.getInstance().ping();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    LiveSrsBreakDown.getInstance().ping();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

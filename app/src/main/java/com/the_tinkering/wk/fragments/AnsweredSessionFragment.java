@@ -138,21 +138,18 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
             subjectInfo.setContainerType(SubjectInfoView.ContainerType.ANSWERED_QUESTION);
             subjectInfo.setSubject(this, subject);
 
-            final View.OnClickListener listener = new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        if (session.isNextButtonFrozen()) {
-                            return;
-                        }
-                        disableInteraction();
-                        session.advance();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            final View.OnClickListener listener = v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    if (session.isNextButtonFrozen()) {
+                        return;
+                    }
+                    disableInteraction();
+                    session.advance();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             };
             nextButton.setOnClickListener(listener);
@@ -168,12 +165,7 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
                             + " and the small kana %c. Tap this message for more information about the difference between small and regular kana.",
                             match.getRegularKana(), match.getSmallKana()));
                     digraphMatchText.setClickableAndNotFocusable(true);
-                    digraphMatchText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            goToActivity(DigraphHelpActivity.class);
-                        }
-                    });
+                    digraphMatchText.setOnClickListener(v -> goToActivity(DigraphHelpActivity.class));
                     digraphMatchText.setVisibility(true);
                 }
                 else {

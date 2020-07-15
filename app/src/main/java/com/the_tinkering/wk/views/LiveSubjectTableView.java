@@ -18,10 +18,8 @@ package com.the_tinkering.wk.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TableLayout;
 
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 
@@ -92,14 +90,11 @@ public abstract class LiveSubjectTableView extends TableLayout {
      */
     public final void setLifecycleOwner(final Actment actment) {
         try {
-            registerObserver(actment, new Observer<List<Subject>>() {
-                @Override
-                public void onChanged(final List<Subject> t) {
-                    try {
-                        update(actment, t);
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            registerObserver(actment, t -> {
+                try {
+                    update(actment, t);
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {
@@ -137,18 +132,8 @@ public abstract class LiveSubjectTableView extends TableLayout {
                 }
                 final @Nullable LiveSubjectTableRowView row = (LiveSubjectTableRowView) getChildAt(i);
                 if (row != null) {
-                    row.setSubject(subject, new Function<Subject, String>() {
-                        @Override
-                        public String apply(final Subject input) {
-                            return getExtraText(input);
-                        }
-                    });
-                    row.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            actment.goToSubjectInfo(subject.getId(), ids, FragmentTransitionAnimation.RTL);
-                        }
-                    });
+                    row.setSubject(subject, this::getExtraText);
+                    row.setOnClickListener(v -> actment.goToSubjectInfo(subject.getId(), ids, FragmentTransitionAnimation.RTL));
                 }
                 i++;
             }

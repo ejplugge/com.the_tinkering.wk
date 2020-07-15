@@ -19,7 +19,6 @@ package com.the_tinkering.wk.activities;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +31,6 @@ import android.view.animation.DecelerateInterpolator;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -40,7 +38,6 @@ import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.CloseEnoughAction;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
-import com.the_tinkering.wk.enums.SessionState;
 import com.the_tinkering.wk.fragments.AbstractFragment;
 import com.the_tinkering.wk.fragments.AbstractSessionFragment;
 import com.the_tinkering.wk.livedata.LiveSessionProgress;
@@ -84,34 +81,28 @@ public final class SessionActivity extends AbstractActivity {
 
     @Override
     protected void onCreateLocal(final @Nullable Bundle savedInstanceState) {
-        LiveSessionProgress.getInstance().observe(this, new Observer<Object>() {
-            @Override
-            public void onChanged(final Object t) {
-                try {
-                    new ViewProxy(SessionActivity.this, R.id.progress).setText(session.getProgressText());
-                    if (session.getCurrentQuestion() == null && session.isActive()) {
-                        LOGGER.info("Current question has been yanked from under our feet - move to next one");
-                        disableInteraction();
-                        if (session.isAnswered()) {
-                            session.advanceQuietly();
-                        }
-                        FloatingUiState.setCurrentAnswer("");
+        LiveSessionProgress.getInstance().observe(this, t -> {
+            try {
+                new ViewProxy(this, R.id.progress).setText(session.getProgressText());
+                if (session.getCurrentQuestion() == null && session.isActive()) {
+                    LOGGER.info("Current question has been yanked from under our feet - move to next one");
+                    disableInteraction();
+                    if (session.isAnswered()) {
+                        session.advanceQuietly();
                     }
-                    updateFragment();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+                    FloatingUiState.setCurrentAnswer("");
                 }
+                updateFragment();
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
-        LiveSessionState.getInstance().observe(this, new Observer<SessionState>() {
-            @Override
-            public void onChanged(final SessionState t) {
-                try {
-                    updateFragment();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+        LiveSessionState.getInstance().observe(this, t -> {
+            try {
+                updateFragment();
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
@@ -322,14 +313,11 @@ public final class SessionActivity extends AbstractActivity {
         FloatingUiState.showSrsStageChangedToast = false;
 
         final String htmlMessage = String.format("<img src=\"*\"/>  %s", FloatingUiState.toastNewSrsStage.getName());
-        final CharSequence message = TextUtil.renderHtml(htmlMessage, new Html.ImageGetter() {
-            @Override
-            public Drawable getDrawable(final String source) {
-                final Drawable img = getResources().getDrawable(FloatingUiState.toastNewSrsStage.compareTo(FloatingUiState.toastOldSrsStage) > 0
-                        ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
-                img.setBounds(0, 0, dp2px(20), dp2px(20));
-                return img;
-            }
+        final CharSequence message = TextUtil.renderHtml(htmlMessage, source -> {
+            final Drawable img = getResources().getDrawable(FloatingUiState.toastNewSrsStage.compareTo(FloatingUiState.toastOldSrsStage) > 0
+                    ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
+            img.setBounds(0, 0, dp2px(20), dp2px(20));
+            return img;
         });
         view.setText(message);
 

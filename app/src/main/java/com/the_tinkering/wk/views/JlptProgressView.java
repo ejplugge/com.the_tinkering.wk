@@ -21,7 +21,6 @@ import android.util.AttributeSet;
 import android.widget.TableLayout;
 
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -120,25 +119,19 @@ public final class JlptProgressView extends TableLayout {
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
         try {
-            LiveJlptProgress.getInstance().observe(lifecycleOwner, new Observer<JlptProgress>() {
-                @Override
-                public void onChanged(final JlptProgress t) {
-                    try {
-                        update(t);
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveJlptProgress.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    update(t);
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        LiveJlptProgress.getInstance().ping();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    LiveJlptProgress.getInstance().ping();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

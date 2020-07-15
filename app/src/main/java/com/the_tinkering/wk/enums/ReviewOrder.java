@@ -33,12 +33,7 @@ public enum ReviewOrder {
     SHUFFLE() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return 0;
-                }
-            };
+            return (o1, o2) -> 0;
         }
     },
 
@@ -48,12 +43,7 @@ public enum ReviewOrder {
     LEVEL() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return Integer.compare(o1.getLevel(), o2.getLevel());
-                }
-            };
+            return (o1, o2) -> Integer.compare(o1.getLevel(), o2.getLevel());
         }
     },
 
@@ -63,12 +53,7 @@ public enum ReviewOrder {
     TYPE() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
-                }
-            };
+            return (o1, o2) -> Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
         }
     },
 
@@ -78,12 +63,7 @@ public enum ReviewOrder {
     SRS() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return o1.getSrsStage().compareTo(o2.getSrsStage());
-                }
-            };
+            return (o1, o2) -> o1.getSrsStage().compareTo(o2.getSrsStage());
         }
     },
 
@@ -93,12 +73,7 @@ public enum ReviewOrder {
     LEVEL_THEN_TYPE() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
-                }
-            };
+            return (o1, o2) -> compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
         }
     },
 
@@ -108,15 +83,12 @@ public enum ReviewOrder {
     LEVEL_THEN_SRS() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = Integer.compare(o1.getLevel(), o2.getLevel());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return o1.getSrsStage().compareTo(o2.getSrsStage());
+            return (o1, o2) -> {
+                final int n = Integer.compare(o1.getLevel(), o2.getLevel());
+                if (n != 0) {
+                    return n;
                 }
+                return o1.getSrsStage().compareTo(o2.getSrsStage());
             };
         }
     },
@@ -127,12 +99,7 @@ public enum ReviewOrder {
     TYPE_THEN_LEVEL() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
-                }
-            };
+            return (o1, o2) -> compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
         }
     },
 
@@ -142,15 +109,12 @@ public enum ReviewOrder {
     TYPE_THEN_SRS() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return o1.getSrsStage().compareTo(o2.getSrsStage());
+            return (o1, o2) -> {
+                final int n = Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
+                if (n != 0) {
+                    return n;
                 }
+                return o1.getSrsStage().compareTo(o2.getSrsStage());
             };
         }
     },
@@ -161,15 +125,12 @@ public enum ReviewOrder {
     SRS_THEN_TYPE() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
+            return (o1, o2) -> {
+                final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
+                if (n != 0) {
+                    return n;
                 }
+                return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
             };
         }
     },
@@ -180,15 +141,12 @@ public enum ReviewOrder {
     SRS_THEN_LEVEL() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return Integer.compare(o1.getLevel(), o2.getLevel());
+            return (o1, o2) -> {
+                final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
+                if (n != 0) {
+                    return n;
                 }
+                return Integer.compare(o1.getLevel(), o2.getLevel());
             };
         }
     },
@@ -199,15 +157,12 @@ public enum ReviewOrder {
     LEVEL_THEN_TYPE_THEN_SRS() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return o1.getSrsStage().compareTo(o2.getSrsStage());
+            return (o1, o2) -> {
+                final int n = compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
+                if (n != 0) {
+                    return n;
                 }
+                return o1.getSrsStage().compareTo(o2.getSrsStage());
             };
         }
     },
@@ -218,19 +173,16 @@ public enum ReviewOrder {
     LEVEL_THEN_SRS_THEN_TYPE() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n1 = Integer.compare(o1.getLevel(), o2.getLevel());
-                    if (n1 != 0) {
-                        return n1;
-                    }
-                    final int n2 = o1.getSrsStage().compareTo(o2.getSrsStage());
-                    if (n2 != 0) {
-                        return n2;
-                    }
-                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
+            return (o1, o2) -> {
+                final int n1 = Integer.compare(o1.getLevel(), o2.getLevel());
+                if (n1 != 0) {
+                    return n1;
                 }
+                final int n2 = o1.getSrsStage().compareTo(o2.getSrsStage());
+                if (n2 != 0) {
+                    return n2;
+                }
+                return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
             };
         }
     },
@@ -241,15 +193,12 @@ public enum ReviewOrder {
     TYPE_THEN_LEVEL_THEN_SRS() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return o1.getSrsStage().compareTo(o2.getSrsStage());
+            return (o1, o2) -> {
+                final int n = compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
+                if (n != 0) {
+                    return n;
                 }
+                return o1.getSrsStage().compareTo(o2.getSrsStage());
             };
         }
     },
@@ -260,19 +209,16 @@ public enum ReviewOrder {
     TYPE_THEN_SRS_THEN_LEVEL() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n1 = Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
-                    if (n1 != 0) {
-                        return n1;
-                    }
-                    final int n2 = o1.getSrsStage().compareTo(o2.getSrsStage());
-                    if (n2 != 0) {
-                        return n2;
-                    }
-                    return Integer.compare(o1.getLevel(), o2.getLevel());
+            return (o1, o2) -> {
+                final int n1 = Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
+                if (n1 != 0) {
+                    return n1;
                 }
+                final int n2 = o1.getSrsStage().compareTo(o2.getSrsStage());
+                if (n2 != 0) {
+                    return n2;
+                }
+                return Integer.compare(o1.getLevel(), o2.getLevel());
             };
         }
     },
@@ -283,15 +229,12 @@ public enum ReviewOrder {
     SRS_THEN_TYPE_THEN_LEVEL() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
+            return (o1, o2) -> {
+                final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
+                if (n != 0) {
+                    return n;
                 }
+                return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
             };
         }
     },
@@ -302,15 +245,12 @@ public enum ReviewOrder {
     SRS_THEN_LEVEL_THEN_TYPE() {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
+            return (o1, o2) -> {
+                final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
+                if (n != 0) {
+                    return n;
                 }
+                return compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
             };
         }
     };

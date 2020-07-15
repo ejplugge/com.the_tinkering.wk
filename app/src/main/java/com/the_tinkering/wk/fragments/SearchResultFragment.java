@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.fragments;
 
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -124,12 +122,9 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
                     + "Other actions such as refining your search, saving a preset or "
                     + "starting a self-study session can be accessed from the menu.");
             tutorialText.setParentVisibility(true);
-            tutorialDismiss.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    GlobalSettings.Tutorials.setSearchResultDismissed(true);
-                    tutorialText.setParentVisibility(false);
-                }
+            tutorialDismiss.setOnClickListener(v -> {
+                GlobalSettings.Tutorials.setSearchResultDismissed(true);
+                tutorialText.setParentVisibility(false);
             });
         }
     }
@@ -252,58 +247,49 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
                     final AlertDialog theDialog = new AlertDialog.Builder(requireContext())
                             .setTitle("Preset name")
                             .setView(promptView)
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    try {
-                                        hideSoftInput();
-                                    } catch (final Exception e) {
-                                        LOGGER.uerr(e);
-                                    }
+                            .setNegativeButton("Cancel", (dialog, which) -> {
+                                try {
+                                    hideSoftInput();
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
                                 }
                             })
-                            .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    try {
-                                        final String name = editText.getText();
-                                        if (!isEmpty(name)) {
-                                            savePreset(editText.getText());
-                                        }
-                                        hideSoftInput();
-                                    } catch (final Exception e) {
-                                        LOGGER.uerr(e);
-                                    }
-                                }
-                            }).create();
-                    editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                        @Override
-                        public boolean onEditorAction(final TextView v, final int actionId, final KeyEvent event) {
-                            try {
-                                boolean ok = false;
-                                if (event == null && actionId != 0) {
-                                    ok = true;
-                                }
-                                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                                    ok = true;
-                                }
-                                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                                    return true;
-                                }
-                                if (ok) {
+                            .setPositiveButton("Save", (dialog, which) -> {
+                                try {
                                     final String name = editText.getText();
                                     if (!isEmpty(name)) {
                                         savePreset(editText.getText());
                                     }
                                     hideSoftInput();
-                                    theDialog.dismiss();
-                                    return true;
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
                                 }
-                                return false;
-                            } catch (final Exception e) {
-                                LOGGER.uerr(e);
-                                return false;
+                            }).create();
+                    editText.setOnEditorActionListener((v, actionId, event) -> {
+                        try {
+                            boolean ok = false;
+                            if (event == null && actionId != 0) {
+                                ok = true;
                             }
+                            if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                                ok = true;
+                            }
+                            if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                                return true;
+                            }
+                            if (ok) {
+                                final String name = editText.getText();
+                                if (!isEmpty(name)) {
+                                    savePreset(editText.getText());
+                                }
+                                hideSoftInput();
+                                theDialog.dismiss();
+                                return true;
+                            }
+                            return false;
+                        } catch (final Exception e) {
+                            LOGGER.uerr(e);
+                            return false;
                         }
                     });
                     theDialog.show();

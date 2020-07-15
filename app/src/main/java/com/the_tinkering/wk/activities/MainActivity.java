@@ -20,8 +20,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.lifecycle.Observer;
-
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.api.ApiState;
@@ -93,15 +91,12 @@ public final class MainActivity extends AbstractActivity {
         apiKeyRejectedView.setDelegate(this, R.id.apiKeyRejectedView);
         keyboardHelpView.setDelegate(this, R.id.keyboardHelpView);
 
-        LiveApiState.getInstance().observe(this, new Observer<ApiState>() {
-            @Override
-            public void onChanged(final ApiState t) {
-                try {
-                    apiErrorView.setVisibility(t == ApiState.ERROR);
-                    apiKeyRejectedView.setVisibility(t == ApiState.API_KEY_REJECTED);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+        LiveApiState.getInstance().observe(this, t -> {
+            try {
+                apiErrorView.setVisibility(t == ApiState.ERROR);
+                apiKeyRejectedView.setVisibility(t == ApiState.API_KEY_REJECTED);
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 

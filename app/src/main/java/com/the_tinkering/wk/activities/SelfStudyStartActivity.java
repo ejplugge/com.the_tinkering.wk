@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +24,6 @@ import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -110,23 +108,20 @@ public final class SelfStudyStartActivity extends AbstractActivity {
         searchButton1.setDelegate(this, R.id.searchButton1);
         searchButton2.setDelegate(this, R.id.searchButton2);
 
-        final View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-
-                    final @Nullable AdvancedSearchParameters searchParameters = searchForm.extractParameters();
-                    if (searchParameters != null) {
-                        new StartSessionTask(SelfStudyStartActivity.this,
-                                2, Converters.getObjectMapper().writeValueAsString(searchParameters), true).execute();
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        final View.OnClickListener listener = v -> {
+            try {
+                if (!interactionEnabled) {
+                    return;
                 }
+                disableInteraction();
+
+                final @Nullable AdvancedSearchParameters searchParameters = searchForm.extractParameters();
+                if (searchParameters != null) {
+                    new StartSessionTask(this,
+                            2, Converters.getObjectMapper().writeValueAsString(searchParameters), true).execute();
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         };
 
@@ -158,81 +153,66 @@ public final class SelfStudyStartActivity extends AbstractActivity {
             }
         }
 
-        LiveSearchPresets.getInstance().observe(this, new Observer<List<SearchPreset>>() {
-            @Override
-            public void onChanged(final @Nullable List<SearchPreset> t) {
-                try {
-                    if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
-                        presetHeader.setVisibility(false);
-                        presetDivider.setVisibility(false);
-                        presetSpinner.setParentVisibility(false);
-                    }
-                    else {
-                        updatePresetAdapter();
-                        presetHeader.setVisibility(true);
-                        presetDivider.setVisibility(true);
-                        presetSpinner.setParentVisibility(true);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        LiveSearchPresets.getInstance().observe(this, t -> {
+            try {
+                if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
+                    presetHeader.setVisibility(false);
+                    presetDivider.setVisibility(false);
+                    presetSpinner.setParentVisibility(false);
                 }
+                else {
+                    updatePresetAdapter();
+                    presetHeader.setVisibility(true);
+                    presetDivider.setVisibility(true);
+                    presetSpinner.setParentVisibility(true);
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
-        presetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-
-                    final @Nullable Object selection = presetSpinner.getSelection();
-                    if (selection instanceof String) {
-                        final @Nullable SearchPreset preset = LiveSearchPresets.getInstance().getByName((String) selection);
-                        if (preset != null) {
-                            new StartSessionTask(SelfStudyStartActivity.this, preset.type, preset.data, false).execute();
-                        }
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        presetButton.setOnClickListener(v -> {
+            try {
+                if (!interactionEnabled) {
+                    return;
                 }
+                disableInteraction();
+
+                final @Nullable Object selection = presetSpinner.getSelection();
+                if (selection instanceof String) {
+                    final @Nullable SearchPreset preset = LiveSearchPresets.getInstance().getByName((String) selection);
+                    if (preset != null) {
+                        new StartSessionTask(this, preset.type, preset.data, false).execute();
+                    }
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
-        presetDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    final @Nullable Object selection = presetSpinner.getSelection();
-                    if (selection instanceof String) {
-                        final String name = (String) selection;
-                        new AlertDialog.Builder(v.getContext())
-                                .setTitle("Delete preset?")
-                                .setMessage(String.format(Locale.ROOT, "Are you sure you want to delete the preset named '%s'?", name))
-                                .setIcon(R.drawable.ic_baseline_warning_24px)
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        //
-                                    }
-                                })
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        try {
-                                            new DeletePresetTask(name).execute();
-                                            Toast.makeText(v.getContext(), "Preset deleted", Toast.LENGTH_SHORT).show();
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
-                                    }
-                                }).create().show();
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        presetDelete.setOnClickListener(v -> {
+            try {
+                final @Nullable Object selection = presetSpinner.getSelection();
+                if (selection instanceof String) {
+                    final String name = (String) selection;
+                    new AlertDialog.Builder(v.getContext())
+                            .setTitle("Delete preset?")
+                            .setMessage(String.format(Locale.ROOT, "Are you sure you want to delete the preset named '%s'?", name))
+                            .setIcon(R.drawable.ic_baseline_warning_24px)
+                            .setNegativeButton("No", (dialog, which) -> {
+                                //
+                            })
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                try {
+                                    new DeletePresetTask(name).execute();
+                                    Toast.makeText(v.getContext(), "Preset deleted", Toast.LENGTH_SHORT).show();
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
+                                }
+                            }).create().show();
                 }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
     }
@@ -253,12 +233,9 @@ public final class SelfStudyStartActivity extends AbstractActivity {
                     + "Results from a self-study quiz are not reported to WaniKani. They don't affect your progress"
                     + " and are only for your own self-study purposes.");
             tutorialText.setParentVisibility(true);
-            tutorialDismiss.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    GlobalSettings.Tutorials.setStartSelfStudyDismissed(true);
-                    tutorialText.setParentVisibility(false);
-                }
+            tutorialDismiss.setOnClickListener(v -> {
+                GlobalSettings.Tutorials.setStartSelfStudyDismissed(true);
+                tutorialText.setParentVisibility(false);
             });
         }
     }

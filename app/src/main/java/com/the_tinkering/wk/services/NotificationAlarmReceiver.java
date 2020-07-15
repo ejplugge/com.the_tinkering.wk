@@ -234,12 +234,7 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
 
                 if (SessionWidgetProvider.hasWidgets()) {
                     final @Nullable Date upcoming = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, new Date());
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            SessionWidgetProvider.checkAndUpdateWidgets(ctx, upcoming);
-                        }
-                    });
+                    new Handler(Looper.getMainLooper()).post(() -> SessionWidgetProvider.checkAndUpdateWidgets(ctx, upcoming));
                 }
 
                 LiveTimeLine.getInstance().update();

@@ -55,22 +55,19 @@ public final class SearchFormItemViewHolder extends ResultItemViewHolder {
         fragmentRef = new WeakLcoRef<>(fragment);
         form.setDelegate(view, R.id.form);
 
-        final View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    final @Nullable AbstractFragment theFragment = fragmentRef.getOrElse(null);
-                    if (theFragment == null) {
-                        return;
-                    }
-                    final @Nullable Activity activity = theFragment.getActivity();
-                    if (activity instanceof BrowseActivity) {
-                        ((BrowseActivity) activity).loadSearchResultFragment(fragmentRef.get().getPresetName(), 2,
-                                Converters.getObjectMapper().writeValueAsString(form.extractParameters()));
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        final View.OnClickListener listener = v -> {
+            try {
+                final @Nullable AbstractFragment theFragment = fragmentRef.getOrElse(null);
+                if (theFragment == null) {
+                    return;
                 }
+                final @Nullable Activity activity = theFragment.getActivity();
+                if (activity instanceof BrowseActivity) {
+                    ((BrowseActivity) activity).loadSearchResultFragment(fragmentRef.get().getPresetName(), 2,
+                            Converters.getObjectMapper().writeValueAsString(form.extractParameters()));
+                }
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         };
 

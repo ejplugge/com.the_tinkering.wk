@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.tasks;
 
-import androidx.core.util.Consumer;
-
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiStudyMaterial;
@@ -68,12 +66,7 @@ public final class GetStudyMaterialsTask extends ApiTask {
             uri += "?updated_after=" + Converters.formatDate(lastGetStudyMaterialsSuccess);
         }
 
-        if (!collectionApiCall(uri, ApiStudyMaterial.class, new Consumer<ApiStudyMaterial>() {
-            @Override
-            public void accept(final ApiStudyMaterial t) {
-                db.subjectSyncDao().insertOrUpdateStudyMaterial(t, false);
-            }
-        })) {
+        if (!collectionApiCall(uri, ApiStudyMaterial.class, t -> db.subjectSyncDao().insertOrUpdateStudyMaterial(t, false))) {
             return;
         }
 

@@ -78,14 +78,11 @@ public final class LiveCriticalConditionSubjectTableView extends LiveSubjectTabl
         try {
             LiveCriticalCondition.getInstance().observe(lifecycleOwner, observer);
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        LiveCriticalCondition.getInstance().ping();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    LiveCriticalCondition.getInstance().ping();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

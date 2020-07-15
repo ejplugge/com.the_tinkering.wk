@@ -81,14 +81,11 @@ public final class LiveBurnedItemsSubjectTableView extends LiveSubjectTableView 
         try {
             LiveBurnedItems.getInstance().observe(lifecycleOwner, observer);
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        LiveBurnedItems.getInstance().ping();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    LiveBurnedItems.getInstance().ping();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

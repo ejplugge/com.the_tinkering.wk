@@ -34,7 +34,6 @@ import com.the_tinkering.wk.model.SrsSystemRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -228,12 +227,7 @@ public final class SearchUtil {
             subject.setRanking(getSearchRanking(subject, javaTerms));
         }
 
-        Collections.sort(subjects, new Comparator<Subject>() {
-            @Override
-            public int compare(final Subject o1, final Subject o2) {
-                return Integer.compare(o2.getRanking(), o1.getRanking());
-            }
-        });
+        Collections.sort(subjects, (o1, o2) -> Integer.compare(o2.getRanking(), o1.getRanking()));
 
         return subjects;
     }
@@ -265,12 +259,7 @@ public final class SearchUtil {
             subject.setRanking(getSearchRanking(subject, javaTerms));
         }
 
-        Collections.sort(subjects, new Comparator<Subject>() {
-            @Override
-            public int compare(final Subject o1, final Subject o2) {
-                return Integer.compare(o2.getRanking(), o1.getRanking());
-            }
-        });
+        Collections.sort(subjects, (o1, o2) -> Integer.compare(o2.getRanking(), o1.getRanking()));
 
         return subjects;
     }

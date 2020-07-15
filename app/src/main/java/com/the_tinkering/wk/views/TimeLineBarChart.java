@@ -33,16 +33,15 @@ import android.widget.Scroller;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
+import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.livedata.LiveVacationMode;
-import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.model.SrsSystem;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.util.Logger;
@@ -51,7 +50,6 @@ import com.the_tinkering.wk.util.ThemeUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -157,25 +155,19 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
         try {
-            LiveTimeLine.getInstance().observe(lifecycleOwner, new Observer<TimeLine>() {
-                @Override
-                public void onChanged(final TimeLine t) {
-                    try {
-                        update(t);
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    update(t);
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        LiveTimeLine.getInstance().ping();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    LiveTimeLine.getInstance().ping();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {
@@ -314,12 +306,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
 
         final List<RectF> labels = new ArrayList<>();
         final List<BarEntry> sortedEntries = new ArrayList<>(entries);
-        Collections.sort(sortedEntries, new Comparator<BarEntry>() {
-            @Override
-            public int compare(final BarEntry o1, final BarEntry o2) {
-                return compareIntegers(o2.barCount, o1.barCount, o1.index, o2.index);
-            }
-        });
+        Collections.sort(sortedEntries, (o1, o2) -> compareIntegers(o2.barCount, o1.barCount, o1.index, o2.index));
 
         // The count above each bar
         for (final BarEntry entry: sortedEntries) {

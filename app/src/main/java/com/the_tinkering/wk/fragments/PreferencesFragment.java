@@ -18,13 +18,11 @@ package com.the_tinkering.wk.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -87,158 +85,122 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
 
             final @Nullable Preference enableAdvanced = findPreference("enable_advanced");
             if (enableAdvanced != null) {
-                enableAdvanced.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(final Preference preference, final Object newValue) {
-                        try {
-                            final boolean enabled = isTrue(newValue);
-                            if (enabled && !GlobalSettings.getAdvancedEnabled()) {
-                                new AlertDialog.Builder(view.getContext())
-                                        .setTitle("Enable advanced settings?")
-                                        .setMessage(renderHtml(ENABLE_ADVANCED_WARNING))
-                                        .setIcon(R.drawable.ic_baseline_warning_24px)
-                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(final DialogInterface dialog, final int which) {
-                                                try {
-                                                    GlobalSettings.setAdvancedEnabled(false);
-                                                    setVisibleIf("advanced_lesson_settings", false);
-                                                    setVisibleIf("advanced_review_settings", false);
-                                                    setVisibleIf("advanced_self_study_settings", false);
-                                                    setVisibleIf("advanced_other_settings", false);
-                                                    ((TwoStatePreference) preference).setChecked(false);
-                                                } catch (final Exception e) {
-                                                    LOGGER.uerr(e);
-                                                }
-                                            }
-                                        })
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(final DialogInterface dialog, final int which) {
-                                                try {
-                                                    GlobalSettings.setAdvancedEnabled(true);
-                                                    setVisibleIf("advanced_lesson_settings", true);
-                                                    setVisibleIf("advanced_review_settings", true);
-                                                    setVisibleIf("advanced_self_study_settings", true);
-                                                    setVisibleIf("advanced_other_settings", true);
-                                                    ((TwoStatePreference) preference).setChecked(true);
-                                                } catch (final Exception e) {
-                                                    LOGGER.uerr(e);
-                                                }
-                                            }
-                                        }).create().show();
-                                return false;
-                            }
-                            else {
-                                setVisibleIf("advanced_lesson_settings", enabled);
-                                setVisibleIf("advanced_review_settings", enabled);
-                                setVisibleIf("advanced_self_study_settings", enabled);
-                                setVisibleIf("advanced_other_settings", enabled);
-                            }
-                            return true;
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
+                enableAdvanced.setOnPreferenceChangeListener((preference, newValue) -> {
+                    try {
+                        final boolean enabled = isTrue(newValue);
+                        if (enabled && !GlobalSettings.getAdvancedEnabled()) {
+                            new AlertDialog.Builder(view.getContext())
+                                    .setTitle("Enable advanced settings?")
+                                    .setMessage(renderHtml(ENABLE_ADVANCED_WARNING))
+                                    .setIcon(R.drawable.ic_baseline_warning_24px)
+                                    .setNegativeButton("No", (dialog, which) -> {
+                                        try {
+                                            GlobalSettings.setAdvancedEnabled(false);
+                                            setVisibleIf("advanced_lesson_settings", false);
+                                            setVisibleIf("advanced_review_settings", false);
+                                            setVisibleIf("advanced_self_study_settings", false);
+                                            setVisibleIf("advanced_other_settings", false);
+                                            ((TwoStatePreference) preference).setChecked(false);
+                                        } catch (final Exception e) {
+                                            LOGGER.uerr(e);
+                                        }
+                                    })
+                                    .setPositiveButton("Yes", (dialog, which) -> {
+                                        try {
+                                            GlobalSettings.setAdvancedEnabled(true);
+                                            setVisibleIf("advanced_lesson_settings", true);
+                                            setVisibleIf("advanced_review_settings", true);
+                                            setVisibleIf("advanced_self_study_settings", true);
+                                            setVisibleIf("advanced_other_settings", true);
+                                            ((TwoStatePreference) preference).setChecked(true);
+                                        } catch (final Exception e) {
+                                            LOGGER.uerr(e);
+                                        }
+                                    }).create().show();
                             return false;
                         }
+                        else {
+                            setVisibleIf("advanced_lesson_settings", enabled);
+                            setVisibleIf("advanced_review_settings", enabled);
+                            setVisibleIf("advanced_self_study_settings", enabled);
+                            setVisibleIf("advanced_other_settings", enabled);
+                        }
+                        return true;
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
+                        return false;
                     }
                 });
             }
 
-            setOnPreferenceClick("reset_database", new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(final Preference preference) {
-                    try {
-                        new AlertDialog.Builder(preference.getContext())
-                                .setTitle("Reset database?")
-                                .setMessage(renderHtml(RESET_DATABASE_WARNING))
-                                .setIcon(R.drawable.ic_baseline_warning_24px)
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        //
-                                    }
-                                })
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        try {
-                                            JobRunnerService.schedule(ResetDatabaseJob.class, "");
-                                            goToMainActivity();
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
-                                    }
-                                }).create().show();
-                        return true;
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                        return false;
-                    }
+            setOnPreferenceClick("reset_database", preference -> {
+                try {
+                    new AlertDialog.Builder(preference.getContext())
+                            .setTitle("Reset database?")
+                            .setMessage(renderHtml(RESET_DATABASE_WARNING))
+                            .setIcon(R.drawable.ic_baseline_warning_24px)
+                            .setNegativeButton("No", (dialog, which) -> {
+                                //
+                            })
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                try {
+                                    JobRunnerService.schedule(ResetDatabaseJob.class, "");
+                                    goToMainActivity();
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
+                                }
+                            }).create().show();
+                    return true;
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
+                    return false;
                 }
             });
 
-            setOnPreferenceClick("reset_tutorials", new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(final Preference preference) {
-                    try {
-                        new AlertDialog.Builder(preference.getContext())
-                                .setTitle("Reset confirmations and tutorials?")
-                                .setMessage(renderHtml(RESET_TUTORIALS_WARNING))
-                                .setIcon(R.drawable.ic_baseline_warning_24px)
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        //
-                                    }
-                                })
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        try {
-                                            GlobalSettings.resetConfirmationsAndTutorials();
-                                            Toast.makeText(preference.getContext(), "Confirmations and tutorials reset", Toast.LENGTH_LONG).show();
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
-                                    }
-                                }).create().show();
-                        return true;
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                        return false;
-                    }
+            setOnPreferenceClick("reset_tutorials", preference -> {
+                try {
+                    new AlertDialog.Builder(preference.getContext())
+                            .setTitle("Reset confirmations and tutorials?")
+                            .setMessage(renderHtml(RESET_TUTORIALS_WARNING))
+                            .setIcon(R.drawable.ic_baseline_warning_24px)
+                            .setNegativeButton("No", (dialog, which) -> {
+                                //
+                            })
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                try {
+                                    GlobalSettings.resetConfirmationsAndTutorials();
+                                    Toast.makeText(preference.getContext(), "Confirmations and tutorials reset", Toast.LENGTH_LONG).show();
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
+                                }
+                            }).create().show();
+                    return true;
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
+                    return false;
                 }
             });
 
-            setOnPreferenceClick("upload_debug_log", new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(final Preference preference) {
-                    try {
-                        new AlertDialog.Builder(preference.getContext())
-                                .setTitle("Upload debug log?")
-                                .setMessage(renderHtml(UPLOAD_DEBUG_LOG_WARNING))
-                                .setIcon(R.drawable.ic_baseline_warning_24px)
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        //
-                                    }
-                                })
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        try {
-                                            new Task(preference.getContext()).execute();
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
-                                    }
-                                }).create().show();
-                        return true;
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                        return false;
-                    }
+            setOnPreferenceClick("upload_debug_log", preference -> {
+                try {
+                    new AlertDialog.Builder(preference.getContext())
+                            .setTitle("Upload debug log?")
+                            .setMessage(renderHtml(UPLOAD_DEBUG_LOG_WARNING))
+                            .setIcon(R.drawable.ic_baseline_warning_24px)
+                            .setNegativeButton("No", (dialog, which) -> {
+                                //
+                            })
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                try {
+                                    new Task(preference.getContext()).execute();
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
+                                }
+                            }).create().show();
+                    return true;
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
+                    return false;
                 }
             });
 
@@ -353,16 +315,13 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
 
     private void setOnClickGoToActivity(final CharSequence key, final Class<? extends AbstractActivity> clas) {
         try {
-            setOnPreferenceClick(key, new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(final Preference preference) {
-                    try {
-                        goToActivity(clas);
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
-                    return true;
+            setOnPreferenceClick(key, preference -> {
+                try {
+                    goToActivity(clas);
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
+                return true;
             });
         } catch (final Exception e) {
             LOGGER.uerr(e);
@@ -373,15 +332,12 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
         try {
             final @Nullable EditTextPreference pref = findPreference(key);
             if (pref != null) {
-                pref.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
-                    @Override
-                    public void onBindEditText(final EditText editText) {
-                        try {
-                            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                            editText.setSelection(editText.getText().length());
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                        }
+                pref.setOnBindEditTextListener(editText -> {
+                    try {
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setSelection(editText.getText().length());
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
                     }
                 });
             }
@@ -394,15 +350,12 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
         try {
             final @Nullable EditTextPreference pref = findPreference(key);
             if (pref != null) {
-                pref.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
-                    @Override
-                    public void onBindEditText(final EditText editText) {
-                        try {
-                            editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                            editText.setSelection(editText.getText().length());
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                        }
+                pref.setOnBindEditTextListener(editText -> {
+                    try {
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.setSelection(editText.getText().length());
+                    } catch (final Exception e) {
+                        LOGGER.uerr(e);
                     }
                 });
             }

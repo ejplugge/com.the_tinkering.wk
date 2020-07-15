@@ -41,7 +41,6 @@ import com.the_tinkering.wk.util.WeakLcoRef;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -178,79 +177,64 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
             specialButton3.setVisibility(GlobalSettings.AdvancedOther.getSpecialButton3Behavior().canShow());
             specialButton3.setText(GlobalSettings.AdvancedOther.getSpecialButton3Behavior().getLabel());
 
-            specialButton1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        GlobalSettings.AdvancedOther.getSpecialButton1Behavior().perform();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            specialButton1.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    GlobalSettings.AdvancedOther.getSpecialButton1Behavior().perform();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            specialButton2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        GlobalSettings.AdvancedOther.getSpecialButton2Behavior().perform();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            specialButton2.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    GlobalSettings.AdvancedOther.getSpecialButton2Behavior().perform();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            specialButton3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        GlobalSettings.AdvancedOther.getSpecialButton3Behavior().perform();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            specialButton3.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    GlobalSettings.AdvancedOther.getSpecialButton3Behavior().perform();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            finishButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        finishSession();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            finishButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    finishSession();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            showButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        showItems();
-                        enableInteraction();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            showButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    showItems();
+                    enableInteraction();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {
@@ -368,50 +352,44 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
 
         final boolean srsRelevant = session.getType().isSrsRelevant();
 
-        Collections.sort(incorrect, new Comparator<SessionItem>() {
-            @Override
-            public int compare(final SessionItem o1, final SessionItem o2) {
-                final @Nullable Subject s1 = o1.getSubject();
-                final @Nullable Subject s2 = o2.getSubject();
-                if (s1 == null) {
-                    return s2 == null ? 0 : -1;
-                }
-                if (s2 == null) {
-                    return 1;
-                }
-                if (s1.getType().getOrder() != s2.getType().getOrder()) {
-                    return Integer.compare(s1.getType().getOrder(), s2.getType().getOrder());
-                }
-                if (srsRelevant) {
-                    final int n = o1.getNewSrsStage().compareTo(o2.getNewSrsStage());
-                    if (n != 0) {
-                        return n;
-                    }
-                }
-                else {
-                    if (s1.getSrsStage() != s2.getSrsStage()) {
-                        return s1.getSrsStage().compareTo(s2.getSrsStage());
-                    }
-                }
-                return compareIntegersAndLongs(s1.getLevel(), s2.getLevel(), s1.getLessonPosition(), s2.getLessonPosition(),
-                        s1.getId(), s2.getId());
+        Collections.sort(incorrect, (o1, o2) -> {
+            final @Nullable Subject s1 = o1.getSubject();
+            final @Nullable Subject s2 = o2.getSubject();
+            if (s1 == null) {
+                return s2 == null ? 0 : -1;
             }
+            if (s2 == null) {
+                return 1;
+            }
+            if (s1.getType().getOrder() != s2.getType().getOrder()) {
+                return Integer.compare(s1.getType().getOrder(), s2.getType().getOrder());
+            }
+            if (srsRelevant) {
+                final int n = o1.getNewSrsStage().compareTo(o2.getNewSrsStage());
+                if (n != 0) {
+                    return n;
+                }
+            }
+            else {
+                if (s1.getSrsStage() != s2.getSrsStage()) {
+                    return s1.getSrsStage().compareTo(s2.getSrsStage());
+                }
+            }
+            return compareIntegersAndLongs(s1.getLevel(), s2.getLevel(), s1.getLessonPosition(), s2.getLessonPosition(),
+                    s1.getId(), s2.getId());
         });
 
-        Collections.sort(correct, new Comparator<SessionItem>() {
-            @Override
-            public int compare(final SessionItem o1, final SessionItem o2) {
-                final @Nullable Subject s1 = o1.getSubject();
-                final @Nullable Subject s2 = o2.getSubject();
-                if (s1 == null) {
-                    return s2 == null ? 0 : -1;
-                }
-                if (s2 == null) {
-                    return 1;
-                }
-                return compareIntegersAndLongs(s1.getLevel(), s2.getLevel(), s1.getLessonPosition(), s2.getLessonPosition(),
-                        s1.getId(), s2.getId());
+        Collections.sort(correct, (o1, o2) -> {
+            final @Nullable Subject s1 = o1.getSubject();
+            final @Nullable Subject s2 = o2.getSubject();
+            if (s1 == null) {
+                return s2 == null ? 0 : -1;
             }
+            if (s2 == null) {
+                return 1;
+            }
+            return compareIntegersAndLongs(s1.getLevel(), s2.getLevel(), s1.getLessonPosition(), s2.getLessonPosition(),
+                    s1.getId(), s2.getId());
         });
 
         final List<Subject> incorrectSubjects = new ArrayList<>();
@@ -421,12 +399,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                 incorrectSubjects.add(subject);
             }
         }
-        Collections.sort(incorrectSubjects, new Comparator<Subject>() {
-            @Override
-            public int compare(final Subject o1, final Subject o2) {
-                return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
-            }
-        });
+        Collections.sort(incorrectSubjects, (o1, o2) -> Integer.compare(o1.getType().getOrder(), o2.getType().getOrder()));
 
         final List<Subject> correctSubjects = new ArrayList<>();
         for (final SessionItem item: correct) {
@@ -435,12 +408,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                 correctSubjects.add(subject);
             }
         }
-        Collections.sort(correctSubjects, new Comparator<Subject>() {
-            @Override
-            public int compare(final Subject o1, final Subject o2) {
-                return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
-            }
-        });
+        Collections.sort(correctSubjects, (o1, o2) -> Integer.compare(o1.getType().getOrder(), o2.getType().getOrder()));
 
         incorrectTable.setVisibility(View.VISIBLE);
         incorrectTable.setSubjects(this, incorrectSubjects);

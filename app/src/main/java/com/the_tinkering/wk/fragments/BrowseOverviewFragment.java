@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -34,7 +33,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
@@ -108,12 +106,9 @@ public final class BrowseOverviewFragment extends AbstractFragment {
                     + " advanced filter criteria. From the search result screen you can then save search presets, start a self-study quiz,"
                     + " and more. Once you have defined search presets, they will be shown here as well.");
             tutorialText.setParentVisibility(true);
-            tutorialDismiss.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    GlobalSettings.Tutorials.setBrowseOverviewDismissed(true);
-                    tutorialText.setParentVisibility(false);
-                }
+            tutorialDismiss.setOnClickListener(v -> {
+                GlobalSettings.Tutorials.setBrowseOverviewDismissed(true);
+                tutorialText.setParentVisibility(false);
             });
         }
     }
@@ -150,58 +145,49 @@ public final class BrowseOverviewFragment extends AbstractFragment {
             presetButton.setDelegate(view, R.id.presetButton);
             presetDelete.setDelegate(view, R.id.presetDelete);
 
-            queryField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(final TextView v, final int actionId, final @Nullable KeyEvent event) {
-                    try {
-                        if (event == null && actionId != 0) {
-                            submitQuery(queryField.getText());
-                            return true;
-                        }
-                        if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                            submitQuery(queryField.getText());
-                            return true;
-                        }
-                        //noinspection RedundantIfStatement
-                        if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                            return true;
-                        }
-                        return false;
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                        return false;
+            queryField.setOnEditorActionListener((v, actionId, event) -> {
+                try {
+                    if (event == null && actionId != 0) {
+                        submitQuery(queryField.getText());
+                        return true;
                     }
+                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                        submitQuery(queryField.getText());
+                        return true;
+                    }
+                    //noinspection RedundantIfStatement
+                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                        return true;
+                    }
+                    return false;
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
+                    return false;
                 }
             });
 
             queryField.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-            queryButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        submitQuery(queryField.getText());
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            queryButton.setOnClickListener(v -> {
+                try {
+                    submitQuery(queryField.getText());
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            final View.OnClickListener listener = new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        final @Nullable AdvancedSearchParameters searchParameters = searchForm.extractParameters();
-                        if (searchParameters != null) {
-                            final @Nullable AbstractActivity activity = getAbstractActivity();
-                            if (activity instanceof BrowseActivity) {
-                                ((BrowseActivity) activity).loadSearchResultFragment(null, 2,
-                                        Converters.getObjectMapper().writeValueAsString(searchParameters));
-                            }
+            final View.OnClickListener listener = v -> {
+                try {
+                    final @Nullable AdvancedSearchParameters searchParameters = searchForm.extractParameters();
+                    if (searchParameters != null) {
+                        final @Nullable AbstractActivity activity = getAbstractActivity();
+                        if (activity instanceof BrowseActivity) {
+                            ((BrowseActivity) activity).loadSearchResultFragment(null, 2,
+                                    Converters.getObjectMapper().writeValueAsString(searchParameters));
                         }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             };
 
@@ -220,77 +206,62 @@ public final class BrowseOverviewFragment extends AbstractFragment {
                 }
             }
 
-            LiveSearchPresets.getInstance().observe(getViewLifecycleOwner(), new Observer<List<SearchPreset>>() {
-                @Override
-                public void onChanged(final @Nullable List<SearchPreset> t) {
-                    try {
-                        if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
-                            presetHeader.setVisibility(false);
-                            presetDivider.setVisibility(false);
-                            presetSpinner.setParentVisibility(false);
-                        }
-                        else {
-                            updatePresetAdapter();
-                            presetHeader.setVisibility(true);
-                            presetDivider.setVisibility(true);
-                            presetSpinner.setParentVisibility(true);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            LiveSearchPresets.getInstance().observe(getViewLifecycleOwner(), t -> {
+                try {
+                    if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
+                        presetHeader.setVisibility(false);
+                        presetDivider.setVisibility(false);
+                        presetSpinner.setParentVisibility(false);
                     }
+                    else {
+                        updatePresetAdapter();
+                        presetHeader.setVisibility(true);
+                        presetDivider.setVisibility(true);
+                        presetSpinner.setParentVisibility(true);
+                    }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            presetButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        final @Nullable Object selection = presetSpinner.getSelection();
-                        if (selection instanceof String) {
-                            final @Nullable SearchPreset preset = LiveSearchPresets.getInstance().getByName((String) selection);
-                            final @Nullable AbstractActivity activity = getAbstractActivity();
-                            if (activity instanceof BrowseActivity && preset != null) {
-                                ((BrowseActivity) activity).loadSearchResultFragment(preset.name, preset.type, preset.data);
-                            }
+            presetButton.setOnClickListener(v -> {
+                try {
+                    final @Nullable Object selection = presetSpinner.getSelection();
+                    if (selection instanceof String) {
+                        final @Nullable SearchPreset preset = LiveSearchPresets.getInstance().getByName((String) selection);
+                        final @Nullable AbstractActivity activity = getAbstractActivity();
+                        if (activity instanceof BrowseActivity && preset != null) {
+                            ((BrowseActivity) activity).loadSearchResultFragment(preset.name, preset.type, preset.data);
                         }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            presetDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        final @Nullable Object selection = presetSpinner.getSelection();
-                        if (selection instanceof String) {
-                            final String name = (String) selection;
-                            new AlertDialog.Builder(v.getContext())
-                                    .setTitle("Delete preset?")
-                                    .setMessage(String.format(Locale.ROOT, "Are you sure you want to delete the preset named '%s'?", name))
-                                    .setIcon(R.drawable.ic_baseline_warning_24px)
-                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(final DialogInterface dialog, final int which) {
-                                            //
-                                        }
-                                    })
-                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(final DialogInterface dialog, final int which) {
-                                            try {
-                                                new DeletePresetTask(name).execute();
-                                                Toast.makeText(v.getContext(), "Preset deleted", Toast.LENGTH_SHORT).show();
-                                            } catch (final Exception e) {
-                                                LOGGER.uerr(e);
-                                            }
-                                        }
-                                    }).create().show();
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            presetDelete.setOnClickListener(v -> {
+                try {
+                    final @Nullable Object selection = presetSpinner.getSelection();
+                    if (selection instanceof String) {
+                        final String name = (String) selection;
+                        new AlertDialog.Builder(v.getContext())
+                                .setTitle("Delete preset?")
+                                .setMessage(String.format(Locale.ROOT, "Are you sure you want to delete the preset named '%s'?", name))
+                                .setIcon(R.drawable.ic_baseline_warning_24px)
+                                .setNegativeButton("No", (dialog, which) -> {
+                                    //
+                                })
+                                .setPositiveButton("Yes", (dialog, which) -> {
+                                    try {
+                                        new DeletePresetTask(name).execute();
+                                        Toast.makeText(v.getContext(), "Preset deleted", Toast.LENGTH_SHORT).show();
+                                    } catch (final Exception e) {
+                                        LOGGER.uerr(e);
+                                    }
+                                }).create().show();
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
@@ -394,17 +365,14 @@ public final class BrowseOverviewFragment extends AbstractFragment {
             final TableRow.LayoutParams cellLayoutParams;
 
             final int level = i + 1;
-            final View.OnClickListener onClick = new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        final @Nullable AbstractActivity activity = getAbstractActivity();
-                        if (activity instanceof BrowseActivity) {
-                            ((BrowseActivity) activity).loadSearchResultFragment(null, 0, Integer.toString(level));
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            final View.OnClickListener onClick = v -> {
+                try {
+                    final @Nullable AbstractActivity activity = getAbstractActivity();
+                    if (activity instanceof BrowseActivity) {
+                        ((BrowseActivity) activity).loadSearchResultFragment(null, 0, Integer.toString(level));
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             };
 

@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.tasks;
 
-import androidx.core.util.Consumer;
-
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiReviewStatistic;
@@ -69,12 +67,7 @@ public final class GetReviewStatisticsTask extends ApiTask {
             uri += "?updated_after=" + Converters.formatDate(lastGetReviewStatisticsSuccess);
         }
 
-        if (!collectionApiCall(uri, ApiReviewStatistic.class, new Consumer<ApiReviewStatistic>() {
-            @Override
-            public void accept(final ApiReviewStatistic t) {
-                db.subjectSyncDao().insertOrUpdateReviewStatistic(t);
-            }
-        })) {
+        if (!collectionApiCall(uri, ApiReviewStatistic.class, t -> db.subjectSyncDao().insertOrUpdateReviewStatistic(t))) {
             return;
         }
 

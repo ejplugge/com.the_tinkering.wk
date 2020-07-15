@@ -21,7 +21,6 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -60,14 +59,11 @@ public final class FirstTimeSetupView extends AppCompatTextView {
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
         try {
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        update();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    update();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

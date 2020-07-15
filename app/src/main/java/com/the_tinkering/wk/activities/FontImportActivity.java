@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.activities;
 
 import android.annotation.TargetApi;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -190,20 +189,14 @@ public final class FontImportActivity extends AbstractActivity {
                             .setTitle("Overwrite file?")
                             .setMessage(String.format("A file named '%s' already exists. Do you want to overwrite it?", fileName))
                             .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    //
-                                }
+                            .setNegativeButton("No", (dialog, which) -> {
+                                //
                             })
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    try {
-                                        importFile(uri, fileName);
-                                    } catch (final Exception e) {
-                                        LOGGER.uerr(e);
-                                    }
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                try {
+                                    importFile(uri, fileName);
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
                                 }
                             }).create().show();
                 }
@@ -281,11 +274,8 @@ public final class FontImportActivity extends AbstractActivity {
                             .setTitle("Font sample")
                             .setView(textView)
                             .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    //
-                                }
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                //
                             }).create().show();
                 }
                 catch (final Exception e) {
@@ -293,11 +283,8 @@ public final class FontImportActivity extends AbstractActivity {
                             .setTitle("Unable to load font")
                             .setMessage("There was an error attempting to load this font. You will not be able to use it in quizzes.")
                             .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    //
-                                }
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                //
                             }).create().show();
                 }
             }
@@ -319,22 +306,16 @@ public final class FontImportActivity extends AbstractActivity {
                         .setTitle("Delete file?")
                         .setMessage(String.format("Are you sure you want to delete '%s'", row.getName()))
                         .setIcon(R.drawable.ic_baseline_warning_24px)
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialog, final int which) {
-                                //
-                            }
+                        .setNegativeButton("No", (dialog, which) -> {
+                            //
                         })
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialog, final int which) {
-                                try {
-                                    FontStorageUtil.deleteFont(row.getName());
-                                    flushCache(row.getName());
-                                    updateFileList();
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            try {
+                                FontStorageUtil.deleteFont(row.getName());
+                                flushCache(row.getName());
+                                updateFileList();
+                            } catch (final Exception e) {
+                                LOGGER.uerr(e);
                             }
                         }).create().show();
             }

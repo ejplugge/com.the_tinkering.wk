@@ -323,12 +323,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
      */
     public List<Subject> getSubjects() {
         final List<Subject> result = new ArrayList<>();
-        rootItem.iterateSubjects(new Consumer<Subject>() {
-            @Override
-            public void accept(final Subject t) {
-                result.add(t);
-            }
-        });
+        rootItem.iterateSubjects(result::add);
         return result;
     }
 
@@ -358,12 +353,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
      */
     public long[] getResurrectableSubjectIds() {
         final List<Subject> subjects = new ArrayList<>();
-        rootItem.iterateSubjects(new Consumer<Subject>() {
-            @Override
-            public void accept(final Subject t) {
-                if (t.isResurrectable()) {
-                    subjects.add(t);
-                }
+        rootItem.iterateSubjects(t -> {
+            if (t.isResurrectable()) {
+                subjects.add(t);
             }
         });
         final long[] result = new long[subjects.size()];
@@ -380,12 +372,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
      */
     public long[] getBurnableSubjectIds() {
         final List<Subject> subjects = new ArrayList<>();
-        rootItem.iterateSubjects(new Consumer<Subject>() {
-            @Override
-            public void accept(final Subject t) {
-                if (t.isBurnable()) {
-                    subjects.add(t);
-                }
+        rootItem.iterateSubjects(t -> {
+            if (t.isBurnable()) {
+                subjects.add(t);
             }
         });
         final long[] result = new long[subjects.size()];

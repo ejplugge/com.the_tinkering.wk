@@ -21,7 +21,6 @@ import android.util.AttributeSet;
 import android.widget.TableLayout;
 
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -128,25 +127,19 @@ public final class JoyoProgressView extends TableLayout {
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
         try {
-            LiveJoyoProgress.getInstance().observe(lifecycleOwner, new Observer<JoyoProgress>() {
-                @Override
-                public void onChanged(final JoyoProgress t) {
-                    try {
-                        update(t);
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveJoyoProgress.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    update(t);
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        LiveJoyoProgress.getInstance().ping();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    LiveJoyoProgress.getInstance().ping();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

@@ -232,50 +232,44 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
                 questionEdit.setHintTextColor(question.getType().getEditTextHintColor());
             }
 
-            dontKnowButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        if (!session.isAnswered()) {
-                            disableInteraction();
-                            questionEdit.setTag(false);
-                            session.submitDontKnow();
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            dontKnowButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    if (!session.isAnswered()) {
+                        disableInteraction();
+                        questionEdit.setTag(false);
+                        session.submitDontKnow();
+                    }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            submitButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    try {
-                        if (!interactionEnabled) {
-                            return;
-                        }
-                        disableInteraction();
-                        questionEdit.setTag(false);
-                        FloatingUiState.setCurrentAnswer(questionEdit.getText());
-                        LOGGER.info("Submitting answer '%s' for subject '%s' (%d) via submit button",
-                                FloatingUiState.getCurrentAnswer(), subject.getCharacters(), subject.getId());
-                        final AnswerVerdict verdict = session.submit(matchingKanji);
-                        if (verdict.isRetry()) {
-                            final TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
-                            shake.setDuration(1000);
-                            shake.setInterpolator(new CycleInterpolator(7));
-                            questionEdit.startAnimation(shake);
-                            enableInteraction();
-                            questionEdit.setTag(true);
-                            questionEdit.requestFocusInTouchMode();
-                            showSoftInput(questionEdit);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            submitButton.setOnClickListener(v -> {
+                try {
+                    if (!interactionEnabled) {
+                        return;
                     }
+                    disableInteraction();
+                    questionEdit.setTag(false);
+                    FloatingUiState.setCurrentAnswer(questionEdit.getText());
+                    LOGGER.info("Submitting answer '%s' for subject '%s' (%d) via submit button",
+                            FloatingUiState.getCurrentAnswer(), subject.getCharacters(), subject.getId());
+                    final AnswerVerdict verdict = session.submit(matchingKanji);
+                    if (verdict.isRetry()) {
+                        final TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
+                        shake.setDuration(1000);
+                        shake.setInterpolator(new CycleInterpolator(7));
+                        questionEdit.startAnimation(shake);
+                        enableInteraction();
+                        questionEdit.setTag(true);
+                        questionEdit.requestFocusInTouchMode();
+                        showSoftInput(questionEdit);
+                    }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {
@@ -425,47 +419,44 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
             return;
         }
 
-        final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(final TextView v, final int actionId, final @Nullable KeyEvent event) {
-                try {
-                    final boolean active = (boolean) questionEdit.getTag();
-                    if (!active) {
-                        return false;
-                    }
-                    boolean ok = false;
-                    if (event == null && actionId != 0) {
-                        ok = true;
-                    }
-                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                        ok = true;
-                    }
-                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                        return true;
-                    }
-                    if (ok && interactionEnabled) {
-                        if (!session.isAnswered()) {
-                            questionEdit.setTag(false);
-                            final @Nullable Subject match = matchingKanji;
-                            FloatingUiState.setCurrentAnswer(questionEdit.getText());
-                            LOGGER.info("Submitting answer '%s' for subject '%s' (%d) via keyboard action",
-                                    FloatingUiState.getCurrentAnswer(), subject.getCharacters(), subject.getId());
-                            final AnswerVerdict verdict = session.submit(match);
-                            if (verdict.isRetry()) {
-                                final TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
-                                shake.setDuration(1000);
-                                shake.setInterpolator(new CycleInterpolator(7));
-                                questionEdit.startAnimation(shake);
-                                questionEdit.setTag(true);
-                            }
-                        }
-                        return true;
-                    }
-                    return false;
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        final TextView.OnEditorActionListener onEditorActionListener = (v, actionId, event) -> {
+            try {
+                final boolean active = (boolean) questionEdit.getTag();
+                if (!active) {
                     return false;
                 }
+                boolean ok = false;
+                if (event == null && actionId != 0) {
+                    ok = true;
+                }
+                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    ok = true;
+                }
+                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    return true;
+                }
+                if (ok && interactionEnabled) {
+                    if (!session.isAnswered()) {
+                        questionEdit.setTag(false);
+                        final @Nullable Subject match = matchingKanji;
+                        FloatingUiState.setCurrentAnswer(questionEdit.getText());
+                        LOGGER.info("Submitting answer '%s' for subject '%s' (%d) via keyboard action",
+                                FloatingUiState.getCurrentAnswer(), subject.getCharacters(), subject.getId());
+                        final AnswerVerdict verdict = session.submit(match);
+                        if (verdict.isRetry()) {
+                            final TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
+                            shake.setDuration(1000);
+                            shake.setInterpolator(new CycleInterpolator(7));
+                            questionEdit.startAnimation(shake);
+                            questionEdit.setTag(true);
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+                return false;
             }
         };
 

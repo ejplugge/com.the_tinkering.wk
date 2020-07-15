@@ -19,7 +19,6 @@ package com.the_tinkering.wk.views;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.CompoundButton;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -95,14 +94,11 @@ public final class FontSelectionRowView extends ConstraintLayout {
     public void setFontId(final String fontId) {
         try {
             fontSwitch.setChecked(GlobalSettings.Font.isFontSelected(fontId));
-            fontSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                    try {
-                        GlobalSettings.Font.setFontSelected(fontId, isChecked);
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            fontSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                try {
+                    GlobalSettings.Font.setFontSelected(fontId, isChecked);
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

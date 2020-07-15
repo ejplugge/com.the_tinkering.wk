@@ -19,7 +19,6 @@ package com.the_tinkering.wk.activities;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -41,19 +40,16 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.Actment;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.Identification;
-import com.the_tinkering.wk.services.NetworkStateBroadcastReceiver;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.enums.OnlineStatus;
-import com.the_tinkering.wk.enums.SessionState;
 import com.the_tinkering.wk.fragments.AbstractFragment;
 import com.the_tinkering.wk.jobs.ActivityResumedJob;
 import com.the_tinkering.wk.jobs.AutoSyncNowJob;
@@ -65,10 +61,9 @@ import com.the_tinkering.wk.livedata.LiveLevelDuration;
 import com.the_tinkering.wk.livedata.LiveSessionProgress;
 import com.the_tinkering.wk.livedata.LiveSessionState;
 import com.the_tinkering.wk.livedata.LiveTaskCounts;
-import com.the_tinkering.wk.model.LevelDuration;
 import com.the_tinkering.wk.model.Session;
-import com.the_tinkering.wk.model.TaskCounts;
 import com.the_tinkering.wk.services.JobRunnerService;
+import com.the_tinkering.wk.services.NetworkStateBroadcastReceiver;
 import com.the_tinkering.wk.tasks.ApiTask;
 import com.the_tinkering.wk.util.Logger;
 
@@ -146,111 +141,99 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                         actionBar.setDisplayShowHomeEnabled(true);
                     }
 
-                    LiveTaskCounts.getInstance().observe(this, new Observer<TaskCounts>() {
-                        @Override
-                        public void onChanged(final @Nullable TaskCounts t) {
-                            try {
-                                final OnlineStatus onlineStatus = ApiTask.getOnlineStatus();
-                                final boolean hasApi = t != null && t.getApiCount() > 0 && onlineStatus.canCallApi();
-                                final boolean hasAudio = t != null && t.getAudioCount() > 0 && onlineStatus.canDownloadAudio();
-                                final boolean hasPitchInfo = t != null && t.getPitchInfoCount() > 0 && onlineStatus.canDownloadAudio();
+                    LiveTaskCounts.getInstance().observe(this, t -> {
+                        try {
+                            final OnlineStatus onlineStatus = ApiTask.getOnlineStatus();
+                            final boolean hasApi = t != null && t.getApiCount() > 0 && onlineStatus.canCallApi();
+                            final boolean hasAudio = t != null && t.getAudioCount() > 0 && onlineStatus.canDownloadAudio();
+                            final boolean hasPitchInfo = t != null && t.getPitchInfoCount() > 0 && onlineStatus.canDownloadAudio();
 
-                                final Collection<String> parts = new ArrayList<>();
-                                if (hasApi) {
-                                    parts.add(String.format(Locale.ROOT, "%d background tasks", t.getApiCount()));
-                                }
-                                if (hasAudio) {
-                                    parts.add(String.format(Locale.ROOT, "%d audio download tasks", t.getAudioCount()));
-                                }
-                                if (hasPitchInfo) {
-                                    parts.add(String.format(Locale.ROOT, "%d pitch info download tasks", t.getPitchInfoCount()));
-                                }
-
-                                if (parts.isEmpty()) {
-                                    actionBar.setSubtitle(null);
-                                }
-                                else {
-                                    actionBar.setSubtitle(join(", ", "", "", parts) + "... ⌛");
-                                }
-
-                                final @Nullable Menu menu = getMenu();
-                                if (menu != null) {
-                                    final @Nullable MenuItem flushTasksItem = menu.findItem(R.id.action_flush_tasks);
-                                    if (t != null && flushTasksItem != null) {
-                                        flushTasksItem.setVisible(!t.isEmpty());
-                                    }
-                                }
-                            } catch (final Exception e) {
-                                LOGGER.uerr(e);
+                            final Collection<String> parts = new ArrayList<>();
+                            if (hasApi) {
+                                parts.add(String.format(Locale.ROOT, "%d background tasks", t.getApiCount()));
                             }
+                            if (hasAudio) {
+                                parts.add(String.format(Locale.ROOT, "%d audio download tasks", t.getAudioCount()));
+                            }
+                            if (hasPitchInfo) {
+                                parts.add(String.format(Locale.ROOT, "%d pitch info download tasks", t.getPitchInfoCount()));
+                            }
+
+                            if (parts.isEmpty()) {
+                                actionBar.setSubtitle(null);
+                            }
+                            else {
+                                actionBar.setSubtitle(join(", ", "", "", parts) + "... ⌛");
+                            }
+
+                            final @Nullable Menu menu = getMenu();
+                            if (menu != null) {
+                                final @Nullable MenuItem flushTasksItem = menu.findItem(R.id.action_flush_tasks);
+                                if (t != null && flushTasksItem != null) {
+                                    flushTasksItem.setVisible(!t.isEmpty());
+                                }
+                            }
+                        } catch (final Exception e) {
+                            LOGGER.uerr(e);
                         }
                     });
                 }
             }
 
-            LiveSessionState.getInstance().observe(this, new Observer<SessionState>() {
-                @Override
-                public void onChanged(final SessionState t) {
-                    try {
-                        final @Nullable Menu menu = getMenu();
-                        final Session session = Session.getInstance();
+            LiveSessionState.getInstance().observe(this, t -> {
+                try {
+                    final @Nullable Menu menu = getMenu();
+                    final Session session = Session.getInstance();
 
-                        if (menu != null) {
-                            final @Nullable MenuItem abandonSessionItem = menu.findItem(R.id.action_abandon_session);
-                            if (abandonSessionItem != null) {
-                                abandonSessionItem.setVisible(session.canBeAbandoned());
-                            }
-
-                            final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
-                            if (wrapupSessionItem != null) {
-                                wrapupSessionItem.setVisible(session.canBeWrappedUp());
-                            }
-
-                            final @Nullable MenuItem selfStudyItem = menu.findItem(R.id.action_self_study);
-                            if (selfStudyItem != null) {
-                                selfStudyItem.setVisible(session.isInactive());
-                            }
+                    if (menu != null) {
+                        final @Nullable MenuItem abandonSessionItem = menu.findItem(R.id.action_abandon_session);
+                        if (abandonSessionItem != null) {
+                            abandonSessionItem.setVisible(session.canBeAbandoned());
                         }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+
+                        final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
+                        if (wrapupSessionItem != null) {
+                            wrapupSessionItem.setVisible(session.canBeWrappedUp());
+                        }
+
+                        final @Nullable MenuItem selfStudyItem = menu.findItem(R.id.action_self_study);
+                        if (selfStudyItem != null) {
+                            selfStudyItem.setVisible(session.isInactive());
+                        }
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveSessionProgress.getInstance().observe(this, new Observer<Object>() {
-                @Override
-                public void onChanged(final Object t) {
-                    try {
-                        final @Nullable Menu menu = getMenu();
-                        final Session session = Session.getInstance();
+            LiveSessionProgress.getInstance().observe(this, t -> {
+                try {
+                    final @Nullable Menu menu = getMenu();
+                    final Session session = Session.getInstance();
 
-                        if (menu != null) {
-                            final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
-                            if (wrapupSessionItem != null) {
-                                wrapupSessionItem.setVisible(session.canBeWrappedUp());
-                            }
+                    if (menu != null) {
+                        final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
+                        if (wrapupSessionItem != null) {
+                            wrapupSessionItem.setVisible(session.canBeWrappedUp());
                         }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveLevelDuration.getInstance().observe(this, new Observer<LevelDuration>() {
-                @Override
-                public void onChanged(final LevelDuration t) {
-                    try {
-                        final @Nullable Menu menu = getMenu();
-                        if (menu != null) {
-                            final @Nullable MenuItem testItem = menu.findItem(R.id.action_test);
-                            if (testItem != null) {
-                                final @Nullable String username = t.getUsername();
-                                testItem.setVisible(!isEmpty(username) && username.equals(Identification.AUTHOR_USERNAME));
-                            }
+            LiveLevelDuration.getInstance().observe(this, t -> {
+                try {
+                    final @Nullable Menu menu = getMenu();
+                    if (menu != null) {
+                        final @Nullable MenuItem testItem = menu.findItem(R.id.action_test);
+                        if (testItem != null) {
+                            final @Nullable String username = t.getUsername();
+                            testItem.setVisible(!isEmpty(username) && username.equals(Identification.AUTHOR_USERNAME));
                         }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
@@ -452,33 +435,24 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                                 .setTitle("Abandon session?")
                                 .setMessage(message)
                                 .setIcon(R.drawable.ic_baseline_warning_24px)
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        //
+                                .setNegativeButton("No", (dialog, which) -> {
+                                    //
+                                })
+                                .setNeutralButton("Yes and don't ask again", (dialog, which) -> {
+                                    try {
+                                        session.finish();
+                                        Toast.makeText(this, "Session abandoned", Toast.LENGTH_SHORT).show();
+                                        GlobalSettings.UiConfirmations.setUiConfirmAbandonSession(false);
+                                    } catch (final Exception e) {
+                                        LOGGER.uerr(e);
                                     }
                                 })
-                                .setNeutralButton("Yes and don't ask again", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        try {
-                                            session.finish();
-                                            Toast.makeText(AbstractActivity.this, "Session abandoned", Toast.LENGTH_SHORT).show();
-                                            GlobalSettings.UiConfirmations.setUiConfirmAbandonSession(false);
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
-                                    }
-                                })
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        try {
-                                            session.finish();
-                                            Toast.makeText(AbstractActivity.this, "Session abandoned", Toast.LENGTH_SHORT).show();
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
+                                .setPositiveButton("Yes", (dialog, which) -> {
+                                    try {
+                                        session.finish();
+                                        Toast.makeText(this, "Session abandoned", Toast.LENGTH_SHORT).show();
+                                    } catch (final Exception e) {
+                                        LOGGER.uerr(e);
                                     }
                                 }).create().show();
                     }
@@ -505,33 +479,24 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                                 .setTitle("Wrap up session?")
                                 .setMessage(message)
                                 .setIcon(R.drawable.ic_baseline_warning_24px)
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        //
+                                .setNegativeButton("No", (dialog, which) -> {
+                                    //
+                                })
+                                .setNeutralButton("Yes and don't ask again", (dialog, which) -> {
+                                    try {
+                                        session.wrapup();
+                                        Toast.makeText(this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
+                                        GlobalSettings.UiConfirmations.setUiConfirmWrapupSession(false);
+                                    } catch (final Exception e) {
+                                        LOGGER.uerr(e);
                                     }
                                 })
-                                .setNeutralButton("Yes and don't ask again", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        try {
-                                            session.wrapup();
-                                            Toast.makeText(AbstractActivity.this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
-                                            GlobalSettings.UiConfirmations.setUiConfirmWrapupSession(false);
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
-                                    }
-                                })
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        try {
-                                            session.wrapup();
-                                            Toast.makeText(AbstractActivity.this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
+                                .setPositiveButton("Yes", (dialog, which) -> {
+                                    try {
+                                        session.wrapup();
+                                        Toast.makeText(this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
+                                    } catch (final Exception e) {
+                                        LOGGER.uerr(e);
                                     }
                                 }).create().show();
                     }
@@ -561,21 +526,15 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                             .setTitle("Flush background tasks?")
                             .setMessage(renderHtml(FLUSH_TASKS_WARNING))
                             .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    //
-                                }
+                            .setNegativeButton("No", (dialog, which) -> {
+                                //
                             })
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialog, final int which) {
-                                    try {
-                                        JobRunnerService.schedule(FlushTasksJob.class, "");
-                                        Toast.makeText(AbstractActivity.this, "Background tasks flushed!", Toast.LENGTH_SHORT).show();
-                                    } catch (final Exception e) {
-                                        LOGGER.uerr(e);
-                                    }
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                try {
+                                    JobRunnerService.schedule(FlushTasksJob.class, "");
+                                    Toast.makeText(this, "Background tasks flushed!", Toast.LENGTH_SHORT).show();
+                                } catch (final Exception e) {
+                                    LOGGER.uerr(e);
                                 }
                             }).create().show();
                     return true;

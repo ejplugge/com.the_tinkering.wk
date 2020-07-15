@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.TextView;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -60,23 +59,20 @@ public final class NoApiKeyHelpActivity extends AbstractActivity {
         final ViewProxy document = new ViewProxy(this, R.id.document);
         document.setTextHtml(NO_API_KEY_HELP_DOCUMENT);
         document.setLinkMovementMethod();
-        apiKey.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(final TextView v, final int actionId, final @Nullable KeyEvent event) {
-                try {
-                    if (event == null && actionId == EditorInfo.IME_ACTION_DONE) {
-                        saveApiKey(v);
-                        return true;
-                    }
-                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                        saveApiKey(v);
-                        return true;
-                    }
-                    return false;
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                    return false;
+        apiKey.setOnEditorActionListener((v, actionId, event) -> {
+            try {
+                if (event == null && actionId == EditorInfo.IME_ACTION_DONE) {
+                    saveApiKey(v);
+                    return true;
                 }
+                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    saveApiKey(v);
+                    return true;
+                }
+                return false;
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
+                return false;
             }
         });
     }

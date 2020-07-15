@@ -1105,17 +1105,14 @@ s     *
             }
             if (GlobalSettings.getOrderOverdueFirst(type)) {
                 final Comparator<Subject> old = comparator;
-                comparator = new Comparator<Subject>() {
-                    @Override
-                    public int compare(final Subject o1, final Subject o2) {
-                        if (o1.isOverdue() && !o2.isOverdue()) {
-                            return -1;
-                        }
-                        if (o2.isOverdue() && !o1.isOverdue()) {
-                            return 1;
-                        }
-                        return old.compare(o1, o2);
+                comparator = (o1, o2) -> {
+                    if (o1.isOverdue() && !o2.isOverdue()) {
+                        return -1;
                     }
+                    if (o2.isOverdue() && !o1.isOverdue()) {
+                        return 1;
+                    }
+                    return old.compare(o1, o2);
                 };
             }
             final int userLevel = db.propertiesDao().getUserLevel();
@@ -1387,17 +1384,14 @@ s     *
         }
         if (GlobalSettings.AdvancedReview.getOrderOverdueFirst()) {
             final Comparator<Subject> old = comparator;
-            comparator = new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    if (o1.isOverdue() && !o2.isOverdue()) {
-                        return -1;
-                    }
-                    if (o2.isOverdue() && !o1.isOverdue()) {
-                        return 1;
-                    }
-                    return old.compare(o1, o2);
+            comparator = (o1, o2) -> {
+                if (o1.isOverdue() && !o2.isOverdue()) {
+                    return -1;
                 }
+                if (o2.isOverdue() && !o1.isOverdue()) {
+                    return 1;
+                }
+                return old.compare(o1, o2);
             };
         }
         final int userLevel = db.propertiesDao().getUserLevel();
@@ -1446,17 +1440,14 @@ s     *
         }
         if (GlobalSettings.AdvancedSelfStudy.getOrderOverdueFirst()) {
             final Comparator<Subject> old = comparator;
-            comparator = new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    if (o1.isOverdue() && !o2.isOverdue()) {
-                        return -1;
-                    }
-                    if (o2.isOverdue() && !o1.isOverdue()) {
-                        return 1;
-                    }
-                    return old.compare(o1, o2);
+            comparator = (o1, o2) -> {
+                if (o1.isOverdue() && !o2.isOverdue()) {
+                    return -1;
                 }
+                if (o2.isOverdue() && !o1.isOverdue()) {
+                    return 1;
+                }
+                return old.compare(o1, o2);
             };
         }
         final int userLevel = db.propertiesDao().getUserLevel();

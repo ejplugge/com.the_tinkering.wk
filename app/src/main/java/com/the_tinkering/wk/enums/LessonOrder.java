@@ -33,12 +33,7 @@ public enum LessonOrder {
     SHUFFLE(true) {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return 0;
-                }
-            };
+            return (o1, o2) -> 0;
         }
     },
 
@@ -48,12 +43,7 @@ public enum LessonOrder {
     LEVEL_THEN_TYPE(false) {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
-                }
-            };
+            return (o1, o2) -> compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
         }
     },
 
@@ -63,15 +53,12 @@ public enum LessonOrder {
     RADICALS_THEN_LEVEL_THEN_TYPE(false) {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = Boolean.compare(!o1.getType().isRadical(), !o2.getType().isRadical());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
+            return (o1, o2) -> {
+                final int n = Boolean.compare(!o1.getType().isRadical(), !o2.getType().isRadical());
+                if (n != 0) {
+                    return n;
                 }
+                return compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
             };
         }
     },
@@ -82,12 +69,7 @@ public enum LessonOrder {
     TYPE_THEN_LEVEL(false) {
         @Override
         public Comparator<Subject> getComparator() {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
-                }
-            };
+            return (o1, o2) -> compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
         }
     },
 
@@ -97,12 +79,7 @@ public enum LessonOrder {
     LEVEL_THEN_SHUFFLE(true) {
         @Override
         public Comparator<Subject> getComparator () {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return Integer.compare(o1.getLevel(), o2.getLevel());
-                }
-            };
+            return (o1, o2) -> Integer.compare(o1.getLevel(), o2.getLevel());
         }
     },
 
@@ -112,12 +89,7 @@ public enum LessonOrder {
     TYPE_THEN_SHUFFLE(true) {
         @Override
         public Comparator<Subject> getComparator () {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
-                }
-            };
+            return (o1, o2) -> Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
         }
     };
 

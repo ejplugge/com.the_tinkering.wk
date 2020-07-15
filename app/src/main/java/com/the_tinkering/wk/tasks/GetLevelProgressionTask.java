@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.tasks;
 
-import androidx.core.util.Consumer;
-
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiLevelProgression;
@@ -71,12 +69,7 @@ public final class GetLevelProgressionTask extends ApiTask {
             uri += "?updated_after=" + Converters.formatDate(lastGetLevelProgressionSuccess);
         }
 
-        if (!collectionApiCall(uri, ApiLevelProgression.class, new Consumer<ApiLevelProgression>() {
-            @Override
-            public void accept(final ApiLevelProgression t) {
-                levelProgressionDao.insertOrUpdate(t);
-            }
-        })) {
+        if (!collectionApiCall(uri, ApiLevelProgression.class, levelProgressionDao::insertOrUpdate)) {
             return;
         }
 

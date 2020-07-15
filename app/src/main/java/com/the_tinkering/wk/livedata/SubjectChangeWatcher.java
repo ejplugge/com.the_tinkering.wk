@@ -83,14 +83,11 @@ public final class SubjectChangeWatcher {
                     }
                     if (subject != null) {
                         final Subject theSubject = subject;
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    listener.onSubjectChange(theSubject);
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            try {
+                                listener.onSubjectChange(theSubject);
+                            } catch (final Exception e) {
+                                LOGGER.uerr(e);
                             }
                         });
                     }

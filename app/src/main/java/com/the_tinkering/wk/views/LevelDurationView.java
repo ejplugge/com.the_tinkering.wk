@@ -21,7 +21,6 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -64,27 +63,21 @@ public final class LevelDurationView extends AppCompatTextView {
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
         try {
-            LiveLevelDuration.getInstance().observe(lifecycleOwner, new Observer<LevelDuration>() {
-                @Override
-                public void onChanged(final LevelDuration t) {
-                    try {
-                        if (t != null) {
-                            update(t);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            LiveLevelDuration.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    if (t != null) {
+                        update(t);
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        LiveLevelDuration.getInstance().ping();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    LiveLevelDuration.getInstance().ping();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {

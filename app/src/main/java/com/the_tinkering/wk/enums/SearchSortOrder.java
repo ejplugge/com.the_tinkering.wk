@@ -41,12 +41,7 @@ public enum SearchSortOrder {
     TYPE("Type", true) {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
-                }
-            };
+            return (o1, o2) -> Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
         }
 
         @Override
@@ -63,14 +58,9 @@ public enum SearchSortOrder {
     LEVEL_TYPE("Level, Type", false) {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(
-                            o1.getLevel(), o2.getLevel(),
-                            o1.getType().getOrder(), o2.getType().getOrder());
-                }
-            };
+            return (o1, o2) -> compareIntegers(
+                    o1.getLevel(), o2.getLevel(),
+                    o1.getType().getOrder(), o2.getType().getOrder());
         }
 
         @Override
@@ -87,27 +77,24 @@ public enum SearchSortOrder {
     AVAILABLE_AT_TYPE("Next review, Type", false) {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    long ts1 = 0;
-                    if (o1.getAvailableAt() != null) {
-                        ts1 = o1.getAvailableAt().getTime();
-                        if (ts1 < searchTime) {
-                            ts1 = searchTime;
-                        }
+            return (o1, o2) -> {
+                long ts1 = 0;
+                if (o1.getAvailableAt() != null) {
+                    ts1 = o1.getAvailableAt().getTime();
+                    if (ts1 < searchTime) {
+                        ts1 = searchTime;
                     }
-                    long ts2 = 0;
-                    if (o2.getAvailableAt() != null) {
-                        ts2 = o2.getAvailableAt().getTime();
-                        if (ts2 < searchTime) {
-                            ts2 = searchTime;
-                        }
-                    }
-                    return compareLongsAndIntegers(
-                            ts1, ts2,
-                            o1.getType().getOrder(), o2.getType().getOrder());
                 }
+                long ts2 = 0;
+                if (o2.getAvailableAt() != null) {
+                    ts2 = o2.getAvailableAt().getTime();
+                    if (ts2 < searchTime) {
+                        ts2 = searchTime;
+                    }
+                }
+                return compareLongsAndIntegers(
+                        ts1, ts2,
+                        o1.getType().getOrder(), o2.getType().getOrder());
             };
         }
 
@@ -139,15 +126,12 @@ public enum SearchSortOrder {
     STAGE_TYPE("SRS Stage, Type", false) {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
-            return new Comparator<Subject>() {
-                @Override
-                public int compare(final Subject o1, final Subject o2) {
-                    final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
-                    if (n != 0) {
-                        return n;
-                    }
-                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
+            return (o1, o2) -> {
+                final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
+                if (n != 0) {
+                    return n;
                 }
+                return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
             };
         }
 

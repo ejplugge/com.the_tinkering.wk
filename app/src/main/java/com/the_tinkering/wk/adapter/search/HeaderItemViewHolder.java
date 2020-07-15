@@ -20,11 +20,9 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Consumer;
 
 import com.airbnb.lottie.SimpleColorFilter;
 import com.the_tinkering.wk.R;
-import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
@@ -85,25 +83,22 @@ public abstract class HeaderItemViewHolder extends ResultItemViewHolder implemen
         prePassed = 0;
         passed = 0;
         burned = 0;
-        item.iterateSubjects(new Consumer<Subject>() {
-            @Override
-            public void accept(final Subject t) {
-                total++;
-                if (t.getSrsStage().isCompleted()) {
-                    burned++;
-                }
-                else if (t.getSrsStage().isInitial()) {
-                    initial++;
-                }
-                else if (t.getSrsStage().isLocked()) {
-                    locked++;
-                }
-                else if (t.isPassed()) {
-                    passed++;
-                }
-                else {
-                    prePassed++;
-                }
+        item.iterateSubjects(t -> {
+            total++;
+            if (t.getSrsStage().isCompleted()) {
+                burned++;
+            }
+            else if (t.getSrsStage().isInitial()) {
+                initial++;
+            }
+            else if (t.getSrsStage().isLocked()) {
+                locked++;
+            }
+            else if (t.isPassed()) {
+                passed++;
+            }
+            else {
+                prePassed++;
             }
         });
 

@@ -136,14 +136,11 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
         questionText.setSubject(subject);
         questionText.setMaxSize(maxWidth, maxHeight);
         questionText.setSizeForQuiz(true);
-        questionText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    questionText.setTypefaceConfiguration(TypefaceConfiguration.DEFAULT);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+        questionText.setOnClickListener(v -> {
+            try {
+                questionText.setTypefaceConfiguration(TypefaceConfiguration.DEFAULT);
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
@@ -153,48 +150,39 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
         questionType.setTextColor(question.getType().getHintContrastColor());
         questionType.setVisibility(!isLandscape() || !(this instanceof UnansweredSessionFragment));
 
-        specialButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-                    GlobalSettings.AdvancedOther.getSpecialButton1Behavior().perform();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        specialButton1.setOnClickListener(v -> {
+            try {
+                if (!interactionEnabled) {
+                    return;
                 }
+                disableInteraction();
+                GlobalSettings.AdvancedOther.getSpecialButton1Behavior().perform();
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
-        specialButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-                    GlobalSettings.AdvancedOther.getSpecialButton2Behavior().perform();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        specialButton2.setOnClickListener(v -> {
+            try {
+                if (!interactionEnabled) {
+                    return;
                 }
+                disableInteraction();
+                GlobalSettings.AdvancedOther.getSpecialButton2Behavior().perform();
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
 
-        specialButton3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-                    GlobalSettings.AdvancedOther.getSpecialButton3Behavior().perform();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        specialButton3.setOnClickListener(v -> {
+            try {
+                if (!interactionEnabled) {
+                    return;
                 }
+                disableInteraction();
+                GlobalSettings.AdvancedOther.getSpecialButton3Behavior().perform();
+            } catch (final Exception e) {
+                LOGGER.uerr(e);
             }
         });
     }

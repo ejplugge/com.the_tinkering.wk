@@ -21,13 +21,12 @@ import android.util.AttributeSet;
 import android.widget.TableLayout;
 
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
+import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
-import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.model.LevelProgress;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.Logger;
@@ -104,27 +103,21 @@ public final class LevelProgressView extends TableLayout {
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
         try {
-            LiveLevelProgress.getInstance().observe(lifecycleOwner, new Observer<LevelProgress>() {
-                @Override
-                public void onChanged(final LevelProgress t) {
-                    try {
-                        if (t != null) {
-                            update(t);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+            LiveLevelProgress.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    if (t != null) {
+                        update(t);
                     }
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, new Observer<Integer>() {
-                @Override
-                public void onChanged(final Integer t) {
-                    try {
-                        LiveLevelProgress.getInstance().ping();
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
+                try {
+                    LiveLevelProgress.getInstance().ping();
+                } catch (final Exception e) {
+                    LOGGER.uerr(e);
                 }
             });
         } catch (final Exception e) {
