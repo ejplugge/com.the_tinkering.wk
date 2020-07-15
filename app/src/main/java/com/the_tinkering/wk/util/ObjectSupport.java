@@ -301,20 +301,6 @@ public final class ObjectSupport {
     }
 
     /**
-     * Helper for comparators: generate the order of boolean values, with false < true.
-     *
-     * @param b1 left-hand value
-     * @param b2 right-hand value
-     * @return order as for compareTo()
-     */
-    public static int compareBooleans(final boolean b1, final boolean b2) {
-        if (b1 == b2) {
-            return 0;
-        }
-        return b1 ? 1 : -1;
-    }
-
-    /**
      * Create a comparator that will deliver the reverse results of the argument one.
      *
      * @param comparator the argument comparator

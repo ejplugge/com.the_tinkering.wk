@@ -20,7 +20,6 @@ import com.the_tinkering.wk.db.model.Subject;
 
 import java.util.Comparator;
 
-import static com.the_tinkering.wk.util.ObjectSupport.compareBooleans;
 import static com.the_tinkering.wk.util.ObjectSupport.compareIntegers;
 
 /**
@@ -67,7 +66,7 @@ public enum LessonOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    final int n = compareBooleans(!o1.getType().isRadical(), !o2.getType().isRadical());
+                    final int n = Boolean.compare(!o1.getType().isRadical(), !o2.getType().isRadical());
                     if (n != 0) {
                         return n;
                     }
