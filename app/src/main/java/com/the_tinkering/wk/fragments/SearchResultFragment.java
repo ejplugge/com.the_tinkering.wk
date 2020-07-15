@@ -145,7 +145,7 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
             if (savedInstanceState != null) {
                 final @Nullable Collection<String> tags = savedInstanceState.getStringArrayList("collapsedTags");
                 if (tags == null) {
-                    adapter.setCollapsedTags(Collections.<String>emptyList());
+                    adapter.setCollapsedTags(Collections.emptyList());
                 }
                 else {
                     adapter.setCollapsedTags(tags);

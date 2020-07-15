@@ -423,7 +423,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                 case R.id.action_view_last_finished: {
                     final long subjectId = Session.getInstance().getLastFinishedSubjectId();
                     if (subjectId != -1) {
-                        goToSubjectInfo(subjectId, Collections.<Long>emptyList(), FragmentTransitionAnimation.RTL);
+                        goToSubjectInfo(subjectId, Collections.emptyList(), FragmentTransitionAnimation.RTL);
                     }
                     return true;
                 }

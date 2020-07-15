@@ -161,7 +161,7 @@ public final class TestActivity extends AbstractActivity {
                             final String characters = requireNonNull(subject.getCharacters());
 
                             if (subject.isPrefix() || subject.isSuffix()) {
-                                map.put(characters, Collections.<PitchInfo>emptyList());
+                                map.put(characters, Collections.emptyList());
                             }
                             else if (PitchInfoUtil.existsWeblioFile(characters)) {
                                 final Set<PitchInfo> pitchInfo = PitchInfoUtil.parseWeblioFile(characters);
@@ -170,7 +170,7 @@ public final class TestActivity extends AbstractActivity {
                                 map.put(characters, list);
                             }
                             else {
-                                map.put(characters, Collections.<PitchInfo>emptyList());
+                                map.put(characters, Collections.emptyList());
                             }
                         }
                     }

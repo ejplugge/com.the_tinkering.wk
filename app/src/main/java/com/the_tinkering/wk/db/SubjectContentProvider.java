@@ -57,14 +57,14 @@ public final class SubjectContentProvider extends ContentProvider {
                         final @Nullable String sortOrder) {
         try {
             if (selectionArgs == null || selectionArgs.length == 0 || selectionArgs[0] == null || getContext() == null) {
-                return new SubjectCursor(Collections.<Subject>emptyList());
+                return new SubjectCursor(Collections.emptyList());
             }
             final String query = selectionArgs[0];
             final List<Subject> subjects = SearchUtil.searchSubjectSuggestions(query);
             return new SubjectCursor(subjects);
         } catch (final Exception e) {
             LOGGER.uerr(e);
-            return new SubjectCursor(Collections.<Subject>emptyList());
+            return new SubjectCursor(Collections.emptyList());
         }
     }
 
