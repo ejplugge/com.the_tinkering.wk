@@ -24,17 +24,16 @@ import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.livedata.SubjectChangeListener;
 import com.the_tinkering.wk.livedata.SubjectChangeWatcher;
 import com.the_tinkering.wk.model.SubjectCardBinder;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * View holder class for subject items.
  */
 public final class SubjectItemViewHolder extends ResultItemViewHolder implements View.OnClickListener, SubjectChangeListener {
-    private static final Logger LOGGER = Logger.get(SubjectItemViewHolder.class);
-
     private final SubjectCardBinder binder;
     private @Nullable Subject subject = null;
     private final WeakLcoRef<Actment> actmentRef;
@@ -80,14 +79,12 @@ public final class SubjectItemViewHolder extends ResultItemViewHolder implements
 
     @Override
     public void onClick(final View v) {
-        try {
+        safe(() -> {
             final @Nullable Actment theActment = actmentRef.getOrElse(null);
             if (theActment == null || subject == null) {
                 return;
             }
             theActment.goToSubjectInfo(subject.getId(), adapter.getSubjectIds(), FragmentTransitionAnimation.RTL);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

@@ -31,7 +31,6 @@ import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.fragments.SearchResultFragment;
 import com.the_tinkering.wk.model.AdvancedSearchParameters;
 import com.the_tinkering.wk.model.SubjectCardBinder;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
 import java.util.ArrayList;
@@ -43,14 +42,13 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
  * RecyclerView adapter for advanced search results.
  */
 public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemViewHolder> {
-    private static final Logger LOGGER = Logger.get(SearchResultAdapter.class);
-
     private final WeakLcoRef<SearchResultFragment> fragmentRef;
     private final RootItem rootItem = new RootItem();
     private SearchSortOrder sortOrder = SearchSortOrder.TYPE;
@@ -158,7 +156,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
 
     @Override
     public ResultItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        try {
+        return safe(() -> new DummyViewHolder(this, new AppCompatTextView(parent.getContext())), () -> {
             switch (viewType) {
                 case R.id.viewTypeRadical: {
                     final View view = binder.createView(SubjectType.WANIKANI_RADICAL, parent);
@@ -198,52 +196,43 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
                     final View view = inflater.inflate(R.layout.search_result_top_header, parent, false);
                     return new SrsStageHeaderItemViewHolder(this, view);
                 }
-                default:
+                default: {
+                    return new DummyViewHolder(this, new AppCompatTextView(parent.getContext()));
+                }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        return new DummyViewHolder(this, new AppCompatTextView(parent.getContext()));
+        });
     }
 
     @Override
     public void onBindViewHolder(final ResultItemViewHolder holder, final int position) {
-        try {
+        safe(() -> {
             final @Nullable ResultItem item = getItem(position);
             if (item != null) {
                 holder.bind(item);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public int getItemCount() {
-        try {
+        return safe(0, () -> {
             int count = rootItem.getCount();
             if (showingForm) {
                 count++;
             }
             return count;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        return 0;
+        });
     }
 
     @Override
     public int getItemViewType(final int position) {
-        try {
+        return safe(0, () -> {
             final @Nullable ResultItem item = getItem(position);
             if (item == null) {
                 return 0;
             }
             return item.getViewType();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        return 0;
+        });
     }
 
     /**
@@ -254,16 +243,13 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
      * @return the span size
      */
     public int getItemSpanSize(final int position, final int spans) {
-        try {
+        return safe(0, () -> {
             final @Nullable ResultItem item = getItem(position);
             if (item == null) {
                 return 1;
             }
             return item.getSpanSize(spans);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        return 0;
+        });
     }
 
     /**

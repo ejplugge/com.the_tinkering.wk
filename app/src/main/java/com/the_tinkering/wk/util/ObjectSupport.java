@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -383,8 +384,8 @@ public final class ObjectSupport {
      * Run some code that produces a non-null return value, while capturing and
      * logging any exceptions thrown.
      *
-     * @param supplier the supplier that produces the result, i.e. the code to run safely
      * @param defaultValue the default value to return if the supplier throws an exception
+     * @param supplier the supplier that produces the result, i.e. the code to run safely
      * @param <T> the type of the return value
      * @return the result from the supplier, or defaultValue if the supplier threw an exception
      */
@@ -395,6 +396,25 @@ public final class ObjectSupport {
         catch (final Exception e) {
             LOGGER.uerr(e);
             return defaultValue;
+        }
+    }
+
+    /**
+     * Run some code that produces a non-null return value, while capturing and
+     * logging any exceptions thrown. Variant that takes a Supplier to create a defaultValue.
+     *
+     * @param defaultValueSupplier the default value to return if the supplier throws an exception
+     * @param supplier the supplier that produces the result, i.e. the code to run safely
+     * @param <T> the type of the return value
+     * @return the result from the supplier, or defaultValue if the supplier threw an exception
+     */
+    public static <T> T safe(final Supplier<T> defaultValueSupplier, final ThrowingSupplier<? extends T> supplier) {
+        try {
+            return requireNonNull(supplier.get());
+        }
+        catch (final Exception e) {
+            LOGGER.uerr(e);
+            return defaultValueSupplier.get();
         }
     }
 

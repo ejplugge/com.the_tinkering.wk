@@ -26,17 +26,16 @@ import com.the_tinkering.wk.fragments.AbstractFragment;
 import com.the_tinkering.wk.fragments.SearchResultFragment;
 import com.the_tinkering.wk.model.AdvancedSearchParameters;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * View holder class for the search form.
  */
 public final class SearchFormItemViewHolder extends ResultItemViewHolder {
-    private static final Logger LOGGER = Logger.get(SearchFormItemViewHolder.class);
-
     private final ViewProxy form = new ViewProxy();
 
     private final WeakLcoRef<SearchResultFragment> fragmentRef;
@@ -55,21 +54,17 @@ public final class SearchFormItemViewHolder extends ResultItemViewHolder {
         fragmentRef = new WeakLcoRef<>(fragment);
         form.setDelegate(view, R.id.form);
 
-        final View.OnClickListener listener = v -> {
-            try {
-                final @Nullable AbstractFragment theFragment = fragmentRef.getOrElse(null);
-                if (theFragment == null) {
-                    return;
-                }
-                final @Nullable Activity activity = theFragment.getActivity();
-                if (activity instanceof BrowseActivity) {
-                    ((BrowseActivity) activity).loadSearchResultFragment(fragmentRef.get().getPresetName(), 2,
-                            Converters.getObjectMapper().writeValueAsString(form.extractParameters()));
-                }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
+        final View.OnClickListener listener = v -> safe(() -> {
+            final @Nullable AbstractFragment theFragment = fragmentRef.getOrElse(null);
+            if (theFragment == null) {
+                return;
             }
-        };
+            final @Nullable Activity activity = theFragment.getActivity();
+            if (activity instanceof BrowseActivity) {
+                ((BrowseActivity) activity).loadSearchResultFragment(fragmentRef.get().getPresetName(), 2,
+                        Converters.getObjectMapper().writeValueAsString(form.extractParameters()));
+            }
+        });
 
         new ViewProxy(view, R.id.searchButton1).setOnClickListener(listener);
         new ViewProxy(view, R.id.searchButton2).setOnClickListener(listener);

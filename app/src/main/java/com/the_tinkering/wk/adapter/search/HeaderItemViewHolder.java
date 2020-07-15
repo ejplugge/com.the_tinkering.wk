@@ -24,7 +24,6 @@ import androidx.core.content.ContextCompat;
 import com.airbnb.lottie.SimpleColorFilter;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.ArrayList;
@@ -34,13 +33,12 @@ import java.util.Locale;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.join;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Abstract base class for view holders for advanced search result items.
  */
 public abstract class HeaderItemViewHolder extends ResultItemViewHolder implements View.OnClickListener {
-    private static final Logger LOGGER = Logger.get(HeaderItemViewHolder.class);
-
     private final ViewProxy arrowHead = new ViewProxy();
     @SuppressWarnings("JavaDoc")
     protected final ViewProxy title = new ViewProxy();
@@ -130,7 +128,7 @@ public abstract class HeaderItemViewHolder extends ResultItemViewHolder implemen
 
     @Override
     public final void onClick(final View v) {
-        try {
+        safe(() -> {
             if (item == null) {
                 return;
             }
@@ -148,8 +146,6 @@ public abstract class HeaderItemViewHolder extends ResultItemViewHolder implemen
                 adapter.notifyItemRangeRemoved(getAdapterPosition() + 1, count);
                 adapter.getCollapsedTags().add(item.getTag());
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }
