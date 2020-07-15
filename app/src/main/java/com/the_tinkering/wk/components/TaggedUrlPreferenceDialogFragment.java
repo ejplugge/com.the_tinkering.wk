@@ -24,15 +24,14 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
  * A custom preference that combines two related edittext preferences: a URL and a name/tag describing it.
  */
 public final class TaggedUrlPreferenceDialogFragment extends PreferenceDialogFragmentCompat {
-    private static final Logger LOGGER = Logger.get(TaggedUrlPreferenceDialogFragment.class);
     private static final String SAVE_STATE_TAG = "TaggedUrlPreferenceDialogFragment.tag";
     private static final String SAVE_STATE_URL = "TaggedUrlPreferenceDialogFragment.url";
 
@@ -62,7 +61,7 @@ public final class TaggedUrlPreferenceDialogFragment extends PreferenceDialogFra
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        try {
+        safe(() -> {
             super.onCreate(savedInstanceState);
             if (savedInstanceState == null) {
                 tag = getTaggedUrlPreference().getTag();
@@ -72,25 +71,21 @@ public final class TaggedUrlPreferenceDialogFragment extends PreferenceDialogFra
                 tag = savedInstanceState.getString(SAVE_STATE_TAG, "");
                 url = savedInstanceState.getString(SAVE_STATE_URL, "");
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public void onSaveInstanceState(final Bundle outState) {
-        try {
+        safe(() -> {
             super.onSaveInstanceState(outState);
             outState.putString(SAVE_STATE_TAG, tag);
             outState.putString(SAVE_STATE_URL, url);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     protected void onBindDialogView(final View view) {
-        try {
+        safe(() -> {
             super.onBindDialogView(view);
 
             tagInput.setDelegate(view, R.id.tagInput);
@@ -107,20 +102,16 @@ public final class TaggedUrlPreferenceDialogFragment extends PreferenceDialogFra
             urlInput.setMaxLines(5);
             urlInput.setHorizontallyScrolling(false);
             urlInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public void onDialogClosed(final boolean positiveResult) {
-        try {
+        safe(() -> {
             if (positiveResult) {
                 getTaggedUrlPreference().setTag(tagInput.getText());
                 getTaggedUrlPreference().setUrl(urlInput.getText());
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

@@ -25,18 +25,16 @@ import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceManager;
 
 import com.the_tinkering.wk.R;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom preference that combines two related edittext preferences: a URL and a name/tag describing it.
  */
 public final class TaggedUrlPreference extends DialogPreference {
-    private static final Logger LOGGER = Logger.get(TaggedUrlPreference.class);
-
     private String defaultTag = "";
     private String defaultUrl = "";
 
@@ -91,7 +89,7 @@ public final class TaggedUrlPreference extends DialogPreference {
     }
 
     private void init(final @Nullable AttributeSet attrs) {
-        try {
+        safe(() -> {
             setPersistent(false);
             setDialogLayoutResource(R.layout.pref_tagged_url);
             setSummaryProvider((SummaryProvider<TaggedUrlPreference>) preference -> getTag());
@@ -103,9 +101,7 @@ public final class TaggedUrlPreference extends DialogPreference {
             finally {
                 a.recycle();
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
@@ -123,13 +119,10 @@ public final class TaggedUrlPreference extends DialogPreference {
      * @return the value
      */
     public String getTag() {
-        try {
+        return safe("", () -> {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             return prefs.getString(getKey() + "_tag", defaultTag);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return "";
-        }
+        });
     }
 
     /**
@@ -137,15 +130,13 @@ public final class TaggedUrlPreference extends DialogPreference {
      * @param value the value
      */
     public void setTag(final String value) {
-        try {
+        safe(() -> {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putString(getKey() + "_tag", value);
             editor.apply();
             notifyChanged();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -153,13 +144,10 @@ public final class TaggedUrlPreference extends DialogPreference {
      * @return the value
      */
     public String getUrl() {
-        try {
+        return safe("", () -> {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             return prefs.getString(getKey(), defaultUrl);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return "";
-        }
+        });
     }
 
     /**
@@ -167,14 +155,12 @@ public final class TaggedUrlPreference extends DialogPreference {
      * @param value the value
      */
     public void setUrl(final String value) {
-        try {
+        safe(() -> {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putString(getKey(), value);
             editor.apply();
             notifyChanged();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

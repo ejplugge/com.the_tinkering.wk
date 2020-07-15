@@ -25,7 +25,7 @@ import android.text.style.URLSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.the_tinkering.wk.util.Logger;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Subclass of ArrowKeyMovementMethod that supports clicking on links in text.
@@ -33,11 +33,9 @@ import com.the_tinkering.wk.util.Logger;
  * play nice together.
  */
 public final class CustomMovementMethod extends ArrowKeyMovementMethod {
-    private static final Logger LOGGER = Logger.get(CustomMovementMethod.class);
-
     @Override
     public boolean onTouchEvent(final TextView widget, final Spannable buffer, final MotionEvent event){
-        try {
+        return safe(() -> super.onTouchEvent(widget, buffer, event), () -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
@@ -56,9 +54,7 @@ public final class CustomMovementMethod extends ArrowKeyMovementMethod {
                 }
                 return true;
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        return super.onTouchEvent(widget, buffer, event);
+            return false;
+        });
     }
 }

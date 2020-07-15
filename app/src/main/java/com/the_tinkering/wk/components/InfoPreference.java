@@ -24,19 +24,17 @@ import androidx.preference.PreferenceViewHolder;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import static com.the_tinkering.wk.Constants.API_KEY_PERMISSION_NOTICE;
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A dummy preference class that isn't actually a preference - it's not clickable and just
  * a way to show a block of text in the preferences screen.
  */
 public final class InfoPreference extends Preference {
-    private static final Logger LOGGER = Logger.get(InfoPreference.class);
-
     /**
      * The constructor.
      *
@@ -93,7 +91,7 @@ public final class InfoPreference extends Preference {
 
     @Override
     public void onBindViewHolder(final PreferenceViewHolder holder) {
-        try {
+        safe(() -> {
             super.onBindViewHolder(holder);
             holder.itemView.setClickable(false);
             holder.itemView.setFocusable(false);
@@ -103,8 +101,6 @@ public final class InfoPreference extends Preference {
             summary.setTextSize(FONT_SIZE_NORMAL);
             summary.setLinkMovementMethod();
             summary.setVisibility(true);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

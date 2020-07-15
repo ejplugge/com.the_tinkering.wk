@@ -26,7 +26,6 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
 import com.the_tinkering.wk.WkApplication;
-import com.the_tinkering.wk.util.Logger;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -37,6 +36,9 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
+
 /**
  * Wrapper for preference storage that stores values in an encrypted form.
  * The encryption key is stored hardcoded in here, so this is not super-secure. It's mostly
@@ -44,7 +46,6 @@ import javax.crypto.spec.SecretKeySpec;
  * Otherwise, this just delegates to the system's default shared preferences.
  */
 public final class EncryptedPreferenceDataStore extends PreferenceDataStore {
-    private static final Logger LOGGER = Logger.get(EncryptedPreferenceDataStore.class);
     private @Nullable SharedPreferences encryptedPrefs = null;
 
     private static final byte[] KEY = {
@@ -71,68 +72,59 @@ public final class EncryptedPreferenceDataStore extends PreferenceDataStore {
     }
 
     private static String decrypt(final String encrypted) {
-        try {
+        return safe("", () -> {
             final byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             final AlgorithmParameterSpec ivspec = new IvParameterSpec(iv);
             final Cipher aes = Cipher.getInstance("AES/CBC/PKCS5Padding");
             aes.init(Cipher.DECRYPT_MODE, new SecretKeySpec(KEY, "AES"), ivspec);
             return new String(aes.doFinal(Base64.decode(encrypted, Base64.DEFAULT)), "UTF-8");
+        });
+    }
+
+    private @Nullable String getStringImpl(final String key, final @Nullable String defValue) throws Exception {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final @Nullable String newStoredValue = encryptedPrefs().getString(key, null);
+            if (newStoredValue != null) {
+                return newStoredValue;
+            }
+
+            @Nullable String storedValue = prefs().getString(key, null);
+            if (storedValue == null) {
+                return defValue;
+            }
+            if (storedValue.startsWith("enc:")) {
+                storedValue = decrypt(storedValue.substring(4));
+            }
+
+            final SharedPreferences.Editor editor = encryptedPrefs().edit();
+            editor.putString(key, storedValue);
+            editor.apply();
+
+            return storedValue;
         }
-        catch (final RuntimeException e) {
-            LOGGER.uerr(e);
-            throw e;
-        }
-        catch (final Exception e) {
-            LOGGER.uerr(e);
-            throw new IllegalArgumentException(e);
+        else {
+            @Nullable String storedValue = prefs().getString(key, null);
+            if (storedValue == null) {
+                return defValue;
+            }
+            if (storedValue.startsWith("enc:")) {
+                storedValue = decrypt(storedValue.substring(4));
+                final SharedPreferences.Editor editor = prefs().edit();
+                editor.putString(key, storedValue);
+                editor.apply();
+            }
+            return storedValue;
         }
     }
 
     @Override
     public @Nullable String getString(final String key, final @Nullable String defValue) {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                final @Nullable String newStoredValue = encryptedPrefs().getString(key, null);
-                if (newStoredValue != null) {
-                    return newStoredValue;
-                }
-
-                @Nullable String storedValue = prefs().getString(key, null);
-                if (storedValue == null) {
-                    return defValue;
-                }
-                if (storedValue.startsWith("enc:")) {
-                    storedValue = decrypt(storedValue.substring(4));
-                }
-
-                final SharedPreferences.Editor editor = encryptedPrefs().edit();
-                editor.putString(key, storedValue);
-                editor.apply();
-
-                return storedValue;
-            }
-            else {
-                @Nullable String storedValue = prefs().getString(key, null);
-                if (storedValue == null) {
-                    return defValue;
-                }
-                if (storedValue.startsWith("enc:")) {
-                    storedValue = decrypt(storedValue.substring(4));
-                    final SharedPreferences.Editor editor = prefs().edit();
-                    editor.putString(key, storedValue);
-                    editor.apply();
-                }
-                return storedValue;
-            }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        return null;
+        return safeNullable(() -> getStringImpl(key, defValue));
     }
 
     @Override
     public void putString(final String key, final @Nullable String value) {
-        try {
+        safe(() -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 final SharedPreferences.Editor editor = encryptedPrefs().edit();
                 editor.putString(key, value);
@@ -143,8 +135,6 @@ public final class EncryptedPreferenceDataStore extends PreferenceDataStore {
                 editor.putString(key, value);
                 editor.apply();
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }
