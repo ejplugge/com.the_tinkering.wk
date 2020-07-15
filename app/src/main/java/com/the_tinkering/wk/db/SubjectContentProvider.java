@@ -25,7 +25,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.the_tinkering.wk.db.model.Subject;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.SearchUtil;
 
 import java.io.UnsupportedEncodingException;
@@ -33,58 +32,55 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Content provider for search results, used for incremental search.
  */
 public final class SubjectContentProvider extends ContentProvider {
-    private static final Logger LOGGER = Logger.get(SubjectContentProvider.class);
-
     @Override
     public boolean onCreate() {
         return true;
     }
 
+    @SuppressWarnings("RedundantSuppression")
     @Override
-    public Cursor query(final @Nonnull Uri uri,
+    public Cursor query(final Uri uri,
                         final @Nullable String[] projection,
                         final @Nullable String selection,
                         final @Nullable String[] selectionArgs,
                         final @Nullable String sortOrder) {
-        try {
+        //noinspection IOResourceOpenedButNotSafelyClosed,resource
+        return safe(() -> new SubjectCursor(Collections.emptyList()), () -> {
             if (selectionArgs == null || selectionArgs.length == 0 || selectionArgs[0] == null || getContext() == null) {
                 return new SubjectCursor(Collections.emptyList());
             }
             final String query = selectionArgs[0];
             final List<Subject> subjects = SearchUtil.searchSubjectSuggestions(query);
             return new SubjectCursor(subjects);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return new SubjectCursor(Collections.emptyList());
-        }
+        });
     }
 
     @Override
-    public String getType(final @Nonnull Uri uri) {
+    public String getType(final Uri uri) {
         return "vnd.android.cursor.dir/vnd.android.search.suggest";
     }
 
     @Override
-    public @Nullable Uri insert(final @Nonnull Uri uri, final @Nullable ContentValues values) {
+    public @Nullable Uri insert(final Uri uri, final @Nullable ContentValues values) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public int delete(final @Nonnull Uri uri, final @Nullable String selection, final @Nullable String[] selectionArgs) {
+    public int delete(final Uri uri, final @Nullable String selection, final @Nullable String[] selectionArgs) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public int update(final @Nonnull Uri uri, final @Nullable ContentValues values,
+    public int update(final Uri uri, final @Nullable ContentValues values,
                       final @Nullable String selection, final @Nullable String[] selectionArgs) {
         throw new UnsupportedOperationException();
     }

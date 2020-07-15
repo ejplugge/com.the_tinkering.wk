@@ -26,7 +26,6 @@ import com.the_tinkering.wk.enums.SessionItemState;
 import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.tasks.ApiTask;
-import com.the_tinkering.wk.util.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,13 +37,12 @@ import java.util.TimeZone;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
 
 /**
  * Various data conversion tools.
  */
 public final class Converters {
-    private static final Logger LOGGER = Logger.get(Converters.class);
-
     /**
      * A singleton instance of the object mapper, preconfigured to handle timestamps as needed for the API.
      */
@@ -282,7 +280,7 @@ public final class Converters {
             return null;
         }
 
-        try {
+        return safeNullable(() -> {
             final Calendar result = new GregorianCalendar(TimeZone.getTimeZone("Z"), Locale.ROOT);
             result.clear();
             result.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4), 10));
@@ -293,9 +291,6 @@ public final class Converters {
             result.set(Calendar.SECOND, Integer.parseInt(date.substring(17, 19), 10));
             result.set(Calendar.MILLISECOND, Integer.parseInt(date.substring(20, 23), 10));
             return result.getTime();
-        } catch (final NumberFormatException e) {
-            LOGGER.error(e, "Error parsing date");
-            return null;
-        }
+        });
     }
 }

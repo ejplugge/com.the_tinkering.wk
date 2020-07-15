@@ -34,18 +34,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * DAO for subjects.
  */
 @Dao
 public abstract class SubjectCollectionsDao {
-    private static List<Subject> buildList(final Iterable<SubjectEntity> list) {
-        final List<Subject> result = new ArrayList<>();
-        for (final SubjectEntity entity: list) {
-            result.add(new Subject(entity));
-        }
-        return result;
+    private static List<Subject> buildList(final Collection<SubjectEntity> list) {
+        return list.stream().map(Subject::new).collect(Collectors.toList());
     }
 
     /**

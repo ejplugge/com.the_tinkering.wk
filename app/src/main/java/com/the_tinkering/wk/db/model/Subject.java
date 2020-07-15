@@ -38,12 +38,12 @@ import com.the_tinkering.wk.util.PseudoIme;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -52,7 +52,6 @@ import static com.the_tinkering.wk.util.ObjectSupport.getShortWaitTimeAsInformal
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
 import static com.the_tinkering.wk.util.ObjectSupport.join;
-import static com.the_tinkering.wk.util.ObjectSupport.orElse;
 import static com.the_tinkering.wk.util.ObjectSupport.removeDuplicates;
 import static com.the_tinkering.wk.util.TextUtil.escapeHtml;
 import static com.the_tinkering.wk.util.TextUtil.formatTimestamp;
@@ -574,15 +573,9 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the list
      */
     private List<Meaning> getAcceptedMeanings() {
-        final List<Meaning> result = new ArrayList<>();
-
-        for (final Meaning meaning: getMeanings()) {
-            if (meaning.isAcceptedAnswer()) {
-                result.add(meaning);
-            }
-        }
-
-        return result;
+        return getMeanings().stream()
+                .filter(Meaning::isAcceptedAnswer)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -600,12 +593,8 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it does
      */
     private boolean hasAcceptedMeanings() {
-        for (final Meaning meaning: getMeanings()) {
-            if (meaning.isAcceptedAnswer()) {
-                return true;
-            }
-        }
-        return false;
+        return getMeanings().stream()
+                .anyMatch(Meaning::isAcceptedAnswer);
     }
 
     /**
@@ -613,16 +602,10 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the number
      */
-    private int getNumAcceptedMeanings() {
-        int n = 0;
-
-        for (final Meaning meaning: getMeanings()) {
-            if (meaning.isAcceptedAnswer()) {
-                n++;
-            }
-        }
-
-        return n;
+    private long getNumAcceptedMeanings() {
+        return getMeanings().stream()
+                .filter(Meaning::isAcceptedAnswer)
+                .count();
     }
 
     /**
@@ -631,25 +614,18 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the meaning
      */
     public String getOneMeaning() {
-        @Nullable Meaning best = null;
-        for (final Meaning meaning: getMeanings()) {
-            if (best == null) {
-                best = meaning;
-                continue;
+        return getMeanings().stream().reduce((t, u) -> {
+            if (t.isPrimary()) {
+                return t;
             }
-            if (meaning.isAcceptedAnswer() && !best.isAcceptedAnswer()) {
-                best = meaning;
-                continue;
+            if (u.isPrimary()) {
+                return u;
             }
-            if (!meaning.isAcceptedAnswer() && best.isAcceptedAnswer()) {
-                continue;
+            if (t.isAcceptedAnswer()) {
+                return t;
             }
-            if (meaning.isPrimary() && !best.isPrimary()) {
-                best = meaning;
-            }
-        }
-
-        return (best == null) ? "" : orElse(best.getMeaning(), "");
+            return u;
+        }).map(Meaning::getMeaning).orElse("");
     }
 
     /**
@@ -658,15 +634,9 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the list
      */
     public List<Reading> getAcceptedReadings() {
-        final List<Reading> result = new ArrayList<>();
-
-        for (final Reading reading: getReadings()) {
-            if (reading.isAcceptedAnswer()) {
-                result.add(reading);
-            }
-        }
-
-        return result;
+        return getReadings().stream()
+                .filter(Reading::isAcceptedAnswer)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -684,12 +654,8 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it does
      */
     private boolean hasAcceptedReadings() {
-        for (final Reading reading: getReadings()) {
-            if (reading.isAcceptedAnswer()) {
-                return true;
-            }
-        }
-        return false;
+        return getReadings().stream()
+                .anyMatch(Reading::isAcceptedAnswer);
     }
 
     /**
@@ -697,16 +663,10 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the number
      */
-    private int getNumAcceptedReadings() {
-        int n = 0;
-
-        for (final Reading reading: getReadings()) {
-            if (reading.isAcceptedAnswer()) {
-                n++;
-            }
-        }
-
-        return n;
+    private long getNumAcceptedReadings() {
+        return getReadings().stream()
+                .filter(Reading::isAcceptedAnswer)
+                .count();
     }
 
     /**
@@ -724,25 +684,18 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the meaning
      */
     public String getOneReading() {
-        @Nullable Reading best = null;
-        for (final Reading reading: getReadings()) {
-            if (best == null) {
-                best = reading;
-                continue;
+        return getReadings().stream().reduce((t, u) -> {
+            if (t.isPrimary()) {
+                return t;
             }
-            if (reading.isAcceptedAnswer() && !best.isAcceptedAnswer()) {
-                best = reading;
-                continue;
+            if (u.isPrimary()) {
+                return u;
             }
-            if (!reading.isAcceptedAnswer() && best.isAcceptedAnswer()) {
-                continue;
+            if (t.isAcceptedAnswer()) {
+                return t;
             }
-            if (reading.isPrimary() && !best.isPrimary()) {
-                best = reading;
-            }
-        }
-
-        return (best == null) ? "" : orElse(best.getValue(GlobalSettings.Other.getShowOnInKatakana()), "");
+            return u;
+        }).map(reading -> reading.getValue(GlobalSettings.Other.getShowOnInKatakana())).orElse("");
     }
 
     /**
@@ -760,15 +713,9 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the list
      */
     public List<Reading> getOnYomiReadings() {
-        final List<Reading> result = new ArrayList<>();
-
-        for (final Reading reading: getReadings()) {
-            if (reading.isOnYomi()) {
-                result.add(reading);
-            }
-        }
-
-        return result;
+        return getReadings().stream()
+                .filter(Reading::isOnYomi)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -777,32 +724,9 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the list
      */
     public List<Reading> getKunYomiReadings() {
-        final List<Reading> result = new ArrayList<>();
-
-        for (final Reading reading: getReadings()) {
-            if (reading.isKunYomi()) {
-                result.add(reading);
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Get the nanori readings for this subject.
-     *
-     * @return the list
-     */
-    private List<Reading> getNanoriReadings() {
-        final List<Reading> result = new ArrayList<>();
-
-        for (final Reading reading: getReadings()) {
-            if (reading.isNanori()) {
-                result.add(reading);
-            }
-        }
-
-        return result;
+        return getReadings().stream()
+                .filter(Reading::isKunYomi)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -811,13 +735,8 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it does
      */
     public boolean hasOnYomi() {
-        for (final Reading reading: getReadings()) {
-            if (reading.isOnYomi()) {
-                return true;
-            }
-        }
-
-        return false;
+        return getReadings().stream()
+                .anyMatch(Reading::isOnYomi);
     }
 
     /**
@@ -826,13 +745,8 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it does
      */
     public boolean hasKunYomi() {
-        for (final Reading reading: getReadings()) {
-            if (reading.isKunYomi()) {
-                return true;
-            }
-        }
-
-        return false;
+        return getReadings().stream()
+                .anyMatch(Reading::isKunYomi);
     }
 
     /**
@@ -841,13 +755,8 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it does
      */
     public boolean hasNanori() {
-        for (final Reading reading: getReadings()) {
-            if (reading.isNanori()) {
-                return true;
-            }
-        }
-
-        return false;
+        return getReadings().stream()
+                .anyMatch(Reading::isNanori);
     }
 
     /**
@@ -856,13 +765,9 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it does
      */
     public boolean hasAcceptedOnYomi() {
-        for (final Reading reading: getAcceptedReadings()) {
-            if (reading.isOnYomi()) {
-                return true;
-            }
-        }
-
-        return false;
+        return getReadings().stream()
+                .filter(Reading::isAcceptedAnswer)
+                .anyMatch(Reading::isOnYomi);
     }
 
     /**
@@ -871,13 +776,9 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it does
      */
     public boolean hasAcceptedKunYomi() {
-        for (final Reading reading: getAcceptedReadings()) {
-            if (reading.isKunYomi()) {
-                return true;
-            }
-        }
-
-        return false;
+        return getReadings().stream()
+                .filter(Reading::isAcceptedAnswer)
+                .anyMatch(Reading::isKunYomi);
     }
 
     /**
@@ -887,12 +788,9 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it is
      */
     public boolean isPrimaryReading(final @Nullable String value) {
-        for (final Reading reading: getAcceptedReadings()) {
-            if (isEqual(reading.getReading(), value) && reading.isPrimary()) {
-                return true;
-            }
-        }
-        return false;
+        return getReadings().stream()
+                .filter(Reading::isPrimary)
+                .anyMatch(reading -> isEqual(reading.getReading(), value));
     }
 
     /**
@@ -1019,20 +917,13 @@ public final class Subject implements PronunciationAudioOwner {
         return entity.parsedPitchInfo;
     }
 
-    /**
-     * Does this subject have pitch info for a specific reading?.
-     *
-     * @param reading the reading to check
-     * @return true if it does
-     */
     private boolean hasPitchInfoFor(final CharSequence reading) {
         final String kana = requireNonNull(PseudoIme.toKatakana(reading));
-        for (final PitchInfo info: getPitchInfo()) {
-            if (isEqual(kana, info.getReading())) {
-                return true;
-            }
-        }
-        return false;
+        return getPitchInfo().stream().anyMatch(info -> isEqual(kana, info.getReading()));
+    }
+
+    private boolean hasFallbackPitchInfo() {
+        return getPitchInfo().stream().anyMatch(info -> info.getReading() == null);
     }
 
     /**
@@ -1042,19 +933,19 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the list
      */
     public List<PitchInfo> getPitchInfoFor(final CharSequence reading) {
-        final List<PitchInfo> result = new ArrayList<>();
         final String kana = requireNonNull(PseudoIme.toKatakana(reading));
-        boolean foundReadingMatch = false;
-        for (final PitchInfo info: getPitchInfo()) {
-            if (isEqual(kana, info.getReading())) {
-                result.add(info);
-                foundReadingMatch = true;
-            }
-            if (info.getReading() == null && !foundReadingMatch) {
-                result.add(info);
-            }
+
+        final List<PitchInfo> normalMatches = getPitchInfo().stream()
+                .filter(info -> isEqual(kana, info.getReading()))
+                .collect(Collectors.toList());
+
+        if (!normalMatches.isEmpty()) {
+            return normalMatches;
         }
-        return result;
+
+        return getPitchInfo().stream()
+                .filter(info -> info.getReading() == null)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -1106,7 +997,8 @@ public final class Subject implements PronunciationAudioOwner {
                 return true;
             }
         }
-        return false;
+
+        return hasFallbackPitchInfo();
     }
 
     /*
@@ -1672,20 +1564,13 @@ public final class Subject implements PronunciationAudioOwner {
      * @param prefix prefix to add to the produced text
      * @return the text
      */
-    public CharSequence getMeaningRichText(final String prefix) {
-        final Collection<String> result = new ArrayList<>();
-
-        for (final Meaning meaning: getAcceptedMeanings()) {
-            if (meaning.isPrimary() && getNumAcceptedMeanings() > 1) {
-                result.add(String.format("<b>%s</b>", meaning.getMeaning()));
-            }
-            else {
-                result.add(meaning.getMeaning());
-            }
-        }
-
-        final String s = prefix + join(", ", "", "", result);
-        return renderHtml(s);
+    public CharSequence getMeaningRichText(final CharSequence prefix) {
+        final String html = getAcceptedMeanings().stream()
+                .map(meaning -> meaning.isPrimary() && getNumAcceptedMeanings() > 1
+                ? String.format(Locale.ROOT, "<b>%s</b>", meaning.getMeaning())
+                : meaning.getMeaning())
+                .collect(Collectors.joining(", ", prefix, ""));
+        return renderHtml(html);
     }
 
     /**
@@ -1773,21 +1658,14 @@ public final class Subject implements PronunciationAudioOwner {
      * @param prefix prefix to add to the produced text
      * @return the text
      */
-    public CharSequence getRegularReadingRichText(final String prefix) {
-        final Collection<String> result = new ArrayList<>();
+    public CharSequence getRegularReadingRichText(final CharSequence prefix) {
         final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
-
-        for (final Reading reading: getAcceptedReadings()) {
-            if (reading.isPrimary() && getNumAcceptedReadings() > 1) {
-                result.add(String.format("<b>%s</b>", reading.getValue(showOnInKatakana)));
-            }
-            else {
-                result.add(reading.getValue(showOnInKatakana));
-            }
-        }
-
-        final String s = prefix + join(", ", "", "", result);
-        return renderHtml(s);
+        final String html = getAcceptedReadings().stream()
+                .map(reading -> reading.isPrimary() && getNumAcceptedReadings() > 1
+                        ? String.format(Locale.ROOT, "<b>%s</b>", reading.getValue(showOnInKatakana))
+                        : reading.getValue(showOnInKatakana))
+                .collect(Collectors.joining(", ", prefix, ""));
+        return renderHtml(html);
     }
 
     /**
@@ -1837,18 +1715,14 @@ public final class Subject implements PronunciationAudioOwner {
      * @param prefix prefix to add to the produced text
      * @return the text
      */
-    public CharSequence getAcceptedOnYomiRichText(final String prefix) {
-        final Collection<String> result = new ArrayList<>();
+    public CharSequence getAcceptedOnYomiRichText(final CharSequence prefix) {
         final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
-
-        for (final Reading reading: getOnYomiReadings()) {
-            if (!hasAcceptedOnYomi() || reading.isAcceptedAnswer()) {
-                result.add(reading.getValue(showOnInKatakana));
-            }
-        }
-
-        final String s = prefix + join(", ", "", "", result);
-        return renderHtml(s);
+        final String html = getReadings().stream()
+                .filter(Reading::isOnYomi)
+                .filter(reading -> !hasAcceptedOnYomi() || reading.isAcceptedAnswer())
+                .map(reading -> reading.getValue(showOnInKatakana))
+                .collect(Collectors.joining(", ", prefix, ""));
+        return renderHtml(html);
     }
 
     /**
@@ -1857,17 +1731,13 @@ public final class Subject implements PronunciationAudioOwner {
      * @param prefix prefix to add to the produced text
      * @return the text
      */
-    public CharSequence getAcceptedKunYomiRichText(final String prefix) {
-        final Collection<String> result = new ArrayList<>();
-
-        for (final Reading reading: getKunYomiReadings()) {
-            if (!hasAcceptedKunYomi() || reading.isAcceptedAnswer()) {
-                result.add(reading.getValue(false));
-            }
-        }
-
-        final String s = prefix + join(", ", "", "", result);
-        return renderHtml(s);
+    public CharSequence getAcceptedKunYomiRichText(final CharSequence prefix) {
+        final String html = getReadings().stream()
+                .filter(Reading::isOnYomi)
+                .filter(reading -> !hasAcceptedKunYomi() || reading.isAcceptedAnswer())
+                .map(reading -> reading.getValue(false))
+                .collect(Collectors.joining(", ", prefix, ""));
+        return renderHtml(html);
     }
 
     /**
@@ -1876,15 +1746,12 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the text
      */
     public CharSequence getOnYomiRichText() {
-        final Collection<String> result = new ArrayList<>();
         final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
-
-        for (final Reading reading: getOnYomiReadings()) {
-            result.add(reading.getValue(showOnInKatakana));
-        }
-
-        final String s = join(", ", "<b>On'yomi:</b> ", "", result);
-        return renderHtml(s);
+        final String html = getReadings().stream()
+                .filter(Reading::isOnYomi)
+                .map(reading -> reading.getValue(showOnInKatakana))
+                .collect(Collectors.joining(", ", "<b>On'yomi:</b> ", ""));
+        return renderHtml(html);
     }
 
     /**
@@ -1893,14 +1760,11 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the text
      */
     public CharSequence getKunYomiRichText() {
-        final Collection<String> result = new ArrayList<>();
-
-        for (final Reading reading: getKunYomiReadings()) {
-            result.add(reading.getValue(false));
-        }
-
-        final String s = join(", ", "<b>Kun'yomi:</b> ", "", result);
-        return renderHtml(s);
+        final String html = getReadings().stream()
+                .filter(Reading::isKunYomi)
+                .map(reading -> reading.getValue(false))
+                .collect(Collectors.joining(", ", "<b>Kun'yomi:</b> ", ""));
+        return renderHtml(html);
     }
 
     /**
@@ -1909,14 +1773,11 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the text
      */
     public CharSequence getNanoriRichText() {
-        final Collection<String> result = new ArrayList<>();
-
-        for (final Reading reading: getNanoriReadings()) {
-            result.add(reading.getValue(false));
-        }
-
-        final String s = join(", ", "<b>Nanori:</b> ", "", result);
-        return renderHtml(s);
+        final String html = getReadings().stream()
+                .filter(Reading::isNanori)
+                .map(reading -> reading.getValue(false))
+                .collect(Collectors.joining(", ", "<b>Nanori:</b> ", ""));
+        return renderHtml(html);
     }
 
     /**

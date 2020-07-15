@@ -48,9 +48,9 @@ import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.SrsSystemDefinition;
 import com.the_tinkering.wk.db.model.SubjectEntity;
 import com.the_tinkering.wk.db.model.TaskDefinition;
+import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.jobs.TickJob;
 import com.the_tinkering.wk.model.Session;
-import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.tasks.DownloadAudioTask;
 import com.the_tinkering.wk.tasks.DownloadPitchInfoTask;
@@ -73,7 +73,6 @@ import com.the_tinkering.wk.tasks.SubmitStudyMaterialTask;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.DAY;
@@ -92,7 +91,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.join;
         LogRecord.class,
         AudioDownloadStatus.class,
         SearchPreset.class
-        }, version = 65)
+}, version = 65)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
     /**
@@ -110,7 +109,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_48_49 = new Migration(48, 49) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("CREATE INDEX IF NOT EXISTS `index_subject_characters` ON subject (`characters`)");
         }
     };
@@ -120,7 +119,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_49_50 = new Migration(49, 50) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("DROP VIEW IF EXISTS `SubjectProgressItem`");
             database.execSQL("CREATE VIEW `SubjectProgressItem` AS SELECT level, typeCode, srsStage, passed, unlockedAt "
                     + "FROM subject WHERE subject.hiddenAt = 0 AND object IS NOT NULL ORDER BY subject.level, subject.typeCode");
@@ -132,7 +131,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_50_51 = new Migration(50, 51) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("DROP VIEW IF EXISTS `AudioDownloadOverviewItem`");
             database.execSQL("DROP VIEW IF EXISTS `SrsBreakDownItem`");
             database.execSQL("DROP VIEW IF EXISTS `SubjectProgressItem`");
@@ -144,7 +143,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_51_52 = new Migration(51, 52) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE subject ADD COLUMN levelProgressScore INTEGER NOT NULL DEFAULT 0");
             database.execSQL("UPDATE subject SET levelProgressScore=0 WHERE passed");
             database.execSQL("UPDATE subject SET levelProgressScore=6 WHERE NOT passed AND (unlockedAt = 0 OR unlockedAt IS NULL)");
@@ -161,7 +160,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_52_53 = new Migration(52, 53) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE session_item ADD COLUMN numAnswers INTEGER NOT NULL DEFAULT 0");
         }
     };
@@ -171,7 +170,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_53_54 = new Migration(53, 54) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE session_item ADD COLUMN lastAnswer INTEGER NOT NULL DEFAULT 0");
         }
     };
@@ -181,7 +180,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_54_55 = new Migration(54, 55) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `level_progression` (`id` INTEGER NOT NULL, `abandonedAt` INTEGER,"
                     + "`completedAt` INTEGER, `createdAt` INTEGER, `passedAt` INTEGER, `startedAt` INTEGER,"
                     + "`unlockedAt` INTEGER, `level` INTEGER NOT NULL, PRIMARY KEY(`id`))");
@@ -193,7 +192,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_55_56 = new Migration(55, 56) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `log_record` (`id` INTEGER NOT NULL, `timestamp` INTEGER, `tag` TEXT, "
                     + "`length` INTEGER NOT NULL, `message` TEXT, PRIMARY KEY(`id`))");
         }
@@ -204,7 +203,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_56_57 = new Migration(56, 57) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE subject ADD COLUMN lastIncorrectAnswer INTEGER");
         }
     };
@@ -214,7 +213,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_57_58 = new Migration(57, 58) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `audio_download_status` (`level` INTEGER NOT NULL, `numTotal` INTEGER NOT NULL, "
                     + "`numNoAudio` INTEGER NOT NULL, `numMissingAudio` INTEGER NOT NULL, `numPartialAudio` INTEGER NOT NULL, "
                     + "`numFullAudio` INTEGER NOT NULL, PRIMARY KEY(`level`))");
@@ -226,7 +225,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_58_59 = new Migration(58, 59) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE subject ADD COLUMN pitchInfo TEXT");
         }
     };
@@ -236,7 +235,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_59_60 = new Migration(59, 60) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE session_item ADD COLUMN kanjiAcceptedReadingType TEXT");
         }
     };
@@ -246,7 +245,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_60_61 = new Migration(60, 61) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE session_item ADD COLUMN srsSystemId INTEGER NOT NULL DEFAULT 0");
             database.execSQL("ALTER TABLE subject ADD COLUMN srsSystemId INTEGER NOT NULL DEFAULT 0");
         }
@@ -257,7 +256,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_61_62 = new Migration(61, 62) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE subject ADD COLUMN documentUrl TEXT");
         }
     };
@@ -267,7 +266,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_62_63 = new Migration(62, 63) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("DROP TABLE srs_stage");
             database.execSQL("CREATE TABLE IF NOT EXISTS `srs_system` (`id` INTEGER NOT NULL, `name` TEXT, `description` TEXT, `stages` TEXT,"
                     + " `unlockingStagePosition` INTEGER NOT NULL, `startingStagePosition` INTEGER NOT NULL,"
@@ -280,7 +279,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_63_64 = new Migration(63, 64) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `search_preset` (`name` TEXT NOT NULL, `type` INTEGER NOT NULL,"
                     + " `data` TEXT NOT NULL, PRIMARY KEY(`name`))");
         }
@@ -291,7 +290,7 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     public static final Migration MIGRATION_64_65 = new Migration(64, 65) {
         @Override
-        public void migrate(final @Nonnull SupportSQLiteDatabase database) {
+        public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("UPDATE subject SET srsStage=-999 WHERE unlockedAt = 0 OR unlockedAt IS NULL");
         }
     };

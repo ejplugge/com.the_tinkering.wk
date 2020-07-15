@@ -22,7 +22,6 @@ import androidx.room.Query;
 import com.the_tinkering.wk.db.model.Property;
 import com.the_tinkering.wk.enums.QuestionType;
 import com.the_tinkering.wk.enums.SessionType;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.Date;
 import java.util.List;
@@ -34,14 +33,14 @@ import static com.the_tinkering.wk.db.Converters.sessionTypeToString;
 import static com.the_tinkering.wk.db.Converters.stringToSessionType;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.isEqualIgnoreCase;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
 
 /**
  * DAO for properties: various key/value records that record useful data that doesn't count as settings.
  */
 @Dao
 public abstract class PropertiesDao {
-    private static final Logger LOGGER = Logger.get(PropertiesDao.class);
-
     /**
      * Room-generated method: get all properties.
      *
@@ -66,12 +65,7 @@ public abstract class PropertiesDao {
      * @return the value or null if it doesn't exist
      */
     private @Nullable String getProperty(final String name) {
-        try {
-            return getPropertyHelper(name);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return null;
-        }
+        return safeNullable(() -> getPropertyHelper(name));
     }
 
     /**
@@ -98,11 +92,7 @@ public abstract class PropertiesDao {
      * @param value the value of the property
      */
     private void setProperty(final String name, final String value) {
-        try {
-            setPropertyHelper(name, value);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> setPropertyHelper(name, value));
     }
 
     /**
@@ -144,12 +134,7 @@ public abstract class PropertiesDao {
             return 0;
         }
 
-        try {
-            return Integer.parseInt(value, 10);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return 0;
-        }
+        return safe(0, () -> Integer.parseInt(value, 10));
     }
 
     /**
@@ -175,12 +160,7 @@ public abstract class PropertiesDao {
             return 0;
         }
 
-        try {
-            return Long.parseLong(value, 10);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return 0;
-        }
+        return safe(0L, () -> Long.parseLong(value, 10));
     }
 
     /**
@@ -208,12 +188,7 @@ public abstract class PropertiesDao {
             return null;
         }
 
-        long ts = 0;
-        try {
-            ts = Long.parseLong(value);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        long ts = safe(0L, () -> Long.parseLong(value));
         if (ts == 0) {
             return null;
         }

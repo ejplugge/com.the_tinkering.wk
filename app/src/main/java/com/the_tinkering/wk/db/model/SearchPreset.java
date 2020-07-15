@@ -20,8 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import javax.annotation.Nonnull;
-
 /**
  * Room entity for the search_preset table, which stores the user's search presets.
  */
@@ -32,7 +30,7 @@ public final class SearchPreset {
      */
     @NonNull
     @PrimaryKey
-    public @Nonnull String name = "";
+    public String name = "";
 
     /**
      * Type of this preset. 0 = level browse, 1 = simple keyword search, 2 = advanced search
@@ -43,5 +41,5 @@ public final class SearchPreset {
      * Type-specific string that encodes the parameters for the search preset.
      */
     @NonNull
-    public @Nonnull String data = "";
+    public String data = "";
 }
