@@ -50,7 +50,7 @@ public final class TimeLine {
     public TimeLine(final int size) {
         createdAt = new Date();
         for (int i = 0; i < size; i++) {
-            timeLine.add(new ArrayList<Subject>());
+            timeLine.add(new ArrayList<>());
             numRequiredForLevelUp.add(0);
         }
 

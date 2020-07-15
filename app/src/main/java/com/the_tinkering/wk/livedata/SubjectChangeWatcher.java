@@ -42,7 +42,7 @@ public final class SubjectChangeWatcher {
     private static final Logger LOGGER = Logger.get(SubjectChangeWatcher.class);
     private static final SubjectChangeWatcher instance = new SubjectChangeWatcher();
     private static final Object MARK = new Object();
-    private final Map<SubjectChangeListener, Object> map = Collections.synchronizedMap(new WeakHashMap<SubjectChangeListener, Object>());
+    private final Map<SubjectChangeListener, Object> map = Collections.synchronizedMap(new WeakHashMap<>());
 
     /**
      * Get the singleton instance.
