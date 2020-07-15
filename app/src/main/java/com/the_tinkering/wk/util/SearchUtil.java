@@ -43,7 +43,6 @@ import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.Constants.MAX_SEARCH_HITS;
-import static com.the_tinkering.wk.util.ObjectSupport.compareIntegers;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.join;
 
@@ -232,7 +231,7 @@ public final class SearchUtil {
         Collections.sort(subjects, new Comparator<Subject>() {
             @Override
             public int compare(final Subject o1, final Subject o2) {
-                return compareIntegers(o2.getRanking(), o1.getRanking());
+                return Integer.compare(o2.getRanking(), o1.getRanking());
             }
         });
 
@@ -269,7 +268,7 @@ public final class SearchUtil {
         Collections.sort(subjects, new Comparator<Subject>() {
             @Override
             public int compare(final Subject o1, final Subject o2) {
-                return compareIntegers(o2.getRanking(), o1.getRanking());
+                return Integer.compare(o2.getRanking(), o1.getRanking());
             }
         });
 

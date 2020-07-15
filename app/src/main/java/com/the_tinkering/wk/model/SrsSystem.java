@@ -24,8 +24,6 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.compareIntegers;
-import static com.the_tinkering.wk.util.ObjectSupport.compareLongs;
 import static com.the_tinkering.wk.util.TextUtil.getRomanNumeral;
 
 /**
@@ -120,7 +118,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
         if (o == null) {
             return 1;
         }
-        return compareLongs(id, o.id);
+        return Long.compare(id, o.id);
     }
 
     /**
@@ -166,7 +164,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
         Collections.sort(stages, new Comparator<Stage>() {
             @Override
             public int compare(final Stage o1, final Stage o2) {
-                return compareLongs(o1.id, o2.id);
+                return Long.compare(o1.id, o2.id);
             }
         });
         numPassedStages = 0;
@@ -414,12 +412,12 @@ public final class SrsSystem implements Comparable<SrsSystem> {
                 if (!o.isPassed()) {
                     return 1;
                 }
-                return compareIntegers(passedIndex, o.passedIndex);
+                return Integer.compare(passedIndex, o.passedIndex);
             }
             if (o.isPassed()) {
                 return -1;
             }
-            return compareIntegers(prePassedIndex, o.prePassedIndex);
+            return Integer.compare(prePassedIndex, o.prePassedIndex);
         }
 
         /**

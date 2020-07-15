@@ -51,7 +51,7 @@ public enum ReviewOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getLevel(), o2.getLevel());
+                    return Integer.compare(o1.getLevel(), o2.getLevel());
                 }
             };
         }
@@ -66,7 +66,7 @@ public enum ReviewOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
                 }
             };
         }
@@ -111,7 +111,7 @@ public enum ReviewOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    final int n = compareIntegers(o1.getLevel(), o2.getLevel());
+                    final int n = Integer.compare(o1.getLevel(), o2.getLevel());
                     if (n != 0) {
                         return n;
                     }
@@ -145,7 +145,7 @@ public enum ReviewOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    final int n = compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                    final int n = Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
                     if (n != 0) {
                         return n;
                     }
@@ -168,7 +168,7 @@ public enum ReviewOrder {
                     if (n != 0) {
                         return n;
                     }
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
                 }
             };
         }
@@ -187,7 +187,7 @@ public enum ReviewOrder {
                     if (n != 0) {
                         return n;
                     }
-                    return compareIntegers(o1.getLevel(), o2.getLevel());
+                    return Integer.compare(o1.getLevel(), o2.getLevel());
                 }
             };
         }
@@ -221,7 +221,7 @@ public enum ReviewOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    final int n1 = compareIntegers(o1.getLevel(), o2.getLevel());
+                    final int n1 = Integer.compare(o1.getLevel(), o2.getLevel());
                     if (n1 != 0) {
                         return n1;
                     }
@@ -229,7 +229,7 @@ public enum ReviewOrder {
                     if (n2 != 0) {
                         return n2;
                     }
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
                 }
             };
         }
@@ -263,7 +263,7 @@ public enum ReviewOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    final int n1 = compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                    final int n1 = Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
                     if (n1 != 0) {
                         return n1;
                     }
@@ -271,7 +271,7 @@ public enum ReviewOrder {
                     if (n2 != 0) {
                         return n2;
                     }
-                    return compareIntegers(o1.getLevel(), o2.getLevel());
+                    return Integer.compare(o1.getLevel(), o2.getLevel());
                 }
             };
         }

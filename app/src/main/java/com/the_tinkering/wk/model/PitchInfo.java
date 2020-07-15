@@ -107,6 +107,6 @@ public final class PitchInfo implements Comparable<PitchInfo> {
         if (n2 != 0) {
             return n2;
         }
-        return ObjectSupport.compareIntegers(pitchNumber, o.pitchNumber);
+        return Integer.compare(pitchNumber, o.pitchNumber);
     }
 }

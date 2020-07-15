@@ -238,40 +238,6 @@ public final class ObjectSupport {
     }
 
     /**
-     * Helper for comparators: generate the order of long values.
-     *
-     * @param l1 left-hand value
-     * @param l2 right-hand value
-     * @return order as for compareTo()
-     */
-    public static int compareLongs(final long l1, final long l2) {
-        if (l1 < l2) {
-            return -1;
-        }
-        if (l1 > l2) {
-            return 1;
-        }
-        return 0;
-    }
-
-    /**
-     * Helper for comparators: generate the order of int values.
-     *
-     * @param i1 left-hand value
-     * @param i2 right-hand value
-     * @return order as for compareTo()
-     */
-    public static int compareIntegers(final int i1, final int i2) {
-        if (i1 < i2) {
-            return -1;
-        }
-        if (i1 > i2) {
-            return 1;
-        }
-        return 0;
-    }
-
-    /**
      * Helper for comparators: generate the order of int values.
      * The result is based on the values of i1 and i2 if they differ.
      * If they are the same, use i3 and i4 instead.
@@ -283,19 +249,11 @@ public final class ObjectSupport {
      * @return order as for compareTo()
      */
     public static int compareIntegers(final int i1, final int i2, final int i3, final int i4) {
-        if (i1 < i2) {
-            return -1;
+        final int n = Integer.compare(i1, i2);
+        if (n != 0) {
+            return n;
         }
-        if (i1 > i2) {
-            return 1;
-        }
-        if (i3 < i4) {
-            return -1;
-        }
-        if (i3 > i4) {
-            return 1;
-        }
-        return 0;
+        return Integer.compare(i3, i4);
     }
 
     /**
@@ -310,19 +268,11 @@ public final class ObjectSupport {
      * @return order as for compareTo()
      */
     public static int compareLongsAndIntegers(final long i1, final long i2, final int i3, final int i4) {
-        if (i1 < i2) {
-            return -1;
+        final int n = Long.compare(i1, i2);
+        if (n != 0) {
+            return n;
         }
-        if (i1 > i2) {
-            return 1;
-        }
-        if (i3 < i4) {
-            return -1;
-        }
-        if (i3 > i4) {
-            return 1;
-        }
-        return 0;
+        return Integer.compare(i3, i4);
     }
 
     /**
@@ -339,25 +289,15 @@ public final class ObjectSupport {
      * @return order as for compareTo()
      */
     public static int compareIntegersAndLongs(final int i1, final int i2, final int i3, final int i4, final long i5, final long i6) {
-        if (i1 < i2) {
-            return -1;
+        final int n1 = Integer.compare(i1, i2);
+        if (n1 != 0) {
+            return n1;
         }
-        if (i1 > i2) {
-            return 1;
+        final int n2 = Integer.compare(i3, i4);
+        if (n2 != 0) {
+            return n2;
         }
-        if (i3 < i4) {
-            return -1;
-        }
-        if (i3 > i4) {
-            return 1;
-        }
-        if (i5 < i6) {
-            return -1;
-        }
-        if (i5 > i6) {
-            return 1;
-        }
-        return 0;
+        return Long.compare(i5, i6);
     }
 
     /**

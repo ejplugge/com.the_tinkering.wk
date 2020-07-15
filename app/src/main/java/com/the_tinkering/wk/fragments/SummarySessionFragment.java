@@ -46,7 +46,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.compareIntegers;
 import static com.the_tinkering.wk.util.ObjectSupport.compareIntegersAndLongs;
 import static com.the_tinkering.wk.util.ObjectSupport.requireNonNull;
 
@@ -381,7 +380,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                     return 1;
                 }
                 if (s1.getType().getOrder() != s2.getType().getOrder()) {
-                    return compareIntegers(s1.getType().getOrder(), s2.getType().getOrder());
+                    return Integer.compare(s1.getType().getOrder(), s2.getType().getOrder());
                 }
                 if (srsRelevant) {
                     final int n = o1.getNewSrsStage().compareTo(o2.getNewSrsStage());
@@ -425,7 +424,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         Collections.sort(incorrectSubjects, new Comparator<Subject>() {
             @Override
             public int compare(final Subject o1, final Subject o2) {
-                return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
             }
         });
 
@@ -439,7 +438,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         Collections.sort(correctSubjects, new Comparator<Subject>() {
             @Override
             public int compare(final Subject o1, final Subject o2) {
-                return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
             }
         });
 

@@ -101,7 +101,7 @@ public enum LessonOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getLevel(), o2.getLevel());
+                    return Integer.compare(o1.getLevel(), o2.getLevel());
                 }
             };
         }
@@ -116,7 +116,7 @@ public enum LessonOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
                 }
             };
         }

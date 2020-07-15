@@ -44,7 +44,7 @@ public enum SearchSortOrder {
             return new Comparator<Subject>() {
                 @Override
                 public int compare(final Subject o1, final Subject o2) {
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
                 }
             };
         }
@@ -146,7 +146,7 @@ public enum SearchSortOrder {
                     if (n != 0) {
                         return n;
                     }
-                    return compareIntegers(o1.getType().getOrder(), o2.getType().getOrder());
+                    return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
                 }
             };
         }
