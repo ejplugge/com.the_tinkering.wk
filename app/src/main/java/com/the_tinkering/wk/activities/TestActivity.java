@@ -22,7 +22,6 @@ import android.view.View;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
-import com.the_tinkering.wk.api.model.Reading;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.SubjectType;
@@ -33,7 +32,6 @@ import com.the_tinkering.wk.util.PitchInfoUtil;
 import com.the_tinkering.wk.util.ReferenceDataUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

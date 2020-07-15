@@ -89,7 +89,7 @@ public abstract class SubjectDao {
      */
     @Query("UPDATE subject SET frequency = :frequency, joyoGrade = :joyoGrade, jlptLevel = :jlptLevel, pitchInfo = :pitchInfo WHERE id = :id")
     public abstract void updateReferenceData(final long id, final int frequency, final int joyoGrade, final int jlptLevel,
-                                             final String pitchInfo);
+                                             @androidx.annotation.Nullable final String pitchInfo);
 
     /**
      * Room-generated method: update the last incorrect answer timestamp.

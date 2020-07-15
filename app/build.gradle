@@ -34,9 +34,16 @@ android {
         reportDir "$rootDir/test-reports"
         resultsDir "$rootDir/test-results"
     }
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+
     annotationProcessor "androidx.room:room-compiler:2.2.5"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -53,8 +60,8 @@ dependencies {
     implementation 'com.airbnb.android:lottie:3.4.1'
     implementation "androidx.work:work-runtime:2.3.4"
     implementation "org.jsoup:jsoup:1.13.1"
-    implementation "com.squareup.okhttp3:okhttp:4.7.2"
-    implementation "com.squareup.okhttp3:okhttp-urlconnection:4.7.2"
+    implementation "com.squareup.okhttp3:okhttp:4.8.0"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:4.8.0"
     implementation "com.github.madrapps:pikolo:2.0.1"
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation 'androidx.gridlayout:gridlayout:1.0.0'

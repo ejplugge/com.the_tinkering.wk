@@ -71,7 +71,6 @@ public final class LoadReferenceDataTask extends ApiTask {
             final @Nullable String pitchInfo = ReferenceDataUtil.getPitchInfo(data.getType(), data.getCharacters());
             if (frequency != data.getFrequency() || joyoGrade != data.getJoyoGrade() || jlptLevel != data.getJlptLevel()
                     || !isEqual(pitchInfo, data.getPitchInfo())) {
-                //noinspection ConstantConditions
                 db.subjectDao().updateReferenceData(data.getId(), frequency, joyoGrade, jlptLevel, pitchInfo);
             }
             LiveApiProgress.addProcessedEntity();
