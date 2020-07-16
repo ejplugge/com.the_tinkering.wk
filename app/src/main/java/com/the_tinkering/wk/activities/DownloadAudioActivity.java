@@ -222,9 +222,6 @@ public final class DownloadAudioActivity extends AbstractActivity {
                 });
                 return null;
             }, null, result -> {
-                if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
-                    return;
-                }
                 LiveAudioMoveStatus.getInstance().setActive(false);
                 LiveAudioMoveStatus.getInstance().forceUpdate();
                 moveProgressBar.setVisibility(false);

@@ -257,9 +257,6 @@ public final class SelfStudyStartActivity extends AbstractActivity {
             }
             return subjects;
         }, null, result -> {
-            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
-                return;
-            }
             if (result == null || result.isEmpty() || session.isInactive()) {
                 Toast.makeText(this, "No subjects found for self-study!", Toast.LENGTH_SHORT).show();
                 goToMainActivity();

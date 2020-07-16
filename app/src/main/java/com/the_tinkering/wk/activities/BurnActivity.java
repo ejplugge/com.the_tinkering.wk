@@ -122,7 +122,7 @@ public final class BurnActivity extends AbstractActivity {
         final AppDatabase db = WkApplication.getDatabase();
         int i = 0;
         while (i < subjectIds.size()) {
-            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED) || stopped) {
+            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED) || stopped) {
                 break;
             }
             final long id = subjectIds.get(0);
@@ -158,9 +158,6 @@ public final class BurnActivity extends AbstractActivity {
     }
 
     private void onPublishProgress(final Object[] values) {
-        if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED) || stopped) {
-            return;
-        }
         final @Nullable CharSequence newStatus = (CharSequence) values[0];
         if (newStatus != null) {
             status.setText(newStatus);
@@ -186,9 +183,6 @@ public final class BurnActivity extends AbstractActivity {
     }
 
     private void onPostExecute() {
-        if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
-            return;
-        }
         startButton.enableInteraction();
         stopButton.disableInteraction();
         if (subjectIds.isEmpty()) {

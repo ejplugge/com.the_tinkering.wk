@@ -155,9 +155,6 @@ public final class FontImportActivity extends AbstractActivity {
             }
             return null;
         }, null, result -> {
-            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
-                return;
-            }
             flushCache(fileName);
             updateFileList();
             Toast.makeText(this, "File imported", Toast.LENGTH_LONG).show();

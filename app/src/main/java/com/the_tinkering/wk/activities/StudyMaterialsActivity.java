@@ -98,9 +98,6 @@ public final class StudyMaterialsActivity extends AbstractActivity {
                     publisher -> WkApplication.getDatabase().subjectDao().getById(id),
                     null,
                     result -> {
-                        if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
-                            return;
-                        }
                         if (result == null || !result.getType().canHaveStudyMaterials()) {
                             finish();
                             return;
