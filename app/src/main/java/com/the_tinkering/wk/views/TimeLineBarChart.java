@@ -49,13 +49,13 @@ import com.the_tinkering.wk.util.ThemeUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
-import static com.the_tinkering.wk.util.ObjectSupport.compareIntegers;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Calendar.DAY_OF_WEEK;
 import static java.util.Calendar.HOUR_OF_DAY;
@@ -284,7 +284,9 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
 
         final List<RectF> labels = new ArrayList<>();
         final List<BarEntry> sortedEntries = new ArrayList<>(entries);
-        Collections.sort(sortedEntries, (o1, o2) -> compareIntegers(o2.barCount, o1.barCount, o1.index, o2.index));
+        Collections.sort(sortedEntries,
+                Comparator.<BarEntry>comparingInt(entry -> entry.barCount)
+                        .thenComparingInt(entry -> entry.index));
 
         // The count above each bar
         for (final BarEntry entry: sortedEntries) {

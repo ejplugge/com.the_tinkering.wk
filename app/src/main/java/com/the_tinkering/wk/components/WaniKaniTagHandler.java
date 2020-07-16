@@ -41,7 +41,6 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.enums.ActiveTheme;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import org.xml.sax.XMLReader;
@@ -50,12 +49,12 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * A tag handler for texts like mnemonics in the subject info. Used to translate a few WK-specific tags like '&lt;kanji&gt;'.
  */
 public final class WaniKaniTagHandler implements Html.TagHandler {
-    private static final Logger LOGGER = Logger.get(WaniKaniTagHandler.class);
-
     @Override
     public void handleTag(final boolean opening, final String tag, final Editable output, final XMLReader xmlReader) {
         if (!(output instanceof SpannableStringBuilder)) {
@@ -138,13 +137,10 @@ public final class WaniKaniTagHandler implements Html.TagHandler {
                 start(output, new TitleImage());
             }
             else {
-                final int imageId;
-                try {
-                    imageId = Integer.parseInt(tag.substring(12), 10);
+                safe(() -> {
+                    final int imageId = Integer.parseInt(tag.substring(12), 10);
                     end(output, TitleImage.class, new TitleImageSpan(imageId));
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+                });
             }
         }
     }

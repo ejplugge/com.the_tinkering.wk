@@ -21,7 +21,6 @@ import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.CloseEnoughAction;
 import com.the_tinkering.wk.enums.QuestionType;
-import com.the_tinkering.wk.util.ObjectSupport;
 
 import java.util.Locale;
 
@@ -29,6 +28,7 @@ import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.enums.SessionItemState.ACTIVE;
 import static com.the_tinkering.wk.enums.SessionItemState.PENDING;
+import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -123,7 +123,7 @@ public final class Question {
      * @return the verdict for this answer
      */
     public AnswerVerdict checkAnswer(final @Nullable Subject matchingKanji, final String answer, final CloseEnoughAction closeEnoughAction) {
-        if (ObjectSupport.isEmpty(answer)) {
+        if (isEmpty(answer)) {
             return AnswerVerdict.NOK_WITH_RETRY;
         }
 

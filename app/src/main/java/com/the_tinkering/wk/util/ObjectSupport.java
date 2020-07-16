@@ -215,42 +215,6 @@ public final class ObjectSupport {
     }
 
     /**
-     * Helper for comparators: generate the order of two string values, either of which could be null.
-     *
-     * @param s1 left-hand value
-     * @param s2 right-hand value
-     * @return order as for compareTo()
-     */
-    public static int compareStrings(final @Nullable Comparable<? super String> s1, final @Nullable String s2) {
-        if (s1 == null) {
-            return s2 == null ? 0 : -1;
-        }
-        if (s2 == null) {
-            return 1;
-        }
-        return s1.compareTo(s2);
-    }
-
-    /**
-     * Helper for comparators: generate the order of int values.
-     * The result is based on the values of i1 and i2 if they differ.
-     * If they are the same, use i3 and i4 instead.
-     *
-     * @param i1 left-hand value 1
-     * @param i2 right-hand value 1
-     * @param i3 left-hand value 2
-     * @param i4 right-hand value 2
-     * @return order as for compareTo()
-     */
-    public static int compareIntegers(final int i1, final int i2, final int i3, final int i4) {
-        final int n = Integer.compare(i1, i2);
-        if (n != 0) {
-            return n;
-        }
-        return Integer.compare(i3, i4);
-    }
-
-    /**
      * Create a comparator that will deliver the reverse results of the argument one.
      *
      * @param comparator the argument comparator
@@ -424,7 +388,7 @@ public final class ObjectSupport {
     @SafeVarargs
     public static <Params, Progress, Result> void runAsync(final @Nullable LifecycleOwner lifecycleOwner,
                                                            final DoInBackground<Progress, Result> background,
-                                                           final ObjectSupport.@Nullable OnProgressUpdate<? super Progress> progress,
+                                                           final @Nullable ObjectSupport.OnProgressUpdate<? super Progress> progress,
                                                            final @Nullable OnPostExecute<? super Result> post,
                                                            final Params... params) {
         new AsyncTask<Params, Progress, Result>() {

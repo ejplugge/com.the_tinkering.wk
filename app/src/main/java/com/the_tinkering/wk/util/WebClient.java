@@ -44,6 +44,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -98,7 +100,7 @@ public final class WebClient {
     }
 
     private boolean findAuthenticityToken(final @Nullable ResponseBody body) {
-        try {
+        return safe(false, () -> {
             if (body == null) {
                 return false;
             }
@@ -111,14 +113,12 @@ public final class WebClient {
                     return true;
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        return false;
+            return false;
+        });
     }
 
     private static @Nullable Response getUrl(final String url) {
-        try {
+        return safeNullable(() -> {
             LOGGER.info("Fetching: %s", url);
             final OkHttpClient client = new OkHttpClient.Builder()
                     .cookieJar(new JavaNetCookieJar(CookieHandler.getDefault()))
@@ -128,14 +128,11 @@ public final class WebClient {
                     .url(url)
                     .build();
             return client.newCall(request).execute();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return null;
-        }
+        });
     }
 
     private static @Nullable Response postUrl(final String url, final RequestBody requestBody) {
-        try {
+        return safeNullable(() -> {
             LOGGER.info("Posting: %s", url);
             final OkHttpClient client = new OkHttpClient.Builder()
                     .cookieJar(new JavaNetCookieJar(CookieHandler.getDefault()))
@@ -146,14 +143,15 @@ public final class WebClient {
                     .post(requestBody)
                     .build();
             return client.newCall(request).execute();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return null;
-        }
+        });
     }
 
     private boolean fetchLoginPage() {
-        try {
+        return safe(() -> {
+            lastLoginState = 3;
+            lastLoginMessage = "Login page could not be fetched or parsed";
+            return false;
+        }, () -> {
             try (final @Nullable Response response = getUrl(LOGIN_URL)) {
                 if (response == null || !response.isSuccessful()) {
                     lastLoginState = 3;
@@ -167,16 +165,15 @@ public final class WebClient {
                 }
                 return true;
             }
-        } catch (final Exception e) {
-            lastLoginState = 3;
-            lastLoginMessage = "Login page could not be fetched or parsed";
-            LOGGER.uerr(e);
-            return false;
-        }
+        });
     }
 
     private void performLogin(final String password) {
-        try {
+        safe(() -> {
+            lastLoginState = 3;
+            lastLoginMessage = "Login failed";
+            return "";
+        }, () -> {
             final AppDatabase db = WkApplication.getDatabase();
             final RequestBody formData = new FormBody.Builder()
                     .add("utf8", "✓")
@@ -189,14 +186,18 @@ public final class WebClient {
                 if (response == null) {
                     lastLoginState = 3;
                     lastLoginMessage = "Login failed";
-                    return;
+                    return "";
                 }
                 if (response.isSuccessful() && response.request().url().toString().equals(DASHBOARD_URL)) {
                     lastLoginState = 1;
                     lastLoginMessage = "Login successful";
-                    return;
+                    return "";
                 }
-                try {
+                return safe(() -> {
+                    lastLoginState = 3;
+                    lastLoginMessage = "Login failed";
+                    return "";
+                }, () -> {
                     final Document doc = Jsoup.parse(requireNonNull(response.body()).string(), LOGIN_URL);
                     final Elements divs = doc.getElementsByClass("alert-error");
                     if (!divs.isEmpty()) {
@@ -204,27 +205,22 @@ public final class WebClient {
                         if (div.text().contains("Invalid login or password")) {
                             lastLoginState = 2;
                             lastLoginMessage = "Invalid username or password";
-                            return;
+                            return "";
                         }
                     }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-                lastLoginState = 3;
-                lastLoginMessage = "Login failed";
+                    lastLoginState = 3;
+                    lastLoginMessage = "Login failed";
+                    return "";
+                });
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            lastLoginState = 3;
-            lastLoginMessage = "Login failed";
-        }
+        });
     }
 
     /**
      * Perform a login on the web site.
      */
     public void doLogin() {
-        try {
+        safe(() -> {
             CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
             final @Nullable String password = GlobalSettings.Api.getWebPassword();
             if (isEmpty(password)) {
@@ -236,9 +232,7 @@ public final class WebClient {
                 return;
             }
             performLogin(password);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**

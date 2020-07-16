@@ -44,12 +44,12 @@ import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.Constants.MAX_SEARCH_HITS;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.join;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Utility methods for searching.
  */
 public final class SearchUtil {
-    private static final Logger LOGGER = Logger.get(SearchUtil.class);
     private static final Pattern TERM_PATTERN = Pattern.compile("[\\p{Z}\\s]");
     private static final Pattern PERC_PATTERN = Pattern.compile("%");
     private static final Pattern US_PATTERN = Pattern.compile("_");
@@ -380,12 +380,10 @@ public final class SearchUtil {
         }
 
         if (searchType == 2) {
-            try {
+            return safe(Collections::emptyList, () -> {
                 final AdvancedSearchParameters parameters = Converters.getObjectMapper().readValue(searchParameters, AdvancedSearchParameters.class);
                 return searchSubjects(parameters);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
         }
 
         return Collections.emptyList();

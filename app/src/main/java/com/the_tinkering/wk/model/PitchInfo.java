@@ -18,13 +18,15 @@ package com.the_tinkering.wk.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.the_tinkering.wk.util.ObjectSupport;
 import com.the_tinkering.wk.util.PitchInfoDeserializer;
 import com.the_tinkering.wk.util.PitchInfoSerializer;
 import com.the_tinkering.wk.util.PseudoIme;
 
+import java.util.Comparator;
+
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.hash;
 import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
 import static java.util.Objects.requireNonNull;
 
@@ -34,6 +36,11 @@ import static java.util.Objects.requireNonNull;
 @JsonSerialize(using = PitchInfoSerializer.class)
 @JsonDeserialize(using = PitchInfoDeserializer.class)
 public final class PitchInfo implements Comparable<PitchInfo> {
+    private static final Comparator<PitchInfo> COMPARATOR = Comparator.nullsFirst(
+            Comparator.comparing(PitchInfo::getReading, Comparator.nullsFirst(Comparator.naturalOrder())))
+            .thenComparing(PitchInfo::getPartOfSpeech, Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparingInt(PitchInfo::getPitchNumber);
+
     private final @Nullable String reading;
     private final @Nullable String partOfSpeech;
     private final int pitchNumber;
@@ -91,22 +98,11 @@ public final class PitchInfo implements Comparable<PitchInfo> {
 
     @Override
     public int hashCode() {
-        return ObjectSupport.hash(reading, partOfSpeech, pitchNumber);
+        return hash(reading, partOfSpeech, pitchNumber);
     }
 
     @Override
     public int compareTo(final @Nullable PitchInfo o) {
-        if (o == null) {
-            return 1;
-        }
-        final int n1 = ObjectSupport.compareStrings(reading, o.reading);
-        if (n1 != 0) {
-            return n1;
-        }
-        final int n2 = ObjectSupport.compareStrings(partOfSpeech, o.partOfSpeech);
-        if (n2 != 0) {
-            return n2;
-        }
-        return Integer.compare(pitchNumber, o.pitchNumber);
+        return COMPARATOR.compare(this, o);
     }
 }

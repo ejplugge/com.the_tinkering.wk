@@ -39,7 +39,6 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.model.TypefaceConfiguration;
-import com.the_tinkering.wk.util.ObjectSupport;
 import com.the_tinkering.wk.util.ViewUtil;
 
 import java.net.URLEncoder;
@@ -48,6 +47,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.orElse;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -385,7 +385,7 @@ public final class SubjectInfoButtonView extends View {
      */
     public void setSubject(final Subject subject) {
         safe(() -> {
-            characters = ObjectSupport.orElse(subject.getCharacters(), "");
+            characters = orElse(subject.getCharacters(), "");
             image = subject.needsTitleImage() ? getContext().getResources().getDrawable(subject.getTitleImageId()) : null;
             textColor = subject.getTextColor();
             if (image != null) {
