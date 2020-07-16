@@ -91,7 +91,8 @@ public final class SubjectInfoFragment extends AbstractFragment implements Swipi
                 final long subjectId = args.getLong("id", -1);
                 if (subjectId != -1) {
                     runAsync(
-                            (publisher, params) -> WkApplication.getDatabase().subjectDao().getById(subjectId),
+                            this,
+                            publisher -> WkApplication.getDatabase().subjectDao().getById(subjectId),
                             null,
                             result -> {
                         currentSubject = result;

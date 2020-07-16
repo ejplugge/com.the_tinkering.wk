@@ -210,7 +210,8 @@ public final class BurnActivity extends AbstractActivity {
             fail = 0;
             stopped = false;
             ObjectSupport.<Void, Object, Void>runAsync(
-                    (publisher, params) -> doInBackground(publisher),
+                    this,
+                    this::doInBackground,
                     this::onPublishProgress,
                     result -> onPostExecute());
         });

@@ -180,7 +180,7 @@ public final class MainActivity extends AbstractActivity {
         NotificationAlarmReceiver.scheduleOrCancelAlarm();
         BackgroundSyncWorker.scheduleOrCancelWork();
 
-        runAsync((publisher, params) -> {
+        runAsync(this, publisher -> {
             LiveBurnedItems.getInstance().forceUpdate();
             LiveCriticalCondition.getInstance().forceUpdate();
             LiveLevelDuration.getInstance().forceUpdate();
@@ -273,7 +273,7 @@ public final class MainActivity extends AbstractActivity {
             disableInteraction();
             final TimeLine timeLine = LiveTimeLine.getInstance().get();
             if (timeLine.hasAvailableLessons()) {
-                runAsync((publisher, params) -> {
+                runAsync(this, publisher -> {
                     Session.getInstance().startNewLessonSession(timeLine.getAvailableLessons());
                     return null;
                 }, null, result -> goToActivity(SessionActivity.class));
@@ -297,7 +297,7 @@ public final class MainActivity extends AbstractActivity {
             disableInteraction();
             final TimeLine timeLine = LiveTimeLine.getInstance().get();
             if (timeLine.hasAvailableReviews()) {
-                runAsync((publisher, params) -> {
+                runAsync(this, publisher -> {
                     Session.getInstance().startNewReviewSession(timeLine.getAvailableReviews());
                     return null;
                 }, null, result -> goToActivity(SessionActivity.class));

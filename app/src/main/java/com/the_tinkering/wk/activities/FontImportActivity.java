@@ -147,7 +147,7 @@ public final class FontImportActivity extends AbstractActivity {
     }
 
     private void importFile(final Uri uri, final String fileName) {
-        runAsync((publisher, params) -> {
+        runAsync(this, publisher -> {
             try (final @Nullable InputStream is = WkApplication.getInstance().getContentResolver().openInputStream(uri)) {
                 if (is != null) {
                     importFontFile(is, fileName);

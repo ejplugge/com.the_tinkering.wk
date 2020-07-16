@@ -206,7 +206,7 @@ public final class DownloadAudioActivity extends AbstractActivity {
             LiveAudioMoveStatus.getInstance().setNumDone(0);
             LiveAudioMoveStatus.getInstance().setNumTotal(100);
             LiveAudioMoveStatus.getInstance().forceUpdate();
-            runAsync((publisher, params) -> {
+            runAsync(this, publisher -> {
                 final int numTotal = AudioUtil.getNumMisplacedAudioFiles();
                 if (numTotal <= 0) {
                     return null;

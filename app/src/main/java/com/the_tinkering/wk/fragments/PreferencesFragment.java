@@ -148,7 +148,8 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
                     .setIcon(R.drawable.ic_baseline_warning_24px)
                     .setNegativeButton("No", (dialog, which) -> {})
                     .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(
-                            (publisher, params) -> DbLogger.uploadLog(),
+                            this,
+                            publisher -> DbLogger.uploadLog(),
                             null,
                             result -> {
                         if (result != null && result) {

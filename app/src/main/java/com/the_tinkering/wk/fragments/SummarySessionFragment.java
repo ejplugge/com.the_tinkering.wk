@@ -327,7 +327,8 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         finishProgressBar.setVisibility(View.VISIBLE);
 
         ObjectSupport.<Void, Integer, Void>runAsync(
-                (publisher, params) -> doInBackground(publisher),
+                this,
+                SummarySessionFragment::doInBackground,
                 values -> {
             int progress = values[0];
             if (progress < 0) {

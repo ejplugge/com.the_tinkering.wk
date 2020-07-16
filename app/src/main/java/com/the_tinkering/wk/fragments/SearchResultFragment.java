@@ -27,7 +27,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.the_tinkering.wk.GlobalSettings;
@@ -193,7 +192,7 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
         resultView.setAdapter(adapter);
         resultView.setHasFixedSize(true);
 
-        runAsync((publisher, params) -> {
+        runAsync(this, publisher -> {
             if (searchType == 0) {
                 final int level = Integer.parseInt(searchParameters, 10);
                 adapter.setSortOrder(SearchSortOrder.TYPE);
@@ -212,9 +211,6 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
             }
             return SearchUtil.searchSubjects(searchType, searchParameters);
         }, null, result -> {
-            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
-                return;
-            }
             if (result != null) {
                 adapter.setResult(result);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !isEmpty(GlobalSettings.Api.getWebPassword())) {
@@ -280,7 +276,7 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
         preset.type = searchType;
         preset.data = searchParameters;
 
-        runAsync((publisher, params) -> {
+        runAsync(this, publisher -> {
             WkApplication.getDatabase().searchPresetDao().setPreset(preset.name, preset.type, preset.data);
             return null;
         }, null, result -> Toast.makeText(requireContext(), "Preset '" + preset.name + "' saved", Toast.LENGTH_SHORT).show());
@@ -349,7 +345,7 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
             }
             case R.id.action_search_result_self_study: {
                 final List<Subject> subjects = adapter.getSubjects();
-                runAsync((publisher, params) -> {
+                runAsync(this, publisher -> {
                     if (!subjects.isEmpty() && Session.getInstance().isInactive()) {
                         Session.getInstance().startNewSelfStudySession(subjects);
                     }

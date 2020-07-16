@@ -18,6 +18,11 @@ package com.the_tinkering.wk.util;
 
 import android.os.AsyncTask;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+
+import com.the_tinkering.wk.Actment;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -248,31 +253,6 @@ public final class ObjectSupport {
     }
 
     /**
-     * Helper for comparators: generate the order of int/long values.
-     * The result is based on the values of i1 and i2 if they differ.
-     * If they are the same, use i3 and i4 instead, or i5 and i6 if i3 and i4 are also equal.
-     *
-     * @param i1 left-hand value 1
-     * @param i2 right-hand value 1
-     * @param i3 left-hand value 2
-     * @param i4 right-hand value 2
-     * @param i5 left-hand value 3
-     * @param i6 right-hand value 3
-     * @return order as for compareTo()
-     */
-    public static int compareIntegersAndLongs(final int i1, final int i2, final int i3, final int i4, final long i5, final long i6) {
-        final int n1 = Integer.compare(i1, i2);
-        if (n1 != 0) {
-            return n1;
-        }
-        final int n2 = Integer.compare(i3, i4);
-        if (n2 != 0) {
-            return n2;
-        }
-        return Long.compare(i5, i6);
-    }
-
-    /**
      * Create a comparator that will deliver the reverse results of the argument one.
      *
      * @param comparator the argument comparator
@@ -442,7 +422,8 @@ public final class ObjectSupport {
      * @param <Result> the type of the result
      */
     @SafeVarargs
-    public static <Params, Progress, Result> void runAsync(final DoInBackground<? super Params, Progress, Result> background,
+    public static <Params, Progress, Result> void runAsync(final LifecycleOwner lifecycleOwner,
+                                                           final DoInBackground<Progress, Result> background,
                                                            final ObjectSupport.@Nullable OnProgressUpdate<? super Progress> progress,
                                                            final @Nullable OnPostExecute<? super Result> post,
                                                            final Params... params) {
@@ -454,23 +435,27 @@ public final class ObjectSupport {
                 return safeNullable(() -> {
                     //noinspection Convert2MethodRef
                     final ProgressPublisher<Progress> publisher = values -> publishProgress(values);
-                    return background.doInBackground(publisher, params);
+                    return background.doInBackground(publisher);
                 });
             }
 
             @SafeVarargs
             @Override
             protected final void onProgressUpdate(final Progress... values) {
-                if (progress != null) {
-                    safe(() -> progress.onProgressUpdate(values));
-                }
+                safe(() -> {
+                    if (progress != null && lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                        progress.onProgressUpdate(values);
+                    }
+                });
             }
 
             @Override
             protected void onPostExecute(final @Nullable Result result) {
-                if (post != null) {
-                    safe(() -> post.onPostExecute(result));
-                }
+                safe(() -> {
+                    if (post != null && lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                        post.onPostExecute(result);
+                    }
+                });
             }
         }.execute(params);
     }
@@ -543,21 +528,19 @@ public final class ObjectSupport {
     /**
      * An interface for the work to do in doInBackground in an AsyncTask.
      *
-     * @param <Params> the type of the parameters
      * @param <Progress> the type of the progress values
      * @param <Result> the type of the result
      */
     @FunctionalInterface
-    public interface DoInBackground<Params, Progress, Result> {
+    public interface DoInBackground<Progress, Result> {
         /**
          * Run the background operation. Same as AsyncTask.doInBackground, but it gets an explicit reference to a publisher that can publish progress.
          *
          * @param publisher the publisher that can process progress values
-         * @param params the parameters
          * @return the result
          * @throws Exception if anything went wrong
          */
-        @Nullable Result doInBackground(ProgressPublisher<Progress> publisher, Params[] params) throws Exception;
+        @Nullable Result doInBackground(ProgressPublisher<Progress> publisher) throws Exception;
     }
 
     /**

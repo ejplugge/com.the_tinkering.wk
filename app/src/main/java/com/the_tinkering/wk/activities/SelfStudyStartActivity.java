@@ -183,7 +183,7 @@ public final class SelfStudyStartActivity extends AbstractActivity {
                         .setIcon(R.drawable.ic_baseline_warning_24px)
                         .setNegativeButton("No", (dialog, which) -> {})
                         .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                            runAsync((publisher, params) -> {
+                            runAsync(this, publisher -> {
                                 WkApplication.getDatabase().searchPresetDao().deletePreset(name);
                                 return null;
                             }, null, null);
@@ -247,7 +247,7 @@ public final class SelfStudyStartActivity extends AbstractActivity {
     }
 
     private void startSession(final int searchType, final String searchParameters, final boolean saveSelfStudyPreset) {
-        runAsync((publisher, params) -> {
+        runAsync(this, publisher -> {
             if (saveSelfStudyPreset && searchType == 2) {
                 WkApplication.getDatabase().searchPresetDao().setPreset("\u0000SELF_STUDY_DEFAULT", 2, searchParameters);
             }

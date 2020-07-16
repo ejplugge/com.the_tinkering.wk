@@ -221,7 +221,7 @@ public final class BrowseOverviewFragment extends AbstractFragment {
                         .setIcon(R.drawable.ic_baseline_warning_24px)
                         .setNegativeButton("No", (dialog, which) -> {})
                         .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                            runAsync((publisher, params) -> {
+                            runAsync(this, publisher -> {
                                 WkApplication.getDatabase().searchPresetDao().deletePreset(name);
                                 return null;
                             }, null, null);
@@ -231,7 +231,8 @@ public final class BrowseOverviewFragment extends AbstractFragment {
         }));
 
         runAsync(
-                (publisher, params) -> WkApplication.getDatabase().subjectAggregatesDao().getMaxLevel(),
+                this,
+                publisher -> WkApplication.getDatabase().subjectAggregatesDao().getMaxLevel(),
                 null,
                 result -> render(result == null ? 60 : result)
         );

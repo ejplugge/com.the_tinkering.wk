@@ -94,7 +94,8 @@ public final class StudyMaterialsActivity extends AbstractActivity {
             final String[] path = requireNonNull(uri.getPath()).split("/");
             final long id = Long.parseLong(path[1]);
             ObjectSupport.<Void, Void, Subject>runAsync(
-                    (task, params) -> WkApplication.getDatabase().subjectDao().getById(id),
+                    this,
+                    publisher -> WkApplication.getDatabase().subjectDao().getById(id),
                     null,
                     result -> {
                         if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {

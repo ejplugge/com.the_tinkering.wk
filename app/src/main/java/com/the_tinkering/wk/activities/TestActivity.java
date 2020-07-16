@@ -85,7 +85,6 @@ public final class TestActivity extends AbstractActivity {
         //
     }
 
-    @SuppressWarnings("MethodMayBeStatic")
     public void downloadPitchInfo(@SuppressWarnings("unused") final View view) {
         if (activePitchInfoDownload) {
             activePitchInfoDownload = false;
@@ -94,7 +93,7 @@ public final class TestActivity extends AbstractActivity {
 
         activePitchInfoDownload = true;
 
-        runAsync((task, params) -> {
+        runAsync(this, publisher -> {
             final AppDatabase db = WkApplication.getDatabase();
             final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
 
@@ -133,9 +132,8 @@ public final class TestActivity extends AbstractActivity {
         }, null, null);
     }
 
-    @SuppressWarnings("MethodMayBeStatic")
     public void generatePitchInfo(@SuppressWarnings("unused") final View view) {
-        runAsync((task, params) -> {
+        runAsync(this, publisher -> {
             final AppDatabase db = WkApplication.getDatabase();
             final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
 
@@ -170,9 +168,8 @@ public final class TestActivity extends AbstractActivity {
         }, null, null);
     }
 
-    @SuppressWarnings("MethodMayBeStatic")
     public void checkPitchInfo(@SuppressWarnings("unused") final View view) {
-        runAsync((task, params) -> {
+        runAsync(this, publisher -> {
             final AppDatabase db = WkApplication.getDatabase();
 
             LOGGER.info("Number of weblio files: %d", PitchInfoUtil.getNumWeblioFiles());
