@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.util;
 
+import static java.lang.Math.min;
+
 /**
  * Implementation of the Optimal String Alignment algorithm. This is used
  * to compute an edit distance between two strings. This is similar to
@@ -25,29 +27,6 @@ package com.the_tinkering.wk.util;
 public final class OptimalStringAlignmentDistance {
     private OptimalStringAlignmentDistance() {
         //
-    }
-
-    /**
-     * Find the smaller of two ints.
-     *
-     * @param a one int
-     * @param b another int
-     * @return the smaller of a and b
-     */
-    private static int min(final int a, final int b) {
-        return Math.min(a, b);
-    }
-
-    /**
-     * Find the smallest of three ints.
-     *
-     * @param a one int
-     * @param b another int
-     * @param c final int
-     * @return the smallest of a, b and c
-     */
-    private static int min(final int a, final int b, final int c) {
-        return min(min(a, b), c);
     }
 
     /**
@@ -77,7 +56,7 @@ public final class OptimalStringAlignmentDistance {
         for (int i=0; i<a.length(); i++) {
             for (int j=0; j<b.length(); j++) {
                 final int cost = a.charAt(i) == b.charAt(j) ? 0 : 1;
-                d[i+1][j+1] = min(d[i][j+1] + 1, d[i+1][j] + 1, d[i][j] + cost);
+                d[i+1][j+1] = min(min(d[i][j+1] + 1, d[i+1][j] + 1), d[i][j] + cost);
                 if (i > 0 && j > 0 && a.charAt(i) == b.charAt(j-1) && a.charAt(i-1) == b.charAt(j)) {
                     d[i+1][j+1] = min(d[i+1][j+1], d[i-1][j-1] + cost);
                 }

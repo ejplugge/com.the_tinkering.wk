@@ -30,6 +30,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -37,8 +38,6 @@ import static java.util.Objects.requireNonNull;
  * as resources in the app.
  */
 public final class ReferenceDataUtil {
-    private static final Logger LOGGER = Logger.get(ReferenceDataUtil.class);
-
     private static final Map<String, Integer> FREQUENCY_MAP = new HashMap<>();
     private static final Map<String, Integer> JOYO_GRADE_MAP = new HashMap<>();
     private static final Map<String, Integer> KANJI_JLPT_LEVEL_MAP = new HashMap<>();
@@ -65,20 +64,18 @@ public final class ReferenceDataUtil {
             return;
         }
 
-        try (final InputStream is = WkApplication.getInstance().getResources().openRawResource(resourceId)) {
-            final Map<String, Integer> json = Converters.getObjectMapper().readValue(is, new TypeReference<Map<String, Integer>>() {
-            });
-            for (final Map.Entry<String, Integer> entry : json.entrySet()) {
-                final @Nullable String key = entry.getKey();
-                final @Nullable Integer value = entry.getValue();
-                if (key != null && value != null) {
-                    map.put(key.intern(), requireNonNull(INT_INTERNALIZER.internalize(value)));
+        safe(() -> {
+            try (final InputStream is = WkApplication.getInstance().getResources().openRawResource(resourceId)) {
+                final Map<String, Integer> json = Converters.getObjectMapper().readValue(is, new TypeReference<Map<String, Integer>>() {});
+                for (final Map.Entry<String, Integer> entry : json.entrySet()) {
+                    final @Nullable String key = entry.getKey();
+                    final @Nullable Integer value = entry.getValue();
+                    if (key != null && value != null) {
+                        map.put(key.intern(), requireNonNull(INT_INTERNALIZER.internalize(value)));
+                    }
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        //
+        });
     }
 
     /**
@@ -123,20 +120,20 @@ public final class ReferenceDataUtil {
             return;
         }
 
-        try (final InputStream is = WkApplication.getInstance().getResources().openRawResource(R.raw.pitch_info)) {
-            final Map<String, List<PitchInfo>> json = Converters.getObjectMapper().readValue(is, new TypeReference<Map<String, List<PitchInfo>>>() {
-            });
-            for (final Map.Entry<String, List<PitchInfo>> entry : json.entrySet()) {
-                final @Nullable String key = entry.getKey();
-                final @Nullable List<PitchInfo> value = entry.getValue();
-                if (key != null && value != null) {
-                    PITCH_INFO_MAP.put(key.intern(), value);
+        safe(() -> {
+            try (final InputStream is = WkApplication.getInstance().getResources().openRawResource(R.raw.pitch_info)) {
+                final Map<String, List<PitchInfo>> json = Converters.getObjectMapper()
+                        .readValue(is, new TypeReference<Map<String, List<PitchInfo>>>() {});
+                for (final Map.Entry<String, List<PitchInfo>> entry : json.entrySet()) {
+                    final @Nullable String key = entry.getKey();
+                    final @Nullable List<PitchInfo> value = entry.getValue();
+                    if (key != null && value != null) {
+                        PITCH_INFO_MAP.put(key.intern(), value);
+                    }
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        //
+        });
+
         pitchInfoMapLoaded = true;
     }
 

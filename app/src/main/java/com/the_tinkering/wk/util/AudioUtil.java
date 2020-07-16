@@ -62,6 +62,7 @@ import static com.the_tinkering.wk.enums.VoicePreference.FEMALE;
 import static com.the_tinkering.wk.enums.VoicePreference.MALE;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static com.the_tinkering.wk.util.ObjectSupport.shuffle;
 import static java.util.Objects.requireNonNull;
 
@@ -626,7 +627,7 @@ public final class AudioUtil {
         final @Nullable GenderedFile audioFile = getOneAudioFileShouldMatch(subject, lastMatchedAnswer);
         if (audioFile != null) {
             lastWasMale = audioFile.isMale();
-            try {
+            safe(() -> {
                 final MediaPlayer player = new MediaPlayer();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     player.setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build());
@@ -656,9 +657,7 @@ public final class AudioUtil {
                     }
                 }, PLAYBACK_DELAY));
                 player.start();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
         }
     }
 
