@@ -27,6 +27,7 @@ import com.the_tinkering.wk.activities.DigraphHelpActivity;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
+import com.the_tinkering.wk.enums.QuestionType;
 import com.the_tinkering.wk.model.DigraphMatch;
 import com.the_tinkering.wk.model.FloatingUiState;
 import com.the_tinkering.wk.model.Question;
@@ -64,6 +65,24 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
      */
     public AnsweredSessionFragment() {
         super(R.layout.fragment_answered_question);
+    }
+
+    /**
+     * Create a new instance with arguments set.
+     *
+     * @param subjectId the subject ID to show
+     * @param questionType the type of the question to show
+     * @return the fragment
+     */
+    public static AnsweredSessionFragment newInstance(final long subjectId, final QuestionType questionType) {
+        final AnsweredSessionFragment fragment = new AnsweredSessionFragment();
+
+        final Bundle args = new Bundle();
+        args.putLong("subjectId", subjectId);
+        args.putString("questionType", questionType.name());
+
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override

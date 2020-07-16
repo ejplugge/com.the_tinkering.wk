@@ -24,7 +24,6 @@ import androidx.lifecycle.LifecycleOwner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -212,17 +211,6 @@ public final class ObjectSupport {
      */
     public static int nextRandomInt(final int bound) {
         return random.nextInt(bound);
-    }
-
-    /**
-     * Create a comparator that will deliver the reverse results of the argument one.
-     *
-     * @param comparator the argument comparator
-     * @param <T> the type of objects it compares
-     * @return the new comparator
-     */
-    public static <T> Comparator<T> reversedComparator(final Comparator<? super T> comparator) {
-        return (o1, o2) -> comparator.compare(o2, o1);
     }
 
     /**

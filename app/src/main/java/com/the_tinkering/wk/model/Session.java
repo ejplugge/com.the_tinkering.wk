@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.model;
 
-import android.os.Bundle;
-
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
@@ -56,6 +54,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -69,7 +68,6 @@ import static com.the_tinkering.wk.enums.SessionType.NONE;
 import static com.the_tinkering.wk.enums.SessionType.REVIEW;
 import static com.the_tinkering.wk.enums.SessionType.SELF_STUDY;
 import static com.the_tinkering.wk.util.ObjectSupport.nextRandomInt;
-import static com.the_tinkering.wk.util.ObjectSupport.reversedComparator;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -293,14 +291,8 @@ s     *
      *
      * @return the number
      */
-    public int getNumActiveItems() {
-        int count = 0;
-        for (final SessionItem item: items) {
-            if (item.isActive()) {
-                count++;
-            }
-        }
-        return count;
+    public long getNumActiveItems() {
+        return items.stream().filter(SessionItem::isActive).count();
     }
 
     /**
@@ -308,14 +300,8 @@ s     *
      *
      * @return the number
      */
-    public int getNumPendingItems() {
-        int count = 0;
-        for (final SessionItem item: items) {
-            if (item.isPending()) {
-                count++;
-            }
-        }
-        return count;
+    public long getNumPendingItems() {
+        return items.stream().filter(SessionItem::isPending).count();
     }
 
     /**
@@ -323,14 +309,8 @@ s     *
      *
      * @return the number
      */
-    private int getNumFinishedItems() {
-        int count = 0;
-        for (final SessionItem item: items) {
-            if (item.isReported() || item.isPending()) {
-                count++;
-            }
-        }
-        return count;
+    private long getNumFinishedItems() {
+        return items.stream().filter(item -> item.isReported() || item.isPending()).count();
     }
 
     /**
@@ -338,14 +318,8 @@ s     *
      *
      * @return the number
      */
-    private int getNumLiveItems() {
-        int count = 0;
-        for (final SessionItem item: items) {
-            if (!item.isAbandoned()) {
-                count++;
-            }
-        }
-        return count;
+    private long getNumLiveItems() {
+        return items.stream().filter(item -> !item.isAbandoned()).count();
     }
 
     /**
@@ -353,14 +327,8 @@ s     *
      *
      * @return the number
      */
-    public int getNumStartedItems() {
-        int count = 0;
-        for (final SessionItem item: items) {
-            if (item.isStarted()) {
-                count++;
-            }
-        }
-        return count;
+    public long getNumStartedItems() {
+        return items.stream().filter(SessionItem::isStarted).count();
     }
 
     /**
@@ -368,14 +336,8 @@ s     *
      *
      * @return the number
      */
-    public int getNumReportedItems() {
-        int count = 0;
-        for (final SessionItem item: items) {
-            if (item.isReported()) {
-                count++;
-            }
-        }
-        return count;
+    public long getNumReportedItems() {
+        return items.stream().filter(SessionItem::isReported).count();
     }
 
     /**
@@ -465,48 +427,36 @@ s     *
         List<Question> candidateQuestions = questions;
 
         if (backToBack) {
-            final List<Question> list = new ArrayList<>();
-            for (final Question question: candidateQuestions) {
-                if (question.getItem().isStarted()) {
-                    list.add(question);
-                }
-            }
+            final List<Question> list = candidateQuestions.stream()
+                    .filter(question -> question.getItem().isStarted())
+                    .collect(Collectors.toList());
             if (!list.isEmpty()) {
                 candidateQuestions = list;
             }
         }
 
         if (readingFirst) {
-            final List<Question> list = new ArrayList<>();
-            for (final Question question: candidateQuestions) {
-                if (!question.getItem().hasPendingReadingAndMeaning() || question.getType().isReading()) {
-                    list.add(question);
-                }
-            }
+            final List<Question> list = candidateQuestions.stream()
+                    .filter(question -> !question.getItem().hasPendingReadingAndMeaning() || question.getType().isReading())
+                    .collect(Collectors.toList());
             if (!list.isEmpty()) {
                 candidateQuestions = list;
             }
         }
 
         if (meaningFirst) {
-            final List<Question> list = new ArrayList<>();
-            for (final Question question: candidateQuestions) {
-                if (!question.getItem().hasPendingReadingAndMeaning() || question.getType().isMeaning()) {
-                    list.add(question);
-                }
-            }
+            final List<Question> list = candidateQuestions.stream()
+                    .filter(question -> !question.getItem().hasPendingReadingAndMeaning() || question.getType().isMeaning())
+                    .collect(Collectors.toList());
             if (!list.isEmpty()) {
                 candidateQuestions = list;
             }
         }
 
         if (getNumStartedItems() >= 10) {
-            final List<Question> list = new ArrayList<>();
-            for (final Question question: candidateQuestions) {
-                if (question.getItem().isStarted()) {
-                    list.add(question);
-                }
-            }
+            final List<Question> list = candidateQuestions.stream()
+                    .filter(question -> question.getItem().isStarted())
+                    .collect(Collectors.toList());
             if (!list.isEmpty()) {
                 candidateQuestions = list;
             }
@@ -526,12 +476,9 @@ s     *
             }
         }
         if (hasDelayed && hasUndelayed) {
-            final List<Question> list = new ArrayList<>();
-            for (final Question question: candidateQuestions) {
-                if (question.getItem().getChoiceDelay() == 0) {
-                    list.add(question);
-                }
-            }
+            final List<Question> list = candidateQuestions.stream()
+                    .filter(question -> question.getItem().getChoiceDelay() == 0)
+                    .collect(Collectors.toList());
             if (!list.isEmpty()) {
                 candidateQuestions = list;
             }
@@ -964,11 +911,7 @@ s     *
                 return currentFragment;
             }
             else {
-                final LessonSessionFragment fragment = new LessonSessionFragment();
-                final Bundle args = new Bundle();
-                args.putLong("subjectId", item.getId());
-                fragment.setArguments(args);
-                return fragment;
+                return LessonSessionFragment.newInstance(item.getId());
             }
         }
 
@@ -988,12 +931,7 @@ s     *
                 return currentFragment;
             }
             else {
-                final AnkiSessionFragment fragment = new AnkiSessionFragment();
-                final Bundle args = new Bundle();
-                args.putLong("subjectId", item.getId());
-                args.putString("questionType", question.getType().name());
-                fragment.setArguments(args);
-                return fragment;
+                return AnkiSessionFragment.newInstance(item.getId(), question.getType());
             }
         }
 
@@ -1004,12 +942,7 @@ s     *
                 return currentFragment;
             }
             else {
-                final AnsweredSessionFragment fragment = new AnsweredSessionFragment();
-                final Bundle args = new Bundle();
-                args.putLong("subjectId", item.getId());
-                args.putString("questionType", question.getType().name());
-                fragment.setArguments(args);
-                return fragment;
+                return AnsweredSessionFragment.newInstance(item.getId(), question.getType());
             }
         }
 
@@ -1019,12 +952,7 @@ s     *
 
         requireNonNull(item);
         requireNonNull(question);
-        final UnansweredSessionFragment fragment = new UnansweredSessionFragment();
-        final Bundle args = new Bundle();
-        args.putLong("subjectId", item.getId());
-        args.putString("questionType", question.getType().name());
-        fragment.setArguments(args);
-        return fragment;
+        return UnansweredSessionFragment.newInstance(item.getId(), question.getType());
     }
 
     /**
@@ -1101,19 +1029,11 @@ s     *
             meaningFirst = GlobalSettings.getMeaningFirst(type);
             comparator = GlobalSettings.getSubjectComparator(type);
             if (GlobalSettings.getOrderReversed(type)) {
-                comparator = reversedComparator(comparator);
+                comparator = comparator.reversed();
             }
             if (GlobalSettings.getOrderOverdueFirst(type)) {
-                final Comparator<Subject> old = comparator;
-                comparator = (o1, o2) -> {
-                    if (o1.isOverdue() && !o2.isOverdue()) {
-                        return -1;
-                    }
-                    if (o2.isOverdue() && !o1.isOverdue()) {
-                        return 1;
-                    }
-                    return old.compare(o1, o2);
-                };
+                final Comparator<Subject> c = (o1, o2) -> Boolean.compare(o2.isOverdue(), o1.isOverdue());
+                comparator = c.thenComparing(comparator);
             }
             final int userLevel = db.propertiesDao().getUserLevel();
             final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
@@ -1154,7 +1074,8 @@ s     *
                             break;
                         }
                     }
-                } else {
+                }
+                else {
                     for (final Question question : questions) {
                         if (!question.getItem().isActive()) {
                             continue;
@@ -1336,7 +1257,7 @@ s     *
         final int maxSize = GlobalSettings.Review.gexMaxLessonSessionSize();
         comparator = GlobalSettings.AdvancedLesson.getOrder().getComparator();
         if (GlobalSettings.AdvancedLesson.getOrderReversed()) {
-            comparator = reversedComparator(comparator);
+            comparator = comparator.reversed();
         }
         final int userLevel = db.propertiesDao().getUserLevel();
         final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
@@ -1380,19 +1301,11 @@ s     *
         final int maxSize = GlobalSettings.Review.gexMaxReviewSessionSize();
         comparator = GlobalSettings.AdvancedReview.getOrder().getComparator();
         if (GlobalSettings.AdvancedReview.getOrderReversed()) {
-            comparator = reversedComparator(comparator);
+            comparator = comparator.reversed();
         }
         if (GlobalSettings.AdvancedReview.getOrderOverdueFirst()) {
-            final Comparator<Subject> old = comparator;
-            comparator = (o1, o2) -> {
-                if (o1.isOverdue() && !o2.isOverdue()) {
-                    return -1;
-                }
-                if (o2.isOverdue() && !o1.isOverdue()) {
-                    return 1;
-                }
-                return old.compare(o1, o2);
-            };
+            final Comparator<Subject> c = (o1, o2) -> Boolean.compare(o2.isOverdue(), o1.isOverdue());
+            comparator = c.thenComparing(comparator);
         }
         final int userLevel = db.propertiesDao().getUserLevel();
         final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
@@ -1436,19 +1349,11 @@ s     *
         final int maxSize = GlobalSettings.Review.getMaxSelfStudySessionSize();
         comparator = GlobalSettings.AdvancedSelfStudy.getOrder().getComparator();
         if (GlobalSettings.AdvancedSelfStudy.getOrderReversed()) {
-            comparator = reversedComparator(comparator);
+            comparator = comparator.reversed();
         }
         if (GlobalSettings.AdvancedSelfStudy.getOrderOverdueFirst()) {
-            final Comparator<Subject> old = comparator;
-            comparator = (o1, o2) -> {
-                if (o1.isOverdue() && !o2.isOverdue()) {
-                    return -1;
-                }
-                if (o2.isOverdue() && !o1.isOverdue()) {
-                    return 1;
-                }
-                return old.compare(o1, o2);
-            };
+            final Comparator<Subject> c = (o1, o2) -> Boolean.compare(o2.isOverdue(), o1.isOverdue());
+            comparator = c.thenComparing(comparator);
         }
         final int userLevel = db.propertiesDao().getUserLevel();
         final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
@@ -1477,12 +1382,7 @@ s     *
      * @return the item or null if not found
      */
     public @Nullable SessionItem findItemBySubjectId(final long id) {
-        for (final SessionItem item: items) {
-            if (item.getId() == id) {
-                return item;
-            }
-        }
-        return null;
+        return items.stream().filter(item -> item.getId() == id).findAny().orElse(null);
     }
 
     @Override

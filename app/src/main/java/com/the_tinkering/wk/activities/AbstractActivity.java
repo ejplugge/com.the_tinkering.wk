@@ -385,11 +385,11 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                 case R.id.action_abandon_session: {
                     final Session session = Session.getInstance();
                     if (GlobalSettings.UiConfirmations.getUiConfirmAbandonSession()) {
-                        final int numActive = session.getNumActiveItems();
-                        final int numPending = session.getNumPendingItems();
-                        final int numReported = session.getNumReportedItems();
-                        final int numStarted = session.getNumStartedItems();
-                        final int numNotStarted = numActive - numStarted;
+                        final long numActive = session.getNumActiveItems();
+                        final long numPending = session.getNumPendingItems();
+                        final long numReported = session.getNumReportedItems();
+                        final long numStarted = session.getNumStartedItems();
+                        final long numNotStarted = numActive - numStarted;
                         String message = "Are you sure you want to abandon this session? If you do:";
                         if (numPending > 0) {
                             message += String.format(Locale.ROOT, "\n- %d finished items will not be reported", numPending);
@@ -427,9 +427,9 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                 case R.id.action_wrapup_session: {
                     final Session session = Session.getInstance();
                     if (GlobalSettings.UiConfirmations.getUiConfirmWrapupSession()) {
-                        final int numActive = session.getNumActiveItems();
-                        final int numStarted = session.getNumStartedItems();
-                        final int numNotStarted = numActive - numStarted;
+                        final long numActive = session.getNumActiveItems();
+                        final long numStarted = session.getNumStartedItems();
+                        final long numNotStarted = numActive - numStarted;
                         String message = "Are you sure you want to wrap up this session? If you do:";
                         if (numStarted > 0) {
                             message += String.format(Locale.ROOT, "\n- %d partially quizzed items will remain in the session", numStarted);

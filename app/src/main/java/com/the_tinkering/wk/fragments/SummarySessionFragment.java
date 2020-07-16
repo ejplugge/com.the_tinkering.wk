@@ -322,7 +322,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
             return;
         }
 
-        final int total = session.getNumPendingItems();
+        final int total = (int) session.getNumPendingItems();
         finishProgressBar.setMax(total);
         finishProgressBar.setProgress(0);
         finishProgressBar.setVisibility(View.VISIBLE);

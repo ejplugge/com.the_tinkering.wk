@@ -57,6 +57,22 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
         super(R.layout.fragment_lesson);
     }
 
+    /**
+     * Create a new instance with arguments set.
+     *
+     * @param subjectId the subject ID to show
+     * @return the fragment
+     */
+    public static LessonSessionFragment newInstance(final long subjectId) {
+        final LessonSessionFragment fragment = new LessonSessionFragment();
+
+        final Bundle args = new Bundle();
+        args.putLong("subjectId", subjectId);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     protected void onCreateLocal() {
         final @Nullable Bundle args = getArguments();
