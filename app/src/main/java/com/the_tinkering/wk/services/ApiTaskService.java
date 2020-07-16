@@ -28,12 +28,13 @@ import com.the_tinkering.wk.jobs.TickJob;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.tasks.ApiTask;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * An intent service for running tasks. Tasks are actions that need to run
@@ -48,8 +49,6 @@ import javax.annotation.Nullable;
  * </p>
  */
 public final class ApiTaskService extends JobIntentService {
-    private static final Logger LOGGER = Logger.get(ApiTaskService.class);
-
     /**
      * The ID for jobs running in this service. This is a single constant ID that is reused.
      */
@@ -70,6 +69,61 @@ public final class ApiTaskService extends JobIntentService {
         enqueueWork(WkApplication.getInstance(), ApiTaskService.class, JOB_ID, intent);
     }
 
+    private static void runTasksImpl() throws Exception {
+        final AppDatabase db = WkApplication.getDatabase();
+        while (db.hasPendingApiTasks()) {
+            //noinspection SynchronizationOnStaticField
+            synchronized (TASK_MONITOR) {
+                final @Nullable TaskDefinition taskDefinition = db.taskDefinitionDao().getNextTaskDefinition();
+                if (taskDefinition == null) {
+                    break;
+                }
+
+                final @Nullable Class<? extends ApiTask> clas = taskDefinition.getTaskClass();
+                if (clas == null) {
+                    db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
+                }
+                else {
+                    final ApiTask apiTask = taskDefinition.getTaskClass()
+                            .getConstructor(TaskDefinition.class)
+                            .newInstance(taskDefinition);
+
+                    if (!apiTask.canRun()) {
+                        break;
+                    }
+
+                    apiTask.run();
+                }
+            }
+        }
+        if (db.taskDefinitionDao().getApiCount() == 0) {
+            if (GlobalSettings.getFirstTimeSetup() == 0) {
+                GlobalSettings.setFirstTimeSetup(1);
+                LiveFirstTimeSetup.getInstance().forceUpdate();
+            }
+            if (Session.getInstance().isInactive()) {
+                final Collection<Long> assignmentSubjectIds = db.subjectViewsDao().getPatchedAssignments();
+                if (!assignmentSubjectIds.isEmpty()) {
+                    db.assertGetPatchedAssignmentsTask(assignmentSubjectIds);
+                }
+                final Collection<Long> reviewStatisticsSubjectIds = db.subjectViewsDao().getPatchedReviewStatistics();
+                if (!reviewStatisticsSubjectIds.isEmpty()) {
+                    db.assertGetPatchedReviewStatisticsTask(reviewStatisticsSubjectIds);
+                }
+                final Collection<Long> studyMaterialsSubjectIds = db.subjectViewsDao().getPatchedStudyMaterials();
+                if (!studyMaterialsSubjectIds.isEmpty()) {
+                    db.assertGetPatchedStudyMaterialsTask(studyMaterialsSubjectIds);
+                }
+                if (db.propertiesDao().getForceLateRefresh()) {
+                    db.propertiesDao().setForceLateRefresh(false);
+                    db.assertRefreshForAllModels();
+                    db.assertGetLevelProgressionTask();
+                    JobRunnerService.schedule(TickJob.class, "");
+                }
+            }
+        }
+    }
+
     /**
      * Loop through all available tasks and execute them one by one, taking into
      * account the priority order and online status.
@@ -80,62 +134,7 @@ public final class ApiTaskService extends JobIntentService {
      * </p>
      */
     public static void runTasks() {
-        try {
-            final AppDatabase db = WkApplication.getDatabase();
-            while (db.hasPendingApiTasks()) {
-                //noinspection SynchronizationOnStaticField
-                synchronized (TASK_MONITOR) {
-                    final @Nullable TaskDefinition taskDefinition = db.taskDefinitionDao().getNextTaskDefinition();
-                    if (taskDefinition == null) {
-                        break;
-                    }
-
-                    final @Nullable Class<? extends ApiTask> clas = taskDefinition.getTaskClass();
-                    if (clas == null) {
-                        db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
-                    }
-                    else {
-                        final ApiTask apiTask = taskDefinition.getTaskClass()
-                                .getConstructor(TaskDefinition.class)
-                                .newInstance(taskDefinition);
-
-                        if (!apiTask.canRun()) {
-                            break;
-                        }
-
-                        apiTask.run();
-                    }
-                }
-            }
-            if (db.taskDefinitionDao().getApiCount() == 0) {
-                if (GlobalSettings.getFirstTimeSetup() == 0) {
-                    GlobalSettings.setFirstTimeSetup(1);
-                    LiveFirstTimeSetup.getInstance().forceUpdate();
-                }
-                if (Session.getInstance().isInactive()) {
-                    final Collection<Long> assignmentSubjectIds = db.subjectViewsDao().getPatchedAssignments();
-                    if (!assignmentSubjectIds.isEmpty()) {
-                        db.assertGetPatchedAssignmentsTask(assignmentSubjectIds);
-                    }
-                    final Collection<Long> reviewStatisticsSubjectIds = db.subjectViewsDao().getPatchedReviewStatistics();
-                    if (!reviewStatisticsSubjectIds.isEmpty()) {
-                        db.assertGetPatchedReviewStatisticsTask(reviewStatisticsSubjectIds);
-                    }
-                    final Collection<Long> studyMaterialsSubjectIds = db.subjectViewsDao().getPatchedStudyMaterials();
-                    if (!studyMaterialsSubjectIds.isEmpty()) {
-                        db.assertGetPatchedStudyMaterialsTask(studyMaterialsSubjectIds);
-                    }
-                    if (db.propertiesDao().getForceLateRefresh()) {
-                        db.propertiesDao().setForceLateRefresh(false);
-                        db.assertRefreshForAllModels();
-                        db.assertGetLevelProgressionTask();
-                        JobRunnerService.schedule(TickJob.class, "");
-                    }
-                }
-            }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(ApiTaskService::runTasksImpl);
     }
 
     @Override

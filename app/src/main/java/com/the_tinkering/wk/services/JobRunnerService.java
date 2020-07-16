@@ -22,10 +22,10 @@ import androidx.core.app.JobIntentService;
 
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.jobs.Job;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nonnull;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -40,8 +40,6 @@ import static java.util.Objects.requireNonNull;
  * </p>
  */
 public final class JobRunnerService extends JobIntentService {
-    private static final Logger LOGGER = Logger.get(JobRunnerService.class);
-
     /**
      * The ID for jobs running in this service. This is a single constant ID that is reused.
      */
@@ -55,14 +53,12 @@ public final class JobRunnerService extends JobIntentService {
      * @param jobData parameters for this job, encoded in a class-specific format
      */
     public static void schedule(final Class<? extends Job> jobClass, final String jobData) {
-        try {
+        safe(() -> {
             final Intent intent = new Intent(WkApplication.getInstance(), JobRunnerService.class);
             intent.putExtra("com.the_tinkering.wk.JOB_CLASS", jobClass.getCanonicalName());
             intent.putExtra("com.the_tinkering.wk.JOB_DATA", jobData);
             enqueueWork(WkApplication.getInstance(), JobRunnerService.class, JOB_ID, intent);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -73,7 +69,7 @@ public final class JobRunnerService extends JobIntentService {
      */
     @Override
     protected void onHandleWork(final @Nonnull Intent intent) {
-        try {
+        safe(() -> {
             final String jobClassName = requireNonNull(intent.getStringExtra("com.the_tinkering.wk.JOB_CLASS"));
             final Class<? extends Job> jobClass = Class.forName(jobClassName).asSubclass(Job.class);
             final String jobData = requireNonNull(intent.getStringExtra("com.the_tinkering.wk.JOB_DATA"));
@@ -81,8 +77,6 @@ public final class JobRunnerService extends JobIntentService {
                     .getConstructor(String.class)
                     .newInstance(jobData);
             job.run();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

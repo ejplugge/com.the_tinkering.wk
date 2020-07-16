@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.model;
 
+import androidx.room.Ignore;
+
 import java.util.Date;
 
 import javax.annotation.Nullable;
@@ -28,6 +30,8 @@ public final class NotificationContext {
     private int numReviews = 0;
     private int numNewReviews = 0;
     private @Nullable Date newestAvailableAt;
+    @Ignore
+    private @Nullable Date moreReviewsDate = null;
 
     /**
      * Number of lessons currently available.
@@ -93,5 +97,25 @@ public final class NotificationContext {
     public void setNewestAvailableAt(final @Nullable Date newestAvailableAt) {
         //noinspection AssignmentOrReturnOfFieldWithMutableType
         this.newestAvailableAt = newestAvailableAt;
+    }
+
+    /**
+     * Extra field for widgets.
+     *
+     * @return the next date when new reviews will become available
+     */
+    public @Nullable Date getMoreReviewsDate() {
+        //noinspection AssignmentOrReturnOfFieldWithMutableType
+        return moreReviewsDate;
+    }
+
+    /**
+     * Extra field for widgets.
+     *
+     * @param moreReviewsDate the next date when new reviews will become available
+     */
+    public void setMoreReviewsDate(final @Nullable Date moreReviewsDate) {
+        //noinspection AssignmentOrReturnOfFieldWithMutableType
+        this.moreReviewsDate = moreReviewsDate;
     }
 }

@@ -21,21 +21,16 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.the_tinkering.wk.jobs.NetworkStateChangedJob;
-import com.the_tinkering.wk.util.Logger;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A receiver that listens for network state change events. This triggers a background job
  * that can kick off API tasks if needed.
  */
 public final class NetworkStateBroadcastReceiver extends BroadcastReceiver {
-    private static final Logger LOGGER = Logger.get(NetworkStateBroadcastReceiver.class);
-
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        try {
-            JobRunnerService.schedule(NetworkStateChangedJob.class, "");
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> JobRunnerService.schedule(NetworkStateChangedJob.class, ""));
     }
 }

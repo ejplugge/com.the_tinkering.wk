@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * The background worker that implements background sync.
  */
@@ -70,7 +72,7 @@ public final class BackgroundSyncWorker extends Worker {
      */
     @Override
     public Result doWork() {
-        try {
+        safe(() -> {
             if (GlobalSettings.Api.getEnableBackgroundSync()) {
                 LOGGER.info("Background sync starts: %s %s", ApiState.getCurrentApiState(), ApiTask.getOnlineStatus());
                 if (LiveApiState.getInstance().get() == ApiState.ERROR) {
@@ -84,9 +86,7 @@ public final class BackgroundSyncWorker extends Worker {
             else {
                 cancelWork();
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
 
         return Result.success();
     }
@@ -130,7 +130,7 @@ public final class BackgroundSyncWorker extends Worker {
      * to make sure what is scheduled matches what the user wants.
      */
     public static void scheduleOrCancelWork() {
-        try {
+        safe(() -> {
             if (LiveWorkInfos.getInstance().hasNullValue()) {
                 return;
             }
@@ -149,8 +149,6 @@ public final class BackgroundSyncWorker extends Worker {
                     cancelWork();
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

@@ -21,8 +21,6 @@ import android.os.AsyncTask;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.the_tinkering.wk.Actment;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -412,7 +410,9 @@ public final class ObjectSupport {
 
     /**
      * Run an AsyncTask with the supplied handler bodies.
+     * Only call the progress and post callbacks if the supplied lifecycleowner is started or resumed.
      *
+     * @param lifecycleOwner the lifecycle owner to check for callbacks
      * @param background run on the background thread, returns a result
      * @param progress run on the UI thread to report progress
      * @param post run on the UI thread to report the result
@@ -422,7 +422,7 @@ public final class ObjectSupport {
      * @param <Result> the type of the result
      */
     @SafeVarargs
-    public static <Params, Progress, Result> void runAsync(final LifecycleOwner lifecycleOwner,
+    public static <Params, Progress, Result> void runAsync(final @Nullable LifecycleOwner lifecycleOwner,
                                                            final DoInBackground<Progress, Result> background,
                                                            final ObjectSupport.@Nullable OnProgressUpdate<? super Progress> progress,
                                                            final @Nullable OnPostExecute<? super Result> post,
@@ -443,7 +443,8 @@ public final class ObjectSupport {
             @Override
             protected final void onProgressUpdate(final Progress... values) {
                 safe(() -> {
-                    if (progress != null && lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                    if (progress != null
+                            && (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
                         progress.onProgressUpdate(values);
                     }
                 });
@@ -452,7 +453,8 @@ public final class ObjectSupport {
             @Override
             protected void onPostExecute(final @Nullable Result result) {
                 safe(() -> {
-                    if (post != null && lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                    if (post != null
+                            && (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
                         post.onPostExecute(result);
                     }
                 });
