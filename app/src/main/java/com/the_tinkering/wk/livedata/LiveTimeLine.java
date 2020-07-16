@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.livedata;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
@@ -59,6 +61,7 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
         //
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void updateLocal() {
         final AppDatabase db = WkApplication.getDatabase();
@@ -73,19 +76,17 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
         final Collection<Subject> scanSubjects = new ArrayList<>();
 
         if (!vacationMode) {
-            final Collection<Subject> lessonSubjects = db.subjectCollectionsDao().getAvailableLessonItems(maxLevel, userLevel);
-            for (final Subject subject: lessonSubjects) {
+            db.subjectCollectionsDao().getAvailableLessonItems(maxLevel, userLevel).forEach(subject -> {
                 timeLine.addLesson(subject);
                 scanSubjects.add(subject);
-            }
+            });
 
             final long ahead = size * HOUR;
             final Date cutoff = new Date(System.currentTimeMillis() + ahead);
-            final Collection<Subject> reviewSubjects = db.subjectCollectionsDao().getUpcomingReviewItems(maxLevel, userLevel, cutoff);
-            for (final Subject subject: reviewSubjects) {
+            db.subjectCollectionsDao().getUpcomingReviewItems(maxLevel, userLevel, cutoff).forEach(subject -> {
                 timeLine.addReview(subject, !subject.isPassed() && levelUpIds.contains(subject.getId()));
                 scanSubjects.add(subject);
-            }
+            });
 
             final @Nullable Date longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, cutoff);
             timeLine.setLongTermUpcomingReviewDate(longDate);

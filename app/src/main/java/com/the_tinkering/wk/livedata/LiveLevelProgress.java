@@ -16,9 +16,10 @@
 
 package com.the_tinkering.wk.livedata;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
-import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.model.LevelProgress;
 import com.the_tinkering.wk.model.LevelProgressItem;
 
@@ -47,6 +48,7 @@ public final class LiveLevelProgress extends ConservativeLiveData<LevelProgress>
         //
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void updateLocal() {
         final AppDatabase db = WkApplication.getDatabase();
@@ -63,11 +65,9 @@ public final class LiveLevelProgress extends ConservativeLiveData<LevelProgress>
 
         levelProgress.removePassedBars();
 
-        for (final LevelProgress.BarEntry entry: levelProgress.getEntries()) {
-            for (final Subject subject: db.subjectCollectionsDao().getLevelProgressSubjects(entry.getLevel(), entry.getType())) {
-                entry.addSubject(subject);
-            }
-        }
+        levelProgress.getEntries().forEach(
+                entry -> db.subjectCollectionsDao().getLevelProgressSubjects(entry.getLevel(), entry.getType())
+                        .forEach(entry::addSubject));
 
         instance.postValue(levelProgress);
     }

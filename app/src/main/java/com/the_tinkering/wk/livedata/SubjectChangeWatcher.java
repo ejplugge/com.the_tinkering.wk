@@ -22,7 +22,6 @@ import android.os.Looper;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +29,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A watcher that keeps track of changes to subjects' assignments, statistics and study materials.
@@ -39,7 +40,6 @@ import javax.annotation.Nullable;
  * </p>
  */
 public final class SubjectChangeWatcher {
-    private static final Logger LOGGER = Logger.get(SubjectChangeWatcher.class);
     private static final SubjectChangeWatcher instance = new SubjectChangeWatcher();
     private static final Object MARK = new Object();
     private final Map<SubjectChangeListener, Object> map = Collections.synchronizedMap(new WeakHashMap<>());
@@ -72,7 +72,7 @@ public final class SubjectChangeWatcher {
      * @param subjectId the ID of the subject that has been changed
      */
     public void reportChange(final long subjectId) {
-        try {
+        safe(() -> {
             @Nullable Subject subject = null;
             final Iterable<SubjectChangeListener> listeners = new ArrayList<>(map.keySet());
             final AppDatabase db = WkApplication.getDatabase();
@@ -83,18 +83,10 @@ public final class SubjectChangeWatcher {
                     }
                     if (subject != null) {
                         final Subject theSubject = subject;
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            try {
-                                listener.onSubjectChange(theSubject);
-                            } catch (final Exception e) {
-                                LOGGER.uerr(e);
-                            }
-                        });
+                        new Handler(Looper.getMainLooper()).post(() -> safe(() -> listener.onSubjectChange(theSubject)));
                     }
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

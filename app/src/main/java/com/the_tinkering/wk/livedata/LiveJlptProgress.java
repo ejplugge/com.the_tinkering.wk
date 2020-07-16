@@ -16,11 +16,12 @@
 
 package com.the_tinkering.wk.livedata;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.JlptProgress;
-import com.the_tinkering.wk.model.JlptProgressItem;
 
 /**
  * LiveData that records the JLPT progress.
@@ -47,14 +48,13 @@ public final class LiveJlptProgress extends ConservativeLiveData<JlptProgress> {
         //
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void updateLocal() {
         if (GlobalSettings.Dashboard.getShowJlptProgress() || hasNullValue()) {
             final AppDatabase db = WkApplication.getDatabase();
             final JlptProgress progress = new JlptProgress();
-            for (final JlptProgressItem item: db.subjectAggregatesDao().getJlptProgress()) {
-                progress.addItem(item);
-            }
+            db.subjectAggregatesDao().getJlptProgress().forEach(progress::addItem);
             instance.postValue(progress);
         }
         else {

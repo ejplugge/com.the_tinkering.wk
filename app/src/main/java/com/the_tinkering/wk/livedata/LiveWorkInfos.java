@@ -22,12 +22,13 @@ import androidx.work.WorkManager;
 
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.services.BackgroundSyncWorker;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A special case LiveData for information about existing background workers in the database.
@@ -39,8 +40,6 @@ import javax.annotation.Nullable;
  * </p>
  */
 public final class LiveWorkInfos extends LiveData<List<WorkInfo>> {
-    private static final Logger LOGGER = Logger.get(LiveWorkInfos.class);
-
     /**
      * The singleton instance.
      */
@@ -71,22 +70,16 @@ public final class LiveWorkInfos extends LiveData<List<WorkInfo>> {
      * Initialize this instance with the available database.
      */
     public void initialize() {
-        try {
+        safe(() -> {
             if (backing == null) {
                 backing = WorkManager.getInstance(WkApplication.getInstance()).getWorkInfosByTagLiveData(BackgroundSyncWorker.JOB_TAG);
-                backing.observeForever(t -> {
-                    try {
-                        if (t != null) {
-                            postValue(t);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+                backing.observeForever(t -> safe(() -> {
+                    if (t != null) {
+                        postValue(t);
                     }
-                });
+                }));
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**

@@ -16,11 +16,10 @@
 
 package com.the_tinkering.wk.livedata;
 
-import android.os.AsyncTask;
-
 import androidx.lifecycle.LiveData;
 
-import com.the_tinkering.wk.util.Logger;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A LiveData subclass that is conservative about updates. If an update is requested
@@ -32,8 +31,6 @@ import com.the_tinkering.wk.util.Logger;
  * @param <T> the type of data stored in this instance
  */
 public abstract class ConservativeLiveData<T> extends LiveData<T> {
-    private static final Logger LOGGER = Logger.get(ConservativeLiveData.class);
-
     /**
      * True if an update is pending.
      */
@@ -103,24 +100,15 @@ public abstract class ConservativeLiveData<T> extends LiveData<T> {
 
     @Override
     protected final void onActive() {
-        try {
+        safe(() -> {
             if (pendingUpdate) {
                 pendingUpdate = false;
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(final Void... params) {
-                        try {
-                            forceUpdate();
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                        }
-                        return null;
-                    }
-                }.execute();
+                runAsync(null, publisher -> {
+                    forceUpdate();
+                    return null;
+                }, null, null);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**

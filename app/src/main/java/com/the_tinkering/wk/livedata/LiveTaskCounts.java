@@ -16,16 +16,16 @@
 
 package com.the_tinkering.wk.livedata;
 
-import android.os.AsyncTask;
-
 import androidx.lifecycle.LiveData;
 
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.TaskCounts;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A special case LiveData for information about existing task records in the database.
@@ -37,8 +37,6 @@ import javax.annotation.Nullable;
  * </p>
  */
 public final class LiveTaskCounts extends LiveData<TaskCounts> {
-    private static final Logger LOGGER = Logger.get(LiveTaskCounts.class);
-
     /**
      * The singleton instance.
      */
@@ -69,34 +67,21 @@ public final class LiveTaskCounts extends LiveData<TaskCounts> {
      * Initialize this instance with the available database.
      */
     public void initialize() {
-        try {
+        safe(() -> {
             if (counts == null) {
                 final AppDatabase db = WkApplication.getDatabase();
                 counts = db.taskDefinitionDao().getLiveCounts();
-                counts.observeForever(t -> {
-                    try {
-                        if (t != null) {
-                            postValue(t);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+                counts.observeForever(t -> safe(() -> {
+                    if (t != null) {
+                        postValue(t);
                     }
-                });
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected @Nullable Void doInBackground(final Void... params) {
-                        try {
-                            LiveApiProgress.getInstance().setSyncReminder(WkApplication.getDatabase().propertiesDao().getSyncReminder());
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                        }
-                        return null;
-                    }
-                }.execute();
+                }));
+                runAsync(null, publisher -> {
+                    LiveApiProgress.getInstance().setSyncReminder(WkApplication.getDatabase().propertiesDao().getSyncReminder());
+                    return null;
+                }, null, null);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**

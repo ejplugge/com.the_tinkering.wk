@@ -16,11 +16,12 @@
 
 package com.the_tinkering.wk.livedata;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.JoyoProgress;
-import com.the_tinkering.wk.model.JoyoProgressItem;
 
 /**
  * LiveData that records the Joyo kanji progress.
@@ -47,14 +48,13 @@ public final class LiveJoyoProgress extends ConservativeLiveData<JoyoProgress> {
         //
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void updateLocal() {
         if (GlobalSettings.Dashboard.getShowJoyoProgress() || hasNullValue()) {
             final AppDatabase db = WkApplication.getDatabase();
             final JoyoProgress progress = new JoyoProgress();
-            for (final JoyoProgressItem item: db.subjectAggregatesDao().getJoyoProgress()) {
-                progress.addItem(item);
-            }
+            db.subjectAggregatesDao().getJoyoProgress().forEach(progress::addItem);
             instance.postValue(progress);
         }
         else {

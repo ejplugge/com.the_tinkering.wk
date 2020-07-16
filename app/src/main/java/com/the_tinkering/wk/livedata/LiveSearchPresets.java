@@ -21,13 +21,14 @@ import androidx.lifecycle.LiveData;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.SearchPreset;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A special case LiveData for information about existing task records in the database.
@@ -39,8 +40,6 @@ import javax.annotation.Nullable;
  * </p>
  */
 public final class LiveSearchPresets extends LiveData<List<SearchPreset>> {
-    private static final Logger LOGGER = Logger.get(LiveSearchPresets.class);
-
     /**
      * The singleton instance.
      */
@@ -71,23 +70,17 @@ public final class LiveSearchPresets extends LiveData<List<SearchPreset>> {
      * Initialize this instance with the available database.
      */
     public void initialize() {
-        try {
+        safe(() -> {
             if (presets == null) {
                 final AppDatabase db = WkApplication.getDatabase();
                 presets = db.searchPresetDao().getLivePresets();
-                presets.observeForever(t -> {
-                    try {
-                        if (t != null) {
-                            postValue(t);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
+                presets.observeForever(t -> safe(() -> {
+                    if (t != null) {
+                        postValue(t);
                     }
-                });
+                }));
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**

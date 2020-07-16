@@ -16,14 +16,13 @@
 
 package com.the_tinkering.wk.livedata;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.SrsBreakDown;
-import com.the_tinkering.wk.model.SrsBreakDownItem;
 import com.the_tinkering.wk.model.SrsSystem;
 import com.the_tinkering.wk.model.SrsSystemRepository;
-
-import java.util.List;
 
 /**
  * LiveData that tracks the SRS breakdown data for the dashboard.
@@ -50,16 +49,16 @@ public final class LiveSrsBreakDown extends ConservativeLiveData<SrsBreakDown> {
         //
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void updateLocal() {
         final AppDatabase db = WkApplication.getDatabase();
         final int userLevel = db.propertiesDao().getUserLevel();
         final SrsBreakDown breakDown = new SrsBreakDown();
-        final List<SrsBreakDownItem> items = db.subjectViewsDao().getSrsBreakDownItems(userLevel);
-        for (final SrsBreakDownItem item: items) {
+        db.subjectViewsDao().getSrsBreakDownItems(userLevel).forEach(item -> {
             final SrsSystem.Stage stage = SrsSystemRepository.getSrsSystem(item.getSystemId()).getStage(item.getStageId());
             breakDown.addCount(stage, item.getCount());
-        }
+        });
         breakDown.setOverLevel(db.subjectViewsDao().getSrsBreakDownOverLevel(userLevel));
         instance.postValue(breakDown);
     }
