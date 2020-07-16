@@ -46,15 +46,8 @@ public enum SessionPriority {
         public Comparator<Subject> getComparator(final Comparator<Subject> base,
                                                  final Collection<Long> levelUpIds,
                                                  final int userLevel, final int maxLevel) {
-            return (o1, o2) -> {
-                if (o1.getType().isRadical() && !o2.getType().isRadical()) {
-                    return -1;
-                }
-                if (o2.getType().isRadical() && !o1.getType().isRadical()) {
-                    return 1;
-                }
-                return base.compare(o1, o2);
-            };
+            final Comparator<Subject> c = (o1, o2) -> Boolean.compare(o2.getType().isRadical(), o1.getType().isRadical());
+            return c.thenComparing(base);
         }
     },
 
@@ -67,19 +60,9 @@ public enum SessionPriority {
         public Comparator<Subject> getComparator(final Comparator<Subject> base,
                                                  final Collection<Long> levelUpIds,
                                                  final int userLevel, final int maxLevel) {
-            return (o1, o2) -> {
-                if (userLevel < maxLevel) {
-                    final boolean b1 = !o1.isPassed() && levelUpIds.contains(o1.getId());
-                    final boolean b2 = !o2.isPassed() && levelUpIds.contains(o2.getId());
-                    if (b1 && !b2) {
-                        return -1;
-                    }
-                    if (b2 && !b1) {
-                        return 1;
-                    }
-                }
-                return base.compare(o1, o2);
-            };
+            final Comparator<Subject> c = (o1, o2) -> Boolean.compare(
+                    !o2.isPassed() && levelUpIds.contains(o2.getId()), !o1.isPassed() && levelUpIds.contains(o1.getId()));
+            return c.thenComparing(base);
         }
     },
 
@@ -91,17 +74,10 @@ public enum SessionPriority {
         public Comparator<Subject> getComparator(final Comparator<Subject> base,
                                                  final Collection<Long> levelUpIds,
                                                  final int userLevel, final int maxLevel) {
-            return (o1, o2) -> {
-                final boolean b1 = o1.getLevel() == userLevel && !o1.getType().isVocabulary();
-                final boolean b2 = o2.getLevel() == userLevel && !o2.getType().isVocabulary();
-                if (b1 && !b2) {
-                    return -1;
-                }
-                if (b2 && !b1) {
-                    return 1;
-                }
-                return base.compare(o1, o2);
-            };
+            final Comparator<Subject> c = (o1, o2) -> Boolean.compare(
+                    o2.getLevel() == userLevel && !o2.getType().isVocabulary(),
+                    o1.getLevel() == userLevel && !o1.getType().isVocabulary());
+            return c.thenComparing(base);
         }
     },
 
@@ -113,15 +89,9 @@ public enum SessionPriority {
         public Comparator<Subject> getComparator(final Comparator<Subject> base,
                                                  final Collection<Long> levelUpIds,
                                                  final int userLevel, final int maxLevel) {
-            return (o1, o2) -> {
-                if (o1.getLevel() == userLevel && o2.getLevel() != userLevel) {
-                    return -1;
-                }
-                if (o2.getLevel() == userLevel && o1.getLevel() != userLevel) {
-                    return 1;
-                }
-                return base.compare(o1, o2);
-            };
+            final Comparator<Subject> c = (o1, o2) -> Boolean.compare(
+                    o2.getLevel() == userLevel, o1.getLevel() == userLevel);
+            return c.thenComparing(base);
         }
     };
 

@@ -250,25 +250,6 @@ public final class ObjectSupport {
     /**
      * Helper for comparators: generate the order of int/long values.
      * The result is based on the values of i1 and i2 if they differ.
-     * If they are the same, use i3 and i4 instead.
-     *
-     * @param i1 left-hand value 1
-     * @param i2 right-hand value 1
-     * @param i3 left-hand value 2
-     * @param i4 right-hand value 2
-     * @return order as for compareTo()
-     */
-    public static int compareLongsAndIntegers(final long i1, final long i2, final int i3, final int i4) {
-        final int n = Long.compare(i1, i2);
-        if (n != 0) {
-            return n;
-        }
-        return Integer.compare(i3, i4);
-    }
-
-    /**
-     * Helper for comparators: generate the order of int/long values.
-     * The result is based on the values of i1 and i2 if they differ.
      * If they are the same, use i3 and i4 instead, or i5 and i6 if i3 and i4 are also equal.
      *
      * @param i1 left-hand value 1
@@ -555,7 +536,7 @@ public final class ObjectSupport {
          * @param values the progress values
          * @throws Exception if anything went wrong
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "RedundantThrows", "RedundantSuppression"})
         void progress(Progress... values) throws Exception;
     }
 

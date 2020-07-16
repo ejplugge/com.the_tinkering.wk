@@ -111,6 +111,7 @@ public final class ResurrectActivity extends AbstractActivity {
         //
     }
 
+    @SuppressWarnings("SameReturnValue")
     private @Nullable Void doInBackground(final ObjectSupport.ProgressPublisher<Object> publisher) throws Exception {
         if (WebClient.getInstance().getLastLoginState() != 1) {
             publisher.progress("Status: Logging in...", false, false, -1L);

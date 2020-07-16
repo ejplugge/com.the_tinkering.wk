@@ -30,9 +30,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.compareIntegers;
-import static com.the_tinkering.wk.util.ObjectSupport.compareLongsAndIntegers;
-
 /**
  * Sort order for advanced search.
  */
@@ -41,7 +38,7 @@ public enum SearchSortOrder {
     TYPE("Type", true) {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
-            return (o1, o2) -> Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
+            return Comparator.comparingInt(Subject::getTypeOrder);
         }
 
         @Override
@@ -58,9 +55,7 @@ public enum SearchSortOrder {
     LEVEL_TYPE("Level, Type", false) {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
-            return (o1, o2) -> compareIntegers(
-                    o1.getLevel(), o2.getLevel(),
-                    o1.getType().getOrder(), o2.getType().getOrder());
+            return Comparator.comparingInt(Subject::getLevel).thenComparingInt(Subject::getTypeOrder);
         }
 
         @Override
@@ -77,25 +72,10 @@ public enum SearchSortOrder {
     AVAILABLE_AT_TYPE("Next review, Type", false) {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
-            return (o1, o2) -> {
-                long ts1 = 0;
-                if (o1.getAvailableAt() != null) {
-                    ts1 = o1.getAvailableAt().getTime();
-                    if (ts1 < searchTime) {
-                        ts1 = searchTime;
-                    }
-                }
-                long ts2 = 0;
-                if (o2.getAvailableAt() != null) {
-                    ts2 = o2.getAvailableAt().getTime();
-                    if (ts2 < searchTime) {
-                        ts2 = searchTime;
-                    }
-                }
-                return compareLongsAndIntegers(
-                        ts1, ts2,
-                        o1.getType().getOrder(), o2.getType().getOrder());
-            };
+            return Comparator.<Subject>comparingLong(subject -> {
+                final @Nullable Date date = subject.getAvailableAt();
+                return date == null ? 0 : Math.max(date.getTime(), searchTime);
+            }).thenComparingInt(Subject::getTypeOrder);
         }
 
         @Override
@@ -126,13 +106,7 @@ public enum SearchSortOrder {
     STAGE_TYPE("SRS Stage, Type", false) {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
-            return (o1, o2) -> {
-                final int n = o1.getSrsStage().compareTo(o2.getSrsStage());
-                if (n != 0) {
-                    return n;
-                }
-                return Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
-            };
+            return Comparator.comparing(Subject::getSrsStage).thenComparingInt(Subject::getTypeOrder);
         }
 
         @Override

@@ -63,8 +63,7 @@ public final class FontSelectionActivity extends AbstractActivity {
         addStaticRow(fontList, 7, R.font.otsutomefont_ver3, "Otsutome");
         addStaticRow(fontList, 8, R.font.gochikakutto, "851 Gochikakutto");
 
-        //noinspection SimplifyStreamApiCallChains
-        FontStorageUtil.getNames().stream().forEach(name -> addDynamicRow(fontList, name));
+        FontStorageUtil.getNames().forEach(name -> addDynamicRow(fontList, name));
     }
 
     @Override

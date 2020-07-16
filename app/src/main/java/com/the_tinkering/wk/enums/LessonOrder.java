@@ -20,8 +20,6 @@ import com.the_tinkering.wk.db.model.Subject;
 
 import java.util.Comparator;
 
-import static com.the_tinkering.wk.util.ObjectSupport.compareIntegers;
-
 /**
  * The order to present lessons in. Each value will produce a comparator on demand.
  */
@@ -43,7 +41,7 @@ public enum LessonOrder {
     LEVEL_THEN_TYPE(false) {
         @Override
         public Comparator<Subject> getComparator() {
-            return (o1, o2) -> compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
+            return Comparator.comparingInt(Subject::getLevel).thenComparingInt(Subject::getTypeOrder);
         }
     },
 
@@ -53,13 +51,8 @@ public enum LessonOrder {
     RADICALS_THEN_LEVEL_THEN_TYPE(false) {
         @Override
         public Comparator<Subject> getComparator() {
-            return (o1, o2) -> {
-                final int n = Boolean.compare(!o1.getType().isRadical(), !o2.getType().isRadical());
-                if (n != 0) {
-                    return n;
-                }
-                return compareIntegers(o1.getLevel(), o2.getLevel(), o1.getType().getOrder(), o2.getType().getOrder());
-            };
+            final Comparator<Subject> c = (o1, o2) -> Boolean.compare(o2.getType().isRadical(), o1.getType().isRadical());
+            return c.thenComparingInt(Subject::getLevel).thenComparingInt(Subject::getTypeOrder);
         }
     },
 
@@ -69,7 +62,7 @@ public enum LessonOrder {
     TYPE_THEN_LEVEL(false) {
         @Override
         public Comparator<Subject> getComparator() {
-            return (o1, o2) -> compareIntegers(o1.getType().getOrder(), o2.getType().getOrder(), o1.getLevel(), o2.getLevel());
+            return Comparator.comparingInt(Subject::getTypeOrder).thenComparingInt(Subject::getLevel);
         }
     },
 
@@ -79,7 +72,7 @@ public enum LessonOrder {
     LEVEL_THEN_SHUFFLE(true) {
         @Override
         public Comparator<Subject> getComparator () {
-            return (o1, o2) -> Integer.compare(o1.getLevel(), o2.getLevel());
+            return Comparator.comparingInt(Subject::getLevel);
         }
     },
 
@@ -89,7 +82,7 @@ public enum LessonOrder {
     TYPE_THEN_SHUFFLE(true) {
         @Override
         public Comparator<Subject> getComparator () {
-            return (o1, o2) -> Integer.compare(o1.getType().getOrder(), o2.getType().getOrder());
+            return Comparator.comparingInt(Subject::getTypeOrder);
         }
     };
 

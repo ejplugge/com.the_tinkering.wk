@@ -132,6 +132,15 @@ public final class Subject implements PronunciationAudioOwner {
         return type;
     }
 
+    /**
+     * The subject's type order.
+     *
+     * @return the order
+     */
+    public int getTypeOrder() {
+        return getType().getOrder();
+    }
+
     @Override
     public long getId() {
         return entity.id;
