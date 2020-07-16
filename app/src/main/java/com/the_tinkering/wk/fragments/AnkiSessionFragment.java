@@ -32,17 +32,16 @@ import com.the_tinkering.wk.model.FloatingUiState;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.AudioUtil;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.views.SubjectInfoView;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Fragment for an Anki mode question.
  */
 public final class AnkiSessionFragment extends AbstractSessionFragment {
-    private static final Logger LOGGER = Logger.get(AnkiSessionFragment.class);
-
     private @Nullable Question question = null;
     private @Nullable Subject subject = null;
     private boolean showingAnswer = false;
@@ -95,119 +94,101 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
         updateViews();
     }
 
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        try {
-            if (question == null || subject == null) {
+    private void onViewCreatedBase(final View view) {
+        if (question == null || subject == null) {
+            return;
+        }
+
+        onViewCreatedCommon(view, question, subject, true);
+
+        ankiShowAnswerButton.setDelegate(view, R.id.ankiShowAnswerButton);
+        ankiNextButton.setDelegate(view, R.id.ankiNextButton);
+        ankiCorrectButton.setDelegate(view, R.id.ankiCorrectButton);
+        ankiIncorrectButton.setDelegate(view, R.id.ankiIncorrectButton);
+        answer.setDelegate(view, R.id.answer);
+        synonyms.setDelegate(view, R.id.synonyms);
+        subjectInfo.setDelegate(view, R.id.subjectInfo);
+        scrollView.setDelegate(view, R.id.scrollView);
+        specialButton1.setDelegate(view, R.id.specialButton1);
+        specialButton2.setDelegate(view, R.id.specialButton2);
+        specialButton3.setDelegate(view, R.id.specialButton3);
+        questionView.setDelegate(view, R.id.questionView);
+        buttonsView.setDelegate(view, R.id.buttonsView);
+
+        // Swap the correct/incorrect buttons if the settings ask for it.
+        if (GlobalSettings.Display.getSwapAnkiButtons()) {
+            safe(() -> {
+                final @Nullable ConstraintLayout.LayoutParams correctParams = (ConstraintLayout.LayoutParams) ankiCorrectButton.getLayoutParams();
+                final @Nullable ConstraintLayout.LayoutParams incorrectParams = (ConstraintLayout.LayoutParams) ankiIncorrectButton.getLayoutParams();
+                if (correctParams != null && incorrectParams != null) {
+                    correctParams.startToEnd = ConstraintLayout.LayoutParams.UNSET;
+                    correctParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
+                    correctParams.endToEnd = ConstraintLayout.LayoutParams.UNSET;
+                    correctParams.endToStart = R.id.ankiIncorrectButton;
+                    incorrectParams.startToEnd = R.id.ankiCorrectButton;
+                    incorrectParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
+                    incorrectParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
+                    incorrectParams.endToStart = ConstraintLayout.LayoutParams.UNSET;
+                    ankiCorrectButton.setLayoutParams(correctParams);
+                    ankiIncorrectButton.setLayoutParams(incorrectParams);
+                }
+            });
+        }
+
+        final @Nullable LinearLayout.LayoutParams qvparams = (LinearLayout.LayoutParams) questionView.getLayoutParams();
+        if (qvparams != null) {
+            final int height = GlobalSettings.Display.getQuizQuestionViewHeight();
+            qvparams.height = height > 0 ? dp2px(height): ViewGroup.LayoutParams.WRAP_CONTENT;
+            qvparams.weight = 0;
+            questionView.setLayoutParams(qvparams);
+        }
+
+        // Resize the Anki buttons as needed
+        final @Nullable ViewGroup.LayoutParams params = buttonsView.getLayoutParams();
+        if (params != null) {
+            params.height = dp2px(GlobalSettings.Display.getAnkiButtonsHeight());
+            buttonsView.setLayoutParams(params);
+        }
+
+        updateViews();
+
+        ankiShowAnswerButton.setOnClickListener(v -> safe(() -> {
+            showingAnswer = true;
+            playAudio();
+            updateViews();
+        }));
+
+        ankiNextButton.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
                 return;
             }
+            disableInteraction();
+            showingAnswer = false;
+            session.advance();
+        }));
 
-            onViewCreatedCommon(view, question, subject, true);
-
-            ankiShowAnswerButton.setDelegate(view, R.id.ankiShowAnswerButton);
-            ankiNextButton.setDelegate(view, R.id.ankiNextButton);
-            ankiCorrectButton.setDelegate(view, R.id.ankiCorrectButton);
-            ankiIncorrectButton.setDelegate(view, R.id.ankiIncorrectButton);
-            answer.setDelegate(view, R.id.answer);
-            synonyms.setDelegate(view, R.id.synonyms);
-            subjectInfo.setDelegate(view, R.id.subjectInfo);
-            scrollView.setDelegate(view, R.id.scrollView);
-            specialButton1.setDelegate(view, R.id.specialButton1);
-            specialButton2.setDelegate(view, R.id.specialButton2);
-            specialButton3.setDelegate(view, R.id.specialButton3);
-            questionView.setDelegate(view, R.id.questionView);
-            buttonsView.setDelegate(view, R.id.buttonsView);
-
-            // Swap the correct/incorrect buttons if the settings ask for it.
-            if (GlobalSettings.Display.getSwapAnkiButtons()) {
-                try {
-                    final @Nullable ConstraintLayout.LayoutParams correctParams = (ConstraintLayout.LayoutParams) ankiCorrectButton.getLayoutParams();
-                    final @Nullable ConstraintLayout.LayoutParams incorrectParams = (ConstraintLayout.LayoutParams) ankiIncorrectButton.getLayoutParams();
-                    if (correctParams != null && incorrectParams != null) {
-                        correctParams.startToEnd = ConstraintLayout.LayoutParams.UNSET;
-                        correctParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-                        correctParams.endToEnd = ConstraintLayout.LayoutParams.UNSET;
-                        correctParams.endToStart = R.id.ankiIncorrectButton;
-                        incorrectParams.startToEnd = R.id.ankiCorrectButton;
-                        incorrectParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
-                        incorrectParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
-                        incorrectParams.endToStart = ConstraintLayout.LayoutParams.UNSET;
-                        ankiCorrectButton.setLayoutParams(correctParams);
-                        ankiIncorrectButton.setLayoutParams(incorrectParams);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+        ankiCorrectButton.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
+                return;
             }
+            disableInteraction();
+            showingAnswer = false;
+            session.submitAnkiCorrect();
+        }));
 
-            final @Nullable LinearLayout.LayoutParams qvparams = (LinearLayout.LayoutParams) questionView.getLayoutParams();
-            if (qvparams != null) {
-                final int height = GlobalSettings.Display.getQuizQuestionViewHeight();
-                qvparams.height = height > 0 ? dp2px(height): ViewGroup.LayoutParams.WRAP_CONTENT;
-                qvparams.weight = 0;
-                questionView.setLayoutParams(qvparams);
+        ankiIncorrectButton.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
+                return;
             }
+            disableInteraction();
+            showingAnswer = false;
+            session.submitAnkiIncorrect();
+        }));
+    }
 
-            // Resize the Anki buttons as needed
-            final @Nullable ViewGroup.LayoutParams params = buttonsView.getLayoutParams();
-            if (params != null) {
-                params.height = dp2px(GlobalSettings.Display.getAnkiButtonsHeight());
-                buttonsView.setLayoutParams(params);
-            }
-
-            updateViews();
-
-            ankiShowAnswerButton.setOnClickListener(v -> {
-                try {
-                    showingAnswer = true;
-                    playAudio();
-                    updateViews();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            ankiNextButton.setOnClickListener(v -> {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-                    showingAnswer = false;
-                    session.advance();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            ankiCorrectButton.setOnClickListener(v -> {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-                    showingAnswer = false;
-                    session.submitAnkiCorrect();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            ankiIncorrectButton.setOnClickListener(v -> {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-                    showingAnswer = false;
-                    session.submitAnkiIncorrect();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+    @Override
+    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        safe(() -> onViewCreatedBase(view));
     }
 
     @Override
@@ -222,7 +203,7 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
 
     @Override
     public void enableInteraction() {
-        try {
+        safe(() -> {
             ankiShowAnswerButton.enableInteraction();
             ankiCorrectButton.enableInteraction();
             ankiIncorrectButton.enableInteraction();
@@ -231,14 +212,12 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
             specialButton2.enableInteraction();
             specialButton3.enableInteraction();
             interactionEnabled = true;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public void disableInteraction() {
-        try {
+        safe(() -> {
             interactionEnabled = false;
             ankiShowAnswerButton.disableInteraction();
             ankiCorrectButton.disableInteraction();
@@ -247,9 +226,7 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
             specialButton1.disableInteraction();
             specialButton2.disableInteraction();
             specialButton3.disableInteraction();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @SuppressWarnings("SuspiciousGetterSetter")

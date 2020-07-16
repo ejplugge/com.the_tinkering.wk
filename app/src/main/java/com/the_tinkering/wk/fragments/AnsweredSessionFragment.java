@@ -31,7 +31,6 @@ import com.the_tinkering.wk.model.DigraphMatch;
 import com.the_tinkering.wk.model.FloatingUiState;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 import com.the_tinkering.wk.views.SubjectInfoView;
 
@@ -39,11 +38,12 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * Fragment for an answered non-Anki mode question.
  */
 public final class AnsweredSessionFragment extends AbstractSessionFragment {
-    private static final Logger LOGGER = Logger.get(AnsweredSessionFragment.class);
     private @Nullable Question question;
     private @Nullable Subject subject;
 
@@ -85,96 +85,92 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
         nextButton.requestFocus();
     }
 
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        try {
-            if (question == null || subject == null) {
+    private void onViewCreatedBase(final View view) {
+        if (question == null || subject == null) {
+            return;
+        }
+
+        onViewCreatedCommon(view, question, subject, false);
+
+        scrollView.setDelegate(view, R.id.scrollView);
+        nextButton.setDelegate(view, R.id.nextButton);
+        nextButton2.setDelegate(view, R.id.nextButton2);
+        specialButton1.setDelegate(view, R.id.specialButton1);
+        specialButton2.setDelegate(view, R.id.specialButton2);
+        specialButton3.setDelegate(view, R.id.specialButton3);
+        toastAnimation.setDelegate(view, R.id.toastAnimation);
+        questionView.setDelegate(view, R.id.questionView);
+        questionEdit.setDelegate(view, R.id.questionEdit);
+        subjectInfo.setDelegate(view, R.id.subjectInfo);
+        digraphMatchText.setDelegate(view, R.id.digraphMatchText);
+
+        final @Nullable LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) questionView.getLayoutParams();
+        if (params != null) {
+            final int height = GlobalSettings.Display.getQuizQuestionViewHeight();
+            params.height = height > 0 ? dp2px(height): ViewGroup.LayoutParams.WRAP_CONTENT;
+            params.weight = 0;
+            questionView.setLayoutParams(params);
+        }
+
+        if (session.isCorrect()) {
+            questionEdit.setBackgroundColor(ThemeUtil.getColor(R.attr.correctColorBackground));
+        }
+        else {
+            questionEdit.setBackgroundColor(ThemeUtil.getColor(R.attr.incorrectColorBackground));
+        }
+
+        questionEdit.setSingleLine();
+        questionEdit.setText(FloatingUiState.getCurrentAnswer());
+        questionEdit.setTextSize(GlobalSettings.Font.getFontSizeQuestionEdit());
+        questionEdit.setTextColor(ThemeUtil.getColor(R.attr.colorPrimary));
+        if (question.getType().isAscii()) {
+            questionEdit.setRootLocale();
+        }
+        if (question.getType().isKana()) {
+            questionEdit.setJapaneseLocale();
+        }
+
+        // Show or hide the subject info dump
+        subjectInfo.setToolbar(null);
+        subjectInfo.setMaxFontSize(GlobalSettings.Font.getMaxFontSizeQuiz());
+        subjectInfo.setContainerType(SubjectInfoView.ContainerType.ANSWERED_QUESTION);
+        subjectInfo.setSubject(this, subject);
+
+        final View.OnClickListener listener = v -> safe(() -> {
+            if (!interactionEnabled) {
                 return;
             }
-
-            onViewCreatedCommon(view, question, subject, false);
-
-            scrollView.setDelegate(view, R.id.scrollView);
-            nextButton.setDelegate(view, R.id.nextButton);
-            nextButton2.setDelegate(view, R.id.nextButton2);
-            specialButton1.setDelegate(view, R.id.specialButton1);
-            specialButton2.setDelegate(view, R.id.specialButton2);
-            specialButton3.setDelegate(view, R.id.specialButton3);
-            toastAnimation.setDelegate(view, R.id.toastAnimation);
-            questionView.setDelegate(view, R.id.questionView);
-            questionEdit.setDelegate(view, R.id.questionEdit);
-            subjectInfo.setDelegate(view, R.id.subjectInfo);
-            digraphMatchText.setDelegate(view, R.id.digraphMatchText);
-
-            final @Nullable LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) questionView.getLayoutParams();
-            if (params != null) {
-                final int height = GlobalSettings.Display.getQuizQuestionViewHeight();
-                params.height = height > 0 ? dp2px(height): ViewGroup.LayoutParams.WRAP_CONTENT;
-                params.weight = 0;
-                questionView.setLayoutParams(params);
+            if (session.isNextButtonFrozen()) {
+                return;
             }
+            disableInteraction();
+            session.advance();
+        });
+        nextButton.setOnClickListener(listener);
+        nextButton2.setOnClickListener(listener);
 
-            if (session.isCorrect()) {
-                questionEdit.setBackgroundColor(ThemeUtil.getColor(R.attr.correctColorBackground));
+        if (FloatingUiState.lastVerdict == null) {
+            digraphMatchText.setVisibility(false);
+        }
+        else {
+            final @Nullable DigraphMatch match = FloatingUiState.lastVerdict.getDigraphMatch();
+            if (match != null) {
+                digraphMatchText.setText(String.format(Locale.ROOT, "Your answer was incorrect because you mixed up the regular kana %c"
+                                + " and the small kana %c. Tap this message for more information about the difference between small and regular kana.",
+                        match.getRegularKana(), match.getSmallKana()));
+                digraphMatchText.setClickableAndNotFocusable(true);
+                digraphMatchText.setOnClickListener(v -> goToActivity(DigraphHelpActivity.class));
+                digraphMatchText.setVisibility(true);
             }
             else {
-                questionEdit.setBackgroundColor(ThemeUtil.getColor(R.attr.incorrectColorBackground));
-            }
-
-            questionEdit.setSingleLine();
-            questionEdit.setText(FloatingUiState.getCurrentAnswer());
-            questionEdit.setTextSize(GlobalSettings.Font.getFontSizeQuestionEdit());
-            questionEdit.setTextColor(ThemeUtil.getColor(R.attr.colorPrimary));
-            if (question.getType().isAscii()) {
-                questionEdit.setRootLocale();
-            }
-            if (question.getType().isKana()) {
-                questionEdit.setJapaneseLocale();
-            }
-
-            // Show or hide the subject info dump
-            subjectInfo.setToolbar(null);
-            subjectInfo.setMaxFontSize(GlobalSettings.Font.getMaxFontSizeQuiz());
-            subjectInfo.setContainerType(SubjectInfoView.ContainerType.ANSWERED_QUESTION);
-            subjectInfo.setSubject(this, subject);
-
-            final View.OnClickListener listener = v -> {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    if (session.isNextButtonFrozen()) {
-                        return;
-                    }
-                    disableInteraction();
-                    session.advance();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            };
-            nextButton.setOnClickListener(listener);
-            nextButton2.setOnClickListener(listener);
-
-            if (FloatingUiState.lastVerdict == null) {
                 digraphMatchText.setVisibility(false);
             }
-            else {
-                final @Nullable DigraphMatch match = FloatingUiState.lastVerdict.getDigraphMatch();
-                if (match != null) {
-                    digraphMatchText.setText(String.format(Locale.ROOT, "Your answer was incorrect because you mixed up the regular kana %c"
-                            + " and the small kana %c. Tap this message for more information about the difference between small and regular kana.",
-                            match.getRegularKana(), match.getSmallKana()));
-                    digraphMatchText.setClickableAndNotFocusable(true);
-                    digraphMatchText.setOnClickListener(v -> goToActivity(DigraphHelpActivity.class));
-                    digraphMatchText.setVisibility(true);
-                }
-                else {
-                    digraphMatchText.setVisibility(false);
-                }
-            }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
         }
+    }
+
+    @Override
+    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        safe(() -> onViewCreatedBase(view));
     }
 
     @Override
@@ -189,30 +185,26 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
 
     @Override
     public void enableInteraction() {
-        try {
+        safe(() -> {
             nextButton.enableInteraction();
             nextButton2.enableInteraction();
             specialButton1.enableInteraction();
             specialButton2.enableInteraction();
             specialButton3.enableInteraction();
             interactionEnabled = true;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public void disableInteraction() {
-        try {
+        safe(() -> {
             interactionEnabled = false;
             nextButton.disableInteraction();
             nextButton2.disableInteraction();
             specialButton1.disableInteraction();
             specialButton2.disableInteraction();
             specialButton3.disableInteraction();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @SuppressWarnings("SuspiciousGetterSetter")
@@ -254,12 +246,10 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
 
     @Override
     public void updateViews() {
-        try {
+        safe(() -> {
             if (GlobalSettings.Review.getShowAnswerToast()) {
                 showPreviousAnswerToast(toastAnimation, session.isCorrect() ? R.raw.success : R.raw.fail);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.fragments;
 
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -52,6 +51,8 @@ import java.util.Locale;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Fragment for an unanswered non-Anki mode question.
@@ -97,184 +98,164 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
         questionEdit.requestFocusInTouchMode();
     }
 
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        try {
-            if (question == null || subject == null) {
-                return;
+    private void onViewCreatedBase(final View view) {
+        if (question == null || subject == null) {
+            return;
+        }
+
+        onViewCreatedCommon(view, question, subject, false);
+
+        dontKnowButton.setDelegate(view, R.id.dontKnowButton);
+        submitButton.setDelegate(view, R.id.submitButton);
+        specialButton1.setDelegate(view, R.id.specialButton1);
+        specialButton2.setDelegate(view, R.id.specialButton2);
+        specialButton3.setDelegate(view, R.id.specialButton3);
+        questionEdit.setDelegate(view, R.id.questionEdit);
+        questionView.setDelegate(view, R.id.questionView);
+        questionEditFrame.setDelegate(view, R.id.questionEditFrame);
+
+        questionEdit.setTag(true);
+        addTextWatcherToEditText();
+        addActionListenerToEditText();
+
+        final @Nullable LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) questionView.getLayoutParams();
+        if (params != null) {
+            if (GlobalSettings.Display.getStretchQuestionView()) {
+                params.height = 0;
+                params.weight = 1;
             }
+            else {
+                final int height = GlobalSettings.Display.getQuizQuestionViewHeight();
+                params.height = height > 0 ? dp2px(height): ViewGroup.LayoutParams.WRAP_CONTENT;
+                params.weight = 0;
+            }
+            questionView.setLayoutParams(params);
+        }
 
-            onViewCreatedCommon(view, question, subject, false);
+        matchingKanji = null;
+        final String characters = orElse(subject.getCharacters(), "");
+        if (subject.getType().isVocabulary() && characters.length() == 1
+                && GlobalSettings.AdvancedOther.getShakeOnMatchingKanji()) {
+            runAsync(
+                    (publisher, params_) -> WkApplication.getDatabase().subjectDao().getKanjiByCharacters(characters),
+                    null,
+                    result -> matchingKanji = result);
+        }
 
-            dontKnowButton.setDelegate(view, R.id.dontKnowButton);
-            submitButton.setDelegate(view, R.id.submitButton);
-            specialButton1.setDelegate(view, R.id.specialButton1);
-            specialButton2.setDelegate(view, R.id.specialButton2);
-            specialButton3.setDelegate(view, R.id.specialButton3);
-            questionEdit.setDelegate(view, R.id.questionEdit);
-            questionView.setDelegate(view, R.id.questionView);
-            questionEditFrame.setDelegate(view, R.id.questionEditFrame);
+        // Show the Don't Know button if needed
+        dontKnowButton.setVisibility(GlobalSettings.AdvancedOther.getDontKnowButtonBehavior().canShow());
 
-            questionEdit.setTag(true);
-            addTextWatcherToEditText();
-            addActionListenerToEditText();
+        if (isLandscape()) {
+            questionEditFrame.setBackgroundColor(question.getType().getHintColor());
+        }
 
-            final @Nullable LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) questionView.getLayoutParams();
-            if (params != null) {
-                if (GlobalSettings.Display.getStretchQuestionView()) {
-                    params.height = 0;
-                    params.weight = 1;
+        questionEdit.setTextSize(GlobalSettings.Font.getFontSizeQuestionEdit());
+        questionEdit.setHint(question.getHint(isLandscape()));
+
+        int imeOptions = EditorInfo.IME_ACTION_UNSPECIFIED | EditorInfo.IME_FLAG_NO_FULLSCREEN;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && GlobalSettings.Keyboard.getEnableNoLearning()) {
+            imeOptions |= EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING;
+        }
+        if (question.getType().isAscii() && GlobalSettings.Keyboard.getForceAsciiMeaning()) {
+            imeOptions |= EditorInfo.IME_FLAG_FORCE_ASCII;
+        }
+        else if (question.getType().isKana() && GlobalSettings.Keyboard.getForceAsciiReading()) {
+            imeOptions |= EditorInfo.IME_FLAG_FORCE_ASCII;
+        }
+        questionEdit.setImeOptions(imeOptions);
+
+        int inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
+        if (GlobalSettings.Keyboard.getEnableAutoCorrectMeaning() && question.getType().isAscii()) {
+            inputType |= InputType.TYPE_TEXT_FLAG_AUTO_CORRECT;
+        }
+        else if (GlobalSettings.Keyboard.getEnableAutoCorrectReading() && question.getType().isKana()) {
+            inputType |= InputType.TYPE_TEXT_FLAG_AUTO_CORRECT;
+        }
+        if (GlobalSettings.Keyboard.getForceVisiblePasswordMeaning() && question.getType().isAscii()) {
+            inputType |= InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
+        }
+        else if (GlobalSettings.Keyboard.getForceVisiblePasswordReading() && question.getType().isKana()) {
+            inputType |= InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
+        }
+        questionEdit.setInputType(inputType);
+
+        if (GlobalSettings.Keyboard.getImeHintMeaning() || GlobalSettings.Keyboard.getImeHintReading()) {
+            if (question.getType().isAscii()) {
+                if (GlobalSettings.Keyboard.getImeHintMeaning()) {
+                    questionEdit.setImeHintLocales(Locale.ENGLISH);
                 }
                 else {
-                    final int height = GlobalSettings.Display.getQuizQuestionViewHeight();
-                    params.height = height > 0 ? dp2px(height): ViewGroup.LayoutParams.WRAP_CONTENT;
-                    params.weight = 0;
+                    questionEdit.setImeHintLocales();
                 }
-                questionView.setLayoutParams(params);
-            }
-
-            matchingKanji = null;
-            final String characters = orElse(subject.getCharacters(), "");
-            if (subject.getType().isVocabulary() && characters.length() == 1
-                    && GlobalSettings.AdvancedOther.getShakeOnMatchingKanji()) {
-                new AsyncTask<Void, Void, Subject>() {
-                    @Override
-                    protected @Nullable Subject doInBackground(final Void... params) {
-                        try {
-                            return WkApplication.getDatabase().subjectDao().getKanjiByCharacters(characters);
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(final @Nullable Subject result) {
-                        matchingKanji = result;
-                    }
-                }.execute();
-            }
-
-            // Show the Don't Know button if needed
-            dontKnowButton.setVisibility(GlobalSettings.AdvancedOther.getDontKnowButtonBehavior().canShow());
-
-            if (isLandscape()) {
-                questionEditFrame.setBackgroundColor(question.getType().getHintColor());
-            }
-
-            questionEdit.setTextSize(GlobalSettings.Font.getFontSizeQuestionEdit());
-            questionEdit.setHint(question.getHint(isLandscape()));
-
-            int imeOptions = EditorInfo.IME_ACTION_UNSPECIFIED | EditorInfo.IME_FLAG_NO_FULLSCREEN;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && GlobalSettings.Keyboard.getEnableNoLearning()) {
-                imeOptions |= EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING;
-            }
-            if (question.getType().isAscii() && GlobalSettings.Keyboard.getForceAsciiMeaning()) {
-                imeOptions |= EditorInfo.IME_FLAG_FORCE_ASCII;
-            }
-            else if (question.getType().isKana() && GlobalSettings.Keyboard.getForceAsciiReading()) {
-                imeOptions |= EditorInfo.IME_FLAG_FORCE_ASCII;
-            }
-            questionEdit.setImeOptions(imeOptions);
-
-            int inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
-            if (GlobalSettings.Keyboard.getEnableAutoCorrectMeaning() && question.getType().isAscii()) {
-                inputType |= InputType.TYPE_TEXT_FLAG_AUTO_CORRECT;
-            }
-            else if (GlobalSettings.Keyboard.getEnableAutoCorrectReading() && question.getType().isKana()) {
-                inputType |= InputType.TYPE_TEXT_FLAG_AUTO_CORRECT;
-            }
-            if (GlobalSettings.Keyboard.getForceVisiblePasswordMeaning() && question.getType().isAscii()) {
-                inputType |= InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
-            }
-            else if (GlobalSettings.Keyboard.getForceVisiblePasswordReading() && question.getType().isKana()) {
-                inputType |= InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
-            }
-            questionEdit.setInputType(inputType);
-
-            if (GlobalSettings.Keyboard.getImeHintMeaning() || GlobalSettings.Keyboard.getImeHintReading()) {
-                if (question.getType().isAscii()) {
-                    if (GlobalSettings.Keyboard.getImeHintMeaning()) {
-                        questionEdit.setImeHintLocales(Locale.ENGLISH);
-                    }
-                    else {
-                        questionEdit.setImeHintLocales();
-                    }
-                }
-                if (question.getType().isKana()) {
-                    if (GlobalSettings.Keyboard.getImeHintReading()) {
-                        questionEdit.setImeHintLocales(Locale.JAPANESE);
-                    }
-                    else {
-                        questionEdit.setImeHintLocales();
-                    }
-                }
-            }
-
-            if (GlobalSettings.Display.getCenterCaret()) {
-                questionEdit.setGravity(Gravity.CENTER_HORIZONTAL);
-            }
-            questionEdit.setMinEms(10);
-            questionEdit.setSingleLine();
-            questionEdit.setContentDescription(question.getTitle());
-            questionEdit.setText(FloatingUiState.getCurrentAnswer());
-            if (question.getType().isAscii()) {
-                questionEdit.setRootLocale();
             }
             if (question.getType().isKana()) {
-                questionEdit.setJapaneseLocale();
-            }
-
-            if (isLandscape()) {
-                questionEditFrame.setBackgroundColor(question.getType().getHintColor());
-                questionEdit.setBackgroundColor(question.getType().getHintColor());
-                questionEdit.setTextColor(question.getType().getHintContrastColor());
-                questionEdit.setHintTextColor(question.getType().getEditTextHintColor());
-            }
-
-            dontKnowButton.setOnClickListener(v -> {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    if (!session.isAnswered()) {
-                        disableInteraction();
-                        questionEdit.setTag(false);
-                        session.submitDontKnow();
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+                if (GlobalSettings.Keyboard.getImeHintReading()) {
+                    questionEdit.setImeHintLocales(Locale.JAPANESE);
                 }
-            });
-
-            submitButton.setOnClickListener(v -> {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-                    questionEdit.setTag(false);
-                    FloatingUiState.setCurrentAnswer(questionEdit.getText());
-                    LOGGER.info("Submitting answer '%s' for subject '%s' (%d) via submit button",
-                            FloatingUiState.getCurrentAnswer(), subject.getCharacters(), subject.getId());
-                    final AnswerVerdict verdict = session.submit(matchingKanji);
-                    if (verdict.isRetry()) {
-                        final TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
-                        shake.setDuration(1000);
-                        shake.setInterpolator(new CycleInterpolator(7));
-                        questionEdit.startAnimation(shake);
-                        enableInteraction();
-                        questionEdit.setTag(true);
-                        questionEdit.requestFocusInTouchMode();
-                        showSoftInput(questionEdit);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+                else {
+                    questionEdit.setImeHintLocales();
                 }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+            }
         }
+
+        if (GlobalSettings.Display.getCenterCaret()) {
+            questionEdit.setGravity(Gravity.CENTER_HORIZONTAL);
+        }
+        questionEdit.setMinEms(10);
+        questionEdit.setSingleLine();
+        questionEdit.setContentDescription(question.getTitle());
+        questionEdit.setText(FloatingUiState.getCurrentAnswer());
+        if (question.getType().isAscii()) {
+            questionEdit.setRootLocale();
+        }
+        if (question.getType().isKana()) {
+            questionEdit.setJapaneseLocale();
+        }
+
+        if (isLandscape()) {
+            questionEditFrame.setBackgroundColor(question.getType().getHintColor());
+            questionEdit.setBackgroundColor(question.getType().getHintColor());
+            questionEdit.setTextColor(question.getType().getHintContrastColor());
+            questionEdit.setHintTextColor(question.getType().getEditTextHintColor());
+        }
+
+        dontKnowButton.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
+                return;
+            }
+            if (!session.isAnswered()) {
+                disableInteraction();
+                questionEdit.setTag(false);
+                session.submitDontKnow();
+            }
+        }));
+
+        submitButton.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
+                return;
+            }
+            disableInteraction();
+            questionEdit.setTag(false);
+            FloatingUiState.setCurrentAnswer(questionEdit.getText());
+            LOGGER.info("Submitting answer '%s' for subject '%s' (%d) via submit button",
+                    FloatingUiState.getCurrentAnswer(), subject.getCharacters(), subject.getId());
+            final AnswerVerdict verdict = session.submit(matchingKanji);
+            if (verdict.isRetry()) {
+                final TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
+                shake.setDuration(1000);
+                shake.setInterpolator(new CycleInterpolator(7));
+                questionEdit.startAnimation(shake);
+                enableInteraction();
+                questionEdit.setTag(true);
+                questionEdit.requestFocusInTouchMode();
+                showSoftInput(questionEdit);
+            }
+        }));
+    }
+
+    @Override
+    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        safe(() -> onViewCreatedBase(view));
     }
 
     @Override
@@ -289,30 +270,26 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
 
     @Override
     public void enableInteraction() {
-        try {
+        safe(() -> {
             dontKnowButton.enableInteraction();
             submitButton.enableInteraction();
             specialButton1.enableInteraction();
             specialButton2.enableInteraction();
             specialButton3.enableInteraction();
             interactionEnabled = true;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public void disableInteraction() {
-        try {
+        safe(() -> {
             interactionEnabled = false;
             dontKnowButton.disableInteraction();
             submitButton.disableInteraction();
             specialButton1.disableInteraction();
             specialButton2.disableInteraction();
             specialButton3.disableInteraction();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @SuppressWarnings("SuspiciousGetterSetter")
@@ -376,7 +353,7 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
 
             @Override
             public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
-                try {
+                safe(() -> {
                     final boolean active = (boolean) questionEdit.getTag();
                     if (!active) {
                         return;
@@ -386,14 +363,12 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
                         spannable = new SpannableString(s);
                         spannable.setSpan(this, start, start + count, Spanned.SPAN_COMPOSING);
                     }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+                });
             }
 
             @Override
             public void afterTextChanged(final Editable s) {
-                try {
+                safe(() -> {
                     final boolean active = (boolean) questionEdit.getTag();
                     if (!active) {
                         return;
@@ -404,9 +379,7 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
                         spannable.removeSpan(this);
                         PseudoIme.fixup(s, beginIndex, endIndex);
                     }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+                });
             }
         };
 
@@ -414,51 +387,49 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
         questionEdit.setTag(R.id.textWatcherAdded, new Object());
     }
 
-    private void addActionListenerToEditText() {
+    private boolean handleEditorAction(final int actionId, final @Nullable KeyEvent event) {
         if (question == null || subject == null) {
-            return;
+            return false;
         }
 
-        final TextView.OnEditorActionListener onEditorActionListener = (v, actionId, event) -> {
-            try {
-                final boolean active = (boolean) questionEdit.getTag();
-                if (!active) {
-                    return false;
+        final boolean active = (boolean) questionEdit.getTag();
+        if (!active) {
+            return false;
+        }
+        boolean ok = false;
+        if (event == null && actionId != 0) {
+            ok = true;
+        }
+        if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            ok = true;
+        }
+        if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+            return true;
+        }
+        if (ok && interactionEnabled) {
+            if (!session.isAnswered()) {
+                questionEdit.setTag(false);
+                final @Nullable Subject match = matchingKanji;
+                FloatingUiState.setCurrentAnswer(questionEdit.getText());
+                LOGGER.info("Submitting answer '%s' for subject '%s' (%d) via keyboard action",
+                        FloatingUiState.getCurrentAnswer(), subject.getCharacters(), subject.getId());
+                final AnswerVerdict verdict = session.submit(match);
+                if (verdict.isRetry()) {
+                    final TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
+                    shake.setDuration(1000);
+                    shake.setInterpolator(new CycleInterpolator(7));
+                    questionEdit.startAnimation(shake);
+                    questionEdit.setTag(true);
                 }
-                boolean ok = false;
-                if (event == null && actionId != 0) {
-                    ok = true;
-                }
-                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    ok = true;
-                }
-                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                    return true;
-                }
-                if (ok && interactionEnabled) {
-                    if (!session.isAnswered()) {
-                        questionEdit.setTag(false);
-                        final @Nullable Subject match = matchingKanji;
-                        FloatingUiState.setCurrentAnswer(questionEdit.getText());
-                        LOGGER.info("Submitting answer '%s' for subject '%s' (%d) via keyboard action",
-                                FloatingUiState.getCurrentAnswer(), subject.getCharacters(), subject.getId());
-                        final AnswerVerdict verdict = session.submit(match);
-                        if (verdict.isRetry()) {
-                            final TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
-                            shake.setDuration(1000);
-                            shake.setInterpolator(new CycleInterpolator(7));
-                            questionEdit.startAnimation(shake);
-                            questionEdit.setTag(true);
-                        }
-                    }
-                    return true;
-                }
-                return false;
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-                return false;
             }
-        };
+            return true;
+        }
+        return false;
+    }
+
+    private void addActionListenerToEditText() {
+        final TextView.OnEditorActionListener onEditorActionListener = (v, actionId, event) ->
+                safe(false, () -> handleEditorAction(actionId, event));
 
         questionEdit.setOnEditorActionListener(onEditorActionListener);
     }

@@ -36,6 +36,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * Fragment for the lesson presentation.
  */
@@ -76,64 +78,56 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
         playAudio();
     }
 
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        try {
-            if (item == null || subject == null) {
+    private void onViewCreatedBase(final View view) {
+        if (item == null || subject == null) {
+            return;
+        }
+
+        previousButton.setDelegate(view, R.id.previousButton);
+        nextButton.setDelegate(view, R.id.nextButton);
+        progress.setDelegate(view, R.id.progress);
+        scrollView.setDelegate(view, R.id.scrollView);
+        subjectInfo.setDelegate(view, R.id.subjectInfo);
+
+        scrollView.setSwipeListener(this);
+
+        final List<SessionItem> items = session.getItems();
+
+        subjectInfo.setMaxFontSize(GlobalSettings.Font.getMaxFontSizeLesson());
+        subjectInfo.setContainerType(SubjectInfoView.ContainerType.LESSON_PRESENTATION);
+        subjectInfo.setSubject(this, subject);
+
+        previousButton.setVisibility(!session.isOnFirstLessonItem());
+        nextButton.setText(session.isOnLastLessonItem() ? "Start quiz" : "Next");
+        progress.setTextFormat("%d/%d", items.indexOf(item)+1, items.size());
+
+        previousButton.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
                 return;
             }
+            if (!session.isOnFirstLessonItem()) {
+                disableInteraction();
+                session.moveToPreviousLessonItem();
+            }
+        }));
 
-            previousButton.setDelegate(view, R.id.previousButton);
-            nextButton.setDelegate(view, R.id.nextButton);
-            progress.setDelegate(view, R.id.progress);
-            scrollView.setDelegate(view, R.id.scrollView);
-            subjectInfo.setDelegate(view, R.id.subjectInfo);
+        nextButton.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
+                return;
+            }
+            disableInteraction();
+            if (session.isOnLastLessonItem()) {
+                session.startQuiz();
+            }
+            else {
+                session.moveToNextLessonItem();
+            }
+        }));
+    }
 
-            scrollView.setSwipeListener(this);
-
-            final List<SessionItem> items = session.getItems();
-
-            subjectInfo.setMaxFontSize(GlobalSettings.Font.getMaxFontSizeLesson());
-            subjectInfo.setContainerType(SubjectInfoView.ContainerType.LESSON_PRESENTATION);
-            subjectInfo.setSubject(this, subject);
-
-            previousButton.setVisibility(!session.isOnFirstLessonItem());
-            nextButton.setText(session.isOnLastLessonItem() ? "Start quiz" : "Next");
-            progress.setTextFormat("%d/%d", items.indexOf(item)+1, items.size());
-
-            previousButton.setOnClickListener(v -> {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    if (!session.isOnFirstLessonItem()) {
-                        disableInteraction();
-                        session.moveToPreviousLessonItem();
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            nextButton.setOnClickListener(v -> {
-                try {
-                    if (!interactionEnabled) {
-                        return;
-                    }
-                    disableInteraction();
-                    if (session.isOnLastLessonItem()) {
-                        session.startQuiz();
-                    }
-                    else {
-                        session.moveToNextLessonItem();
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+    @Override
+    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        safe(() -> onViewCreatedBase(view));
     }
 
     @Override
@@ -209,7 +203,7 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
 
     @Override
     public void onSwipeLeft(final SwipingScrollView view) {
-        try {
+        safe(() -> {
             if (!interactionEnabled) {
                 return;
             }
@@ -217,14 +211,12 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
                 disableInteraction();
                 session.moveToPreviousLessonItem();
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public void onSwipeRight(final SwipingScrollView view) {
-        try {
+        safe(() -> {
             if (!interactionEnabled) {
                 return;
             }
@@ -235,9 +227,7 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
             else {
                 session.moveToNextLessonItem();
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void playAudio() {

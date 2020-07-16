@@ -31,18 +31,16 @@ import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.model.TypefaceConfiguration;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Abstract superclass for the various quiz fragments.
  */
 public abstract class AbstractSessionFragment extends AbstractFragment implements SubjectChangeListener {
-    private static final Logger LOGGER = Logger.get(AbstractSessionFragment.class);
-
     private final ViewProxy questionView = new ViewProxy();
     private final ViewProxy progress = new ViewProxy();
     private final ViewProxy srsIndicator = new ViewProxy();
@@ -72,14 +70,12 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
      * @param view the view to attach the IME to.
      */
     protected final void showSoftInput(final ViewProxy view) {
-        try {
+        safe(() -> {
             final @Nullable View delegate = view.getDelegate();
             if (delegate != null) {
                 showSoftInput(delegate);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -136,13 +132,7 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
         questionText.setSubject(subject);
         questionText.setMaxSize(maxWidth, maxHeight);
         questionText.setSizeForQuiz(true);
-        questionText.setOnClickListener(v -> {
-            try {
-                questionText.setTypefaceConfiguration(TypefaceConfiguration.DEFAULT);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        });
+        questionText.setOnClickListener(v -> safe(() -> questionText.setTypefaceConfiguration(TypefaceConfiguration.DEFAULT)));
 
         // Color the question type view white or black for meaning and reading respectively
         questionType.setText(question.getTitle());
@@ -150,74 +140,53 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
         questionType.setTextColor(question.getType().getHintContrastColor());
         questionType.setVisibility(!isLandscape() || !(this instanceof UnansweredSessionFragment));
 
-        specialButton1.setOnClickListener(v -> {
-            try {
-                if (!interactionEnabled) {
-                    return;
-                }
-                disableInteraction();
-                GlobalSettings.AdvancedOther.getSpecialButton1Behavior().perform();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
+        specialButton1.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
+                return;
             }
-        });
+            disableInteraction();
+            GlobalSettings.AdvancedOther.getSpecialButton1Behavior().perform();
+        }));
 
-        specialButton2.setOnClickListener(v -> {
-            try {
-                if (!interactionEnabled) {
-                    return;
-                }
-                disableInteraction();
-                GlobalSettings.AdvancedOther.getSpecialButton2Behavior().perform();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
+        specialButton2.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
+                return;
             }
-        });
+            disableInteraction();
+            GlobalSettings.AdvancedOther.getSpecialButton2Behavior().perform();
+        }));
 
-        specialButton3.setOnClickListener(v -> {
-            try {
-                if (!interactionEnabled) {
-                    return;
-                }
-                disableInteraction();
-                GlobalSettings.AdvancedOther.getSpecialButton3Behavior().perform();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
+        specialButton3.setOnClickListener(v -> safe(() -> {
+            if (!interactionEnabled) {
+                return;
             }
-        });
+            disableInteraction();
+            GlobalSettings.AdvancedOther.getSpecialButton3Behavior().perform();
+        }));
     }
 
     @Override
     public final void onSubjectChange(final Subject subject) {
-        try {
-            final @Nullable Subject currentSubject = getSubject();
-            if (currentSubject == null) {
-                return;
-            }
+        final @Nullable Subject currentSubject = getSubject();
+        if (currentSubject == null) {
+            return;
+        }
 
-            if (currentSubject.getId() == subject.getId()) {
-                if (GlobalSettings.Review.getEnableSrsIndicator() && !subject.getSrsStage().isInitial()) {
-                    srsIndicator.setText(subject.getSrsStage().getName());
-                }
-                else {
-                    srsIndicator.setVisibility(false);
-                }
-                currentSubject.setSrsStage(subject.getSrsStage());
+        if (currentSubject.getId() == subject.getId()) {
+            if (GlobalSettings.Review.getEnableSrsIndicator() && !subject.getSrsStage().isInitial()) {
+                srsIndicator.setText(subject.getSrsStage().getName());
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+            else {
+                srsIndicator.setVisibility(false);
+            }
+            currentSubject.setSrsStage(subject.getSrsStage());
         }
     }
 
     @Override
     public final boolean isInterestedInSubject(final long subjectId) {
-        try {
-            final @Nullable Subject subject = getSubject();
-            return subject != null && subject.getId() == subjectId;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return false;
-        }
+        final @Nullable Subject subject = getSubject();
+        return subject != null && subject.getId() == subjectId;
     }
 
     /**
@@ -244,32 +213,26 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
 
             @Override
             public void onAnimationEnd(final Animator animation) {
-                try {
+                safe(() -> {
                     view.setVisibility(View.GONE);
                     view.removeAnimatorListener(this);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+                });
             }
 
             @Override
             public void onAnimationCancel(final Animator animation) {
-                try {
+                safe(() -> {
                     view.setVisibility(View.GONE);
                     view.removeAnimatorListener(this);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+                });
             }
 
             @Override
             public void onAnimationRepeat(final Animator animation) {
-                try {
+                safe(() -> {
                     view.setVisibility(View.GONE);
                     view.removeAnimatorListener(this);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
+                });
             }
         });
 

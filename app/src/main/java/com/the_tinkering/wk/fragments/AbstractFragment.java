@@ -30,18 +30,17 @@ import com.the_tinkering.wk.Actment;
 import com.the_tinkering.wk.activities.AbstractActivity;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * Abstract superclass for the various quiz fragments.
  */
 public abstract class AbstractFragment extends Fragment implements Actment {
-    private static final Logger LOGGER = Logger.get(AbstractFragment.class);
-
     /**
      * Is interaction with e.g. buttons on this display currently enabled?.
      */
@@ -58,23 +57,19 @@ public abstract class AbstractFragment extends Fragment implements Actment {
 
     @Override
     public final void onCreate(final @Nullable Bundle savedInstanceState) {
-        try {
+        safe(() -> {
             super.onCreate(savedInstanceState);
             onCreateLocal();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public final void onResume() {
-        try {
+        safe(() -> {
             super.onResume();
             updateToolbar();
             onResumeLocal();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -90,7 +85,7 @@ public abstract class AbstractFragment extends Fragment implements Actment {
      * Hide the soft keyboard.
      */
     protected final void hideSoftInput() {
-        try {
+        safe(() -> {
             final @Nullable AbstractActivity activity = getAbstractActivity();
             if (activity == null) {
                 return;
@@ -105,9 +100,7 @@ public abstract class AbstractFragment extends Fragment implements Actment {
             if (imm != null) {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -117,14 +110,12 @@ public abstract class AbstractFragment extends Fragment implements Actment {
      */
     @SuppressWarnings("MethodMayBeStatic")
     protected final void showSoftInput(final View view) {
-        try {
+        safe(() -> {
             final @Nullable InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
@@ -151,7 +142,7 @@ public abstract class AbstractFragment extends Fragment implements Actment {
      * Update the toolbar's title and background color based on the fragment's specifications.
      */
     protected final void updateToolbar() {
-        try {
+        safe(() -> {
             final @Nullable Toolbar toolbar = getToolbar();
             if (toolbar != null) {
                 final @Nullable CharSequence title = getToolbarTitle();
@@ -163,9 +154,7 @@ public abstract class AbstractFragment extends Fragment implements Actment {
                     toolbar.setBackgroundColor(color);
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
