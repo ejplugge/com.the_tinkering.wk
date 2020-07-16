@@ -41,6 +41,7 @@ import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.Constants.REFERENCE_DATA_VERSION;
 import static com.the_tinkering.wk.Constants.WEEK;
 import static com.the_tinkering.wk.enums.OnlineStatus.NO_CONNECTION;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Calendar.HOUR_OF_DAY;
 import static java.util.Calendar.MINUTE;
 
@@ -186,14 +187,8 @@ public abstract class Job {
      */
     public final void run() {
         LOGGER.info("%s started with data: %s", DbLogger.getSimpleClassName(getClass()), data);
-        try {
-            runLocal();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        finally {
-            LOGGER.info("%s finished", DbLogger.getSimpleClassName(getClass()));
-        }
+        safe(this::runLocal);
+        LOGGER.info("%s finished", DbLogger.getSimpleClassName(getClass()));
     }
 
     /**
