@@ -36,9 +36,9 @@ import com.the_tinkering.wk.api.model.WaniKaniEntity;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.TaskDefinition;
+import com.the_tinkering.wk.enums.OnlineStatus;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
-import com.the_tinkering.wk.enums.OnlineStatus;
 import com.the_tinkering.wk.util.DbLogger;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.StreamUtil;
@@ -60,6 +60,7 @@ import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.enums.OnlineStatus.NO_CONNECTION;
 import static com.the_tinkering.wk.enums.OnlineStatus.NO_WIFI;
 import static com.the_tinkering.wk.enums.OnlineStatus.ON_WIFI;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 /**
@@ -425,16 +426,12 @@ public abstract class ApiTask {
      */
     public final void run() {
         LOGGER.info("%s started with data: %s", DbLogger.getSimpleClassName(getClass()), taskDefinition.getData());
-        try {
+        safe(() -> {
             LiveApiProgress.reset(false, "");
             runLocal();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        finally {
-            LiveApiProgress.reset(false, "");
-            LOGGER.info("%s finished", DbLogger.getSimpleClassName(getClass()));
-        }
+        });
+        LiveApiProgress.reset(false, "");
+        LOGGER.info("%s finished", DbLogger.getSimpleClassName(getClass()));
     }
 
     /**
