@@ -37,7 +37,6 @@ import com.the_tinkering.wk.enums.SubjectInfoDump;
 import com.the_tinkering.wk.enums.TimeLineBarChartGridStyle;
 import com.the_tinkering.wk.enums.TimeLineBarChartStyle;
 import com.the_tinkering.wk.enums.VoicePreference;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,6 +52,7 @@ import static com.the_tinkering.wk.db.Converters.getObjectMapper;
 import static com.the_tinkering.wk.enums.SessionType.LESSON;
 import static com.the_tinkering.wk.enums.SessionType.REVIEW;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A class with a bunch of static accessors for app settings.
@@ -64,7 +64,6 @@ import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
  * </p>
  */
 public final class GlobalSettings {
-    private static final Logger LOGGER = Logger.get(GlobalSettings.class);
     private static @Nullable WkApplication application = null;
 
     /**
@@ -1354,7 +1353,7 @@ public final class GlobalSettings {
                 return new ArrayList<>();
             }
 
-            try {
+            return safe(ArrayList::new, () -> {
                 if (value.charAt(0) == '[') {
                     return getObjectMapper().readValue(value, new TypeReference<List<String>>() {});
                 }
@@ -1368,10 +1367,7 @@ public final class GlobalSettings {
                     }
                     return result;
                 }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-                return new ArrayList<>();
-            }
+            });
         }
 
         /**
@@ -1400,11 +1396,7 @@ public final class GlobalSettings {
             }
 
             final SharedPreferences.Editor editor = prefs().edit();
-            try {
-                editor.putString("selected_fonts", getObjectMapper().writeValueAsString(ids));
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            safe(() -> editor.putString("selected_fonts", getObjectMapper().writeValueAsString(ids)));
             editor.apply();
         }
 

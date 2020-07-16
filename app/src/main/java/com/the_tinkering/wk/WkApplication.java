@@ -44,18 +44,16 @@ import com.the_tinkering.wk.livedata.LiveVacationMode;
 import com.the_tinkering.wk.livedata.LiveWorkInfos;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.util.DbLogger;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
  * Global application object to handle some global concerns.
  */
 public final class WkApplication extends MultiDexApplication {
-    private static final Logger LOGGER = Logger.get(WkApplication.class);
-
     private static @Nullable WkApplication instance = null;
     private static @Nullable AppDatabase database = null;
     private static @Nullable EncryptedPreferenceDataStore encryptedPreferenceDataStore = null;
@@ -99,23 +97,9 @@ public final class WkApplication extends MultiDexApplication {
         encryptedPreferenceDataStore.getString("web_password", null);
         GlobalSettings.setApplication(application);
 
-        try {
-            LiveTaskCounts.getInstance().initialize();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-
-        try {
-            LiveWorkInfos.getInstance().initialize();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-
-        try {
-            LiveSearchPresets.getInstance().initialize();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> LiveTaskCounts.getInstance().initialize());
+        safe(() -> LiveWorkInfos.getInstance().initialize());
+        safe(() -> LiveSearchPresets.getInstance().initialize());
     }
 
     @Override
@@ -137,14 +121,12 @@ public final class WkApplication extends MultiDexApplication {
             currentTheme = GlobalSettings.Display.getTheme();
         }
         if (createdTheme == null) {
-            try {
+            safe(() -> {
                 createdTheme = super.getTheme();
                 if (createdTheme != null) {
                     createdTheme.applyStyle(ActiveTheme.getCurrentTheme().getStyleId(), true);
                 }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
         }
         return createdTheme;
     }
@@ -161,14 +143,12 @@ public final class WkApplication extends MultiDexApplication {
         protected @Nullable Void doInBackground(final Void... params) {
             final AppDatabase db = requireNonNull(database);
 
-            try {
+            safe(() -> {
                 db.propertiesDao().deleteProperty("migration_done_audio1");
                 db.propertiesDao().deleteProperty("self_study_configuration");
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
 
-            try {
+            safe(() -> {
                 if (!db.propertiesDao().getMigrationDoneAnkiSplit()) {
                     db.propertiesDao().setMigrationDoneAnkiSplit(true);
                     final boolean ankiLesson = GlobalSettings.AdvancedLesson.getAnkiMode();
@@ -181,11 +161,9 @@ public final class WkApplication extends MultiDexApplication {
                     GlobalSettings.AdvancedSelfStudy.setAnkiModeMeaning(ankiSelfStudy);
                     GlobalSettings.AdvancedSelfStudy.setAnkiModeReading(ankiSelfStudy);
                 }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
 
-            try {
+            safe(() -> {
                 if (!db.propertiesDao().getMigrationDoneAudio2()) {
                     db.propertiesDao().setMigrationDoneAudio2(true);
                     final boolean audioLessonPresentation = GlobalSettings.getAutoPlay(SessionType.LESSON);
@@ -197,21 +175,17 @@ public final class WkApplication extends MultiDexApplication {
                         GlobalSettings.Font.setMaxFontSizeQuizText(100);
                     }
                 }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
 
-            try {
+            safe(() -> {
                 if (!db.propertiesDao().getMigrationDoneNotif()) {
                     db.propertiesDao().setMigrationDoneNotif(true);
                     final boolean low = GlobalSettings.Other.getNotificationLowPriority();
                     GlobalSettings.Other.setNotificationPriority(low ? NotificationPriority.LOW : NotificationPriority.DEFAULT);
                 }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
 
-            try {
+            safe(() -> {
                 if (!db.propertiesDao().getMigrationDoneDump()) {
                     db.propertiesDao().setMigrationDoneDump(true);
                     final SubjectInfoDump dump1 = GlobalSettings.Review.getMeaningInfoDump();
@@ -219,11 +193,9 @@ public final class WkApplication extends MultiDexApplication {
                     final SubjectInfoDump dump2 = GlobalSettings.Review.getReadingInfoDump();
                     GlobalSettings.Review.setReadingInfoDumpIncorrect(dump2);
                 }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
 
-            try {
+            safe(() -> {
                 if (LiveSrsSystems.getInstance().hasNullValue()) {
                     LiveSrsSystems.getInstance().update();
                 }
@@ -262,9 +234,7 @@ public final class WkApplication extends MultiDexApplication {
                 }
 
                 Session.getInstance().load();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
+            });
 
             return null;
         }
