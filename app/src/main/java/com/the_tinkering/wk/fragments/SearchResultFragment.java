@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.fragments;
 
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -28,9 +27,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.the_tinkering.wk.Actment;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
@@ -46,10 +45,8 @@ import com.the_tinkering.wk.livedata.LiveSearchPresets;
 import com.the_tinkering.wk.model.AdvancedSearchParameters;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.SearchUtil;
 import com.the_tinkering.wk.util.ThemeUtil;
-import com.the_tinkering.wk.util.WeakLcoRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,13 +56,13 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Fragment to show a simple search result.
  */
 public final class SearchResultFragment extends AbstractFragment implements MenuItem.OnMenuItemClickListener {
-    private static final Logger LOGGER = Logger.get(SearchResultFragment.class);
-
     private int searchType = 0;
     private String searchParameters = "1";
     private String searchDescription = "";
@@ -160,49 +157,82 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
         }
     }
 
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        try {
-            resultView.setDelegate(view, R.id.resultView);
-            numHits.setDelegate(view, R.id.numHits);
-            tutorialText.setDelegate(view, R.id.tutorialText);
-            tutorialDismiss.setDelegate(view, R.id.tutorialDismiss);
+    private void onViewCreatedBase(final View view, final @Nullable Bundle savedInstanceState) {
+        resultView.setDelegate(view, R.id.resultView);
+        numHits.setDelegate(view, R.id.numHits);
+        tutorialText.setDelegate(view, R.id.tutorialText);
+        tutorialDismiss.setDelegate(view, R.id.tutorialDismiss);
 
-            if (savedInstanceState != null) {
-                final @Nullable Collection<String> tags = savedInstanceState.getStringArrayList("collapsedTags");
-                if (tags == null) {
-                    adapter.setCollapsedTags(Collections.emptyList());
+        if (savedInstanceState != null) {
+            final @Nullable Collection<String> tags = savedInstanceState.getStringArrayList("collapsedTags");
+            if (tags == null) {
+                adapter.setCollapsedTags(Collections.emptyList());
+            }
+            else {
+                adapter.setCollapsedTags(tags);
+            }
+        }
+
+        final DisplayMetrics metrics = view.getContext().getResources().getDisplayMetrics();
+        int spans = (int) ((metrics.widthPixels / metrics.density + 10) / 90);
+        if (spans < 1) {
+            spans = 1;
+        }
+        final int numSpans = spans;
+        final GridLayoutManager layoutManager = new GridLayoutManager(view.getContext(), spans);
+        final GridLayoutManager.SpanSizeLookup spanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(final int position) {
+                return adapter.getItemSpanSize(position, numSpans);
+            }
+        };
+        spanSizeLookup.setSpanGroupIndexCacheEnabled(true);
+        spanSizeLookup.setSpanIndexCacheEnabled(true);
+        layoutManager.setSpanSizeLookup(spanSizeLookup);
+        resultView.setLayoutManager(layoutManager);
+        resultView.setAdapter(adapter);
+        resultView.setHasFixedSize(true);
+
+        runAsync((publisher, params) -> {
+            if (searchType == 0) {
+                final int level = Integer.parseInt(searchParameters, 10);
+                adapter.setSortOrder(SearchSortOrder.TYPE);
+                final AdvancedSearchParameters parameters = new AdvancedSearchParameters();
+                parameters.minLevel = level;
+                parameters.maxLevel = level;
+                adapter.setParameters(parameters);
+            }
+            if (searchType == 1) {
+                adapter.setSortOrder(SearchSortOrder.TYPE);
+            }
+            if (searchType == 2) {
+                final AdvancedSearchParameters parameters = Converters.getObjectMapper().readValue(searchParameters, AdvancedSearchParameters.class);
+                adapter.setSortOrder(parameters.sortOrder);
+                adapter.setParameters(parameters);
+            }
+            return SearchUtil.searchSubjects(searchType, searchParameters);
+        }, null, result -> {
+            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.INITIALIZED)) {
+                return;
+            }
+            if (result != null) {
+                adapter.setResult(result);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !isEmpty(GlobalSettings.Api.getWebPassword())) {
+                    canResurrect = result.stream().anyMatch(Subject::isResurrectable);
+                    canBurn = result.stream().anyMatch(Subject::isBurnable);
                 }
                 else {
-                    adapter.setCollapsedTags(tags);
+                    canResurrect = false;
+                    canBurn = false;
                 }
-//                adapter.setShowingForm(savedInstanceState.getBoolean("showingForm", false));
             }
+            updateViews();
+        });
+    }
 
-            final DisplayMetrics metrics = view.getContext().getResources().getDisplayMetrics();
-            int spans = (int) ((metrics.widthPixels / metrics.density + 10) / 90);
-            if (spans < 1) {
-                spans = 1;
-            }
-            final int numSpans = spans;
-            final GridLayoutManager layoutManager = new GridLayoutManager(view.getContext(), spans);
-            final GridLayoutManager.SpanSizeLookup spanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(final int position) {
-                    return adapter.getItemSpanSize(position, numSpans);
-                }
-            };
-            spanSizeLookup.setSpanGroupIndexCacheEnabled(true);
-            spanSizeLookup.setSpanIndexCacheEnabled(true);
-            layoutManager.setSpanSizeLookup(spanSizeLookup);
-            resultView.setLayoutManager(layoutManager);
-            resultView.setAdapter(adapter);
-            resultView.setHasFixedSize(true);
-
-            new SearchTask(this, searchType, searchParameters).execute();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+    @Override
+    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        safe(() -> onViewCreatedBase(view, savedInstanceState));
     }
 
     @Override
@@ -249,243 +279,113 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
         preset.name = name;
         preset.type = searchType;
         preset.data = searchParameters;
-        new SavePresetTask(this, preset).execute();
+
+        runAsync((publisher, params) -> {
+            WkApplication.getDatabase().searchPresetDao().setPreset(preset.name, preset.type, preset.data);
+            return null;
+        }, null, result -> Toast.makeText(requireContext(), "Preset '" + preset.name + "' saved", Toast.LENGTH_SHORT).show());
     }
 
-    @Override
-    public boolean onMenuItemClick(final MenuItem item) {
-        try {
-            switch (item.getItemId()) {
-                case R.id.action_search_result_refine: {
-                    if (searchType != 1) {
-                        adapter.setShowingForm(!adapter.isShowingForm(), resultView.getLayoutManager());
-                    }
-                    return true;
+    private boolean onMenuItemClickBase(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search_result_refine: {
+                if (searchType != 1) {
+                    adapter.setShowingForm(!adapter.isShowingForm(), resultView.getLayoutManager());
                 }
-                case R.id.action_search_result_save_preset: {
-                    final LayoutInflater layoutInflater = LayoutInflater.from(requireContext());
-                    final View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
-                    final ViewProxy textView = new ViewProxy(promptView, R.id.textView);
-                    final ViewProxy editText = new ViewProxy(promptView, R.id.editText);
-                    final ArrayAdapter<String> presetAdapter =
-                            new ArrayAdapter<>(requireContext(), R.layout.spinner_item, LiveSearchPresets.getInstance().getNames());
-                    editText.setArrayAdapter(presetAdapter);
-                    textView.setText("Choose a name for the search preset");
-                    editText.setHint("Name");
-                    if (!isEmpty(presetName)) {
-                        editText.setText(presetName);
-                    }
-                    final AlertDialog theDialog = new AlertDialog.Builder(requireContext())
-                            .setTitle("Preset name")
-                            .setView(promptView)
-                            .setNegativeButton("Cancel", (dialog, which) -> {
-                                try {
-                                    hideSoftInput();
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
-                            })
-                            .setPositiveButton("Save", (dialog, which) -> {
-                                try {
-                                    final String name = editText.getText();
-                                    if (!isEmpty(name)) {
-                                        savePreset(editText.getText());
-                                    }
-                                    hideSoftInput();
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
-                            }).create();
-                    editText.setOnEditorActionListener((v, actionId, event) -> {
-                        try {
-                            boolean ok = false;
-                            if (event == null && actionId != 0) {
-                                ok = true;
-                            }
-                            if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                                ok = true;
-                            }
-                            if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                                return true;
-                            }
-                            if (ok) {
-                                final String name = editText.getText();
-                                if (!isEmpty(name)) {
-                                    savePreset(editText.getText());
-                                }
-                                hideSoftInput();
-                                theDialog.dismiss();
-                                return true;
-                            }
-                            return false;
-                        } catch (final Exception e) {
-                            LOGGER.uerr(e);
-                            return false;
-                        }
-                    });
-                    theDialog.show();
-                    editText.requestFocus();
-                    if (editText.getDelegate() != null) {
-                        showSoftInput(editText.getDelegate());
-                    }
-                    return true;
-                }
-                case R.id.action_search_result_self_study: {
-                    new StartSelfStudyTask(this, adapter.getSubjects()).execute();
-                    return true;
-                }
-                case R.id.action_search_result_resurrect: {
-                    goToResurrectActivity(adapter.getResurrectableSubjectIds());
-                    return true;
-                }
-                case R.id.action_search_result_burn: {
-                    goToBurnActivity(adapter.getBurnableSubjectIds());
-                    return true;
-                }
+                return true;
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+            case R.id.action_search_result_save_preset: {
+                final LayoutInflater layoutInflater = LayoutInflater.from(requireContext());
+                final View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
+                final ViewProxy textView = new ViewProxy(promptView, R.id.textView);
+                final ViewProxy editText = new ViewProxy(promptView, R.id.editText);
+                final ArrayAdapter<String> presetAdapter =
+                        new ArrayAdapter<>(requireContext(), R.layout.spinner_item, LiveSearchPresets.getInstance().getNames());
+                editText.setArrayAdapter(presetAdapter);
+                textView.setText("Choose a name for the search preset");
+                editText.setHint("Name");
+                if (!isEmpty(presetName)) {
+                    editText.setText(presetName);
+                }
+                final AlertDialog theDialog = new AlertDialog.Builder(requireContext())
+                        .setTitle("Preset name")
+                        .setView(promptView)
+                        .setNegativeButton("Cancel", (dialog, which) -> safe(this::hideSoftInput))
+                        .setPositiveButton("Save", (dialog, which) -> safe(() -> {
+                            final String name = editText.getText();
+                            if (!isEmpty(name)) {
+                                savePreset(editText.getText());
+                            }
+                            hideSoftInput();
+                        })).create();
+                editText.setOnEditorActionListener((v, actionId, event) -> safe(false, () -> {
+                    boolean ok = false;
+                    if (event == null && actionId != 0) {
+                        ok = true;
+                    }
+                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                        ok = true;
+                    }
+                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                        return true;
+                    }
+                    if (ok) {
+                        final String name = editText.getText();
+                        if (!isEmpty(name)) {
+                            savePreset(editText.getText());
+                        }
+                        hideSoftInput();
+                        theDialog.dismiss();
+                        return true;
+                    }
+                    return false;
+                }));
+                theDialog.show();
+                editText.requestFocus();
+                if (editText.getDelegate() != null) {
+                    showSoftInput(editText.getDelegate());
+                }
+                return true;
+            }
+            case R.id.action_search_result_self_study: {
+                final List<Subject> subjects = adapter.getSubjects();
+                runAsync((publisher, params) -> {
+                    if (!subjects.isEmpty() && Session.getInstance().isInactive()) {
+                        Session.getInstance().startNewSelfStudySession(subjects);
+                    }
+                    return null;
+                }, null, result -> goToActivity(SessionActivity.class));
+                return true;
+            }
+            case R.id.action_search_result_resurrect: {
+                goToResurrectActivity(adapter.getResurrectableSubjectIds());
+                return true;
+            }
+            case R.id.action_search_result_burn: {
+                goToBurnActivity(adapter.getBurnableSubjectIds());
+                return true;
+            }
         }
         return false;
     }
 
     @Override
+    public boolean onMenuItemClick(final MenuItem item) {
+        return safe(false, () -> onMenuItemClickBase(item));
+    }
+
+    @Override
     public void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        try {
+        safe(() -> {
+            super.onSaveInstanceState(outState);
             outState.putStringArrayList("collapsedTags", new ArrayList<>(adapter.getCollapsedTags()));
-//            outState.putBoolean("showingForm", adapter.isShowingForm());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void updateMenu() {
         final @Nullable AbstractActivity activity = getAbstractActivity();
         if (activity instanceof BrowseActivity) {
             ((BrowseActivity) activity).showSearchResultMenu(this, searchType != 1, adapter.getNumSubjects() > 0, canResurrect, canBurn);
-        }
-    }
-
-    private static final class SearchTask extends AsyncTask<Void, Void, List<Subject>> {
-        private final WeakLcoRef<SearchResultFragment> fragmentRef;
-        private final int searchType;
-        private final String searchParameters;
-
-        private SearchTask(final SearchResultFragment fragment, final int searchType, final String searchParameters) {
-            fragmentRef = new WeakLcoRef<>(fragment);
-            this.searchType = searchType;
-            this.searchParameters = searchParameters;
-        }
-
-        @Override
-        protected List<Subject> doInBackground(final Void... params) {
-            try {
-                if (searchType == 0) {
-                    final int level = Integer.parseInt(searchParameters, 10);
-                    fragmentRef.get().adapter.setSortOrder(SearchSortOrder.TYPE);
-                    final AdvancedSearchParameters parameters = new AdvancedSearchParameters();
-                    parameters.minLevel = level;
-                    parameters.maxLevel = level;
-                    fragmentRef.get().adapter.setParameters(parameters);
-                }
-                if (searchType == 1) {
-                    fragmentRef.get().adapter.setSortOrder(SearchSortOrder.TYPE);
-                }
-                if (searchType == 2) {
-                    final AdvancedSearchParameters parameters = Converters.getObjectMapper().readValue(searchParameters, AdvancedSearchParameters.class);
-                    fragmentRef.get().adapter.setSortOrder(parameters.sortOrder);
-                    fragmentRef.get().adapter.setParameters(parameters);
-                }
-                return SearchUtil.searchSubjects(searchType, searchParameters);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-            return Collections.emptyList();
-        }
-
-        @Override
-        protected void onPostExecute(final @Nullable List<Subject> result) {
-            try {
-                if (result != null) {
-                    fragmentRef.get().adapter.setResult(result);
-                    fragmentRef.get().canResurrect = false;
-                    fragmentRef.get().canBurn = false;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !isEmpty(GlobalSettings.Api.getWebPassword())) {
-                        for (final Subject subject: result) {
-                            if (subject.isResurrectable()) {
-                                fragmentRef.get().canResurrect = true;
-                            }
-                            if (subject.isBurnable()) {
-                                fragmentRef.get().canBurn = true;
-                            }
-                        }
-                    }
-                }
-                fragmentRef.get().updateViews();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
-    }
-
-    private static final class StartSelfStudyTask extends AsyncTask<Void, Void, Void> {
-        private final WeakLcoRef<Actment> actmentRef;
-        private final List<Subject> subjects;
-
-        private StartSelfStudyTask(final Actment actment, final List<Subject> subjects) {
-            actmentRef = new WeakLcoRef<>(actment);
-            this.subjects = subjects;
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            try {
-                if (!subjects.isEmpty() && Session.getInstance().isInactive()) {
-                    Session.getInstance().startNewSelfStudySession(subjects);
-                }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final Void result) {
-            try {
-                actmentRef.get().goToActivity(SessionActivity.class);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
-    }
-
-    private static final class SavePresetTask extends AsyncTask<Void, Void, Void> {
-        private final WeakLcoRef<Actment> actmentRef;
-        private final SearchPreset preset;
-
-        private SavePresetTask(final Actment actment, final SearchPreset preset) {
-            actmentRef = new WeakLcoRef<>(actment);
-            this.preset = preset;
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            try {
-                WkApplication.getDatabase().searchPresetDao().setPreset(preset.name, preset.type, preset.data);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final Void result) {
-            try {
-                Toast.makeText(actmentRef.get().requireContext(), "Preset '" + preset.name + "' saved", Toast.LENGTH_SHORT).show();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
         }
     }
 }

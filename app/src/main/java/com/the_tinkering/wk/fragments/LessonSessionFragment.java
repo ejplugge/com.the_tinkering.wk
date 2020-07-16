@@ -28,7 +28,6 @@ import com.the_tinkering.wk.model.FloatingUiState;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.AudioUtil;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.views.SubjectInfoView;
 import com.the_tinkering.wk.views.SwipingScrollView;
 
@@ -42,8 +41,6 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
  * Fragment for the lesson presentation.
  */
 public final class LessonSessionFragment extends AbstractSessionFragment implements SwipingScrollView.OnSwipeListener {
-    private static final Logger LOGGER = Logger.get(LessonSessionFragment.class);
-
     private @Nullable SessionItem item = null;
     private @Nullable Subject subject = null;
 
@@ -142,24 +139,20 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
 
     @Override
     public void enableInteraction() {
-        try {
+        safe(() -> {
             previousButton.enableInteraction();
             nextButton.enableInteraction();
             interactionEnabled = true;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public void disableInteraction() {
-        try {
+        safe(() -> {
             interactionEnabled = false;
             previousButton.disableInteraction();
             nextButton.disableInteraction();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @SuppressWarnings("SuspiciousGetterSetter")

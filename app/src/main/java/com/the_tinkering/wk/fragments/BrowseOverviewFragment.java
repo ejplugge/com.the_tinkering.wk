@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.fragments;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -47,9 +46,7 @@ import com.the_tinkering.wk.livedata.LiveLevelDuration;
 import com.the_tinkering.wk.livedata.LiveSearchPresets;
 import com.the_tinkering.wk.model.AdvancedSearchParameters;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
-import com.the_tinkering.wk.util.WeakLcoRef;
 
 import java.util.List;
 import java.util.Locale;
@@ -58,13 +55,13 @@ import javax.annotation.Nullable;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Fragment for the initial browse/search overview.
  */
 public final class BrowseOverviewFragment extends AbstractFragment {
-    private static final Logger LOGGER = Logger.get(BrowseOverviewFragment.class);
-
     private final ViewProxy levelTable = new ViewProxy();
     private final ViewProxy queryField = new ViewProxy();
     private final ViewProxy queryButton = new ViewProxy();
@@ -128,156 +125,132 @@ public final class BrowseOverviewFragment extends AbstractFragment {
         }
     }
 
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        try {
-            levelTable.setDelegate(view, R.id.levelTable);
-            queryField.setDelegate(view, R.id.query);
-            queryButton.setDelegate(view, R.id.queryButton);
-            searchButton1.setDelegate(view, R.id.searchButton1);
-            searchButton2.setDelegate(view, R.id.searchButton2);
-            searchForm.setDelegate(view, R.id.searchForm);
-            tutorialText.setDelegate(view, R.id.tutorialText);
-            tutorialDismiss.setDelegate(view, R.id.tutorialDismiss);
-            presetSpinner.setDelegate(view, R.id.presetSpinner);
-            presetHeader.setDelegate(view, R.id.presetHeader);
-            presetDivider.setDelegate(view, R.id.presetDivider);
-            presetButton.setDelegate(view, R.id.presetButton);
-            presetDelete.setDelegate(view, R.id.presetDelete);
+    private void onViewCreatedBase(final View view, final @Nullable Bundle savedInstanceState) {
+        levelTable.setDelegate(view, R.id.levelTable);
+        queryField.setDelegate(view, R.id.query);
+        queryButton.setDelegate(view, R.id.queryButton);
+        searchButton1.setDelegate(view, R.id.searchButton1);
+        searchButton2.setDelegate(view, R.id.searchButton2);
+        searchForm.setDelegate(view, R.id.searchForm);
+        tutorialText.setDelegate(view, R.id.tutorialText);
+        tutorialDismiss.setDelegate(view, R.id.tutorialDismiss);
+        presetSpinner.setDelegate(view, R.id.presetSpinner);
+        presetHeader.setDelegate(view, R.id.presetHeader);
+        presetDivider.setDelegate(view, R.id.presetDivider);
+        presetButton.setDelegate(view, R.id.presetButton);
+        presetDelete.setDelegate(view, R.id.presetDelete);
 
-            queryField.setOnEditorActionListener((v, actionId, event) -> {
-                try {
-                    if (event == null && actionId != 0) {
-                        submitQuery(queryField.getText());
-                        return true;
-                    }
-                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                        submitQuery(queryField.getText());
-                        return true;
-                    }
-                    //noinspection RedundantIfStatement
-                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                        return true;
-                    }
-                    return false;
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                    return false;
-                }
-            });
+        queryField.setOnEditorActionListener((v, actionId, event) -> safe(false, () -> {
+            if (event == null && actionId != 0) {
+                submitQuery(queryField.getText());
+                return true;
+            }
+            if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                submitQuery(queryField.getText());
+                return true;
+            }
+            //noinspection RedundantIfStatement
+            if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                return true;
+            }
+            return false;
+        }));
 
-            queryField.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        queryField.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-            queryButton.setOnClickListener(v -> {
-                try {
-                    submitQuery(queryField.getText());
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
+        queryButton.setOnClickListener(v -> safe(() -> submitQuery(queryField.getText())));
 
-            final View.OnClickListener listener = v -> {
-                try {
-                    final @Nullable AdvancedSearchParameters searchParameters = searchForm.extractParameters();
-                    if (searchParameters != null) {
-                        final @Nullable AbstractActivity activity = getAbstractActivity();
-                        if (activity instanceof BrowseActivity) {
-                            ((BrowseActivity) activity).loadSearchResultFragment(null, 2,
-                                    Converters.getObjectMapper().writeValueAsString(searchParameters));
-                        }
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            };
-
-            searchButton1.setOnClickListener(listener);
-            searchButton2.setOnClickListener(listener);
-
-            updatePresetAdapter();
-
-            if (savedInstanceState != null) {
-                final @Nullable String selection = savedInstanceState.getString("presetSelection");
-                if (selection != null) {
-                    final int position = LiveSearchPresets.getInstance().getNames().indexOf(selection);
-                    if (position >= 0) {
-                        presetSpinner.setSelection(position);
-                    }
+        final View.OnClickListener listener = v -> safe(() -> {
+            final @Nullable AdvancedSearchParameters searchParameters = searchForm.extractParameters();
+            if (searchParameters != null) {
+                final @Nullable AbstractActivity activity = getAbstractActivity();
+                if (activity instanceof BrowseActivity) {
+                    ((BrowseActivity) activity).loadSearchResultFragment(null, 2,
+                            Converters.getObjectMapper().writeValueAsString(searchParameters));
                 }
             }
+        });
 
-            LiveSearchPresets.getInstance().observe(getViewLifecycleOwner(), t -> {
-                try {
-                    if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
-                        presetHeader.setVisibility(false);
-                        presetDivider.setVisibility(false);
-                        presetSpinner.setParentVisibility(false);
-                    }
-                    else {
-                        updatePresetAdapter();
-                        presetHeader.setVisibility(true);
-                        presetDivider.setVisibility(true);
-                        presetSpinner.setParentVisibility(true);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        searchButton1.setOnClickListener(listener);
+        searchButton2.setOnClickListener(listener);
+
+        updatePresetAdapter();
+
+        if (savedInstanceState != null) {
+            final @Nullable String selection = savedInstanceState.getString("presetSelection");
+            if (selection != null) {
+                final int position = LiveSearchPresets.getInstance().getNames().indexOf(selection);
+                if (position >= 0) {
+                    presetSpinner.setSelection(position);
                 }
-            });
-
-            presetButton.setOnClickListener(v -> {
-                try {
-                    final @Nullable Object selection = presetSpinner.getSelection();
-                    if (selection instanceof String) {
-                        final @Nullable SearchPreset preset = LiveSearchPresets.getInstance().getByName((String) selection);
-                        final @Nullable AbstractActivity activity = getAbstractActivity();
-                        if (activity instanceof BrowseActivity && preset != null) {
-                            ((BrowseActivity) activity).loadSearchResultFragment(preset.name, preset.type, preset.data);
-                        }
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            presetDelete.setOnClickListener(v -> {
-                try {
-                    final @Nullable Object selection = presetSpinner.getSelection();
-                    if (selection instanceof String) {
-                        final String name = (String) selection;
-                        new AlertDialog.Builder(v.getContext())
-                                .setTitle("Delete preset?")
-                                .setMessage(String.format(Locale.ROOT, "Are you sure you want to delete the preset named '%s'?", name))
-                                .setIcon(R.drawable.ic_baseline_warning_24px)
-                                .setNegativeButton("No", (dialog, which) -> {
-                                    //
-                                })
-                                .setPositiveButton("Yes", (dialog, which) -> {
-                                    try {
-                                        new DeletePresetTask(name).execute();
-                                        Toast.makeText(v.getContext(), "Preset deleted", Toast.LENGTH_SHORT).show();
-                                    } catch (final Exception e) {
-                                        LOGGER.uerr(e);
-                                    }
-                                }).create().show();
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            new Task(this).execute();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+            }
         }
+
+        LiveSearchPresets.getInstance().observe(getViewLifecycleOwner(), t -> safe(() -> {
+            if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
+                presetHeader.setVisibility(false);
+                presetDivider.setVisibility(false);
+                presetSpinner.setParentVisibility(false);
+            }
+            else {
+                updatePresetAdapter();
+                presetHeader.setVisibility(true);
+                presetDivider.setVisibility(true);
+                presetSpinner.setParentVisibility(true);
+            }
+        }));
+
+        presetButton.setOnClickListener(v -> safe(() -> {
+            final @Nullable Object selection = presetSpinner.getSelection();
+            if (selection instanceof String) {
+                final @Nullable SearchPreset preset = LiveSearchPresets.getInstance().getByName((String) selection);
+                final @Nullable AbstractActivity activity = getAbstractActivity();
+                if (activity instanceof BrowseActivity && preset != null) {
+                    ((BrowseActivity) activity).loadSearchResultFragment(preset.name, preset.type, preset.data);
+                }
+            }
+        }));
+
+        presetDelete.setOnClickListener(v -> safe(() -> {
+            final @Nullable Object selection = presetSpinner.getSelection();
+            if (selection instanceof String) {
+                final String name = (String) selection;
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle("Delete preset?")
+                        .setMessage(String.format(Locale.ROOT, "Are you sure you want to delete the preset named '%s'?", name))
+                        .setIcon(R.drawable.ic_baseline_warning_24px)
+                        .setNegativeButton("No", (dialog, which) -> {})
+                        .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                            runAsync((publisher, params) -> {
+                                WkApplication.getDatabase().searchPresetDao().deletePreset(name);
+                                return null;
+                            }, null, null);
+                            Toast.makeText(v.getContext(), "Preset deleted", Toast.LENGTH_SHORT).show();
+                        })).create().show();
+            }
+        }));
+
+        runAsync(
+                (publisher, params) -> WkApplication.getDatabase().subjectAggregatesDao().getMaxLevel(),
+                null,
+                result -> render(result == null ? 60 : result)
+        );
+    }
+
+    @Override
+    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        safe(() -> onViewCreatedBase(view, savedInstanceState));
     }
 
     @Override
     public void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        final @Nullable Object selection = presetSpinner.getSelection();
-        if (selection instanceof String) {
-            outState.putString("presetSelection", (String) selection);
-        }
+        safe(() -> {
+            super.onSaveInstanceState(outState);
+            final @Nullable Object selection = presetSpinner.getSelection();
+            if (selection instanceof String) {
+                outState.putString("presetSelection", (String) selection);
+            }
+        });
     }
 
     @Override
@@ -365,16 +338,12 @@ public final class BrowseOverviewFragment extends AbstractFragment {
             final TableRow.LayoutParams cellLayoutParams;
 
             final int level = i + 1;
-            final View.OnClickListener onClick = v -> {
-                try {
-                    final @Nullable AbstractActivity activity = getAbstractActivity();
-                    if (activity instanceof BrowseActivity) {
-                        ((BrowseActivity) activity).loadSearchResultFragment(null, 0, Integer.toString(level));
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+            final View.OnClickListener onClick = v -> safe(() -> {
+                final @Nullable AbstractActivity activity = getAbstractActivity();
+                if (activity instanceof BrowseActivity) {
+                    ((BrowseActivity) activity).loadSearchResultFragment(null, 0, Integer.toString(level));
                 }
-            };
+            });
 
             final TextView button = new TextView(context, null, R.attr.WK_TextView_BrowseLevelButton);
             button.setText(Integer.toString(level));
@@ -392,53 +361,6 @@ public final class BrowseOverviewFragment extends AbstractFragment {
             cellLayoutParams.width = MATCH_PARENT;
             cellLayoutParams.height = WRAP_CONTENT;
             currentRow.addView(button, cellLayoutParams);
-        }
-    }
-
-    private static final class Task extends AsyncTask<Void, Void, Integer> {
-        private final WeakLcoRef<BrowseOverviewFragment> fragmentRef;
-
-        private Task(final BrowseOverviewFragment fragment) {
-            fragmentRef = new WeakLcoRef<>(fragment);
-        }
-
-        @Override
-        protected Integer doInBackground(final Void... params) {
-            try {
-                return WkApplication.getDatabase().subjectAggregatesDao().getMaxLevel();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-                return 0;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final @Nullable Integer result) {
-            try {
-                if (result != null) {
-                    fragmentRef.get().render(result);
-                }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
-    }
-
-    private static final class DeletePresetTask extends AsyncTask<Void, Void, Void> {
-        private final String name;
-
-        private DeletePresetTask(final String name) {
-            this.name = name;
-        }
-
-        @Override
-        protected @Nullable Void doInBackground(final Void... params) {
-            try {
-                WkApplication.getDatabase().searchPresetDao().deletePreset(name);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-            return null;
         }
     }
 }

@@ -17,8 +17,6 @@
 package com.the_tinkering.wk.fragments;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
@@ -52,7 +50,6 @@ import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.AudioUtil;
 import com.the_tinkering.wk.util.DbLogger;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.List;
@@ -64,184 +61,146 @@ import static com.the_tinkering.wk.Constants.RESET_DATABASE_WARNING;
 import static com.the_tinkering.wk.Constants.RESET_TUTORIALS_WARNING;
 import static com.the_tinkering.wk.Constants.UPLOAD_DEBUG_LOG_WARNING;
 import static com.the_tinkering.wk.util.ObjectSupport.isTrue;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static com.the_tinkering.wk.util.TextUtil.renderHtml;
 
 /**
  * Fragment for preferences.
  */
 public final class PreferencesFragment extends PreferenceFragmentCompat {
-    private static final Logger LOGGER = Logger.get(PreferencesFragment.class);
-
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
     }
 
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        try {
-            super.onViewCreated(view, savedInstanceState);
-            view.setBackgroundColor(ThemeUtil.getColor(R.attr.colorBackground));
+    private void onViewCreatedBase(final View view, final @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.setBackgroundColor(ThemeUtil.getColor(R.attr.colorBackground));
 
-            final @Nullable Preference enableAdvanced = findPreference("enable_advanced");
-            if (enableAdvanced != null) {
-                enableAdvanced.setOnPreferenceChangeListener((preference, newValue) -> {
-                    try {
-                        final boolean enabled = isTrue(newValue);
-                        if (enabled && !GlobalSettings.getAdvancedEnabled()) {
-                            new AlertDialog.Builder(view.getContext())
-                                    .setTitle("Enable advanced settings?")
-                                    .setMessage(renderHtml(ENABLE_ADVANCED_WARNING))
-                                    .setIcon(R.drawable.ic_baseline_warning_24px)
-                                    .setNegativeButton("No", (dialog, which) -> {
-                                        try {
-                                            GlobalSettings.setAdvancedEnabled(false);
-                                            setVisibleIf("advanced_lesson_settings", false);
-                                            setVisibleIf("advanced_review_settings", false);
-                                            setVisibleIf("advanced_self_study_settings", false);
-                                            setVisibleIf("advanced_other_settings", false);
-                                            ((TwoStatePreference) preference).setChecked(false);
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
-                                    })
-                                    .setPositiveButton("Yes", (dialog, which) -> {
-                                        try {
-                                            GlobalSettings.setAdvancedEnabled(true);
-                                            setVisibleIf("advanced_lesson_settings", true);
-                                            setVisibleIf("advanced_review_settings", true);
-                                            setVisibleIf("advanced_self_study_settings", true);
-                                            setVisibleIf("advanced_other_settings", true);
-                                            ((TwoStatePreference) preference).setChecked(true);
-                                        } catch (final Exception e) {
-                                            LOGGER.uerr(e);
-                                        }
-                                    }).create().show();
-                            return false;
+        final @Nullable Preference enableAdvanced = findPreference("enable_advanced");
+        if (enableAdvanced != null) {
+            enableAdvanced.setOnPreferenceChangeListener((preference, newValue) -> safe(false, () -> {
+                final boolean enabled = isTrue(newValue);
+                if (enabled && !GlobalSettings.getAdvancedEnabled()) {
+                    new AlertDialog.Builder(view.getContext())
+                            .setTitle("Enable advanced settings?")
+                            .setMessage(renderHtml(ENABLE_ADVANCED_WARNING))
+                            .setIcon(R.drawable.ic_baseline_warning_24px)
+                            .setNegativeButton("No", (dialog, which) -> safe(() -> {
+                                GlobalSettings.setAdvancedEnabled(false);
+                                setVisibility("advanced_lesson_settings", false);
+                                setVisibility("advanced_review_settings", false);
+                                setVisibility("advanced_self_study_settings", false);
+                                setVisibility("advanced_other_settings", false);
+                                ((TwoStatePreference) preference).setChecked(false);
+                            }))
+                            .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                                GlobalSettings.setAdvancedEnabled(true);
+                                setVisibility("advanced_lesson_settings", true);
+                                setVisibility("advanced_review_settings", true);
+                                setVisibility("advanced_self_study_settings", true);
+                                setVisibility("advanced_other_settings", true);
+                                ((TwoStatePreference) preference).setChecked(true);
+                            })).create().show();
+                    return false;
+                }
+                else {
+                    setVisibility("advanced_lesson_settings", enabled);
+                    setVisibility("advanced_review_settings", enabled);
+                    setVisibility("advanced_self_study_settings", enabled);
+                    setVisibility("advanced_other_settings", enabled);
+                }
+                return true;
+            }));
+        }
+
+        setOnPreferenceClick("reset_database", preference -> safe(false, () -> {
+            new AlertDialog.Builder(preference.getContext())
+                    .setTitle("Reset database?")
+                    .setMessage(renderHtml(RESET_DATABASE_WARNING))
+                    .setIcon(R.drawable.ic_baseline_warning_24px)
+                    .setNegativeButton("No", (dialog, which) -> {})
+                    .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                        JobRunnerService.schedule(ResetDatabaseJob.class, "");
+                        goToMainActivity();
+                    })).create().show();
+            return true;
+        }));
+
+        setOnPreferenceClick("reset_tutorials", preference -> safe(false, () -> {
+            new AlertDialog.Builder(preference.getContext())
+                    .setTitle("Reset confirmations and tutorials?")
+                    .setMessage(renderHtml(RESET_TUTORIALS_WARNING))
+                    .setIcon(R.drawable.ic_baseline_warning_24px)
+                    .setNegativeButton("No", (dialog, which) -> {})
+                    .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                        GlobalSettings.resetConfirmationsAndTutorials();
+                        Toast.makeText(preference.getContext(), "Confirmations and tutorials reset", Toast.LENGTH_LONG).show();
+                    })).create().show();
+            return true;
+        }));
+
+        setOnPreferenceClick("upload_debug_log", preference -> safe(false, () -> {
+            new AlertDialog.Builder(preference.getContext())
+                    .setTitle("Upload debug log?")
+                    .setMessage(renderHtml(UPLOAD_DEBUG_LOG_WARNING))
+                    .setIcon(R.drawable.ic_baseline_warning_24px)
+                    .setNegativeButton("No", (dialog, which) -> {})
+                    .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(
+                            (publisher, params) -> DbLogger.uploadLog(),
+                            null,
+                            result -> {
+                        if (result != null && result) {
+                            Toast.makeText(requireContext(), "Upload successful, thanks!", Toast.LENGTH_LONG).show();
                         }
                         else {
-                            setVisibleIf("advanced_lesson_settings", enabled);
-                            setVisibleIf("advanced_review_settings", enabled);
-                            setVisibleIf("advanced_self_study_settings", enabled);
-                            setVisibleIf("advanced_other_settings", enabled);
+                            Toast.makeText(requireContext(), "Upload failed", Toast.LENGTH_LONG).show();
                         }
-                        return true;
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                        return false;
-                    }
-                });
-            }
+                    }))).create().show();
+            return true;
+        }));
 
-            setOnPreferenceClick("reset_database", preference -> {
-                try {
-                    new AlertDialog.Builder(preference.getContext())
-                            .setTitle("Reset database?")
-                            .setMessage(renderHtml(RESET_DATABASE_WARNING))
-                            .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", (dialog, which) -> {
-                                //
-                            })
-                            .setPositiveButton("Yes", (dialog, which) -> {
-                                try {
-                                    JobRunnerService.schedule(ResetDatabaseJob.class, "");
-                                    goToMainActivity();
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
-                            }).create().show();
-                    return true;
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                    return false;
-                }
-            });
-
-            setOnPreferenceClick("reset_tutorials", preference -> {
-                try {
-                    new AlertDialog.Builder(preference.getContext())
-                            .setTitle("Reset confirmations and tutorials?")
-                            .setMessage(renderHtml(RESET_TUTORIALS_WARNING))
-                            .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", (dialog, which) -> {
-                                //
-                            })
-                            .setPositiveButton("Yes", (dialog, which) -> {
-                                try {
-                                    GlobalSettings.resetConfirmationsAndTutorials();
-                                    Toast.makeText(preference.getContext(), "Confirmations and tutorials reset", Toast.LENGTH_LONG).show();
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
-                            }).create().show();
-                    return true;
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                    return false;
-                }
-            });
-
-            setOnPreferenceClick("upload_debug_log", preference -> {
-                try {
-                    new AlertDialog.Builder(preference.getContext())
-                            .setTitle("Upload debug log?")
-                            .setMessage(renderHtml(UPLOAD_DEBUG_LOG_WARNING))
-                            .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", (dialog, which) -> {
-                                //
-                            })
-                            .setPositiveButton("Yes", (dialog, which) -> {
-                                try {
-                                    new Task(preference.getContext()).execute();
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
-                            }).create().show();
-                    return true;
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                    return false;
-                }
-            });
-
-            final @Nullable ListPreference audioLocation = findPreference("audio_location");
-            if (audioLocation != null) {
-                final List<String> locationValues = AudioUtil.getLocationValues();
-                final List<String> locations = AudioUtil.getLocations(locationValues);
-                audioLocation.setEntries(locations.toArray(new String[] {}));
-                audioLocation.setEntryValues(locationValues.toArray(new String[] {}));
-                audioLocation.setVisible(true);
-            }
-
-            setVisibleIf("api_key_help", LiveApiState.getInstance().get() != ApiState.OK);
-            setVisibleIf("advanced_lesson_settings", GlobalSettings.getAdvancedEnabled());
-            setVisibleIf("advanced_review_settings", GlobalSettings.getAdvancedEnabled());
-            setVisibleIf("advanced_self_study_settings", GlobalSettings.getAdvancedEnabled());
-            setVisibleIf("advanced_other_settings", GlobalSettings.getAdvancedEnabled());
-            setVisibleIf("ime_hint_reading", Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
-            setVisibleIf("ime_hint_meaning", Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
-            setVisibleIf("web_password", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-
-            setNumberInputType("overdue_threshold");
-            setNumberInputType("max_lesson_session_size");
-            setNumberInputType("max_review_session_size");
-            setNumberInputType("max_self_study_session_size");
-            setDecimalNumberInputType("next_button_delay");
-
-            setOnClickGoToActivity("about_this_app", AboutActivity.class);
-            setOnClickGoToActivity("support_and_feedback", SupportActivity.class);
-            setOnClickGoToActivity("theme_customization", ThemeCustomizationActivity.class);
-            setOnClickGoToActivity("font_selection", FontSelectionActivity.class);
-            setOnClickGoToActivity("font_import", FontImportActivity.class);
-            setOnClickGoToActivity("keyboard_help", KeyboardHelpActivity.class);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+        final @Nullable ListPreference audioLocation = findPreference("audio_location");
+        if (audioLocation != null) {
+            final List<String> locationValues = AudioUtil.getLocationValues();
+            final List<String> locations = AudioUtil.getLocations(locationValues);
+            audioLocation.setEntries(locations.toArray(new String[] {}));
+            audioLocation.setEntryValues(locationValues.toArray(new String[] {}));
+            audioLocation.setVisible(true);
         }
+
+        setVisibility("api_key_help", LiveApiState.getInstance().get() != ApiState.OK);
+        setVisibility("advanced_lesson_settings", GlobalSettings.getAdvancedEnabled());
+        setVisibility("advanced_review_settings", GlobalSettings.getAdvancedEnabled());
+        setVisibility("advanced_self_study_settings", GlobalSettings.getAdvancedEnabled());
+        setVisibility("advanced_other_settings", GlobalSettings.getAdvancedEnabled());
+        setVisibility("ime_hint_reading", Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
+        setVisibility("ime_hint_meaning", Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
+        setVisibility("web_password", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+
+        setNumberInputType("overdue_threshold");
+        setNumberInputType("max_lesson_session_size");
+        setNumberInputType("max_review_session_size");
+        setNumberInputType("max_self_study_session_size");
+        setDecimalNumberInputType("next_button_delay");
+
+        setOnClickGoToActivity("about_this_app", AboutActivity.class);
+        setOnClickGoToActivity("support_and_feedback", SupportActivity.class);
+        setOnClickGoToActivity("theme_customization", ThemeCustomizationActivity.class);
+        setOnClickGoToActivity("font_selection", FontSelectionActivity.class);
+        setOnClickGoToActivity("font_import", FontImportActivity.class);
+        setOnClickGoToActivity("keyboard_help", KeyboardHelpActivity.class);
+    }
+
+    @Override
+    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        safe(() -> onViewCreatedBase(view, savedInstanceState));
     }
 
     @Override
     public void onResume() {
-        try {
+        safe(() -> {
             super.onResume();
             final @Nullable Bundle args = getArguments();
             @Nullable CharSequence title = null;
@@ -264,14 +223,12 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
                     toolbar.setTitle(title);
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     public void onDisplayPreferenceDialog(final Preference preference) {
-        try {
+        safe(() -> {
             if (preference instanceof TaggedUrlPreference) {
                 if (getParentFragmentManager().findFragmentByTag("TaggedUrlPreference") != null) {
                     return;
@@ -283,9 +240,7 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
             }
 
             super.onDisplayPreferenceDialog(preference);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void goToActivity(final Class<? extends AbstractActivity> clas) {
@@ -303,107 +258,51 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void setOnPreferenceClick(final CharSequence key, final @Nullable Preference.OnPreferenceClickListener listener) {
-        try {
+        safe(() -> {
             final @Nullable Preference pref = findPreference(key);
             if (pref != null) {
                 pref.setOnPreferenceClickListener(listener);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void setOnClickGoToActivity(final CharSequence key, final Class<? extends AbstractActivity> clas) {
-        try {
-            setOnPreferenceClick(key, preference -> {
-                try {
-                    goToActivity(clas);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-                return true;
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> setOnPreferenceClick(key, preference -> {
+            safe(() -> goToActivity(clas));
+            return true;
+        }));
     }
 
     private void setNumberInputType(final CharSequence key) {
-        try {
+        safe(() -> {
             final @Nullable EditTextPreference pref = findPreference(key);
             if (pref != null) {
-                pref.setOnBindEditTextListener(editText -> {
-                    try {
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                        editText.setSelection(editText.getText().length());
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
-                });
+                pref.setOnBindEditTextListener(editText -> safe(() -> {
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.setSelection(editText.getText().length());
+                }));
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void setDecimalNumberInputType(@SuppressWarnings("SameParameterValue") final CharSequence key) {
-        try {
+        safe(() -> {
             final @Nullable EditTextPreference pref = findPreference(key);
             if (pref != null) {
-                pref.setOnBindEditTextListener(editText -> {
-                    try {
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                        editText.setSelection(editText.getText().length());
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
-                });
+                pref.setOnBindEditTextListener(editText -> safe(() -> {
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    editText.setSelection(editText.getText().length());
+                }));
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
-    private void setVisibleIf(final CharSequence key, final boolean visible) {
-        try {
+    private void setVisibility(final CharSequence key, final boolean visible) {
+        safe(() -> {
             final @Nullable Preference pref = findPreference(key);
             if (pref != null) {
                 pref.setVisible(visible);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-    }
-
-    private static final class Task extends AsyncTask<Void, Void, Boolean> {
-        private final Context context;
-
-        private Task(final Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected Boolean doInBackground(final Void... params) {
-            try {
-                return DbLogger.uploadLog();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean result) {
-            try {
-                if (result) {
-                    Toast.makeText(context, "Upload successful, thanks!", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show();
-                }
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
+        });
     }
 }
