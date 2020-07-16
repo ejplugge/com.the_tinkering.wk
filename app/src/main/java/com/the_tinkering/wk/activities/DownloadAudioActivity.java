@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.Lifecycle;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.AudioDownloadStatus;

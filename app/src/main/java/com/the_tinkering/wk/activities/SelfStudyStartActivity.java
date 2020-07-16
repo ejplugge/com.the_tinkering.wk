@@ -23,7 +23,6 @@ import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.Lifecycle;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;

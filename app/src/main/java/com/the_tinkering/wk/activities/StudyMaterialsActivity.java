@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Lifecycle;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.the_tinkering.wk.R;

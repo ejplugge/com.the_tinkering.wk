@@ -188,6 +188,7 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
         LOGGER.info("Notification posted");
     }
 
+    @SuppressWarnings("SameReturnValue")
     private @Nullable Void doInBackground(final Context context, final @Nullable PowerManager.WakeLock wl) {
         final AppDatabase db = WkApplication.getDatabase();
         final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();

@@ -1,7 +1,5 @@
 package com.the_tinkering.wk;
 
-import android.content.Context;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LifecycleOwner;
 
@@ -17,12 +15,6 @@ import javax.annotation.Nullable;
  * some common methods. Yes, the name is a silly joke.
  */
 public interface Actment extends LifecycleOwner {
-    /**
-     * Get the context for this instance, throwing an exception if it doesn't exist.
-     * @return the context
-     */
-    Context requireContext();
-
     /**
      * Get the toolbar for this activity or the activity this fragment is attached to.
      *

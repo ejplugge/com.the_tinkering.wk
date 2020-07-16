@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.Lifecycle;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
@@ -51,8 +50,8 @@ import static com.the_tinkering.wk.util.FontStorageUtil.hasFontFile;
 import static com.the_tinkering.wk.util.FontStorageUtil.importFontFile;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
 import static java.util.Objects.requireNonNull;
 
 /**

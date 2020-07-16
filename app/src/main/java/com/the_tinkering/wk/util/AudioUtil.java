@@ -76,7 +76,7 @@ public final class AudioUtil {
      * An unused reference to the most recent MediaPlayer instance. This is kept around so it
      * doesn't get recycled before it is done playing.
      */
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
+    @SuppressWarnings({"unused", "FieldCanBeLocal", "RedundantSuppression"})
     private static @Nullable MediaPlayer savedMediaPlayer = null;
 
     private static boolean lastWasMale = false;

@@ -120,11 +120,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
         mainActivity = this instanceof MainActivity;
     }
 
-    @Override
-    public final Context requireContext() {
-        return this;
-    }
-
     private void onCreateBaseLiveTaskCounts(final ActionBar actionBar, final @Nullable TaskCounts t) {
         final OnlineStatus onlineStatus = ApiTask.getOnlineStatus();
         final boolean hasApi = t != null && t.getApiCount() > 0 && onlineStatus.canCallApi();

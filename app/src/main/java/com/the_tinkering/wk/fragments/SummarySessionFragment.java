@@ -287,6 +287,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         return FragmentTransitionAnimation.LTR;
     }
 
+    @SuppressWarnings("SameReturnValue")
     private static @Nullable Void doInBackground(@SuppressWarnings("BoundedWildcard")
                                                  final ObjectSupport.ProgressPublisher<Integer> publisher) throws Exception {
         int count = 0;
