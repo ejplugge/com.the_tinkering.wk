@@ -29,7 +29,6 @@ import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.model.LevelProgress;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.ArrayList;
@@ -37,13 +36,12 @@ import java.util.List;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.widget.TableLayout.LayoutParams.WRAP_CONTENT;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows the level progress bar chart.
  */
 public final class LevelProgressView extends TableLayout {
-    private static final Logger LOGGER = Logger.get(LevelProgressView.class);
-
     private final List<ViewProxy> legendBuckets = new ArrayList<>();
 
     /**
@@ -71,7 +69,7 @@ public final class LevelProgressView extends TableLayout {
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.level_progress, this);
             setColumnStretchable(0, true);
             setColumnShrinkable(0, true);
@@ -91,9 +89,7 @@ public final class LevelProgressView extends TableLayout {
             for (int i=0; i<legendBuckets.size(); i++) {
                 legendBuckets.get(i).setBackgroundColor(ActiveTheme.getLevelProgressionBucketColors()[i]);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -102,27 +98,15 @@ public final class LevelProgressView extends TableLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveLevelProgress.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    if (t != null) {
-                        update(t);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        safe(() -> {
+            LiveLevelProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+                if (t != null) {
+                    update(t);
                 }
-            });
+            }));
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveLevelProgress.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveLevelProgress.getInstance().ping()));
+        });
     }
 
     /**

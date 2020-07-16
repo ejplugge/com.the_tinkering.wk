@@ -26,19 +26,18 @@ import android.view.View;
 
 import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.R;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 import com.the_tinkering.wk.util.ViewUtil;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view for a pitch info diagram. It sizes and aligns itself to fit over a TextView containing the
  * same reading.
  */
 public final class PitchInfoDiagramView extends View {
-    private static final Logger LOGGER = Logger.get(PitchInfoDiagramView.class);
-
     private static final String KANA_DIGRAPHS = "ぁぃぅぇぉゃゅょゎゕゖァィゥェォャュョヮヵヶ";
     private String text = "";
     private int textSize = Constants.FONT_SIZE_NORMAL;
@@ -172,62 +171,62 @@ public final class PitchInfoDiagramView extends View {
         return mora > 0 && mora < pitchNumber;
     }
 
-    @Override
-    protected void onDraw(final Canvas canvas) {
-        try {
-            super.onDraw(canvas);
-            prepare();
+    private void onDrawImpl(final Canvas canvas) {
+        prepare();
 
-            int prevX = -1;
-            int prevY = -1;
+        int prevX = -1;
+        int prevY = -1;
 
-            for (int i=0; i<=numMora; i++) {
-                final int x = getPaddingLeft() + (xpos[i] + xpos[i+1]) / 2 - xpos[0];
-                final int y = getPaddingTop() + (isDotHigh(i) ? circleRadius : height - circleRadius);
-                if (prevX != -1) {
-                    paint.setColor(color);
-                    paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                    paint.setStrokeWidth(lineThickness);
-                    canvas.drawLine(prevX, prevY, x, y, paint);
-                }
-                prevX = x;
-                prevY = y;
+        for (int i=0; i<=numMora; i++) {
+            final int x = getPaddingLeft() + (xpos[i] + xpos[i+1]) / 2 - xpos[0];
+            final int y = getPaddingTop() + (isDotHigh(i) ? circleRadius : height - circleRadius);
+            if (prevX != -1) {
+                paint.setColor(color);
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                paint.setStrokeWidth(lineThickness);
+                canvas.drawLine(prevX, prevY, x, y, paint);
             }
+            prevX = x;
+            prevY = y;
+        }
 
-            for (int i=0; i<=numMora; i++) {
-                final int x = getPaddingLeft() + (xpos[i] + xpos[i+1]) / 2 - xpos[0];
-                final int y = getPaddingTop() + (isDotHigh(i) ? circleRadius : height - circleRadius);
-                if (i == numMora) {
-                    paint.setColor(backgroundColor);
-                    paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                    paint.setStrokeWidth(0);
-                    canvas.drawCircle(x, y, circleRadius, paint);
-                    paint.setColor(color);
-                    paint.setStyle(Paint.Style.STROKE);
-                }
-                else {
-                    paint.setColor(color);
-                    paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                }
+        for (int i=0; i<=numMora; i++) {
+            final int x = getPaddingLeft() + (xpos[i] + xpos[i+1]) / 2 - xpos[0];
+            final int y = getPaddingTop() + (isDotHigh(i) ? circleRadius : height - circleRadius);
+            if (i == numMora) {
+                paint.setColor(backgroundColor);
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
                 paint.setStrokeWidth(0);
                 canvas.drawCircle(x, y, circleRadius, paint);
+                paint.setColor(color);
+                paint.setStyle(Paint.Style.STROKE);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+            else {
+                paint.setColor(color);
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
+            }
+            paint.setStrokeWidth(0);
+            canvas.drawCircle(x, y, circleRadius, paint);
         }
     }
 
     @Override
+    protected void onDraw(final Canvas canvas) {
+        safe(() -> {
+            super.onDraw(canvas);
+            onDrawImpl(canvas);
+        });
+    }
+
+    @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        try {
+        safe(() -> {
+            setMeasuredDimension(0, 0);
             prepare();
             setMeasuredDimension(
                     xpos[numMora+1] - xpos[0] + getPaddingLeft() + getPaddingRight() + circleRadius * 2,
                     height + getPaddingTop() + getPaddingBottom());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            setMeasuredDimension(0, 0);
-        }
+        });
     }
 
     /**
@@ -236,14 +235,12 @@ public final class PitchInfoDiagramView extends View {
      * @param text the reading text
      */
     public void setText(final String text) {
-        try {
+        safe(() -> {
             this.text = text;
             dirty = true;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -252,14 +249,12 @@ public final class PitchInfoDiagramView extends View {
      * @param textSize the size in SP
      */
     public void setTextSize(final int textSize) {
-        try {
+        safe(() -> {
             this.textSize = textSize;
             dirty = true;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -268,14 +263,12 @@ public final class PitchInfoDiagramView extends View {
      * @param pitchNumber the pitch number
      */
     public void setPitchNumber(final int pitchNumber) {
-        try {
+        safe(() -> {
             this.pitchNumber = pitchNumber;
             dirty = true;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -284,13 +277,10 @@ public final class PitchInfoDiagramView extends View {
      * @return the number
      */
     public int getNumMora() {
-        try {
+        return safe(0, () -> {
             prepare();
             return numMora;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return 0;
-        }
+        });
     }
 
     private int dp2px(final int dp) {

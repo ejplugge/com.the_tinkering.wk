@@ -17,6 +17,7 @@
 package com.the_tinkering.wk.views;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -49,7 +50,6 @@ import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.JobRunnerService;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
@@ -59,14 +59,14 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.isTrue;
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Custom view that shows the subject info dump.
  */
 public final class SubjectInfoView extends LinearLayout implements SubjectChangeListener {
-    private static final Logger LOGGER = Logger.get(SubjectInfoView.class);
-
     private long subjectId = -1;
     private @Nullable WeakLcoRef<Actment> actmentRef = null;
     private ContainerType containerType = ContainerType.BROWSE;
@@ -131,7 +131,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
      */
     public SubjectInfoView(final Context context) {
         super(context);
-        init();
+        safe(this::init);
     }
 
     /**
@@ -142,7 +142,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
      */
     public SubjectInfoView(final Context context, final @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        safe(this::init);
     }
 
     /**
@@ -154,7 +154,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
      */
     public SubjectInfoView(final Context context, final @Nullable AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        safe(this::init);
     }
 
     /**
@@ -236,98 +236,94 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
      * Initialize the instance.
      */
     private void init() {
-        try {
-            inflate(getContext(), R.layout.subject_info, this);
-            setOrientation(VERTICAL);
+        inflate(getContext(), R.layout.subject_info, this);
+        setOrientation(VERTICAL);
 
-            final int textSize = GlobalSettings.Font.getFontSizeSubjectInfo();
-            setTextSize(this, textSize);
+        final int textSize = GlobalSettings.Font.getFontSizeSubjectInfo();
+        setTextSize(this, textSize);
 
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish0));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish1));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish2));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish3));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish4));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish5));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish6));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish7));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish8));
-            contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish9));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese0));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese1));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese2));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese3));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese4));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese5));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese6));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese7));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese8));
-            contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese9));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish0));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish1));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish2));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish3));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish4));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish5));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish6));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish7));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish8));
+        contextSentenceEnglish.add(new ViewProxy(this, R.id.contextSentenceEnglish9));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese0));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese1));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese2));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese3));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese4));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese5));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese6));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese7));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese8));
+        contextSentenceJapanese.add(new ViewProxy(this, R.id.contextSentenceJapanese9));
 
-            addSynonymButton.setDelegate(this, R.id.addSynonymButton);
-            resurrectButton.setDelegate(this, R.id.resurrectButton);
-            burnButton.setDelegate(this, R.id.burnButton);
-            onYomi.setDelegate(this, R.id.onYomi);
-            kunYomi.setDelegate(this, R.id.kunYomi);
-            nanori.setDelegate(this, R.id.nanori);
-            meaningDivider.setDelegate(this, R.id.meaningDivider);
-            meaningMnemonic.setDelegate(this, R.id.meaningMnemonic);
-            meaningHint.setDelegate(this, R.id.meaningHint);
-            meaningNote.setDelegate(this, R.id.meaningNote);
-            synonyms.setDelegate(this, R.id.synonyms);
-            legacyName.setDelegate(this, R.id.legacyName);
-            legacyMnemonic.setDelegate(this, R.id.legacyMnemonic);
-            readingDivider.setDelegate(this, R.id.readingDivider);
-            readingMnemonic.setDelegate(this, R.id.readingMnemonic);
-            readingHint.setDelegate(this, R.id.readingHint);
-            readingNote.setDelegate(this, R.id.readingNote);
-            partsOfSpeechDivider.setDelegate(this, R.id.partsOfSpeechDivider);
-            partsOfSpeech.setDelegate(this, R.id.partsOfSpeech);
-            contextSentencesDivider.setDelegate(this, R.id.contextSentencesDivider);
-            contextSentencesHeader.setDelegate(this, R.id.contextSentencesHeader);
-            headline.setDelegate(this, R.id.headline);
+        addSynonymButton.setDelegate(this, R.id.addSynonymButton);
+        resurrectButton.setDelegate(this, R.id.resurrectButton);
+        burnButton.setDelegate(this, R.id.burnButton);
+        onYomi.setDelegate(this, R.id.onYomi);
+        kunYomi.setDelegate(this, R.id.kunYomi);
+        nanori.setDelegate(this, R.id.nanori);
+        meaningDivider.setDelegate(this, R.id.meaningDivider);
+        meaningMnemonic.setDelegate(this, R.id.meaningMnemonic);
+        meaningHint.setDelegate(this, R.id.meaningHint);
+        meaningNote.setDelegate(this, R.id.meaningNote);
+        synonyms.setDelegate(this, R.id.synonyms);
+        legacyName.setDelegate(this, R.id.legacyName);
+        legacyMnemonic.setDelegate(this, R.id.legacyMnemonic);
+        readingDivider.setDelegate(this, R.id.readingDivider);
+        readingMnemonic.setDelegate(this, R.id.readingMnemonic);
+        readingHint.setDelegate(this, R.id.readingHint);
+        readingNote.setDelegate(this, R.id.readingNote);
+        partsOfSpeechDivider.setDelegate(this, R.id.partsOfSpeechDivider);
+        partsOfSpeech.setDelegate(this, R.id.partsOfSpeech);
+        contextSentencesDivider.setDelegate(this, R.id.contextSentencesDivider);
+        contextSentencesHeader.setDelegate(this, R.id.contextSentencesHeader);
+        headline.setDelegate(this, R.id.headline);
 
-            tableSrsSystem.setDelegate(this, R.id.tableSrsSystem);
-            tableSrsStage.setDelegate(this, R.id.tableSrsStage);
-            tableUnlockedAt.setDelegate(this, R.id.tableUnlockedAt);
-            tableStartedAt.setDelegate(this, R.id.tableStartedAt);
-            tablePassedAt.setDelegate(this, R.id.tablePassedAt);
-            tableBurnedAt.setDelegate(this, R.id.tableBurnedAt);
-            tableResurrectedAt.setDelegate(this, R.id.tableResurrectedAt);
-            tableAvailableAt.setDelegate(this, R.id.tableAvailableAt);
-            tablePercentageCorrect.setDelegate(this, R.id.tablePercentageCorrect);
-            tableMeaningCorrect.setDelegate(this, R.id.tableMeaningCorrect);
-            tableReadingCorrect.setDelegate(this, R.id.tableReadingCorrect);
-            tableFrequency.setDelegate(this, R.id.tableFrequency);
-            tableJoyoGrade.setDelegate(this, R.id.tableJoyoGrade);
-            tableJlptLevel.setDelegate(this, R.id.tableJlptLevel);
-            detailsDivider.setDelegate(this, R.id.detailsDivider);
-            detailsTable.setDelegate(this, R.id.detailsTable);
+        tableSrsSystem.setDelegate(this, R.id.tableSrsSystem);
+        tableSrsStage.setDelegate(this, R.id.tableSrsStage);
+        tableUnlockedAt.setDelegate(this, R.id.tableUnlockedAt);
+        tableStartedAt.setDelegate(this, R.id.tableStartedAt);
+        tablePassedAt.setDelegate(this, R.id.tablePassedAt);
+        tableBurnedAt.setDelegate(this, R.id.tableBurnedAt);
+        tableResurrectedAt.setDelegate(this, R.id.tableResurrectedAt);
+        tableAvailableAt.setDelegate(this, R.id.tableAvailableAt);
+        tablePercentageCorrect.setDelegate(this, R.id.tablePercentageCorrect);
+        tableMeaningCorrect.setDelegate(this, R.id.tableMeaningCorrect);
+        tableReadingCorrect.setDelegate(this, R.id.tableReadingCorrect);
+        tableFrequency.setDelegate(this, R.id.tableFrequency);
+        tableJoyoGrade.setDelegate(this, R.id.tableJoyoGrade);
+        tableJlptLevel.setDelegate(this, R.id.tableJlptLevel);
+        detailsDivider.setDelegate(this, R.id.detailsDivider);
+        detailsTable.setDelegate(this, R.id.detailsTable);
 
-            componentsDivider.setDelegate(this, R.id.componentsDivider);
-            componentsHeader.setDelegate(this, R.id.componentsHeader);
-            componentsTable.setDelegate(this, R.id.componentsTable);
-            if (GlobalSettings.Display.getSwapSimilarAndAmalgamations()) {
-                visuallySimilarsDivider.setDelegate(this, R.id.amalgamationsDivider);
-                visuallySimilarsHeader.setDelegate(this, R.id.amalgamationsHeader);
-                visuallySimilarsTable.setDelegate(this, R.id.amalgamationsTable);
-                amalgamationsDivider.setDelegate(this, R.id.visuallySimilarsDivider);
-                amalgamationsHeader.setDelegate(this, R.id.visuallySimilarsHeader);
-                amalgamationsTable.setDelegate(this, R.id.visuallySimilarsTable);
-            }
-            else {
-                amalgamationsDivider.setDelegate(this, R.id.amalgamationsDivider);
-                amalgamationsHeader.setDelegate(this, R.id.amalgamationsHeader);
-                amalgamationsTable.setDelegate(this, R.id.amalgamationsTable);
-                visuallySimilarsDivider.setDelegate(this, R.id.visuallySimilarsDivider);
-                visuallySimilarsHeader.setDelegate(this, R.id.visuallySimilarsHeader);
-                visuallySimilarsTable.setDelegate(this, R.id.visuallySimilarsTable);
-            }
-
-            SubjectChangeWatcher.getInstance().addListener(this);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+        componentsDivider.setDelegate(this, R.id.componentsDivider);
+        componentsHeader.setDelegate(this, R.id.componentsHeader);
+        componentsTable.setDelegate(this, R.id.componentsTable);
+        if (GlobalSettings.Display.getSwapSimilarAndAmalgamations()) {
+            visuallySimilarsDivider.setDelegate(this, R.id.amalgamationsDivider);
+            visuallySimilarsHeader.setDelegate(this, R.id.amalgamationsHeader);
+            visuallySimilarsTable.setDelegate(this, R.id.amalgamationsTable);
+            amalgamationsDivider.setDelegate(this, R.id.visuallySimilarsDivider);
+            amalgamationsHeader.setDelegate(this, R.id.visuallySimilarsHeader);
+            amalgamationsTable.setDelegate(this, R.id.visuallySimilarsTable);
         }
+        else {
+            amalgamationsDivider.setDelegate(this, R.id.amalgamationsDivider);
+            amalgamationsHeader.setDelegate(this, R.id.amalgamationsHeader);
+            amalgamationsTable.setDelegate(this, R.id.amalgamationsTable);
+            visuallySimilarsDivider.setDelegate(this, R.id.visuallySimilarsDivider);
+            visuallySimilarsHeader.setDelegate(this, R.id.visuallySimilarsHeader);
+            visuallySimilarsTable.setDelegate(this, R.id.visuallySimilarsTable);
+        }
+
+        SubjectChangeWatcher.getInstance().addListener(this);
     }
 
     /**
@@ -337,11 +333,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
      * @param toolbar the toolbar instance
      */
     public void setToolbar(final @Nullable Toolbar toolbar) {
-        try {
-            headline.setToolbar(toolbar);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> headline.setToolbar(toolbar));
     }
 
     /**
@@ -350,22 +342,16 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
      * @param maxFontSize the maximum size
      */
     public void setMaxFontSize(final int maxFontSize) {
-        try {
-            headline.setMaxFontSize(maxFontSize);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> headline.setMaxFontSize(maxFontSize));
     }
 
     @Override
     public void onSubjectChange(@SuppressWarnings("ParameterHidesMemberVariable") final Subject subject) {
-        try {
-            if (subjectId == subject.getId()) {
+        if (subjectId == subject.getId()) {
+            safe(() -> {
                 this.subject = subject;
                 layoutSubject(true);
-            }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+            });
         }
     }
 
@@ -395,15 +381,11 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
                 english.setText("-- Tap to reveal translation --");
                 english.setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
                 english.setClickableAndNotFocusable(true);
-                english.setOnClickListener(v -> {
-                    try {
-                        english.setText("- " + sentence.getEnglish());
-                        english.setClickableAndNotFocusable(false);
-                        english.setBackgroundColor(Constants.TRANSPARENT);
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
-                });
+                english.setOnClickListener(v -> safe(() -> {
+                    english.setText("- " + sentence.getEnglish());
+                    english.setClickableAndNotFocusable(false);
+                    english.setBackgroundColor(Constants.TRANSPARENT);
+                }));
             }
             else {
                 english.setText("- " + sentence.getEnglish());
@@ -419,6 +401,63 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         }
     }
 
+    private void addSynonym(final @Nullable String value) {
+        if (subject == null || isEmpty(value)) {
+            return;
+        }
+
+        final List<String> list = new ArrayList<>(subject.getMeaningSynonyms());
+        if (!list.contains(value)) {
+            list.add(value);
+        }
+
+        subject.setMeaningSynonyms(list);
+        synonyms.setText(subject.getMeaningSynonymsRichText());
+
+        list.add(0, Long.toString(subject.getId()));
+        list.add(1, orElse(subject.getMeaningNote(), ""));
+        list.add(2, orElse(subject.getReadingNote(), ""));
+        final String dataString;
+        try {
+            dataString = Converters.getObjectMapper().writeValueAsString(list);
+        } catch (final JsonProcessingException e) {
+            // This can't realistically happen.
+            return;
+        }
+        JobRunnerService.schedule(SaveStudyMaterialJob.class, dataString);
+    }
+
+    private boolean onSynonymEditorAction(final DialogInterface alertDialog, final EditText synonym,
+                                          final int actionId, final @Nullable KeyEvent event) {
+        final boolean done = isTrue(synonym.getTag());
+
+        if (done) {
+            return true;
+        }
+        boolean ok = false;
+        if (event == null && actionId == EditorInfo.IME_ACTION_DONE) {
+            ok = true;
+        }
+        if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            ok = true;
+        }
+        if (ok) {
+            synonym.setTag(true);
+            try {
+                alertDialog.dismiss();
+            }
+            catch (final Exception e) {
+                //
+            }
+            final @Nullable CharSequence text = synonym.getText();
+            if (text != null) {
+                addSynonym(text.toString().trim());
+            }
+            return true;
+        }
+        return false;
+    }
+
     private void prepareAddSynonymButton(final boolean showMeaningAnswers) {
         if (subject == null) {
             return;
@@ -426,108 +465,26 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
 
         addSynonymButton.setClickableAndNotFocusable(true);
         addSynonymButton.setVisibility(showMeaningAnswers);
-        addSynonymButton.setOnClickListener(new View.OnClickListener() {
-            /**
-             * The user supplied a new synonym, so save it.
-             *
-             * @param value the synonym
-             */
-            private void addSynonym(final @Nullable String value) {
-                if (isEmpty(value)) {
-                    return;
-                }
+        addSynonymButton.setOnClickListener(v -> safe(() -> {
+            final EditText synonym = new EditText(getContext());
+            synonym.setTag(false);
 
-                final List<String> list = new ArrayList<>(subject.getMeaningSynonyms());
-                if (!list.contains(value)) {
-                    list.add(value);
-                }
-
-                subject.setMeaningSynonyms(list);
-                synonyms.setText(subject.getMeaningSynonymsRichText());
-
-                list.add(0, Long.toString(subject.getId()));
-                list.add(1, orElse(subject.getMeaningNote(), ""));
-                list.add(2, orElse(subject.getReadingNote(), ""));
-                final String dataString;
-                try {
-                    dataString = Converters.getObjectMapper().writeValueAsString(list);
-                } catch (final JsonProcessingException e) {
-                    // This can't realistically happen.
-                    return;
-                }
-                JobRunnerService.schedule(SaveStudyMaterialJob.class, dataString);
-            }
-
-            @Override
-            public void onClick(final View v) {
-                try {
-                    final EditText synonym = new EditText(getContext());
-
-                    final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                            .setTitle("Add synonym")
-                            .setView(synonym)
-                            .setNegativeButton("Cancel", (dialog, which) -> {
-                                //
-                            })
-                            .setPositiveButton("Save", (dialog, which) -> {
-                                try {
-                                    final @Nullable CharSequence text = synonym.getText();
-                                    if (text != null) {
-                                        addSynonym(text.toString().trim());
-                                    }
-                                } catch (final Exception e) {
-                                    LOGGER.uerr(e);
-                                }
-                            }).create();
-
-                    synonym.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                        /**
-                         * Set to true when a value has been submitted.
-                         */
-                        private boolean done = false;
-
-                        @Override
-                        public boolean onEditorAction(@SuppressWarnings("AnonymousClassVariableHidesContainingMethodVariable") final TextView v,
-                                                      final int actionId, final @Nullable KeyEvent event) {
-                            try {
-                                if (done) {
-                                    return true;
-                                }
-                                boolean ok = false;
-                                if (event == null && actionId == EditorInfo.IME_ACTION_DONE) {
-                                    ok = true;
-                                }
-                                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                                    ok = true;
-                                }
-                                if (ok) {
-                                    done = true;
-                                    try {
-                                        alertDialog.dismiss();
-                                    }
-                                    catch (final Exception e) {
-                                        //
-                                    }
-                                    final @Nullable CharSequence text = synonym.getText();
-                                    if (text != null) {
-                                        addSynonym(text.toString().trim());
-                                    }
-                                    return true;
-                                }
-                                return false;
-                            } catch (final Exception e) {
-                                LOGGER.uerr(e);
-                                return false;
-                            }
+            final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                    .setTitle("Add synonym")
+                    .setView(synonym)
+                    .setNegativeButton("Cancel", (dialog, which) -> {})
+                    .setPositiveButton("Save", (dialog, which) -> safe(() -> {
+                        final @Nullable CharSequence text = synonym.getText();
+                        if (text != null) {
+                            addSynonym(text.toString().trim());
                         }
-                    });
+                    })).create();
 
-                    alertDialog.show();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            }
-        });
+            synonym.setOnEditorActionListener((v1, actionId, event) -> safe(
+                    false, () -> onSynonymEditorAction(alertDialog, synonym, actionId, event)));
+
+            alertDialog.show();
+        }));
     }
 
     /**
@@ -537,14 +494,203 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
      * @param newSubject the subject
      */
     public void setSubject(final Actment actment, final Subject newSubject) {
-        try {
+        safe(() -> {
             actmentRef = new WeakLcoRef<>(actment);
             final boolean sameSubject = subjectId == newSubject.getId();
             subject = newSubject;
             subjectId = subject.getId();
             layoutSubject(sameSubject);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+        });
+    }
+
+    private void layoutSubjectImpl(final boolean sameSubject) {
+        @Nullable Actment actment = null;
+        if (actmentRef != null) {
+            actment = actmentRef.getOrElse(null);
+        }
+        if (actment == null || subject == null) {
+            return;
+        }
+
+        final boolean showMeaningAnswers = getSubjectInfoDump().getShowMeaningAnswers(Session.getInstance().getCurrentQuestion());
+        final boolean showReadingAnswers = getSubjectInfoDump().getShowReadingAnswers(Session.getInstance().getCurrentQuestion());
+        final boolean showMeaningRelated = getSubjectInfoDump().getShowMeaningRelated(Session.getInstance().getCurrentQuestion());
+        final boolean showReadingRelated = getSubjectInfoDump().getShowReadingRelated(Session.getInstance().getCurrentQuestion());
+
+        headline.setSubject(subject);
+
+        // Kanji on'yomi, kun'yomi, nanori
+        onYomi.setText(subject.getOnYomiRichText());
+        onYomi.setJapaneseLocale();
+        onYomi.setVisibility(showReadingAnswers && subject.hasOnYomi());
+        kunYomi.setText(subject.getKunYomiRichText());
+        kunYomi.setJapaneseLocale();
+        kunYomi.setVisibility(showReadingAnswers && subject.hasKunYomi());
+        nanori.setText(subject.getNanoriRichText());
+        nanori.setJapaneseLocale();
+        nanori.setVisibility(showReadingAnswers && subject.hasNanori());
+
+        // Meaning mnemonic
+        meaningDivider.setVisibility(subject.hasMeaningMnemonic() && (showMeaningRelated || showMeaningAnswers && subject.hasMeaningSynonyms()));
+        meaningMnemonic.setText(subject.getMeaningMnemonicRichText());
+        meaningMnemonic.setJapaneseLocale();
+        meaningMnemonic.setLinkMovementMethod();
+        meaningMnemonic.setVisibility(showMeaningRelated && subject.hasMeaningMnemonic());
+        meaningHint.setText(subject.getMeaningHintRichText());
+        meaningHint.setJapaneseLocale();
+        meaningHint.setLinkMovementMethod();
+        meaningHint.setVisibility(showMeaningRelated && subject.hasMeaningHint());
+        legacyName.setText(subject.getLegacyNameRichText());
+        legacyName.setVisibility(showMeaningRelated && GlobalSettings.Display.getShowLegacy() && subject.hasLegacy());
+        legacyMnemonic.setText(subject.getLegacyMnemonicRichText());
+        legacyMnemonic.setVisibility(showMeaningRelated && GlobalSettings.Display.getShowLegacy() && subject.hasLegacy());
+        meaningNote.setText(subject.getMeaningNoteRichText());
+        meaningNote.setJapaneseLocale();
+        meaningNote.setLinkMovementMethod();
+        meaningNote.setVisibility(showMeaningRelated && subject.hasMeaningNote());
+        synonyms.setText(subject.getMeaningSynonymsRichText());
+        synonyms.setJapaneseLocale();
+        synonyms.setLinkMovementMethod();
+        synonyms.setVisibility(showMeaningAnswers);
+        prepareAddSynonymButton(showMeaningAnswers);
+
+        // Reading mnemonic
+        readingDivider.setVisibility(showReadingRelated && subject.hasReadingMnemonic());
+        readingMnemonic.setText(subject.getReadingMnemonicRichText());
+        readingMnemonic.setJapaneseLocale();
+        readingMnemonic.setLinkMovementMethod();
+        readingMnemonic.setVisibility(showReadingRelated && subject.hasReadingMnemonic());
+        readingHint.setText(subject.getReadingHintRichText());
+        readingHint.setJapaneseLocale();
+        readingHint.setLinkMovementMethod();
+        readingHint.setVisibility(showReadingRelated && subject.hasReadingHint());
+        readingNote.setText(subject.getReadingNoteRichText());
+        readingNote.setJapaneseLocale();
+        readingNote.setLinkMovementMethod();
+        readingNote.setVisibility(showReadingRelated && subject.hasReadingNote());
+
+        // Parts of speech
+        partsOfSpeechDivider.setVisibility(showMeaningRelated && subject.hasPartsOfSpeech());
+        partsOfSpeech.setText(subject.getPartsOfSpeechRichText());
+        partsOfSpeech.setVisibility(showMeaningRelated && subject.hasPartsOfSpeech());
+
+        // Context sentences
+        final boolean hasContextSentences = showMeaningRelated && subject.hasContextSentences();
+        contextSentencesDivider.setVisibility(hasContextSentences);
+        contextSentencesHeader.setVisibility(hasContextSentences);
+        final List<ContextSentence> sentences = subject.getContextSentences();
+        for (int i=0; i<contextSentenceJapanese.size(); i++) {
+            showContextSentence(hasContextSentences, sentences, i, contextSentenceJapanese.get(i), contextSentenceEnglish.get(i));
+        }
+
+        // Bottom table
+        tableSrsSystem.setText(subject.getSrsSystem().getName());
+        tableSrsStage.setText(subject.getSrsStage().getName());
+        tableUnlockedAt.setText(subject.getFormattedUnlockedAt());
+        tableUnlockedAt.setParentVisibility(subject.getUnlockedAt() != null);
+        tableStartedAt.setText(subject.getFormattedStartedAt());
+        tableStartedAt.setParentVisibility(subject.getStartedAt() != null);
+        tablePassedAt.setText(subject.getFormattedPassedAt());
+        tablePassedAt.setParentVisibility(subject.getPassedAt() != null);
+        tableBurnedAt.setText(subject.getFormattedBurnedAt());
+        tableBurnedAt.setParentVisibility(subject.getBurnedAt() != null);
+        tableResurrectedAt.setText(subject.getFormattedResurrectedAt());
+        tableResurrectedAt.setParentVisibility(subject.getResurrectedAt() != null);
+        tableAvailableAt.setText(subject.getFormattedAvailableAt());
+        tableAvailableAt.setParentVisibility(subject.getAvailableAt() != null);
+
+        final int meaningTotal = subject.getMeaningCorrect() + subject.getMeaningIncorrect();
+        final int readingTotal = subject.getReadingCorrect() + subject.getReadingIncorrect();
+        final int total = meaningTotal + readingTotal;
+
+        tablePercentageCorrect.setTextFormat("%d%%", subject.getPercentageCorrect());
+        tablePercentageCorrect.setParentVisibility(total > 0);
+
+        if (meaningTotal > 0) {
+            tableMeaningCorrect.setTextFormat("%d%%, max streak %d, current streak %s",
+                    (100*subject.getMeaningCorrect()) / meaningTotal, subject.getMeaningMaxStreak(),
+                    subject.getMeaningCurrentStreak());
+        }
+        tableMeaningCorrect.setParentVisibility(meaningTotal > 0);
+
+        if (readingTotal > 0) {
+            tableReadingCorrect.setTextFormat("%d%%, max streak %d, current streak %s",
+                    (100*subject.getReadingCorrect()) / readingTotal, subject.getReadingMaxStreak(),
+                    subject.getReadingCurrentStreak());
+        }
+        tableReadingCorrect.setParentVisibility(readingTotal > 0);
+
+        if (subject.getFrequency() > 0) {
+            tableFrequency.setText(subject.getFrequency());
+        }
+        tableFrequency.setParentVisibility(subject.getFrequency() > 0);
+
+        if (subject.getJoyoGrade() > 0) {
+            tableJoyoGrade.setText(subject.getJoyoGradeAsString());
+        }
+        tableJoyoGrade.setParentVisibility(subject.getJoyoGrade() > 0);
+
+        if (subject.getJlptLevel() > 0) {
+            tableJlptLevel.setText(subject.getJlptLevelAsString());
+        }
+        tableJlptLevel.setParentVisibility(subject.getJlptLevel() > 0);
+
+        detailsDivider.setVisibility(showMeaningAnswers || showReadingAnswers);
+        detailsTable.setVisibility(showMeaningAnswers || showReadingAnswers);
+
+        // Components table
+        final boolean hasComponents = showMeaningRelated && subject.hasComponents();
+        componentsDivider.setVisibility(hasComponents);
+        componentsHeader.setText(subject.getType().getComponentsHeaderText());
+        componentsHeader.setVisibility(hasComponents);
+        componentsTable.setVisibility(hasComponents);
+        if (!hasComponents || !sameSubject) {
+            componentsTable.removeAllViews();
+        }
+        if (hasComponents) {
+            componentsTable.setSubjectIds(actment, subject.getComponentSubjectIds());
+        }
+
+        // VisuallySimilars table
+        final boolean hasVisuallySimilars = showMeaningRelated && subject.hasVisuallySimilar();
+        visuallySimilarsDivider.setVisibility(hasVisuallySimilars);
+        visuallySimilarsHeader.setVisibility(hasVisuallySimilars);
+        visuallySimilarsHeader.setText("Visually similar:");
+        visuallySimilarsTable.setVisibility(hasVisuallySimilars);
+        if (!hasVisuallySimilars || !sameSubject) {
+            visuallySimilarsTable.removeAllViews();
+        }
+        if (hasVisuallySimilars) {
+            visuallySimilarsTable.setSubjectIds(actment, subject.getVisuallySimilarSubjectIds());
+        }
+
+        // Amalgamations table
+        final boolean hasAmalgamations = showMeaningRelated && subject.hasAmalgamations();
+        amalgamationsDivider.setVisibility(hasAmalgamations);
+        amalgamationsHeader.setVisibility(hasAmalgamations);
+        amalgamationsHeader.setText("Used in:");
+        amalgamationsTable.setVisibility(hasAmalgamations);
+        if (!hasAmalgamations || !sameSubject) {
+            amalgamationsTable.removeAllViews();
+        }
+        if (hasAmalgamations) {
+            amalgamationsTable.setSubjectIds(actment, subject.getAmalgamationSubjectIds());
+        }
+
+        if (subject.isResurrectable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {
+            resurrectButton.setVisibility(true);
+            resurrectButton.setOnClickListener(v -> goToResurrectActivity(subject.getId()));
+        }
+        else {
+            resurrectButton.setVisibility(false);
+        }
+
+        if (subject.isBurnable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {
+            burnButton.setVisibility(true);
+            burnButton.setOnClickListener(v -> goToBurnActivity(subject.getId()));
+        }
+        else {
+            burnButton.setVisibility(false);
         }
     }
 
@@ -554,218 +700,23 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
      * @param sameSubject true if this is a re-layout of the same subject
      */
     public void layoutSubject(final boolean sameSubject) {
-        try {
-            @Nullable Actment actment = null;
-            if (actmentRef != null) {
-                actment = actmentRef.getOrElse(null);
-            }
-            if (actment == null || subject == null) {
-                return;
-            }
-
-            final boolean showMeaningAnswers = getSubjectInfoDump().getShowMeaningAnswers(Session.getInstance().getCurrentQuestion());
-            final boolean showReadingAnswers = getSubjectInfoDump().getShowReadingAnswers(Session.getInstance().getCurrentQuestion());
-            final boolean showMeaningRelated = getSubjectInfoDump().getShowMeaningRelated(Session.getInstance().getCurrentQuestion());
-            final boolean showReadingRelated = getSubjectInfoDump().getShowReadingRelated(Session.getInstance().getCurrentQuestion());
-
-            headline.setSubject(subject);
-
-            // Kanji on'yomi, kun'yomi, nanori
-            onYomi.setText(subject.getOnYomiRichText());
-            onYomi.setJapaneseLocale();
-            onYomi.setVisibility(showReadingAnswers && subject.hasOnYomi());
-            kunYomi.setText(subject.getKunYomiRichText());
-            kunYomi.setJapaneseLocale();
-            kunYomi.setVisibility(showReadingAnswers && subject.hasKunYomi());
-            nanori.setText(subject.getNanoriRichText());
-            nanori.setJapaneseLocale();
-            nanori.setVisibility(showReadingAnswers && subject.hasNanori());
-
-            // Meaning mnemonic
-            meaningDivider.setVisibility(subject.hasMeaningMnemonic() && (showMeaningRelated || showMeaningAnswers && subject.hasMeaningSynonyms()));
-            meaningMnemonic.setText(subject.getMeaningMnemonicRichText());
-            meaningMnemonic.setJapaneseLocale();
-            meaningMnemonic.setLinkMovementMethod();
-            meaningMnemonic.setVisibility(showMeaningRelated && subject.hasMeaningMnemonic());
-            meaningHint.setText(subject.getMeaningHintRichText());
-            meaningHint.setJapaneseLocale();
-            meaningHint.setLinkMovementMethod();
-            meaningHint.setVisibility(showMeaningRelated && subject.hasMeaningHint());
-            legacyName.setText(subject.getLegacyNameRichText());
-            legacyName.setVisibility(showMeaningRelated && GlobalSettings.Display.getShowLegacy() && subject.hasLegacy());
-            legacyMnemonic.setText(subject.getLegacyMnemonicRichText());
-            legacyMnemonic.setVisibility(showMeaningRelated && GlobalSettings.Display.getShowLegacy() && subject.hasLegacy());
-            meaningNote.setText(subject.getMeaningNoteRichText());
-            meaningNote.setJapaneseLocale();
-            meaningNote.setLinkMovementMethod();
-            meaningNote.setVisibility(showMeaningRelated && subject.hasMeaningNote());
-            synonyms.setText(subject.getMeaningSynonymsRichText());
-            synonyms.setJapaneseLocale();
-            synonyms.setLinkMovementMethod();
-            synonyms.setVisibility(showMeaningAnswers);
-            prepareAddSynonymButton(showMeaningAnswers);
-
-            // Reading mnemonic
-            readingDivider.setVisibility(showReadingRelated && subject.hasReadingMnemonic());
-            readingMnemonic.setText(subject.getReadingMnemonicRichText());
-            readingMnemonic.setJapaneseLocale();
-            readingMnemonic.setLinkMovementMethod();
-            readingMnemonic.setVisibility(showReadingRelated && subject.hasReadingMnemonic());
-            readingHint.setText(subject.getReadingHintRichText());
-            readingHint.setJapaneseLocale();
-            readingHint.setLinkMovementMethod();
-            readingHint.setVisibility(showReadingRelated && subject.hasReadingHint());
-            readingNote.setText(subject.getReadingNoteRichText());
-            readingNote.setJapaneseLocale();
-            readingNote.setLinkMovementMethod();
-            readingNote.setVisibility(showReadingRelated && subject.hasReadingNote());
-
-            // Parts of speech
-            partsOfSpeechDivider.setVisibility(showMeaningRelated && subject.hasPartsOfSpeech());
-            partsOfSpeech.setText(subject.getPartsOfSpeechRichText());
-            partsOfSpeech.setVisibility(showMeaningRelated && subject.hasPartsOfSpeech());
-
-            // Context sentences
-            final boolean hasContextSentences = showMeaningRelated && subject.hasContextSentences();
-            contextSentencesDivider.setVisibility(hasContextSentences);
-            contextSentencesHeader.setVisibility(hasContextSentences);
-            final List<ContextSentence> sentences = subject.getContextSentences();
-            for (int i=0; i<contextSentenceJapanese.size(); i++) {
-                showContextSentence(hasContextSentences, sentences, i, contextSentenceJapanese.get(i), contextSentenceEnglish.get(i));
-            }
-
-            // Bottom table
-            tableSrsSystem.setText(subject.getSrsSystem().getName());
-            tableSrsStage.setText(subject.getSrsStage().getName());
-            tableUnlockedAt.setText(subject.getFormattedUnlockedAt());
-            tableUnlockedAt.setParentVisibility(subject.getUnlockedAt() != null);
-            tableStartedAt.setText(subject.getFormattedStartedAt());
-            tableStartedAt.setParentVisibility(subject.getStartedAt() != null);
-            tablePassedAt.setText(subject.getFormattedPassedAt());
-            tablePassedAt.setParentVisibility(subject.getPassedAt() != null);
-            tableBurnedAt.setText(subject.getFormattedBurnedAt());
-            tableBurnedAt.setParentVisibility(subject.getBurnedAt() != null);
-            tableResurrectedAt.setText(subject.getFormattedResurrectedAt());
-            tableResurrectedAt.setParentVisibility(subject.getResurrectedAt() != null);
-            tableAvailableAt.setText(subject.getFormattedAvailableAt());
-            tableAvailableAt.setParentVisibility(subject.getAvailableAt() != null);
-
-            final int meaningTotal = subject.getMeaningCorrect() + subject.getMeaningIncorrect();
-            final int readingTotal = subject.getReadingCorrect() + subject.getReadingIncorrect();
-            final int total = meaningTotal + readingTotal;
-
-            tablePercentageCorrect.setTextFormat("%d%%", subject.getPercentageCorrect());
-            tablePercentageCorrect.setParentVisibility(total > 0);
-
-            if (meaningTotal > 0) {
-                tableMeaningCorrect.setTextFormat("%d%%, max streak %d, current streak %s",
-                        (100*subject.getMeaningCorrect()) / meaningTotal, subject.getMeaningMaxStreak(),
-                        subject.getMeaningCurrentStreak());
-            }
-            tableMeaningCorrect.setParentVisibility(meaningTotal > 0);
-
-            if (readingTotal > 0) {
-                tableReadingCorrect.setTextFormat("%d%%, max streak %d, current streak %s",
-                        (100*subject.getReadingCorrect()) / readingTotal, subject.getReadingMaxStreak(),
-                        subject.getReadingCurrentStreak());
-            }
-            tableReadingCorrect.setParentVisibility(readingTotal > 0);
-
-            if (subject.getFrequency() > 0) {
-                tableFrequency.setText(subject.getFrequency());
-            }
-            tableFrequency.setParentVisibility(subject.getFrequency() > 0);
-
-            if (subject.getJoyoGrade() > 0) {
-                tableJoyoGrade.setText(subject.getJoyoGradeAsString());
-            }
-            tableJoyoGrade.setParentVisibility(subject.getJoyoGrade() > 0);
-
-            if (subject.getJlptLevel() > 0) {
-                tableJlptLevel.setText(subject.getJlptLevelAsString());
-            }
-            tableJlptLevel.setParentVisibility(subject.getJlptLevel() > 0);
-
-            detailsDivider.setVisibility(showMeaningAnswers || showReadingAnswers);
-            detailsTable.setVisibility(showMeaningAnswers || showReadingAnswers);
-
-            // Components table
-            final boolean hasComponents = showMeaningRelated && subject.hasComponents();
-            componentsDivider.setVisibility(hasComponents);
-            componentsHeader.setText(subject.getType().getComponentsHeaderText());
-            componentsHeader.setVisibility(hasComponents);
-            componentsTable.setVisibility(hasComponents);
-            if (!hasComponents || !sameSubject) {
-                componentsTable.removeAllViews();
-            }
-            if (hasComponents) {
-                componentsTable.setSubjectIds(actment, subject.getComponentSubjectIds());
-            }
-
-            // VisuallySimilars table
-            final boolean hasVisuallySimilars = showMeaningRelated && subject.hasVisuallySimilar();
-            visuallySimilarsDivider.setVisibility(hasVisuallySimilars);
-            visuallySimilarsHeader.setVisibility(hasVisuallySimilars);
-            visuallySimilarsHeader.setText("Visually similar:");
-            visuallySimilarsTable.setVisibility(hasVisuallySimilars);
-            if (!hasVisuallySimilars || !sameSubject) {
-                visuallySimilarsTable.removeAllViews();
-            }
-            if (hasVisuallySimilars) {
-                visuallySimilarsTable.setSubjectIds(actment, subject.getVisuallySimilarSubjectIds());
-            }
-
-            // Amalgamations table
-            final boolean hasAmalgamations = showMeaningRelated && subject.hasAmalgamations();
-            amalgamationsDivider.setVisibility(hasAmalgamations);
-            amalgamationsHeader.setVisibility(hasAmalgamations);
-            amalgamationsHeader.setText("Used in:");
-            amalgamationsTable.setVisibility(hasAmalgamations);
-            if (!hasAmalgamations || !sameSubject) {
-                amalgamationsTable.removeAllViews();
-            }
-            if (hasAmalgamations) {
-                amalgamationsTable.setSubjectIds(actment, subject.getAmalgamationSubjectIds());
-            }
-
-            if (subject.isResurrectable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {
-                resurrectButton.setVisibility(true);
-                resurrectButton.setOnClickListener(v -> goToResurrectActivity(subject.getId()));
-            }
-            else {
-                resurrectButton.setVisibility(false);
-            }
-
-            if (subject.isBurnable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {
-                burnButton.setVisibility(true);
-                burnButton.setOnClickListener(v -> goToBurnActivity(subject.getId()));
-            }
-            else {
-                burnButton.setVisibility(false);
-            }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> layoutSubjectImpl(sameSubject));
     }
 
     private void goToResurrectActivity(final long id) {
-        try {
+        safe(() -> {
             final Intent intent = new Intent(getContext(), ResurrectActivity.class);
             intent.putExtra("ids", new long[] {id});
             getContext().startActivity(intent);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void goToBurnActivity(final long id) {
-        try {
+        safe(() -> {
             final Intent intent = new Intent(getContext(), BurnActivity.class);
             intent.putExtra("ids", new long[] {id});
             getContext().startActivity(intent);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**

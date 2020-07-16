@@ -26,18 +26,17 @@ import com.the_tinkering.wk.jobs.StartAudioDownloadJob;
 import com.the_tinkering.wk.livedata.LiveTaskCounts;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.JobRunnerService;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * A custom view that shows a bracket of levels in the audio download overview.
  */
 public final class DownloadAudioBracketView extends LinearLayout {
-    private static final Logger LOGGER = Logger.get(DownloadAudioBracketView.class);
-
     private final ViewProxy label = new ViewProxy();
     private final ViewProxy rangeLabel = new ViewProxy();
     private final ViewProxy downloadButton = new ViewProxy();
@@ -79,16 +78,14 @@ public final class DownloadAudioBracketView extends LinearLayout {
      * Initialize the view.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.download_audio_bracket, this);
             setOrientation(VERTICAL);
             setPadding(0, 0, 0, 0);
             label.setDelegate(this, R.id.label);
             rangeLabel.setDelegate(this, R.id.rangeLabel);
             downloadButton.setDelegate(this, R.id.downloadButton);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -99,7 +96,7 @@ public final class DownloadAudioBracketView extends LinearLayout {
      * @param maxLevel the highest level in the bracket
      */
     public void setBracket(final Iterable<AudioDownloadStatus> overview, final int minLevel, final int maxLevel) {
-        try {
+        safe(() -> {
             final int audioCount = LiveTaskCounts.getInstance().get().getAudioCount();
 
             int numTotal = 0;
@@ -126,14 +123,8 @@ public final class DownloadAudioBracketView extends LinearLayout {
                 downloadButton.enableInteraction();
             }
 
-            downloadButton.setOnClickListener(v -> {
-                try {
-                    JobRunnerService.schedule(StartAudioDownloadJob.class,
-                            String.format(Locale.ROOT, "%d|%d", minLevel, maxLevel));
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
+            downloadButton.setOnClickListener(v -> safe(() -> JobRunnerService.schedule(StartAudioDownloadJob.class,
+                    String.format(Locale.ROOT, "%d|%d", minLevel, maxLevel))));
 
             rangeLabel.setTextFormat("Levels %d-%d", minLevel, maxLevel);
 
@@ -146,8 +137,6 @@ public final class DownloadAudioBracketView extends LinearLayout {
                         numTotal - numNoAudio,
                         numPartialAudio);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

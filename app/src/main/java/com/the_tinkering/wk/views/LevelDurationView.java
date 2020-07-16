@@ -27,16 +27,15 @@ import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveLevelDuration;
 import com.the_tinkering.wk.model.LevelDuration;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.Locale;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows the user's level and how long they've been on that level.
  */
 public final class LevelDurationView extends AppCompatTextView {
-    private static final Logger LOGGER = Logger.get(LevelDurationView.class);
-
     /**
      * The constructor.
      *
@@ -62,27 +61,15 @@ public final class LevelDurationView extends AppCompatTextView {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveLevelDuration.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    if (t != null) {
-                        update(t);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        safe(() -> {
+            LiveLevelDuration.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+                if (t != null) {
+                    update(t);
                 }
-            });
+            }));
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveLevelDuration.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveLevelDuration.getInstance().ping()));
+        });
     }
 
     /**

@@ -44,7 +44,6 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.livedata.LiveVacationMode;
 import com.the_tinkering.wk.model.SrsSystem;
 import com.the_tinkering.wk.model.TimeLine;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.ArrayList;
@@ -57,6 +56,7 @@ import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
 import static com.the_tinkering.wk.util.ObjectSupport.compareIntegers;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Calendar.DAY_OF_WEEK;
 import static java.util.Calendar.HOUR_OF_DAY;
 
@@ -64,8 +64,6 @@ import static java.util.Calendar.HOUR_OF_DAY;
  * Custom bar chart for the timeline.
  */
 public final class TimeLineBarChart extends View implements GestureDetector.OnGestureListener {
-    private static final Logger LOGGER = Logger.get(TimeLineBarChart.class);
-
     private final List<BarEntry> entries = new ArrayList<>();
     private int[] segmentColors = new int[0];
     private String[] legendLabels = new String[0];
@@ -122,30 +120,26 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
      */
     public TimeLineBarChart(final Context context, final @Nullable AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
-        try {
+        safe(() -> {
             colorPrimary = ThemeUtil.getColor(R.attr.colorPrimary);
             colorPrimaryTonedDown = ThemeUtil.getColor(R.attr.colorPrimaryTonedDown);
             colorWaterfall = ThemeUtil.getColor(R.attr.colorWaterfallLine);
             density = context.getResources().getDisplayMetrics().density;
             arrowIcon = getContext().getResources().getDrawable(ActiveTheme.getCurrentTheme().getLevelUpArrowDrawableId());
             init();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
      * Initialize the view.
      */
     private void init() {
-        try {
+        safe(() -> {
             setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 setNestedScrollingEnabled(true);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -154,30 +148,17 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    update(t);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveTimeLine.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> {
+            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t)));
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
+        });
     }
 
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        try {
+        safe(() -> {
+            setMeasuredDimension(0, 0);
+
             final int w;
             final int h;
             if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
@@ -200,10 +181,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
             }
 
             setMeasuredDimension(w, h);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            setMeasuredDimension(0, 0);
-        }
+        });
     }
 
     /**
@@ -444,81 +422,82 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
         }
     }
 
-    @Override
-    protected void onDraw(final Canvas canvas) {
-        try {
-            super.onDraw(canvas);
+    private void onDrawImpl(final Canvas canvas) {
+        final float baseWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+        final float baseHeight = getHeight() - getPaddingTop() - getPaddingBottom();
 
-            final float baseWidth = getWidth() - getPaddingLeft() - getPaddingRight();
-            final float baseHeight = getHeight() - getPaddingTop() - getPaddingBottom();
+        paint.setTypeface(Typeface.DEFAULT);
 
-            paint.setTypeface(Typeface.DEFAULT);
+        if (totalCount == 0) {
+            paint.setColor(colorPrimary);
+            paint.setTextSize(density * FONT_SIZE_NORMAL);
+            final String s = "No upcoming reviews";
+            paint.getTextBounds(s, 0, s.length(), rect);
+            final float x = getPaddingLeft() + (baseWidth - rect.width()) / 2;
+            final float y = getPaddingTop() + baseHeight / 2 - (paint.ascent() + paint.descent()) / 2;
+            canvas.drawText(s, x, y, paint);
+            return;
+        }
 
-            if (totalCount == 0) {
-                paint.setColor(colorPrimary);
-                paint.setTextSize(density * FONT_SIZE_NORMAL);
-                final String s = "No upcoming reviews";
-                paint.getTextBounds(s, 0, s.length(), rect);
-                final float x = getPaddingLeft() + (baseWidth - rect.width()) / 2;
-                final float y = getPaddingTop() + baseHeight / 2 - (paint.ascent() + paint.descent()) / 2;
-                canvas.drawText(s, x, y, paint);
-                return;
-            }
+        paint.setTextSize(density * 10);
 
-            paint.setTextSize(density * 10);
+        originY = getPaddingTop() + baseHeight - density * 30;
+        axisSizeY = baseHeight - density * 45;
+        if (axisSizeY <= 0) {
+            return;
+        }
+        pixelsPerUnit = (axisSizeY / 1.1f) / maxBarCount;
+        pixelsPerUnitCumulative = (axisSizeY / 1.1f) / totalCount;
+        final float lineSpacing = Math.max(Math.abs(paint.getFontSpacing()), density * 10) * 1.8f;
+        final String topLabel;
+        switch (GlobalSettings.Dashboard.getTimeLineChartGridStyle()) {
+            case FOR_WATERFALL:
+                pixelsPerUnitGrid = pixelsPerUnitCumulative;
+                axisIntervalY = roundUpInterval((int) Math.ceil(lineSpacing / pixelsPerUnitGrid));
+                topLabel = Integer.toString(((totalCount + axisIntervalY - 1) / axisIntervalY) * axisIntervalY);
+                break;
+            case OFF:
+                pixelsPerUnitGrid = pixelsPerUnit;
+                axisIntervalY = 0;
+                topLabel = "";
+                break;
+            case FOR_BARS:
+            default:
+                pixelsPerUnitGrid = pixelsPerUnit;
+                axisIntervalY = roundUpInterval((int) Math.ceil(lineSpacing / pixelsPerUnitGrid));
+                topLabel = Integer.toString(((maxBarCount + axisIntervalY - 1) / axisIntervalY) * axisIntervalY);
+                break;
+        }
 
-            originY = getPaddingTop() + baseHeight - density * 30;
-            axisSizeY = baseHeight - density * 45;
-            if (axisSizeY <= 0) {
-                return;
-            }
-            pixelsPerUnit = (axisSizeY / 1.1f) / maxBarCount;
-            pixelsPerUnitCumulative = (axisSizeY / 1.1f) / totalCount;
-            final float lineSpacing = Math.max(Math.abs(paint.getFontSpacing()), density * 10) * 1.8f;
-            final String topLabel;
-            switch (GlobalSettings.Dashboard.getTimeLineChartGridStyle()) {
-                case FOR_WATERFALL:
-                    pixelsPerUnitGrid = pixelsPerUnitCumulative;
-                    axisIntervalY = roundUpInterval((int) Math.ceil(lineSpacing / pixelsPerUnitGrid));
-                    topLabel = Integer.toString(((totalCount + axisIntervalY - 1) / axisIntervalY) * axisIntervalY);
-                    break;
-                case OFF:
-                    pixelsPerUnitGrid = pixelsPerUnit;
-                    axisIntervalY = 0;
-                    topLabel = "";
-                    break;
-                case FOR_BARS:
-                default:
-                    pixelsPerUnitGrid = pixelsPerUnit;
-                    axisIntervalY = roundUpInterval((int) Math.ceil(lineSpacing / pixelsPerUnitGrid));
-                    topLabel = Integer.toString(((maxBarCount + axisIntervalY - 1) / axisIntervalY) * axisIntervalY);
-                    break;
-            }
+        paint.getTextBounds(topLabel, 0, topLabel.length(), rect);
+        originX = getPaddingLeft() + rect.width() + density * 12;
+        axisSizeX = baseWidth - rect.width() - density * 20;
+        if (axisSizeX <= 0) {
+            return;
+        }
+        barAdvance = axisSizeX / numShownBars;
 
-            paint.getTextBounds(topLabel, 0, topLabel.length(), rect);
-            originX = getPaddingLeft() + rect.width() + density * 12;
-            axisSizeX = baseWidth - rect.width() - density * 20;
-            if (axisSizeX <= 0) {
-                return;
-            }
-            barAdvance = axisSizeX / numShownBars;
+        drawGrid(canvas);
+        drawBars(canvas);
+        drawLegend(canvas);
 
-            drawGrid(canvas);
-            drawBars(canvas);
-            drawLegend(canvas);
-
-            if (scroller != null && !scroller.isFinished() && scroller.computeScrollOffset()) {
-                scrollOffset = Math.min(entries.size() * barAdvance - axisSizeX, Math.max(0, scroller.getCurrX()));
-                postInvalidateOnAnimation();
-            }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+        if (scroller != null && !scroller.isFinished() && scroller.computeScrollOffset()) {
+            scrollOffset = Math.min(entries.size() * barAdvance - axisSizeX, Math.max(0, scroller.getCurrX()));
+            postInvalidateOnAnimation();
         }
     }
 
     @Override
+    protected void onDraw(final Canvas canvas) {
+        safe(() -> {
+            super.onDraw(canvas);
+            onDrawImpl(canvas);
+        });
+    }
+
+    @Override
     public boolean onTouchEvent(final MotionEvent event) {
-        try {
+        final boolean result = safe(false, () -> {
             if (numShownBars < entries.size()) {
                 if (gestureDetector == null) {
                     gestureDetector = new GestureDetectorCompat(getContext(), this);
@@ -526,15 +505,14 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
                 gestureDetector.onTouchEvent(event);
                 return true;
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-        return super.onTouchEvent(event);
+            return false;
+        });
+        return result || super.onTouchEvent(event);
     }
 
     @Override
     public boolean onDown(final MotionEvent e) {
-        try {
+        safe(() -> {
             if (scroller != null) {
                 scroller.forceFinished(true);
             }
@@ -542,9 +520,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
                 startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
             }
             prevVerticalScrollRawY = e.getRawY();
-        } catch (final Exception ex) {
-            LOGGER.uerr(ex);
-        }
+        });
         return true;
     }
 
@@ -560,7 +536,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
 
     @Override
     public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX, final float distanceY) {
-        try {
+        safe(() -> {
             scrollOffset = Math.min(entries.size() * barAdvance - axisSizeX, Math.max(0, scrollOffset + distanceX));
             final float distance = prevVerticalScrollRawY - e2.getRawY();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -568,9 +544,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
             }
             prevVerticalScrollRawY = e2.getRawY();
             invalidate();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
         return true;
     }
 
@@ -581,7 +555,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
 
     @Override
     public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
-        try {
+        safe(() -> {
             if (scroller == null) {
                 scroller = new Scroller(getContext());
             }
@@ -592,9 +566,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
                 dispatchNestedFling(0, -velocityY, false);
             }
             invalidate();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
         return true;
     }
 

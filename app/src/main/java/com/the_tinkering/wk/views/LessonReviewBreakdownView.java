@@ -31,17 +31,16 @@ import com.the_tinkering.wk.livedata.LiveLevelDuration;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows a breakdown of available lessons and reviews.
  */
 public final class LessonReviewBreakdownView extends TableLayout {
-    private static final Logger LOGGER = Logger.get(LessonReviewBreakdownView.class);
-
     private final ViewProxy headerRad = new ViewProxy();
     private final ViewProxy headerKan = new ViewProxy();
     private final ViewProxy headerVoc = new ViewProxy();
@@ -69,7 +68,7 @@ public final class LessonReviewBreakdownView extends TableLayout {
      */
     public LessonReviewBreakdownView(final Context context) {
         super(context);
-        init();
+        safe(this::init);
     }
 
     /**
@@ -80,75 +79,71 @@ public final class LessonReviewBreakdownView extends TableLayout {
      */
     public LessonReviewBreakdownView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        init();
+        safe(this::init);
     }
 
     /**
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
-            inflate(getContext(), R.layout.lesson_review_breakdown, this);
-            setColumnStretchable(0, true);
-            setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
+        inflate(getContext(), R.layout.lesson_review_breakdown, this);
+        setColumnStretchable(0, true);
+        setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
 
-            headerRad.setDelegate(this, R.id.headerRad);
-            headerKan.setDelegate(this, R.id.headerKan);
-            headerVoc.setDelegate(this, R.id.headerVoc);
-            lessonCurrent.setDelegate(this, R.id.lessonCurrent);
-            lessonCurrentRad.setDelegate(this, R.id.lessonCurrentRad);
-            lessonCurrentKan.setDelegate(this, R.id.lessonCurrentKan);
-            lessonCurrentVoc.setDelegate(this, R.id.lessonCurrentVoc);
-            lessonPast.setDelegate(this, R.id.lessonPast);
-            lessonPastRad.setDelegate(this, R.id.lessonPastRad);
-            lessonPastKan.setDelegate(this, R.id.lessonPastKan);
-            lessonPastVoc.setDelegate(this, R.id.lessonPastVoc);
-            reviewCurrent.setDelegate(this, R.id.reviewCurrent);
-            reviewCurrentRad.setDelegate(this, R.id.reviewCurrentRad);
-            reviewCurrentKan.setDelegate(this, R.id.reviewCurrentKan);
-            reviewCurrentVoc.setDelegate(this, R.id.reviewCurrentVoc);
-            reviewPast.setDelegate(this, R.id.reviewPast);
-            reviewPastRad.setDelegate(this, R.id.reviewPastRad);
-            reviewPastKan.setDelegate(this, R.id.reviewPastKan);
-            reviewPastVoc.setDelegate(this, R.id.reviewPastVoc);
+        headerRad.setDelegate(this, R.id.headerRad);
+        headerKan.setDelegate(this, R.id.headerKan);
+        headerVoc.setDelegate(this, R.id.headerVoc);
+        lessonCurrent.setDelegate(this, R.id.lessonCurrent);
+        lessonCurrentRad.setDelegate(this, R.id.lessonCurrentRad);
+        lessonCurrentKan.setDelegate(this, R.id.lessonCurrentKan);
+        lessonCurrentVoc.setDelegate(this, R.id.lessonCurrentVoc);
+        lessonPast.setDelegate(this, R.id.lessonPast);
+        lessonPastRad.setDelegate(this, R.id.lessonPastRad);
+        lessonPastKan.setDelegate(this, R.id.lessonPastKan);
+        lessonPastVoc.setDelegate(this, R.id.lessonPastVoc);
+        reviewCurrent.setDelegate(this, R.id.reviewCurrent);
+        reviewCurrentRad.setDelegate(this, R.id.reviewCurrentRad);
+        reviewCurrentKan.setDelegate(this, R.id.reviewCurrentKan);
+        reviewCurrentVoc.setDelegate(this, R.id.reviewCurrentVoc);
+        reviewPast.setDelegate(this, R.id.reviewPast);
+        reviewPastRad.setDelegate(this, R.id.reviewPastRad);
+        reviewPastKan.setDelegate(this, R.id.reviewPastKan);
+        reviewPastVoc.setDelegate(this, R.id.reviewPastVoc);
 
-            headerRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
-            headerRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
-            headerKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
-            headerKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
-            headerVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
-            headerVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
+        headerRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
+        headerRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
+        headerKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
+        headerKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
+        headerVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
+        headerVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
 
-            lessonCurrentRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
-            lessonCurrentRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
-            lessonCurrentKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
-            lessonCurrentKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
-            lessonCurrentVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
-            lessonCurrentVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
+        lessonCurrentRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
+        lessonCurrentRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
+        lessonCurrentKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
+        lessonCurrentKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
+        lessonCurrentVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
+        lessonCurrentVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
 
-            lessonPastRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
-            lessonPastRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
-            lessonPastKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
-            lessonPastKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
-            lessonPastVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
-            lessonPastVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
+        lessonPastRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
+        lessonPastRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
+        lessonPastKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
+        lessonPastKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
+        lessonPastVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
+        lessonPastVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
 
-            reviewCurrentRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
-            reviewCurrentRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
-            reviewCurrentKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
-            reviewCurrentKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
-            reviewCurrentVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
-            reviewCurrentVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
+        reviewCurrentRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
+        reviewCurrentRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
+        reviewCurrentKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
+        reviewCurrentKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
+        reviewCurrentVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
+        reviewCurrentVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
 
-            reviewPastRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
-            reviewPastRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
-            reviewPastKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
-            reviewPastKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
-            reviewPastVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
-            reviewPastVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        reviewPastRad.setTextColor(ActiveTheme.getSubjectTypeTextColors()[0]);
+        reviewPastRad.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[0]);
+        reviewPastKan.setTextColor(ActiveTheme.getSubjectTypeTextColors()[1]);
+        reviewPastKan.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[1]);
+        reviewPastVoc.setTextColor(ActiveTheme.getSubjectTypeTextColors()[2]);
+        reviewPastVoc.setBackgroundColor(ActiveTheme.getSubjectTypeBackgroundColors()[2]);
     }
 
     /**
@@ -157,25 +152,10 @@ public final class LessonReviewBreakdownView extends TableLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    update(t);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveTimeLine.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> {
+            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t)));
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
+        });
     }
 
     /**

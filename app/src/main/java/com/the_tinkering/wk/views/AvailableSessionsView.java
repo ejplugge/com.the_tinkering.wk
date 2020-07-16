@@ -29,14 +29,13 @@ import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that describes the number of available lessons and reviews.
  */
 public final class AvailableSessionsView extends ConstraintLayout {
-    private static final Logger LOGGER = Logger.get(AvailableSessionsView.class);
-
     private final ViewProxy availableLessonsCount = new ViewProxy();
     private final ViewProxy availableReviewsCount = new ViewProxy();
 
@@ -65,13 +64,11 @@ public final class AvailableSessionsView extends ConstraintLayout {
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.available_sessions, this);
             availableLessonsCount.setDelegate(this, R.id.availableLessonsCount);
             availableReviewsCount.setDelegate(this, R.id.availableReviewsCount);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -80,27 +77,15 @@ public final class AvailableSessionsView extends ConstraintLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    if (t != null) {
-                        update(t);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        safe(() -> {
+            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+                if (t != null) {
+                    update(t);
                 }
-            });
+            }));
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveTimeLine.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
+        });
     }
 
     /**

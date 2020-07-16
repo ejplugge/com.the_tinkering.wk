@@ -26,16 +26,15 @@ import android.widget.LinearLayout;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows a single bar in the level progress chart on the dashboard.
  */
 public final class SynonymRowView extends LinearLayout {
-    private static final Logger LOGGER = Logger.get(SynonymRowView.class);
-
     private int index = 0;
 
     private final ViewProxy textView = new ViewProxy();
@@ -49,7 +48,7 @@ public final class SynonymRowView extends LinearLayout {
      */
     public SynonymRowView(final Context context) {
         super(context);
-        init(null);
+        safe(() -> init(null));
     }
 
     /**
@@ -60,7 +59,7 @@ public final class SynonymRowView extends LinearLayout {
      */
     public SynonymRowView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        init(attrs);
+        safe(() -> init(attrs));
     }
 
     private @Nullable SynonymRowView findRowByIndex(final int otherIndex) {
@@ -82,53 +81,49 @@ public final class SynonymRowView extends LinearLayout {
      * Initialize the view.
      */
     private void init(final @Nullable AttributeSet attrs) {
-        try {
-            inflate(getContext(), R.layout.synonym, this);
-            setOrientation(HORIZONTAL);
+        inflate(getContext(), R.layout.synonym, this);
+        setOrientation(HORIZONTAL);
 
-            textView.setDelegate(this, R.id.text);
-            arrowDown.setDelegate(this, R.id.arrowDown);
-            arrowUp.setDelegate(this, R.id.arrowUp);
+        textView.setDelegate(this, R.id.text);
+        arrowDown.setDelegate(this, R.id.arrowDown);
+        arrowUp.setDelegate(this, R.id.arrowUp);
 
-            if (attrs != null) {
-                final TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.SynonymRowView, 0, 0);
-                try {
-                    index = a.getInt(R.styleable.SynonymRowView_index, 0);
-                    if (index == 0) {
-                        arrowUp.setVisibility(INVISIBLE);
-                    }
-                    if (index == 9) {
-                        arrowDown.setVisibility(INVISIBLE);
-                    }
-                } finally {
-                    a.recycle();
+        if (attrs != null) {
+            final TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.SynonymRowView, 0, 0);
+            try {
+                index = a.getInt(R.styleable.SynonymRowView_index, 0);
+                if (index == 0) {
+                    arrowUp.setVisibility(INVISIBLE);
+                }
+                if (index == 9) {
+                    arrowDown.setVisibility(INVISIBLE);
+                }
+            } finally {
+                a.recycle();
+            }
+        }
+
+        arrowDown.setOnClickListener(v -> {
+            if (index < 9) {
+                final @Nullable SynonymRowView nextRow = findRowByIndex(index + 1);
+                if (nextRow != null) {
+                    final String tmp = getText();
+                    setText(nextRow.getText());
+                    nextRow.setText(tmp);
                 }
             }
+        });
 
-            arrowDown.setOnClickListener(v -> {
-                if (index < 9) {
-                    final @Nullable SynonymRowView nextRow = findRowByIndex(index + 1);
-                    if (nextRow != null) {
-                        final String tmp = getText();
-                        setText(nextRow.getText());
-                        nextRow.setText(tmp);
-                    }
+        arrowUp.setOnClickListener(v -> {
+            if (index > 0) {
+                final @Nullable SynonymRowView prevRow = findRowByIndex(index - 1);
+                if (prevRow != null) {
+                    final String tmp = getText();
+                    setText(prevRow.getText());
+                    prevRow.setText(tmp);
                 }
-            });
-
-            arrowUp.setOnClickListener(v -> {
-                if (index > 0) {
-                    final @Nullable SynonymRowView prevRow = findRowByIndex(index - 1);
-                    if (prevRow != null) {
-                        final String tmp = getText();
-                        setText(prevRow.getText());
-                        prevRow.setText(tmp);
-                    }
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            }
+        });
     }
 
     /**

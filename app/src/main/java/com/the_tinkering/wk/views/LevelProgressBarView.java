@@ -24,17 +24,16 @@ import android.view.View;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.ActiveTheme;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view for a bar in the level progress bar chart.
  */
 public final class LevelProgressBarView extends View {
-    private static final Logger LOGGER = Logger.get(LevelProgressBarView.class);
-
     private int[] values = new int[0];
     private boolean showTarget = false;
     private boolean dirty = true;
@@ -99,7 +98,7 @@ public final class LevelProgressBarView extends View {
 
     @Override
     protected void onDraw(final Canvas canvas) {
-        try {
+        safe(() -> {
             super.onDraw(canvas);
             prepare();
 
@@ -137,14 +136,14 @@ public final class LevelProgressBarView extends View {
                 paint.setStrokeWidth(0);
                 canvas.drawRect(start, getPaddingTop(), end, getPaddingTop() + height, paint);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        try {
+        safe(() -> {
+            setMeasuredDimension(0, 0);
+
             prepare();
 
             final int w;
@@ -162,10 +161,7 @@ public final class LevelProgressBarView extends View {
             }
 
             setMeasuredDimension(w, height + getPaddingTop() + getPaddingBottom());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            setMeasuredDimension(0, 0);
-        }
+        });
     }
 
     /**
@@ -174,14 +170,12 @@ public final class LevelProgressBarView extends View {
      * @param values the array of values, always exactly 10 elements.
      */
     public void setValues(final int[] values) {
-        try {
+        safe(() -> {
             this.values = values.clone();
             dirty = true;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -190,14 +184,12 @@ public final class LevelProgressBarView extends View {
      * @param showTarget true if it should
      */
     public void setShowTarget(final boolean showTarget) {
-        try {
+        safe(() -> {
             this.showTarget = showTarget;
             dirty = true;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private int dp2px(final int dp) {

@@ -28,7 +28,6 @@ import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveJlptProgress;
 import com.the_tinkering.wk.model.JlptProgress;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.ArrayList;
@@ -36,12 +35,12 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * A custom view that shows a breakdown of JLPT progress.
  */
 public final class JlptProgressView extends TableLayout {
-    private static final Logger LOGGER = Logger.get(JlptProgressView.class);
-
     private final List<ViewProxy> locked = new ArrayList<>();
     private final List<ViewProxy> prePassed = new ArrayList<>();
     private final List<ViewProxy> passed = new ArrayList<>();
@@ -54,7 +53,7 @@ public final class JlptProgressView extends TableLayout {
      */
     public JlptProgressView(final Context context) {
         super(context);
-        init();
+        safe(this::init);
     }
 
     /**
@@ -65,51 +64,47 @@ public final class JlptProgressView extends TableLayout {
      */
     public JlptProgressView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        init();
+        safe(this::init);
     }
 
     /**
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
-            inflate(getContext(), R.layout.jlpt_progress, this);
+        inflate(getContext(), R.layout.jlpt_progress, this);
 
-            locked.add(new ViewProxy(this, R.id.jlptLevel1Locked));
-            locked.add(new ViewProxy(this, R.id.jlptLevel2Locked));
-            locked.add(new ViewProxy(this, R.id.jlptLevel3Locked));
-            locked.add(new ViewProxy(this, R.id.jlptLevel4Locked));
-            locked.add(new ViewProxy(this, R.id.jlptLevel5Locked));
+        locked.add(new ViewProxy(this, R.id.jlptLevel1Locked));
+        locked.add(new ViewProxy(this, R.id.jlptLevel2Locked));
+        locked.add(new ViewProxy(this, R.id.jlptLevel3Locked));
+        locked.add(new ViewProxy(this, R.id.jlptLevel4Locked));
+        locked.add(new ViewProxy(this, R.id.jlptLevel5Locked));
 
-            prePassed.add(new ViewProxy(this, R.id.jlptLevel1PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.jlptLevel2PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.jlptLevel3PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.jlptLevel4PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.jlptLevel5PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.jlptLevel1PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.jlptLevel2PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.jlptLevel3PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.jlptLevel4PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.jlptLevel5PrePassed));
 
-            passed.add(new ViewProxy(this, R.id.jlptLevel1Passed));
-            passed.add(new ViewProxy(this, R.id.jlptLevel2Passed));
-            passed.add(new ViewProxy(this, R.id.jlptLevel3Passed));
-            passed.add(new ViewProxy(this, R.id.jlptLevel4Passed));
-            passed.add(new ViewProxy(this, R.id.jlptLevel5Passed));
+        passed.add(new ViewProxy(this, R.id.jlptLevel1Passed));
+        passed.add(new ViewProxy(this, R.id.jlptLevel2Passed));
+        passed.add(new ViewProxy(this, R.id.jlptLevel3Passed));
+        passed.add(new ViewProxy(this, R.id.jlptLevel4Passed));
+        passed.add(new ViewProxy(this, R.id.jlptLevel5Passed));
 
-            burned.add(new ViewProxy(this, R.id.jlptLevel1Burned));
-            burned.add(new ViewProxy(this, R.id.jlptLevel2Burned));
-            burned.add(new ViewProxy(this, R.id.jlptLevel3Burned));
-            burned.add(new ViewProxy(this, R.id.jlptLevel4Burned));
-            burned.add(new ViewProxy(this, R.id.jlptLevel5Burned));
+        burned.add(new ViewProxy(this, R.id.jlptLevel1Burned));
+        burned.add(new ViewProxy(this, R.id.jlptLevel2Burned));
+        burned.add(new ViewProxy(this, R.id.jlptLevel3Burned));
+        burned.add(new ViewProxy(this, R.id.jlptLevel4Burned));
+        burned.add(new ViewProxy(this, R.id.jlptLevel5Burned));
 
-            setColumnShrinkable(0, true);
-            setColumnShrinkable(1, true);
-            setColumnShrinkable(2, true);
-            setColumnShrinkable(3, true);
-            setColumnShrinkable(4, true);
-            setColumnStretchable(0, true);
+        setColumnShrinkable(0, true);
+        setColumnShrinkable(1, true);
+        setColumnShrinkable(2, true);
+        setColumnShrinkable(3, true);
+        setColumnShrinkable(4, true);
+        setColumnStretchable(0, true);
 
-            setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
     }
 
     /**
@@ -118,25 +113,10 @@ public final class JlptProgressView extends TableLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveJlptProgress.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    update(t);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveJlptProgress.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> {
+            LiveJlptProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t)));
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveJlptProgress.getInstance().ping()));
+        });
     }
 
     /**

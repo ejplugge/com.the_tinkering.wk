@@ -28,7 +28,6 @@ import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.List;
@@ -37,14 +36,13 @@ import javax.annotation.Nullable;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.widget.TableLayout.LayoutParams.WRAP_CONTENT;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows a compact table of subjects on the dashboard,
  * backed by a LiveData instance.
  */
 public abstract class LiveSubjectTableView extends TableLayout {
-    private static final Logger LOGGER = Logger.get(LiveSubjectTableView.class);
-
     /**
      * The constructor.
      *
@@ -70,7 +68,7 @@ public abstract class LiveSubjectTableView extends TableLayout {
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.live_subject_table, this);
 
             setColumnStretchable(0, true);
@@ -78,9 +76,7 @@ public abstract class LiveSubjectTableView extends TableLayout {
             setColumnStretchable(1, true);
             setColumnShrinkable(1, true);
             setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -89,17 +85,7 @@ public abstract class LiveSubjectTableView extends TableLayout {
      * @param actment the lifecycle owner
      */
     public final void setLifecycleOwner(final Actment actment) {
-        try {
-            registerObserver(actment, t -> {
-                try {
-                    update(actment, t);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> registerObserver(actment, t -> safe(() -> update(actment, t))));
     }
 
     /**
@@ -108,44 +94,40 @@ public abstract class LiveSubjectTableView extends TableLayout {
      * @param subjects the subjects for this instance
      */
     private void update(final Actment actment, final @Nullable List<Subject> subjects) {
-        try {
-            if (subjects == null || subjects.isEmpty() || LiveFirstTimeSetup.getInstance().get() == 0 || !canShow()) {
-                setVisibility(GONE);
-                return;
-            }
-
-            final long[] ids = new long[subjects.size()];
-            for (int i=0; i<ids.length; i++) {
-                ids[i] = subjects.get(i).getId();
-            }
-
-            int i = 1;
-
-            for (final Subject subject: subjects) {
-                if (i >= getChildCount()) {
-                    final LiveSubjectTableRowView row = new LiveSubjectTableRowView(getContext());
-                    final LayoutParams rowLayoutParams = new LayoutParams(0, 0);
-                    rowLayoutParams.setMargins(0, 0, 0, 0);
-                    rowLayoutParams.width = MATCH_PARENT;
-                    rowLayoutParams.height = WRAP_CONTENT;
-                    addView(row, rowLayoutParams);
-                }
-                final @Nullable LiveSubjectTableRowView row = (LiveSubjectTableRowView) getChildAt(i);
-                if (row != null) {
-                    row.setSubject(subject, this::getExtraText);
-                    row.setOnClickListener(v -> actment.goToSubjectInfo(subject.getId(), ids, FragmentTransitionAnimation.RTL));
-                }
-                i++;
-            }
-
-            while (i < getChildCount()) {
-                removeViewAt(i);
-            }
-
-            setVisibility(VISIBLE);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+        if (subjects == null || subjects.isEmpty() || LiveFirstTimeSetup.getInstance().get() == 0 || !canShow()) {
+            setVisibility(GONE);
+            return;
         }
+
+        final long[] ids = new long[subjects.size()];
+        for (int i=0; i<ids.length; i++) {
+            ids[i] = subjects.get(i).getId();
+        }
+
+        int i = 1;
+
+        for (final Subject subject: subjects) {
+            if (i >= getChildCount()) {
+                final LiveSubjectTableRowView row = new LiveSubjectTableRowView(getContext());
+                final LayoutParams rowLayoutParams = new LayoutParams(0, 0);
+                rowLayoutParams.setMargins(0, 0, 0, 0);
+                rowLayoutParams.width = MATCH_PARENT;
+                rowLayoutParams.height = WRAP_CONTENT;
+                addView(row, rowLayoutParams);
+            }
+            final @Nullable LiveSubjectTableRowView row = (LiveSubjectTableRowView) getChildAt(i);
+            if (row != null) {
+                row.setSubject(subject, this::getExtraText);
+                row.setOnClickListener(v -> actment.goToSubjectInfo(subject.getId(), ids, FragmentTransitionAnimation.RTL));
+            }
+            i++;
+        }
+
+        while (i < getChildCount()) {
+            removeViewAt(i);
+        }
+
+        setVisibility(VISIBLE);
     }
 
     /**

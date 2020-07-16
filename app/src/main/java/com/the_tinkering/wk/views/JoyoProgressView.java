@@ -28,7 +28,6 @@ import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveJoyoProgress;
 import com.the_tinkering.wk.model.JoyoProgress;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.ArrayList;
@@ -36,12 +35,12 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * A custom view that shows a breakdown of Joyo progress.
  */
 public final class JoyoProgressView extends TableLayout {
-    private static final Logger LOGGER = Logger.get(JoyoProgressView.class);
-
     private final List<ViewProxy> locked = new ArrayList<>();
     private final List<ViewProxy> prePassed = new ArrayList<>();
     private final List<ViewProxy> passed = new ArrayList<>();
@@ -54,7 +53,7 @@ public final class JoyoProgressView extends TableLayout {
      */
     public JoyoProgressView(final Context context) {
         super(context);
-        init();
+        safe(this::init);
     }
 
     /**
@@ -65,59 +64,55 @@ public final class JoyoProgressView extends TableLayout {
      */
     public JoyoProgressView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        init();
+        safe(this::init);
     }
 
     /**
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
-            inflate(getContext(), R.layout.joyo_progress, this);
+        inflate(getContext(), R.layout.joyo_progress, this);
 
-            locked.add(new ViewProxy(this, R.id.joyoGrade1Locked));
-            locked.add(new ViewProxy(this, R.id.joyoGrade2Locked));
-            locked.add(new ViewProxy(this, R.id.joyoGrade3Locked));
-            locked.add(new ViewProxy(this, R.id.joyoGrade4Locked));
-            locked.add(new ViewProxy(this, R.id.joyoGrade5Locked));
-            locked.add(new ViewProxy(this, R.id.joyoGrade6Locked));
-            locked.add(new ViewProxy(this, R.id.joyoGrade7Locked));
+        locked.add(new ViewProxy(this, R.id.joyoGrade1Locked));
+        locked.add(new ViewProxy(this, R.id.joyoGrade2Locked));
+        locked.add(new ViewProxy(this, R.id.joyoGrade3Locked));
+        locked.add(new ViewProxy(this, R.id.joyoGrade4Locked));
+        locked.add(new ViewProxy(this, R.id.joyoGrade5Locked));
+        locked.add(new ViewProxy(this, R.id.joyoGrade6Locked));
+        locked.add(new ViewProxy(this, R.id.joyoGrade7Locked));
 
-            prePassed.add(new ViewProxy(this, R.id.joyoGrade1PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.joyoGrade2PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.joyoGrade3PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.joyoGrade4PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.joyoGrade5PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.joyoGrade6PrePassed));
-            prePassed.add(new ViewProxy(this, R.id.joyoGrade7PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.joyoGrade1PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.joyoGrade2PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.joyoGrade3PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.joyoGrade4PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.joyoGrade5PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.joyoGrade6PrePassed));
+        prePassed.add(new ViewProxy(this, R.id.joyoGrade7PrePassed));
 
-            passed.add(new ViewProxy(this, R.id.joyoGrade1Passed));
-            passed.add(new ViewProxy(this, R.id.joyoGrade2Passed));
-            passed.add(new ViewProxy(this, R.id.joyoGrade3Passed));
-            passed.add(new ViewProxy(this, R.id.joyoGrade4Passed));
-            passed.add(new ViewProxy(this, R.id.joyoGrade5Passed));
-            passed.add(new ViewProxy(this, R.id.joyoGrade6Passed));
-            passed.add(new ViewProxy(this, R.id.joyoGrade7Passed));
+        passed.add(new ViewProxy(this, R.id.joyoGrade1Passed));
+        passed.add(new ViewProxy(this, R.id.joyoGrade2Passed));
+        passed.add(new ViewProxy(this, R.id.joyoGrade3Passed));
+        passed.add(new ViewProxy(this, R.id.joyoGrade4Passed));
+        passed.add(new ViewProxy(this, R.id.joyoGrade5Passed));
+        passed.add(new ViewProxy(this, R.id.joyoGrade6Passed));
+        passed.add(new ViewProxy(this, R.id.joyoGrade7Passed));
 
-            burned.add(new ViewProxy(this, R.id.joyoGrade1Burned));
-            burned.add(new ViewProxy(this, R.id.joyoGrade2Burned));
-            burned.add(new ViewProxy(this, R.id.joyoGrade3Burned));
-            burned.add(new ViewProxy(this, R.id.joyoGrade4Burned));
-            burned.add(new ViewProxy(this, R.id.joyoGrade5Burned));
-            burned.add(new ViewProxy(this, R.id.joyoGrade6Burned));
-            burned.add(new ViewProxy(this, R.id.joyoGrade7Burned));
+        burned.add(new ViewProxy(this, R.id.joyoGrade1Burned));
+        burned.add(new ViewProxy(this, R.id.joyoGrade2Burned));
+        burned.add(new ViewProxy(this, R.id.joyoGrade3Burned));
+        burned.add(new ViewProxy(this, R.id.joyoGrade4Burned));
+        burned.add(new ViewProxy(this, R.id.joyoGrade5Burned));
+        burned.add(new ViewProxy(this, R.id.joyoGrade6Burned));
+        burned.add(new ViewProxy(this, R.id.joyoGrade7Burned));
 
-            setColumnShrinkable(0, true);
-            setColumnShrinkable(1, true);
-            setColumnShrinkable(2, true);
-            setColumnShrinkable(3, true);
-            setColumnShrinkable(4, true);
-            setColumnStretchable(0, true);
+        setColumnShrinkable(0, true);
+        setColumnShrinkable(1, true);
+        setColumnShrinkable(2, true);
+        setColumnShrinkable(3, true);
+        setColumnShrinkable(4, true);
+        setColumnStretchable(0, true);
 
-            setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
     }
 
     /**
@@ -126,25 +121,10 @@ public final class JoyoProgressView extends TableLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveJoyoProgress.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    update(t);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveJoyoProgress.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> {
+            LiveJoyoProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t)));
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveJoyoProgress.getInstance().ping()));
+        });
     }
 
     /**

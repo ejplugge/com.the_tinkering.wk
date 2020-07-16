@@ -27,19 +27,18 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.model.SrsBreakDown;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * A custom view for a bar in the post-60 progress bar chart.
  */
 public final class Post60ProgressBarView extends View {
-    private static final Logger LOGGER = Logger.get(Post60ProgressBarView.class);
-
     private int[] values = new int[0];
     private int[] colors = new int[0];
     private int[] textColors = new int[0];
@@ -109,7 +108,7 @@ public final class Post60ProgressBarView extends View {
 
     @Override
     protected void onDraw(final Canvas canvas) {
-        try {
+        safe(() -> {
             super.onDraw(canvas);
             prepare();
 
@@ -160,14 +159,14 @@ public final class Post60ProgressBarView extends View {
 
                 done += value;
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        try {
+        safe(() -> {
+            setMeasuredDimension(0, 0);
+
             prepare();
 
             final int w;
@@ -185,10 +184,7 @@ public final class Post60ProgressBarView extends View {
             }
 
             setMeasuredDimension(w, height + getPaddingTop() + getPaddingBottom());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            setMeasuredDimension(0, 0);
-        }
+        });
     }
 
     /**
@@ -197,7 +193,7 @@ public final class Post60ProgressBarView extends View {
      * @param breakDown the data
      */
     public void setBreakdown(final SrsBreakDown breakDown) {
-        try {
+        safe(() -> {
             final boolean subsections = GlobalSettings.Dashboard.getShowPost60Subsections();
             final boolean reversed = GlobalSettings.Dashboard.getShowPost60Reverse();
 
@@ -249,9 +245,7 @@ public final class Post60ProgressBarView extends View {
             dirty = true;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private int dp2px(final int dp) {

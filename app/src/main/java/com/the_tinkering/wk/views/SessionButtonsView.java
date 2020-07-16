@@ -30,14 +30,13 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows the buttons on the dashboard for starting/resuming a session.
  */
 public final class SessionButtonsView extends LinearLayout {
-    private static final Logger LOGGER = Logger.get(SessionButtonsView.class);
-
     private final ViewProxy resumeButton = new ViewProxy();
     private final ViewProxy resumeButtonRow = new ViewProxy();
     private final ViewProxy startLessonsButton = new ViewProxy();
@@ -69,7 +68,7 @@ public final class SessionButtonsView extends LinearLayout {
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.session_buttons, this);
             setOrientation(HORIZONTAL);
 
@@ -78,9 +77,7 @@ public final class SessionButtonsView extends LinearLayout {
             startLessonsButton.setDelegate(this, R.id.startLessonsButton);
             startReviewsButton.setDelegate(this, R.id.startReviewsButton);
             startButtonsRow.setDelegate(this, R.id.startButtonsRow);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -89,35 +86,16 @@ public final class SessionButtonsView extends LinearLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    if (t != null) {
-                        update(t);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        safe(() -> {
+            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+                if (t != null) {
+                    update(t);
                 }
-            });
+            }));
 
-            LiveSessionState.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveTimeLine.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveTimeLine.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveSessionState.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
+        });
     }
 
     /**
@@ -162,25 +140,21 @@ public final class SessionButtonsView extends LinearLayout {
      * Enable the buttons.
      */
     public void enableInteraction() {
-        try {
+        safe(() -> {
             startLessonsButton.enableInteraction();
             startReviewsButton.enableInteraction();
             resumeButton.enableInteraction();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
      * Disable the buttons.
      */
     public void disableInteraction() {
-        try {
+        safe(() -> {
             startLessonsButton.disableInteraction();
             startReviewsButton.disableInteraction();
             resumeButton.disableInteraction();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

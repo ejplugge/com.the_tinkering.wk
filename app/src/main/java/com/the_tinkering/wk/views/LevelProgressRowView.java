@@ -24,14 +24,13 @@ import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.livedata.LiveLevelDuration;
 import com.the_tinkering.wk.model.LevelProgress;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows a single bar in the level progress chart on the dashboard.
  */
 public final class LevelProgressRowView extends TableRow {
-    private static final Logger LOGGER = Logger.get(LevelProgressRowView.class);
-
     private final ViewProxy label = new ViewProxy();
     private final ViewProxy barView = new ViewProxy();
 
@@ -60,13 +59,11 @@ public final class LevelProgressRowView extends TableRow {
      * Initialize the view.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.level_progress_row, this);
             label.setDelegate(this, R.id.label);
             barView.setDelegate(this, R.id.bar);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -75,12 +72,10 @@ public final class LevelProgressRowView extends TableRow {
      * @param entry the details for the bar view
      */
     public void setEntry(final LevelProgress.BarEntry entry) {
-        try {
+        safe(() -> {
             label.setTextFormat("Lvl %d %s", entry.getLevel(), entry.getType().getLevelProgressLabel());
             barView.setValues(entry.getBuckets());
             barView.setShowTarget(LiveLevelDuration.getInstance().get().getLevel() == entry.getLevel() && entry.getType().hasLevelUpTarget());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

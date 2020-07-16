@@ -29,7 +29,6 @@ import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.livedata.LiveVacationMode;
 import com.the_tinkering.wk.model.TimeLine;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.Locale;
 
@@ -37,14 +36,13 @@ import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.util.ObjectSupport.getWaitTimeAsInformalString;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
 /**
  * A custom view that describes the number of upcoming reviews and when they happen.
  */
 public final class UpcomingReviewsView extends AppCompatTextView {
-    private static final Logger LOGGER = Logger.get(UpcomingReviewsView.class);
-
     /**
      * The constructor.
      *
@@ -70,35 +68,16 @@ public final class UpcomingReviewsView extends AppCompatTextView {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    if (t != null) {
-                        update(t);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        safe(() -> {
+            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+                if (t != null) {
+                    update(t);
                 }
-            });
+            }));
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveTimeLine.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            LiveVacationMode.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveTimeLine.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
+            LiveVacationMode.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
+        });
     }
 
     /**

@@ -25,14 +25,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows one row in the font selection activity.
  */
 public final class FontSelectionRowView extends ConstraintLayout {
-    private static final Logger LOGGER = Logger.get(FontSelectionRowView.class);
-
     private final ViewProxy fontName = new ViewProxy();
     private final ViewProxy fontSample = new ViewProxy();
     private final ViewProxy fontSwitch = new ViewProxy();
@@ -74,16 +73,14 @@ public final class FontSelectionRowView extends ConstraintLayout {
      * Initialize the view.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.font_selection_row_view, this);
             fontName.setDelegate(this, R.id.fontName);
             fontSample.setDelegate(this, R.id.fontSample);
             fontSwitch.setDelegate(this, R.id.fontSwitch);
 
             fontSample.setJapaneseLocale();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -92,18 +89,10 @@ public final class FontSelectionRowView extends ConstraintLayout {
      * @param fontId the font ID
      */
     public void setFontId(final String fontId) {
-        try {
+        safe(() -> {
             fontSwitch.setChecked(GlobalSettings.Font.isFontSelected(fontId));
-            fontSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                try {
-                    GlobalSettings.Font.setFontSelected(fontId, isChecked);
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            fontSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> safe(() -> GlobalSettings.Font.setFontSelected(fontId, isChecked)));
+        });
     }
 
     /**
@@ -112,11 +101,7 @@ public final class FontSelectionRowView extends ConstraintLayout {
      * @param name the name
      */
     public void setFontName(final CharSequence name) {
-        try {
-            fontName.setText(name);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> fontName.setText(name));
     }
 
     /**
@@ -125,10 +110,6 @@ public final class FontSelectionRowView extends ConstraintLayout {
      * @param typeface the typeface
      */
     public void setTypeface(final Typeface typeface) {
-        try {
-            fontSample.setTypeface(typeface);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> fontSample.setTypeface(typeface));
     }
 }

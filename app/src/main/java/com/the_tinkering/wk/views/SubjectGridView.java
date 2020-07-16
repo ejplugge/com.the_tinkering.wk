@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.views;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -29,13 +28,11 @@ import androidx.gridlayout.widget.GridLayout;
 import com.the_tinkering.wk.Actment;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
-import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.livedata.SubjectChangeListener;
 import com.the_tinkering.wk.livedata.SubjectChangeWatcher;
 import com.the_tinkering.wk.model.SubjectCardBinder;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
 import java.util.ArrayList;
@@ -45,13 +42,14 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * A custom view that shows a grid of subjects, showing the text, a meaning, a reading,
  * the SRS stage and the time until the next review.
  */
 public final class SubjectGridView extends GridLayout implements SubjectChangeListener, View.OnClickListener {
-    private static final Logger LOGGER = Logger.get(SubjectGridView.class);
-
     private final SubjectCardBinder binder = new SubjectCardBinder();
     private @Nullable WeakLcoRef<Actment> actmentRef = null;
     private List<Long> currentSubjectIds = Collections.emptyList();
@@ -81,7 +79,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
     }
 
     private void init() {
-        try {
+        safe(() -> {
             setOrientation(HORIZONTAL);
 
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
@@ -90,9 +88,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
                 spans = 1;
             }
             setColumnCount(spans);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void addSpace() {
@@ -142,6 +138,32 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
         return view;
     }
 
+    private void setSubjectIdsImpl(final Actment actment, final Collection<Long> subjectIds) {
+        actmentRef = new WeakLcoRef<>(actment);
+        currentSubjectIds = new ArrayList<>(subjectIds);
+
+        runAsync(actment,
+                publisher -> WkApplication.getDatabase().subjectCollectionsDao().getByIds(subjectIds), null,
+                result -> {
+                    if (result != null) {
+                        final Collection<Subject> subjects = new ArrayList<>();
+                        for (final long id: subjectIds) {
+                            @Nullable Subject subject = null;
+                            for (final Subject candidate: result) {
+                                if (candidate.getId() == id) {
+                                    subject = candidate;
+                                    break;
+                                }
+                            }
+                            if (subject != null) {
+                                subjects.add(subject);
+                            }
+                        }
+                        setSubjects(actmentRef.get(), subjects);
+                    }
+                });
+    }
+
     /**
      * Populate this table from a collection of subject IDs. The order of the
      * table is the iteration order of the IDs.
@@ -150,13 +172,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
      * @param subjectIds the subject IDs
      */
     public void setSubjectIds(final Actment actment, final Collection<Long> subjectIds) {
-        try {
-            actmentRef = new WeakLcoRef<>(actment);
-            currentSubjectIds = new ArrayList<>(subjectIds);
-            new Task(actment, this, subjectIds).execute();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> setSubjectIdsImpl(actment, subjectIds));
     }
 
     /**
@@ -167,7 +183,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
      * @param subjects the subjects
      */
     public void setSubjects(final Actment actment, final Iterable<Subject> subjects) {
-        try {
+        safe(() -> {
             actmentRef = new WeakLcoRef<>(actment);
             currentSubjectIds = new ArrayList<>();
             removeAllViews();
@@ -180,9 +196,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
                 addSpace();
             }
             SubjectChangeWatcher.getInstance().addListener(this);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -191,7 +205,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
      * @param id the subject's ID
      */
     public void removeSubject(final long id) {
-        try {
+        safe(() -> {
             currentSubjectIds.remove(id);
             for (int i=0; i<getChildCount(); i++) {
                 final @Nullable View cell = getChildAt(i);
@@ -203,9 +217,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
                     }
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private @Nullable View getViewBySubjectId(final long id) {
@@ -237,58 +249,11 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
 
     @Override
     public void onClick(final View v) {
-        try {
+        safe(() -> {
             final @Nullable Object subjectIdTag = v.getTag(R.id.subjectId);
             if (subjectIdTag instanceof Long && actmentRef != null) {
                 actmentRef.get().goToSubjectInfo((long) subjectIdTag, currentSubjectIds, FragmentTransitionAnimation.RTL);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
-    }
-
-    private static final class Task extends AsyncTask<Void, Void, List<Subject>> {
-        private final WeakLcoRef<Actment> actmentRef;
-        private final SubjectGridView view;
-        private final Collection<Long> subjectIds;
-
-        private Task(final Actment actment, final SubjectGridView view, final Collection<Long> subjectIds) {
-            actmentRef = new WeakLcoRef<>(actment);
-            this.view = view;
-            this.subjectIds = subjectIds;
-        }
-
-        @Override
-        protected List<Subject> doInBackground(final Void... params) {
-            try {
-                final AppDatabase db = WkApplication.getDatabase();
-                return db.subjectCollectionsDao().getByIds(subjectIds);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-                return Collections.emptyList();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final List<Subject> result) {
-            try {
-                final Collection<Subject> subjects = new ArrayList<>();
-                for (final long id: subjectIds) {
-                    @Nullable Subject subject = null;
-                    for (final Subject candidate: result) {
-                        if (candidate.getId() == id) {
-                            subject = candidate;
-                            break;
-                        }
-                    }
-                    if (subject != null) {
-                        subjects.add(subject);
-                    }
-                }
-                view.setSubjects(actmentRef.get(), subjects);
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
-            }
-        }
+        });
     }
 }

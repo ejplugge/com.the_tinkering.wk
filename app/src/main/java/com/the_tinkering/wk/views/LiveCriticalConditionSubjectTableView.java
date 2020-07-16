@@ -28,17 +28,16 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.List;
 import java.util.Locale;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows the critical condition list on the dashboard.
  */
 public final class LiveCriticalConditionSubjectTableView extends LiveSubjectTableView {
-    private static final Logger LOGGER = Logger.get(LiveCriticalConditionSubjectTableView.class);
-
     /**
      * The constructor.
      *
@@ -64,49 +63,28 @@ public final class LiveCriticalConditionSubjectTableView extends LiveSubjectTabl
      * Initialize the view.
      */
     private void init() {
-        try {
+        safe(() -> {
             final TextView textView = (TextView) ((ViewGroup) getChildAt(0)).getChildAt(0);
             textView.setText("Critical condition items");
             textView.setTextSize(GlobalSettings.Font.getFontSizeLiveSubjectTable());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     protected void registerObserver(final LifecycleOwner lifecycleOwner, final Observer<? super List<Subject>> observer) {
-        try {
+        safe(() -> {
             LiveCriticalCondition.getInstance().observe(lifecycleOwner, observer);
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveCriticalCondition.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveCriticalCondition.getInstance().ping()));
+        });
     }
 
     @Override
     protected boolean canShow() {
-        try {
-            return GlobalSettings.Dashboard.getShowCriticalCondition();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return false;
-        }
+        return safe(false, GlobalSettings.Dashboard::getShowCriticalCondition);
     }
 
     @Override
     protected String getExtraText(final Subject subject) {
-        try {
-            return String.format(Locale.ROOT, "%d%%", subject.getPercentageCorrect());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return "";
-        }
+        return safe("", () -> String.format(Locale.ROOT, "%d%%", subject.getPercentageCorrect()));
     }
 }

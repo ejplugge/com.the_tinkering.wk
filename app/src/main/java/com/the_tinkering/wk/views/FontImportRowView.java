@@ -22,16 +22,15 @@ import android.widget.TableRow;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows a row in the overview of imported fonts.
  */
 public final class FontImportRowView extends TableRow {
-    private static final Logger LOGGER = Logger.get(FontImportRowView.class);
-
     private @Nullable String name;
 
     private final ViewProxy fontName = new ViewProxy();
@@ -61,13 +60,11 @@ public final class FontImportRowView extends TableRow {
      * Initialize the view.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.font_import_row, this);
             setVisibility(GONE);
             fontName.setDelegate(this, R.id.fontName);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -83,12 +80,10 @@ public final class FontImportRowView extends TableRow {
      * @param name the value
      */
     public void setName(final String name) {
-        try {
+        safe(() -> {
             this.name = name;
             fontName.setText(name);
             setVisibility(VISIBLE);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

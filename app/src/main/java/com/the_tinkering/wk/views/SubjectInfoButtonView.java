@@ -39,7 +39,6 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.model.TypefaceConfiguration;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ObjectSupport;
 import com.the_tinkering.wk.util.ViewUtil;
 
@@ -49,11 +48,12 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * Custom view to show the subject info button with the subject's text or radical image.
  */
 public final class SubjectInfoButtonView extends View {
-    private static final Logger LOGGER = Logger.get(SubjectInfoButtonView.class);
     private static final Pattern SEARCH_URL_PATTERN = Pattern.compile("%s");
 
     private TypefaceConfiguration typefaceConfiguration = TypefaceConfiguration.DEFAULT;
@@ -116,96 +116,83 @@ public final class SubjectInfoButtonView extends View {
     }
 
     private void init() {
-        try {
+        safe(() -> {
             displayHeight = getContext().getResources().getDisplayMetrics().heightPixels;
             topMargin = dp2px(28);
             bottomMargin = dp2px(24);
             absoluteMinTextHeight = sp2px(14);
 
             setLongClickable(true);
-            setOnLongClickListener(v -> {
-                try {
-                    if (actionMode != null) {
-                        return false;
-                    }
-
-                    if (image != null) {
-                        Toast.makeText(getContext(), "This radical has no text character. Can't copy or search for an image-only radical.",
-                                Toast.LENGTH_LONG).show();
-                        return false;
-                    }
-
-                    setSelected(true);
-
-                    actionMode = startActionMode(new ActionMode.Callback() {
-                        @Override
-                        public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-                            try {
-                                menu.add(0, Menu.NONE, 1, "Copy title");
-
-                                for (int i=1; i<=5; i++) {
-                                    if (GlobalSettings.Other.hasSearchEngine(i)) {
-                                        menu.add(0, Menu.NONE, i+1, GlobalSettings.Other.getSearchEngineName(i));
-                                    }
-                                }
-                                return true;
-                            } catch (final Exception e) {
-                                LOGGER.uerr(e);
-                                return true;
-                            }
-                        }
-
-                        @Override
-                        public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
-                            try {
-                                final int order = item.getOrder();
-                                if (order == 1) {
-                                    final @Nullable ClipboardManager clipboard =
-                                            (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                                    if (clipboard != null) {
-                                        final ClipData clip = ClipData.newPlainText("title", characters);
-                                        clipboard.setPrimaryClip(clip);
-                                        Toast.makeText(getContext(), "Subject title copied", Toast.LENGTH_SHORT).show();
-                                    }
-                                    mode.finish();
-                                    return true;
-                                }
-                                if (order >= 2 && order <= 6 && GlobalSettings.Other.hasSearchEngine(order-1)) {
-                                    final String query = URLEncoder.encode(characters, "UTF-8");
-                                    final String urlPattern = GlobalSettings.Other.getSearchEngineUrl(order-1);
-                                    final String url = SEARCH_URL_PATTERN.matcher(urlPattern).replaceAll(query);
-                                    final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                    getContext().startActivity(intent);
-                                    mode.finish();
-                                    return true;
-                                }
-                                return false;
-                            } catch (final Exception e) {
-                                LOGGER.uerr(e);
-                                return false;
-                            }
-                        }
-
-                        @Override
-                        public void onDestroyActionMode(final ActionMode mode) {
-                            actionMode = null;
-                        }
-                    });
-
-                    return true;
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+            setOnLongClickListener(v -> safe(false, () -> {
+                if (actionMode != null) {
                     return false;
                 }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+
+                if (image != null) {
+                    Toast.makeText(getContext(), "This radical has no text character. Can't copy or search for an image-only radical.",
+                            Toast.LENGTH_LONG).show();
+                    return false;
+                }
+
+                setSelected(true);
+
+                actionMode = startActionMode(new ActionMode.Callback() {
+                    @Override
+                    public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+                        return safe(true, () -> {
+                            menu.add(0, Menu.NONE, 1, "Copy title");
+
+                            for (int i=1; i<=5; i++) {
+                                if (GlobalSettings.Other.hasSearchEngine(i)) {
+                                    menu.add(0, Menu.NONE, i+1, GlobalSettings.Other.getSearchEngineName(i));
+                                }
+                            }
+                            return true;
+                        });
+                    }
+
+                    @Override
+                    public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+                        return safe(false, () -> {
+                            final int order = item.getOrder();
+                            if (order == 1) {
+                                final @Nullable ClipboardManager clipboard =
+                                        (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                                if (clipboard != null) {
+                                    final ClipData clip = ClipData.newPlainText("title", characters);
+                                    clipboard.setPrimaryClip(clip);
+                                    Toast.makeText(getContext(), "Subject title copied", Toast.LENGTH_SHORT).show();
+                                }
+                                mode.finish();
+                                return true;
+                            }
+                            if (order >= 2 && order <= 6 && GlobalSettings.Other.hasSearchEngine(order-1)) {
+                                final String query = URLEncoder.encode(characters, "UTF-8");
+                                final String urlPattern = GlobalSettings.Other.getSearchEngineUrl(order-1);
+                                final String url = SEARCH_URL_PATTERN.matcher(urlPattern).replaceAll(query);
+                                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                getContext().startActivity(intent);
+                                mode.finish();
+                                return true;
+                            }
+                            return false;
+                        });
+                    }
+
+                    @Override
+                    public void onDestroyActionMode(final ActionMode mode) {
+                        actionMode = null;
+                    }
+                });
+
+                return true;
+            }));
+        });
     }
 
     /**
@@ -324,7 +311,7 @@ public final class SubjectInfoButtonView extends View {
 
     @Override
     protected void onDraw(final Canvas canvas) {
-        try {
+        safe(() -> {
             super.onDraw(canvas);
 
             if (textWidth <= 0 || textHeight <= 0) {
@@ -371,14 +358,13 @@ public final class SubjectInfoButtonView extends View {
                 }
                 image.draw(canvas);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        try {
+        safe(() -> {
+            setMeasuredDimension(0, 0);
             final int measureMaxWidth = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED
                     ? getContext().getResources().getDisplayMetrics().widthPixels
                     : MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
@@ -389,10 +375,7 @@ public final class SubjectInfoButtonView extends View {
             setMeasuredDimension(
                     viewWidth + getPaddingLeft() + getPaddingRight(),
                     viewHeight + getPaddingTop() + getPaddingBottom());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            setMeasuredDimension(0, 0);
-        }
+        });
     }
 
     /**
@@ -401,7 +384,7 @@ public final class SubjectInfoButtonView extends View {
      * @param subject the subject
      */
     public void setSubject(final Subject subject) {
-        try {
+        safe(() -> {
             characters = ObjectSupport.orElse(subject.getCharacters(), "");
             image = subject.needsTitleImage() ? getContext().getResources().getDrawable(subject.getTitleImageId()) : null;
             textColor = subject.getTextColor();
@@ -413,9 +396,7 @@ public final class SubjectInfoButtonView extends View {
             setTag(R.id.subjectId, subject.getId());
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -425,15 +406,13 @@ public final class SubjectInfoButtonView extends View {
      * @param sizeSp the size in SP
      */
     public void setSizeSp(final int sizeSp) {
-        try {
+        safe(() -> {
             this.sizeSp = sizeSp;
             maxWidth = -1;
             maxHeight = -1;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -444,15 +423,13 @@ public final class SubjectInfoButtonView extends View {
      * @param maxHeightPx the maximum width in pixels
      */
     public void setMaxSize(final int maxWidthPx, final int maxHeightPx) {
-        try {
+        safe(() -> {
             maxWidth = maxWidthPx;
             maxHeight = maxHeightPx;
             sizeSp = -1;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -461,13 +438,11 @@ public final class SubjectInfoButtonView extends View {
      * @param transparent true if it should
      */
     public void setTransparent(final boolean transparent) {
-        try {
+        safe(() -> {
             this.transparent = transparent;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -476,13 +451,11 @@ public final class SubjectInfoButtonView extends View {
      * @param typefaceConfiguration the typeface configuration
      */
     public void setTypefaceConfiguration(final TypefaceConfiguration typefaceConfiguration) {
-        try {
+        safe(() -> {
             this.typefaceConfiguration = typefaceConfiguration;
             invalidate();
             requestLayout();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -491,13 +464,10 @@ public final class SubjectInfoButtonView extends View {
      * @return the width in pixels
      */
     public int getCalculatedWidth() {
-        try {
+        return safe(0, () -> {
             prepare(maxWidth, maxHeight);
             return viewWidth;
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return 0;
-        }
+        });
     }
 
     private int dp2px(final int dp) {

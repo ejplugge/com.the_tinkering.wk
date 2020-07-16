@@ -26,16 +26,14 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static com.the_tinkering.wk.util.TextUtil.renderHtml;
 
 /**
  * A custom view for a row in a LiveSubjectTableView.
  */
 public final class LiveSubjectTableRowView extends TableRow {
-    private static final Logger LOGGER = Logger.get(LiveSubjectTableRowView.class);
-
     private final ViewProxy rowText = new ViewProxy();
     private final ViewProxy rowExtra = new ViewProxy();
 
@@ -64,13 +62,11 @@ public final class LiveSubjectTableRowView extends TableRow {
      * Initialize the view.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.live_subject_table_row, this);
             rowText.setDelegate(this, R.id.rowText);
             rowExtra.setDelegate(this, R.id.rowExtra);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -80,7 +76,7 @@ public final class LiveSubjectTableRowView extends TableRow {
      * @param extraTextFunction the function producing the extra text
      */
     public void setSubject(final Subject subject, final Function<? super Subject, String> extraTextFunction) {
-        try {
+        safe(() -> {
             setBackgroundColor(subject.getBackgroundColor());
             rowText.setBackgroundColor(subject.getBackgroundColor());
             rowExtra.setBackgroundColor(subject.getBackgroundColor());
@@ -94,8 +90,6 @@ public final class LiveSubjectTableRowView extends TableRow {
             rowText.setText(renderHtml(subject.getCharactersHtml()));
             rowText.setJapaneseLocale();
             rowExtra.setText(extraTextFunction.apply(subject));
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }

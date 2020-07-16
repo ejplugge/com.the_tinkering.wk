@@ -25,14 +25,13 @@ import androidx.lifecycle.LifecycleOwner;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
-import com.the_tinkering.wk.util.Logger;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows the first-time setup banner.
  */
 public final class FirstTimeSetupView extends AppCompatTextView {
-    private static final Logger LOGGER = Logger.get(FirstTimeSetupView.class);
-
     /**
      * The constructor.
      *
@@ -58,17 +57,7 @@ public final class FirstTimeSetupView extends AppCompatTextView {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    update();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(this::update)));
     }
 
     /**

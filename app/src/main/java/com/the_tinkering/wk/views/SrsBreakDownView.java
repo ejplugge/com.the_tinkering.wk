@@ -29,18 +29,17 @@ import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.model.SrsBreakDown;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * A custom view that shows the SRS breakdown on the dashboard.
  */
 public final class SrsBreakDownView extends ConstraintLayout {
-    private static final Logger LOGGER = Logger.get(SrsBreakDownView.class);
-
     private final List<ViewProxy> counts = new ArrayList<>();
     private final List<ViewProxy> views = new ArrayList<>();
 
@@ -51,7 +50,7 @@ public final class SrsBreakDownView extends ConstraintLayout {
      */
     public SrsBreakDownView(final Context context) {
         super(context);
-        init();
+        safe(this::init);
     }
 
     /**
@@ -62,40 +61,36 @@ public final class SrsBreakDownView extends ConstraintLayout {
      */
     public SrsBreakDownView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        init();
+        safe(this::init);
     }
 
     /**
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
-            inflate(getContext(), R.layout.srs_breakdown, this);
-            setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
+        inflate(getContext(), R.layout.srs_breakdown, this);
+        setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
 
-            counts.add(new ViewProxy(this, R.id.breakdownBucket0Count));
-            counts.add(new ViewProxy(this, R.id.breakdownBucket1Count));
-            counts.add(new ViewProxy(this, R.id.breakdownBucket2Count));
-            counts.add(new ViewProxy(this, R.id.breakdownBucket3Count));
-            counts.add(new ViewProxy(this, R.id.breakdownBucket4Count));
+        counts.add(new ViewProxy(this, R.id.breakdownBucket0Count));
+        counts.add(new ViewProxy(this, R.id.breakdownBucket1Count));
+        counts.add(new ViewProxy(this, R.id.breakdownBucket2Count));
+        counts.add(new ViewProxy(this, R.id.breakdownBucket3Count));
+        counts.add(new ViewProxy(this, R.id.breakdownBucket4Count));
 
-            views.add(new ViewProxy(this, R.id.breakdownBucket0View));
-            views.add(new ViewProxy(this, R.id.breakdownBucket1View));
-            views.add(new ViewProxy(this, R.id.breakdownBucket2View));
-            views.add(new ViewProxy(this, R.id.breakdownBucket3View));
-            views.add(new ViewProxy(this, R.id.breakdownBucket4View));
+        views.add(new ViewProxy(this, R.id.breakdownBucket0View));
+        views.add(new ViewProxy(this, R.id.breakdownBucket1View));
+        views.add(new ViewProxy(this, R.id.breakdownBucket2View));
+        views.add(new ViewProxy(this, R.id.breakdownBucket3View));
+        views.add(new ViewProxy(this, R.id.breakdownBucket4View));
 
-            for (int i=0; i<5; i++) {
-                views.get(i).setBackgroundColor(ActiveTheme.getShallowStageBucketColors5()[i]);
-                if (ActiveTheme.getCurrentTheme() == ActiveTheme.LIGHT) {
-                    counts.get(i).setShadowLayer(3, 1, 1, 0xFF000000);
-                }
-                else {
-                    counts.get(i).setShadowLayer(0, 0, 0, 0);
-                }
+        for (int i=0; i<5; i++) {
+            views.get(i).setBackgroundColor(ActiveTheme.getShallowStageBucketColors5()[i]);
+            if (ActiveTheme.getCurrentTheme() == ActiveTheme.LIGHT) {
+                counts.get(i).setShadowLayer(3, 1, 1, 0xFF000000);
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
+            else {
+                counts.get(i).setShadowLayer(0, 0, 0, 0);
+            }
         }
     }
 
@@ -105,27 +100,15 @@ public final class SrsBreakDownView extends ConstraintLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveSrsBreakDown.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    if (t != null) {
-                        update(t);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        safe(() -> {
+            LiveSrsBreakDown.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+                if (t != null) {
+                    update(t);
                 }
-            });
+            }));
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveSrsBreakDown.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveSrsBreakDown.getInstance().ping()));
+        });
     }
 
     /**

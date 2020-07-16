@@ -28,18 +28,17 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
-import com.the_tinkering.wk.util.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 /**
  * A custom view that shows recent unlocks on the dashboard.
  */
 public final class LiveRecentUnlocksSubjectTableView extends LiveSubjectTableView {
-    private static final Logger LOGGER = Logger.get(LiveRecentUnlocksSubjectTableView.class);
-
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM d", Locale.ENGLISH);
 
     /**
@@ -67,53 +66,34 @@ public final class LiveRecentUnlocksSubjectTableView extends LiveSubjectTableVie
      * Initialize the view.
      */
     private void init() {
-        try {
+        safe(() -> {
             final TextView textView = (TextView) ((ViewGroup) getChildAt(0)).getChildAt(0);
             textView.setText("Recent unlocks in the last 30 days");
             textView.setTextSize(GlobalSettings.Font.getFontSizeLiveSubjectTable());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     @Override
     protected void registerObserver(final LifecycleOwner lifecycleOwner, final Observer<? super List<Subject>> observer) {
-        try {
+        safe(() -> {
             LiveRecentUnlocks.getInstance().observe(lifecycleOwner, observer);
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveRecentUnlocks.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveRecentUnlocks.getInstance().ping()));
+        });
     }
 
     @Override
     protected boolean canShow() {
-        try {
-            return GlobalSettings.Dashboard.getShowRecentUnlocks();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return false;
-        }
+        return safe(false, GlobalSettings.Dashboard::getShowRecentUnlocks);
     }
 
     @Override
     protected String getExtraText(final Subject subject) {
-        try {
+        return safe("", () -> {
             if (subject.getUnlockedAt() == null) {
                 return "";
             }
             //noinspection AccessToNonThreadSafeStaticField
             return DATE_FORMAT.format(subject.getUnlockedAt());
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-            return "";
-        }
+        });
     }
 }

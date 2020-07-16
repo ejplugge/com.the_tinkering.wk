@@ -26,16 +26,15 @@ import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveTaskCounts;
-import com.the_tinkering.wk.util.Logger;
 
 import java.util.Locale;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that describes the progress of background tasks.
  */
 public final class SyncProgressView extends AppCompatTextView {
-    private static final Logger LOGGER = Logger.get(SyncProgressView.class);
-
     /**
      * The constructor.
      *
@@ -61,33 +60,11 @@ public final class SyncProgressView extends AppCompatTextView {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveApiProgress.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    update();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            LiveTaskCounts.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    update();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    update();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> {
+            LiveApiProgress.getInstance().observe(lifecycleOwner, t -> safe(this::update));
+            LiveTaskCounts.getInstance().observe(lifecycleOwner, t -> safe(this::update));
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(this::update));
+        });
     }
 
     /**

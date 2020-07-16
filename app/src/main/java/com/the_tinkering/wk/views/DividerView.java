@@ -21,15 +21,14 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.the_tinkering.wk.R;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows a thin horizontal bar as a divider.
  */
 public final class DividerView extends View {
-    private static final Logger LOGGER = Logger.get(DividerView.class);
-
     /**
      * The constructor.
      *
@@ -55,10 +54,6 @@ public final class DividerView extends View {
      * Initialize the view.
      */
     private void init() {
-        try {
-            setBackgroundColor(ThemeUtil.getColor(R.attr.colorDivider));
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        safe(() -> setBackgroundColor(ThemeUtil.getColor(R.attr.colorDivider)));
     }
 }

@@ -37,7 +37,6 @@ import com.the_tinkering.wk.model.PitchInfo;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.AudioUtil;
-import com.the_tinkering.wk.util.Logger;
 
 import java.io.File;
 import java.util.List;
@@ -50,6 +49,7 @@ import static androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PAR
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
 import static com.the_tinkering.wk.Constants.FONT_SIZE_SMALL;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static com.the_tinkering.wk.util.ViewUtil.getNearestEnclosingViewOfType;
 
 /**
@@ -57,8 +57,6 @@ import static com.the_tinkering.wk.util.ViewUtil.getNearestEnclosingViewOfType;
  * as a child of SubjectInfoView.
  */
 public final class SubjectInfoHeadlineView extends ConstraintLayout {
-    private static final Logger LOGGER = Logger.get(SubjectInfoHeadlineView.class);
-
     private final ViewProxy button = new ViewProxy();
     private final ViewProxy title = new ViewProxy();
     private final ViewProxy meaning = new ViewProxy();
@@ -141,12 +139,10 @@ public final class SubjectInfoHeadlineView extends ConstraintLayout {
      * @param newSubject the subject
      */
     public void setSubject(final Subject newSubject) {
-        try {
+        safe(() -> {
             subject = newSubject;
             layoutSubject();
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     private void layoutSubject() {
@@ -264,13 +260,7 @@ public final class SubjectInfoHeadlineView extends ConstraintLayout {
                 playButton.setTextSize(FONT_SIZE_SMALL);
                 playButton.setCompoundDrawablesWithIntrinsicBounds(
                         ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_volume_up_24px), null, null, null);
-                playButton.setOnClickListener(v -> {
-                    try {
-                        AudioUtil.playAudio(subject, r.getReading());
-                    } catch (final Exception e) {
-                        LOGGER.uerr(e);
-                    }
-                });
+                playButton.setOnClickListener(v -> safe(() -> AudioUtil.playAudio(subject, r.getReading())));
                 final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, 0);
                 layoutParams.width = WRAP_CONTENT;
                 layoutParams.height = WRAP_CONTENT;
@@ -281,21 +271,17 @@ public final class SubjectInfoHeadlineView extends ConstraintLayout {
         revealButton.setText(getSubjectInfoDump().getRevealButtonLabel());
 
         // Show all button
-        revealButton.setOnClickListener(v -> {
-            try {
-                final @Nullable SubjectInfoDump dump = FloatingUiState.showDumpStage;
-                if (dump != null) {
-                    FloatingUiState.showDumpStage = dump.getNextStage();
-                }
-                final @Nullable SubjectInfoView parent = getNearestEnclosingViewOfType(this, SubjectInfoView.class);
-                if (parent != null) {
-                    parent.layoutSubject(true);
-                }
-                layoutSubject();
-            } catch (final Exception e) {
-                LOGGER.uerr(e);
+        revealButton.setOnClickListener(v -> safe(() -> {
+            final @Nullable SubjectInfoDump dump = FloatingUiState.showDumpStage;
+            if (dump != null) {
+                FloatingUiState.showDumpStage = dump.getNextStage();
             }
-        });
+            final @Nullable SubjectInfoView parent = getNearestEnclosingViewOfType(this, SubjectInfoView.class);
+            if (parent != null) {
+                parent.layoutSubject(true);
+            }
+            layoutSubject();
+        }));
         revealButton.setVisibility(getSubjectInfoDump().getShowRevealButton());
 
         title.setTextSize(textSize);

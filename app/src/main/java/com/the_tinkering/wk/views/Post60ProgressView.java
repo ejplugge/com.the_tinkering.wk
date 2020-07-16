@@ -28,15 +28,14 @@ import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.model.SrsBreakDown;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ThemeUtil;
+
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A custom view that shows the post-60 progress bar.
  */
 public final class Post60ProgressView extends LinearLayout {
-    private static final Logger LOGGER = Logger.get(Post60ProgressView.class);
-
     private final ViewProxy barView = new ViewProxy();
 
     /**
@@ -64,14 +63,12 @@ public final class Post60ProgressView extends LinearLayout {
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        try {
+        safe(() -> {
             inflate(getContext(), R.layout.post60_progress, this);
             setOrientation(VERTICAL);
             setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
             barView.setDelegate(this, R.id.bar);
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 
     /**
@@ -80,27 +77,15 @@ public final class Post60ProgressView extends LinearLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        try {
-            LiveSrsBreakDown.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    if (t != null) {
-                        update(t);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
+        safe(() -> {
+            LiveSrsBreakDown.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+                if (t != null) {
+                    update(t);
                 }
-            });
+            }));
 
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> {
-                try {
-                    LiveSrsBreakDown.getInstance().ping();
-                } catch (final Exception e) {
-                    LOGGER.uerr(e);
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveSrsBreakDown.getInstance().ping()));
+        });
     }
 
     /**
