@@ -64,12 +64,12 @@
         <item>TYPE_THEN_SRS</item>
         <item>SRS_THEN_TYPE</item>
         <item>SRS_THEN_LEVEL</item>
-        <item>LEVEL_THEN_TYPE_THEN_SRS("Level,</item>
-        <item>LEVEL_THEN_SRS_THEN_TYPE("Level,</item>
-        <item>TYPE_THEN_LEVEL_THEN_SRS("Type,</item>
-        <item>TYPE_THEN_SRS_THEN_LEVEL("Type,</item>
-        <item>SRS_THEN_TYPE_THEN_LEVEL("SRS</item>
-        <item>SRS_THEN_LEVEL_THEN_TYPE("SRS</item>
+        <item>LEVEL_THEN_TYPE_THEN_SRS</item>
+        <item>LEVEL_THEN_SRS_THEN_TYPE</item>
+        <item>TYPE_THEN_LEVEL_THEN_SRS</item>
+        <item>TYPE_THEN_SRS_THEN_LEVEL</item>
+        <item>SRS_THEN_TYPE_THEN_LEVEL</item>
+        <item>SRS_THEN_LEVEL_THEN_TYPE</item>
     </string-array>
 
     <string-array name="voicePreferences">
