@@ -60,6 +60,9 @@ public enum SessionPriority {
         public Comparator<Subject> getComparator(final Comparator<Subject> base,
                                                  final Collection<Long> levelUpIds,
                                                  final int userLevel, final int maxLevel) {
+            if (userLevel >= maxLevel) {
+                return base;
+            }
             final Comparator<Subject> c = (o1, o2) -> Boolean.compare(
                     !o2.isPassed() && levelUpIds.contains(o2.getId()), !o1.isPassed() && levelUpIds.contains(o1.getId()));
             return c.thenComparing(base);
