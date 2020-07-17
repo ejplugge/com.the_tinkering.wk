@@ -242,13 +242,13 @@ public final class ObjectSupport {
         if (waitTime <= 0) {
             return "now";
         }
-        if (waitTime < HOUR * 2) {
-            return String.format(Locale.ROOT, "%dm", (waitTime+ MINUTE/2) / MINUTE);
+        if (waitTime < HOUR) {
+            return String.format(Locale.ROOT, "%dm", (waitTime + MINUTE/2) / MINUTE);
         }
         if (waitTime < DAY * 2) {
-            return String.format(Locale.ROOT, "%dh", (waitTime+ HOUR/2) / HOUR);
+            return String.format(Locale.ROOT, "%dh", (waitTime + HOUR/2) / HOUR);
         }
-        return String.format(Locale.ROOT, "in %dd", (waitTime+ DAY/2) / DAY);
+        return String.format(Locale.ROOT, "%dd", (waitTime + DAY/2) / DAY);
     }
 
     /**
