@@ -16,12 +16,12 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
 
+import com.airbnb.lottie.SimpleColorFilter;
 import com.madrapps.pikolo.listeners.OnColorSelectionListener;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -288,7 +288,7 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
 
         final @Nullable Drawable background = colorPickerPreview.getBackground();
         if (background != null) {
-            background.setColorFilter(actualColor, PorterDuff.Mode.MULTIPLY);
+            background.setColorFilter(new SimpleColorFilter(actualColor));
         }
 
         rgbValues.setTextFormat("RGB values:\n#%06X", actualColor & 0xFFFFFF);
