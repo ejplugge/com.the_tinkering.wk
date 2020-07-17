@@ -17,7 +17,8 @@
 package com.the_tinkering.wk;
 
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.the_tinkering.wk.db.model.Subject;
@@ -53,6 +54,7 @@ import static com.the_tinkering.wk.enums.SessionType.LESSON;
 import static com.the_tinkering.wk.enums.SessionType.REVIEW;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A class with a bunch of static accessors for app settings.
@@ -88,7 +90,7 @@ public final class GlobalSettings {
      * @return the setting store
      */
     private static SharedPreferences prefs() {
-        return PreferenceManager.getDefaultSharedPreferences(application);
+        return PreferenceManager.getDefaultSharedPreferences(requireNonNull(application));
     }
 
     /**

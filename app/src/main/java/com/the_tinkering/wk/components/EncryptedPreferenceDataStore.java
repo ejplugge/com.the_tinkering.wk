@@ -18,10 +18,10 @@ package com.the_tinkering.wk.components;
 
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.util.Base64;
 
 import androidx.preference.PreferenceDataStore;
+import androidx.preference.PreferenceManager;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
