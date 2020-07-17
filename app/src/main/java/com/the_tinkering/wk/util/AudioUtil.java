@@ -616,6 +616,11 @@ public final class AudioUtil {
         }
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private static void setAudioStreamTypePre21(final MediaPlayer player) {
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    }
+
     /**
      * Play an audio file for a subject. Take into account the user's preferences,
      * and try to get a match for the given reading.
@@ -633,7 +638,7 @@ public final class AudioUtil {
                     player.setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build());
                 }
                 else {
-                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    setAudioStreamTypePre21(player);
                 }
                 player.setDataSource(WkApplication.getInstance(), Uri.fromFile(audioFile));
                 player.prepare();
