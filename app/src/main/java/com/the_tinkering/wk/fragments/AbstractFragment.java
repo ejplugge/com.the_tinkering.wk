@@ -72,6 +72,14 @@ public abstract class AbstractFragment extends Fragment implements Actment {
         });
     }
 
+    @Override
+    public final void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
+        safe(() -> {
+            super.onViewCreated(view, savedInstanceState);
+            onViewCreatedLocal(view, savedInstanceState);
+        });
+    }
+
     /**
      * True if the device is currently in landscape mode.
      *
@@ -246,9 +254,12 @@ public abstract class AbstractFragment extends Fragment implements Actment {
      */
     protected abstract void onResumeLocal();
 
-    @SuppressWarnings("AbstractMethodOverridesConcreteMethod")
-    @Override
-    public abstract void onViewCreated(final View view, final @Nullable Bundle savedInstanceState);
+    /**
+     * Per-subclass part of onViewCreated
+     * @param view the root view
+     * @param savedInstanceState the instance state
+     */
+    public abstract void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState);
 
     /**
      * Get the toolbar title for this fragment.

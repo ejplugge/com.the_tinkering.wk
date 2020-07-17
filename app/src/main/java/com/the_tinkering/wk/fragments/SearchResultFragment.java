@@ -156,7 +156,8 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
         }
     }
 
-    private void onViewCreatedBase(final View view, final @Nullable Bundle savedInstanceState) {
+    @Override
+    public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         resultView.setDelegate(view, R.id.resultView);
         numHits.setDelegate(view, R.id.numHits);
         tutorialText.setDelegate(view, R.id.tutorialText);
@@ -224,11 +225,6 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
             }
             updateViews();
         });
-    }
-
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        safe(() -> onViewCreatedBase(view, savedInstanceState));
     }
 
     @Override

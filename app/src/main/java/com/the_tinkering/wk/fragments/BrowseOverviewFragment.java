@@ -125,7 +125,8 @@ public final class BrowseOverviewFragment extends AbstractFragment {
         }
     }
 
-    private void onViewCreatedBase(final View view, final @Nullable Bundle savedInstanceState) {
+    @Override
+    public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         levelTable.setDelegate(view, R.id.levelTable);
         queryField.setDelegate(view, R.id.query);
         queryButton.setDelegate(view, R.id.queryButton);
@@ -236,11 +237,6 @@ public final class BrowseOverviewFragment extends AbstractFragment {
                 null,
                 result -> render(result == null ? 60 : result)
         );
-    }
-
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        safe(() -> onViewCreatedBase(view, savedInstanceState));
     }
 
     @Override

@@ -104,7 +104,8 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
         nextButton.requestFocus();
     }
 
-    private void onViewCreatedBase(final View view) {
+    @Override
+    public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         if (question == null || subject == null) {
             return;
         }
@@ -185,11 +186,6 @@ public final class AnsweredSessionFragment extends AbstractSessionFragment {
                 digraphMatchText.setVisibility(false);
             }
         }
-    }
-
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        safe(() -> onViewCreatedBase(view));
     }
 
     @Override

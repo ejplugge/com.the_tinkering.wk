@@ -113,7 +113,8 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
         updateViews();
     }
 
-    private void onViewCreatedBase(final View view) {
+    @Override
+    public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         if (question == null || subject == null) {
             return;
         }
@@ -203,11 +204,6 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
             showingAnswer = false;
             session.submitAnkiIncorrect();
         }));
-    }
-
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        safe(() -> onViewCreatedBase(view));
     }
 
     @Override

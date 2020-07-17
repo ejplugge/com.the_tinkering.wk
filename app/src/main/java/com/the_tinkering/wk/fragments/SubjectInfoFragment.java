@@ -79,28 +79,26 @@ public final class SubjectInfoFragment extends AbstractFragment implements Swipi
     }
 
     @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        safe(() -> {
-            scrollView.setDelegate(view, R.id.scrollView);
-            subjectInfo.setDelegate(view, R.id.subjectInfo);
+    public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
+        scrollView.setDelegate(view, R.id.scrollView);
+        subjectInfo.setDelegate(view, R.id.subjectInfo);
 
-            scrollView.setSwipeListener(this);
+        scrollView.setSwipeListener(this);
 
-            final @Nullable Bundle args = getArguments();
-            if (args != null) {
-                final long subjectId = args.getLong("id", -1);
-                if (subjectId != -1) {
-                    runAsync(
-                            this,
-                            publisher -> WkApplication.getDatabase().subjectDao().getById(subjectId),
-                            null,
-                            result -> {
-                        currentSubject = result;
-                        updateViews();
-                    });
-                }
+        final @Nullable Bundle args = getArguments();
+        if (args != null) {
+            final long subjectId = args.getLong("id", -1);
+            if (subjectId != -1) {
+                runAsync(
+                        this,
+                        publisher -> WkApplication.getDatabase().subjectDao().getById(subjectId),
+                        null,
+                        result -> {
+                            currentSubject = result;
+                            updateViews();
+                        });
             }
-        });
+        }
     }
 
     @Override

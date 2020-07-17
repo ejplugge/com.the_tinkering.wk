@@ -88,7 +88,8 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         finishButton.requestFocus();
     }
 
-    private void onViewCreatedBase(final View view) {
+    @Override
+    public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         specialButton1.setDelegate(view, R.id.specialButton1);
         specialButton2.setDelegate(view, R.id.specialButton2);
         specialButton3.setDelegate(view, R.id.specialButton3);
@@ -211,11 +212,6 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
             showItems();
             enableInteraction();
         }));
-    }
-
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        safe(() -> onViewCreatedBase(view));
     }
 
     @Override

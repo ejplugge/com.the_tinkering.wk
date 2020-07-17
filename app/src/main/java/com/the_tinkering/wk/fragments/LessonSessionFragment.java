@@ -91,7 +91,8 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
         playAudio();
     }
 
-    private void onViewCreatedBase(final View view) {
+    @Override
+    public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         if (item == null || subject == null) {
             return;
         }
@@ -136,11 +137,6 @@ public final class LessonSessionFragment extends AbstractSessionFragment impleme
                 session.moveToNextLessonItem();
             }
         }));
-    }
-
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        safe(() -> onViewCreatedBase(view));
     }
 
     @Override

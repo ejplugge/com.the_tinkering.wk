@@ -117,7 +117,8 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
         questionEdit.requestFocusInTouchMode();
     }
 
-    private void onViewCreatedBase(final View view) {
+    @Override
+    public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         if (question == null || subject == null) {
             return;
         }
@@ -271,11 +272,6 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
                 showSoftInput(questionEdit);
             }
         }));
-    }
-
-    @Override
-    public void onViewCreated(final View view, final @Nullable Bundle savedInstanceState) {
-        safe(() -> onViewCreatedBase(view));
     }
 
     @Override
