@@ -282,17 +282,17 @@ public final class ViewProxy {
         }
     }
 
-    public void setSubjects(final Actment actment, final Iterable<Subject> subjects) {
+    public void setSubjects(final Actment actment, final Iterable<Subject> subjects, final boolean showMeaning, final boolean showReading) {
         final @Nullable View delegate = getDelegate();
         if (delegate instanceof SubjectGridView) {
-            ((SubjectGridView) delegate).setSubjects(actment, subjects);
+            ((SubjectGridView) delegate).setSubjects(actment, subjects, showMeaning, showReading);
         }
     }
 
-    public void setSubjectIds(final Actment actment, final Collection<Long> subjectIds) {
+    public void setSubjectIds(final Actment actment, final Collection<Long> subjectIds, final boolean showMeaning, final boolean showReading) {
         final @Nullable View delegate = getDelegate();
         if (delegate instanceof SubjectGridView) {
-            ((SubjectGridView) delegate).setSubjectIds(actment, subjectIds);
+            ((SubjectGridView) delegate).setSubjectIds(actment, subjectIds, showMeaning, showReading);
         }
     }
 

@@ -56,6 +56,8 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
     private int spans = 1;
     private int currentRow = 0;
     private int currentColumn = 0;
+    private boolean showMeaningText = true;
+    private boolean showReadingText = true;
 
     /**
      * The constructor.
@@ -134,11 +136,11 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
         }
         assignSpecs(view, numSpans);
         view.setTag(R.id.subjectId, subject.getId());
-        binder.bind(view, subject, this);
+        binder.bind(view, subject, this, showMeaningText, showReadingText);
         return view;
     }
 
-    private void setSubjectIdsImpl(final Actment actment, final Collection<Long> subjectIds) {
+    private void setSubjectIdsImpl(final Actment actment, final Collection<Long> subjectIds, final boolean showMeaning, final boolean showReading) {
         actmentRef = new WeakLcoRef<>(actment);
         currentSubjectIds = new ArrayList<>(subjectIds);
 
@@ -159,7 +161,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
                                 subjects.add(subject);
                             }
                         }
-                        setSubjects(actmentRef.get(), subjects);
+                        setSubjects(actmentRef.get(), subjects, showMeaning, showReading);
                     }
                 });
     }
@@ -170,9 +172,11 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
      *
      * @param actment the actment this view belongs to
      * @param subjectIds the subject IDs
+     * @param showMeaning show a meaning for subjects that have meanings
+     * @param showReading show a reading for subjects that have readings
      */
-    public void setSubjectIds(final Actment actment, final Collection<Long> subjectIds) {
-        safe(() -> setSubjectIdsImpl(actment, subjectIds));
+    public void setSubjectIds(final Actment actment, final Collection<Long> subjectIds, final boolean showMeaning, final boolean showReading) {
+        safe(() -> setSubjectIdsImpl(actment, subjectIds, showMeaning, showReading));
     }
 
     /**
@@ -181,9 +185,13 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
      *
      * @param actment the actment this view belongs to
      * @param subjects the subjects
+     * @param showMeaning show a meaning for subjects that have meanings
+     * @param showReading show a reading for subjects that have readings
      */
-    public void setSubjects(final Actment actment, final Iterable<Subject> subjects) {
+    public void setSubjects(final Actment actment, final Iterable<Subject> subjects, final boolean showMeaning, final boolean showReading) {
         safe(() -> {
+            showMeaningText = showMeaning;
+            showReadingText = showReading;
             actmentRef = new WeakLcoRef<>(actment);
             currentSubjectIds = new ArrayList<>();
             removeAllViews();
@@ -237,7 +245,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
     public void onSubjectChange(final Subject subject) {
         final @Nullable View cell = getViewBySubjectId(subject.getId());
         if (cell != null) {
-            binder.bind(cell, subject, this);
+            binder.bind(cell, subject, this, showMeaningText, showReadingText);
         }
     }
 

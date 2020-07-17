@@ -61,7 +61,7 @@ public final class SubjectItemViewHolder extends ResultItemViewHolder implements
             return;
         }
         subject = ((SubjectItem) newItem).getSubject();
-        binder.bind(itemView, subject, this);
+        binder.bind(itemView, subject, this, true, true);
     }
 
     @Override
@@ -69,7 +69,7 @@ public final class SubjectItemViewHolder extends ResultItemViewHolder implements
         if (this.subject != null && subject.getId() == this.subject.getId()) {
             this.subject = subject;
         }
-        binder.bind(itemView, subject, this);
+        binder.bind(itemView, subject, this, true, true);
     }
 
     @Override

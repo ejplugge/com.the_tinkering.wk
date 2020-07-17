@@ -648,7 +648,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
             componentsTable.removeAllViews();
         }
         if (hasComponents) {
-            componentsTable.setSubjectIds(actment, subject.getComponentSubjectIds());
+            componentsTable.setSubjectIds(actment, subject.getComponentSubjectIds(), true, showReadingRelated);
         }
 
         // VisuallySimilars table
@@ -661,7 +661,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
             visuallySimilarsTable.removeAllViews();
         }
         if (hasVisuallySimilars) {
-            visuallySimilarsTable.setSubjectIds(actment, subject.getVisuallySimilarSubjectIds());
+            visuallySimilarsTable.setSubjectIds(actment, subject.getVisuallySimilarSubjectIds(), true, showReadingRelated);
         }
 
         // Amalgamations table
@@ -674,7 +674,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
             amalgamationsTable.removeAllViews();
         }
         if (hasAmalgamations) {
-            amalgamationsTable.setSubjectIds(actment, subject.getAmalgamationSubjectIds());
+            amalgamationsTable.setSubjectIds(actment, subject.getAmalgamationSubjectIds(), true, showReadingRelated);
         }
 
         if (subject.isResurrectable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {

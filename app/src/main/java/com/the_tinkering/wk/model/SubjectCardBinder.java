@@ -68,8 +68,11 @@ public final class SubjectCardBinder {
      * @param view the view to bind to
      * @param subject the subject to bind to the view
      * @param onClickListener the onClick listener for the view
+     * @param showMeaning show a meaning if the subject has meanings
+     * @param showReading show a reading if the subject has readings
      */
-    public void bind(final View view, final Subject subject, final View.OnClickListener onClickListener) {
+    public void bind(final View view, final Subject subject, final View.OnClickListener onClickListener,
+                     final boolean showMeaning, final boolean showReading) {
         final ViewProxy button = new ViewProxy(view, R.id.button);
         final ViewProxy meaning = new ViewProxy(view, R.id.meaning);
         final ViewProxy reading = new ViewProxy(view, R.id.reading);
@@ -81,7 +84,7 @@ public final class SubjectCardBinder {
         button.setSizeSp(24);
         button.setTransparent(true);
 
-        if (subject.hasMeanings()) {
+        if (subject.hasMeanings() && showMeaning) {
             meaning.setText(subject.getOneMeaning());
             meaning.setVisibility(true);
         }
@@ -89,7 +92,7 @@ public final class SubjectCardBinder {
             meaning.setVisibility(false);
         }
 
-        if (subject.hasReadings()) {
+        if (subject.hasReadings() && showReading) {
             reading.setText(subject.getOneReading());
             reading.setJapaneseLocale();
             reading.setVisibility(true);

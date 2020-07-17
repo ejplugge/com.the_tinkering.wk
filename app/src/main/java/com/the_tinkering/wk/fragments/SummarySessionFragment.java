@@ -388,9 +388,9 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                 .collect(Collectors.toList());
 
         incorrectTable.setVisibility(View.VISIBLE);
-        incorrectTable.setSubjects(this, incorrectSubjects);
+        incorrectTable.setSubjects(this, incorrectSubjects, true, true);
 
         correctTable.setVisibility(View.VISIBLE);
-        correctTable.setSubjects(this, correctSubjects);
+        correctTable.setSubjects(this, correctSubjects, true, true);
     }
 }

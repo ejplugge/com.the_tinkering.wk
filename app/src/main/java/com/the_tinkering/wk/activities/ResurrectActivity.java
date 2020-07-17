@@ -82,7 +82,7 @@ public final class ResurrectActivity extends AbstractActivity {
         for (final long id: ids) {
             subjectIds.add(id);
         }
-        subjects.setSubjectIds(this, subjectIds);
+        subjects.setSubjectIds(this, subjectIds, true, true);
         todoCount.setText("To do: " + subjectIds.size());
         successCount.setText("Resurrected: 0");
         failCount.setText("Failed to resurrect: 0");
