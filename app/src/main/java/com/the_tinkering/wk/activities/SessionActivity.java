@@ -29,6 +29,8 @@ import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -305,9 +307,12 @@ public final class SessionActivity extends AbstractActivity {
 
         final String htmlMessage = String.format("<img src=\"*\"/>  %s", FloatingUiState.toastNewSrsStage.getName());
         final CharSequence message = TextUtil.renderHtml(htmlMessage, source -> {
-            final Drawable img = getResources().getDrawable(FloatingUiState.toastNewSrsStage.compareTo(FloatingUiState.toastOldSrsStage) > 0
-                    ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
-            img.setBounds(0, 0, dp2px(20), dp2px(20));
+            final int imageId = FloatingUiState.toastNewSrsStage.compareTo(FloatingUiState.toastOldSrsStage) > 0
+                    ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down;
+            final @Nullable Drawable img = ContextCompat.getDrawable(this, imageId);
+            if (img != null) {
+                img.setBounds(0, 0, dp2px(20), dp2px(20));
+            }
             return img;
         });
         view.setText(message);

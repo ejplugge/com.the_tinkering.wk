@@ -30,6 +30,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Scroller;
 
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LifecycleOwner;
@@ -125,7 +126,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
             colorPrimaryTonedDown = ThemeUtil.getColor(R.attr.colorPrimaryTonedDown);
             colorWaterfall = ThemeUtil.getColor(R.attr.colorWaterfallLine);
             density = context.getResources().getDisplayMetrics().density;
-            arrowIcon = getContext().getResources().getDrawable(ActiveTheme.getCurrentTheme().getLevelUpArrowDrawableId());
+            arrowIcon = ContextCompat.getDrawable(getContext(), ActiveTheme.getCurrentTheme().getLevelUpArrowDrawableId());
             init();
         });
     }

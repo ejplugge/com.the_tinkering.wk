@@ -33,6 +33,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.airbnb.lottie.SimpleColorFilter;
 import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
@@ -386,7 +388,7 @@ public final class SubjectInfoButtonView extends View {
     public void setSubject(final Subject subject) {
         safe(() -> {
             characters = orElse(subject.getCharacters(), "");
-            image = subject.needsTitleImage() ? getContext().getResources().getDrawable(subject.getTitleImageId()) : null;
+            image = subject.needsTitleImage() ? ContextCompat.getDrawable(getContext(), subject.getTitleImageId()) : null;
             textColor = subject.getTextColor();
             if (image != null) {
                 textColorFilter = new SimpleColorFilter(textColor);
