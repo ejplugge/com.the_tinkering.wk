@@ -63,7 +63,7 @@ public final class DownloadAudioTask extends ApiTask {
 
     @Override
     public boolean canRun() {
-        return getOnlineStatus().canDownloadAudio();
+        return WkApplication.getInstance().getOnlineStatus().canDownloadAudio();
     }
 
     @Override

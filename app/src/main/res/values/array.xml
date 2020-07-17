@@ -88,8 +88,8 @@
 
     <string-array name="networkRules">
         <item>Always allow sync and downloads</item>
-        <item>Always allow sync, downloads only on WiFi</item>
-        <item>Allow sync and downloads only on WiFi</item>
+        <item>Always allow sync, downloads only on unmetered connections (WiFi)</item>
+        <item>Allow sync and downloads only on unmetered connections (WiFi)</item>
     </string-array>
 
     <string-array name="networkRuleValues">

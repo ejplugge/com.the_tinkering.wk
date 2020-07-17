@@ -20,11 +20,9 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.AudioManager;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -64,8 +62,6 @@ import com.the_tinkering.wk.livedata.LiveTaskCounts;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.model.TaskCounts;
 import com.the_tinkering.wk.services.JobRunnerService;
-import com.the_tinkering.wk.services.NetworkStateBroadcastReceiver;
-import com.the_tinkering.wk.tasks.ApiTask;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,7 +90,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
     private final int layoutId;
     private final int optionsMenuId;
     private final boolean mainActivity;
-    private @Nullable NetworkStateBroadcastReceiver networkStateBroadcastReceiver = null;
     private @Nullable Timer tickTimer = null;
     private @Nullable ActiveTheme creationTheme = null;
     private @Nullable Resources.Theme createdTheme = null;
@@ -121,7 +116,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
     }
 
     private void onCreateBaseLiveTaskCounts(final ActionBar actionBar, final @Nullable TaskCounts t) {
-        final OnlineStatus onlineStatus = ApiTask.getOnlineStatus();
+        final OnlineStatus onlineStatus = WkApplication.getInstance().getOnlineStatus();
         final boolean hasApi = t != null && t.getApiCount() > 0 && onlineStatus.canCallApi();
         final boolean hasAudio = t != null && t.getAudioCount() > 0 && onlineStatus.canDownloadAudio();
         final boolean hasPitchInfo = t != null && t.getPitchInfoCount() > 0 && onlineStatus.canDownloadAudio();
@@ -251,10 +246,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                 }
             }
 
-            networkStateBroadcastReceiver = new NetworkStateBroadcastReceiver();
-            final IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-            registerReceiver(networkStateBroadcastReceiver, filter);
-
             JobRunnerService.schedule(ActivityResumedJob.class, getClass().getSimpleName());
 
             tickTimer = new Timer();
@@ -282,11 +273,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
             if (tickTimer != null) {
                 tickTimer.cancel();
                 tickTimer = null;
-            }
-
-            if (networkStateBroadcastReceiver != null) {
-                unregisterReceiver(networkStateBroadcastReceiver);
-                networkStateBroadcastReceiver = null;
             }
 
             PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);

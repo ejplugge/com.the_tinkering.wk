@@ -78,7 +78,7 @@ dependencies {
     androidTestImplementation 'androidx.room:room-testing:2.2.5'
 }
 
-//tasks.withType(JavaCompile) {
-//    options.compilerArgs << '-Xlint:unchecked'
-//    options.deprecation = true
-//}
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+}

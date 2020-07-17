@@ -56,7 +56,7 @@ public final class GetPatchedReviewStatisticsTask extends ApiTask {
 
     @Override
     public boolean canRun() {
-        return getOnlineStatus().canCallApi() && ApiState.getCurrentApiState() == ApiState.OK;
+        return WkApplication.getInstance().getOnlineStatus().canCallApi() && ApiState.getCurrentApiState() == ApiState.OK;
     }
 
     @Override

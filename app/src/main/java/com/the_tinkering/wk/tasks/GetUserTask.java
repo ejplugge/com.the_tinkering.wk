@@ -56,7 +56,7 @@ public final class GetUserTask extends ApiTask {
 
     @Override
     public boolean canRun() {
-        return getOnlineStatus().canCallApi() && ApiState.getCurrentApiState().canGetUserData();
+        return WkApplication.getInstance().getOnlineStatus().canCallApi() && ApiState.getCurrentApiState().canGetUserData();
     }
 
     @Override

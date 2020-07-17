@@ -16,10 +16,6 @@
 
 package com.the_tinkering.wk.tasks;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import androidx.core.util.Consumer;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -36,7 +32,6 @@ import com.the_tinkering.wk.api.model.WaniKaniEntity;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.TaskDefinition;
-import com.the_tinkering.wk.enums.OnlineStatus;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.util.DbLogger;
@@ -57,9 +52,6 @@ import static com.the_tinkering.wk.Constants.HTTP_TOO_MANY_REQUESTS;
 import static com.the_tinkering.wk.Constants.HTTP_UNPROCESSABLE_ENTITY;
 import static com.the_tinkering.wk.Constants.MINUTE;
 import static com.the_tinkering.wk.Constants.SECOND;
-import static com.the_tinkering.wk.enums.OnlineStatus.NO_CONNECTION;
-import static com.the_tinkering.wk.enums.OnlineStatus.NO_WIFI;
-import static com.the_tinkering.wk.enums.OnlineStatus.ON_WIFI;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
@@ -83,31 +75,6 @@ public abstract class ApiTask {
      */
     protected ApiTask(final TaskDefinition taskDefinition) {
         this.taskDefinition = taskDefinition;
-    }
-
-    /**
-     * Determine the connectivity status of the device: online (on WiFi), online (not on WiFi), offline.
-     *
-     * @return the device's online status
-     */
-    public static OnlineStatus getOnlineStatus() {
-        final @Nullable ConnectivityManager connMgr = (ConnectivityManager) WkApplication.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        if (connMgr == null) {
-            return NO_CONNECTION;
-        }
-
-        final @Nullable NetworkInfo wifiNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (wifiNetworkInfo != null && wifiNetworkInfo.isConnected()) {
-            return ON_WIFI;
-        }
-
-        final @Nullable NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            return NO_WIFI;
-        }
-
-        return NO_CONNECTION;
     }
 
     /**

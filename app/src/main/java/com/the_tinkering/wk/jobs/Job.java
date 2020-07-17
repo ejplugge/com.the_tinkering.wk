@@ -27,7 +27,6 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.services.ApiTaskService;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
-import com.the_tinkering.wk.tasks.ApiTask;
 import com.the_tinkering.wk.util.DbLogger;
 import com.the_tinkering.wk.util.Logger;
 
@@ -76,7 +75,7 @@ public abstract class Job {
     public static void assertDueTasks() {
         final AppDatabase db = WkApplication.getDatabase();
 
-        final OnlineStatus onlineStatus = ApiTask.getOnlineStatus();
+        final OnlineStatus onlineStatus = WkApplication.getInstance().getOnlineStatus();
         boolean canTriggerApiTasks = onlineStatus != NO_CONNECTION;
         final ApiState currentApiState = ApiState.getCurrentApiState();
 

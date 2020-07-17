@@ -33,7 +33,6 @@ import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.jobs.Job;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveWorkInfos;
-import com.the_tinkering.wk.tasks.ApiTask;
 import com.the_tinkering.wk.util.Logger;
 
 import java.util.List;
@@ -74,7 +73,7 @@ public final class BackgroundSyncWorker extends Worker {
     public Result doWork() {
         safe(() -> {
             if (GlobalSettings.Api.getEnableBackgroundSync()) {
-                LOGGER.info("Background sync starts: %s %s", ApiState.getCurrentApiState(), ApiTask.getOnlineStatus());
+                LOGGER.info("Background sync starts: %s %s", ApiState.getCurrentApiState(), WkApplication.getInstance().getOnlineStatus());
                 if (LiveApiState.getInstance().get() == ApiState.ERROR) {
                     final AppDatabase db = WkApplication.getDatabase();
                     db.propertiesDao().setApiInError(false);

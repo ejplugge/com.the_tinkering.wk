@@ -16,17 +16,28 @@
 
 package com.the_tinkering.wk;
 
+import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.Network;
 import android.os.AsyncTask;
+import android.os.Build;
 
+import androidx.core.net.ConnectivityManagerCompat;
 import androidx.multidex.MultiDexApplication;
 
 import com.the_tinkering.wk.components.EncryptedPreferenceDataStore;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.enums.NotificationPriority;
+import com.the_tinkering.wk.enums.OnlineStatus;
 import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.enums.SubjectInfoDump;
+import com.the_tinkering.wk.jobs.NetworkStateChangedJob;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
@@ -43,10 +54,14 @@ import com.the_tinkering.wk.livedata.LiveTaskCounts;
 import com.the_tinkering.wk.livedata.LiveVacationMode;
 import com.the_tinkering.wk.livedata.LiveWorkInfos;
 import com.the_tinkering.wk.model.Session;
+import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.DbLogger;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.enums.OnlineStatus.METERED;
+import static com.the_tinkering.wk.enums.OnlineStatus.NO_CONNECTION;
+import static com.the_tinkering.wk.enums.OnlineStatus.UNMETERED;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
@@ -60,6 +75,7 @@ public final class WkApplication extends MultiDexApplication {
 
     private @Nullable ActiveTheme currentTheme = null;
     private @Nullable Resources.Theme createdTheme = null;
+    private OnlineStatus onlineStatus = NO_CONNECTION;
 
     /**
      * Get the singleton application instance.
@@ -102,11 +118,75 @@ public final class WkApplication extends MultiDexApplication {
         safe(() -> LiveSearchPresets.getInstance().initialize());
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private void registerNetworkStateChangeListenerPre24() {
+        final @Nullable ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return;
+        }
+
+        final IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(final Context context, final Intent intent) {
+                safe(() -> {
+                    final @Nullable android.net.NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    if (networkInfo != null && networkInfo.isConnected()) {
+                        onlineStatus = ConnectivityManagerCompat.isActiveNetworkMetered(connectivityManager) ? METERED : UNMETERED;
+                    }
+                    else {
+                        onlineStatus = NO_CONNECTION;
+                    }
+                    JobRunnerService.schedule(NetworkStateChangedJob.class, onlineStatus.name());
+                });
+            }
+        }, filter);
+    }
+
+    @TargetApi(24)
+    private void registerNetworkStateChangeListenerPost24() {
+        final @Nullable ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return;
+        }
+
+        connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(final Network network) {
+                safe(() -> {
+                    onlineStatus = connectivityManager.isActiveNetworkMetered() ? METERED : UNMETERED;
+                    JobRunnerService.schedule(NetworkStateChangedJob.class, onlineStatus.name());
+                });
+            }
+
+            @Override
+            public void onLost(final Network network) {
+                safe(() -> {
+                    onlineStatus = NO_CONNECTION;
+                    JobRunnerService.schedule(NetworkStateChangedJob.class, onlineStatus.name());
+                });
+            }
+        });
+    }
+
+    private void onCreateLocal() {
         initialize(this);
         new Task().execute();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            registerNetworkStateChangeListenerPost24();
+        }
+        else {
+            registerNetworkStateChangeListenerPre24();
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        safe(() -> {
+            super.onCreate();
+            onCreateLocal();
+        });
     }
 
     /**
@@ -136,6 +216,16 @@ public final class WkApplication extends MultiDexApplication {
      */
     public void resetTheme() {
         createdTheme = null;
+    }
+
+    /**
+     * Get the current online status. The valus is automatically updated with a listener/receiver registered by this class.
+     * Changes in value are also reported via a scheduled job.
+     *
+     * @return the status
+     */
+    public OnlineStatus getOnlineStatus() {
+        return onlineStatus;
     }
 
     private static final class Task extends AsyncTask<Void, Void, Void> {

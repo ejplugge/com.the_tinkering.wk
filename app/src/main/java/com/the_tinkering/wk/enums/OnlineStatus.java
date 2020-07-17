@@ -38,9 +38,9 @@ public enum OnlineStatus {
     },
 
     /**
-     * Connected to WiFi.
+     * Connected to an unmetered connection like WiFi.
      */
-    ON_WIFI() {
+    UNMETERED() {
         @Override
         public boolean canDownloadAudio() {
             return true;
@@ -53,9 +53,9 @@ public enum OnlineStatus {
     },
 
     /**
-     * Connected, but not to WiFi.
+     * Connected to a metered connection like cellular data.
      */
-    NO_WIFI() {
+    METERED() {
         @Override
         public boolean canDownloadAudio() {
             return GlobalSettings.Api.getNetworkRule() == NetworkRule.ALWAYS;

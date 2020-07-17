@@ -3,6 +3,11 @@
 
 - Add a hint when answering a reading question incorrectly because of the common niyuu/nyuu にゆう/にゅう mistake.
 
+- Switch the logic for allowing sync/downloads on WiFi only to check for an unmetered connection instead. This makes
+  no difference in most situations, but this takes into account the possibility of unmetered connections that are not WiFi,
+  and of metered connections that are WiFi (such as hotspots created by another Android device). Basically, if you're using
+  a metered WiFi connection, FD will act as if you're on cellular data.
+
 ### Version 1.26.0, 2020-07-10:
 
 - Update pitch info data for new vocab subjects
