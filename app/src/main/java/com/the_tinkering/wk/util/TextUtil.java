@@ -16,9 +16,11 @@
 
 package com.the_tinkering.wk.util;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.Html;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -130,14 +132,8 @@ public final class TextUtil {
         }
     }
 
-    /**
-     * Render a character into an array of pixels for testing.
-     *
-     * @param typeface the typeface to render in
-     * @param c the single-character string to render
-     * @return the pixels
-     */
-    private static int[] render(final Typeface typeface, final String c) {
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private static int[] renderPre23(final Typeface typeface, final String c) {
         final TextPaint textPaint = new TextPaint();
         textPaint.setTypeface(typeface);
         textPaint.setTextSize(FONT_SIZE_NORMAL);
@@ -153,6 +149,43 @@ public final class TextUtil {
         final int[] pixels = new int[FONT_SIZE_NORMAL * FONT_SIZE_NORMAL];
         bitmap.getPixels(pixels, 0, FONT_SIZE_NORMAL, 0, 0, FONT_SIZE_NORMAL, FONT_SIZE_NORMAL);
         return pixels;
+    }
+
+    @TargetApi(23)
+    private static int[] renderPost23(final Typeface typeface, final CharSequence c) {
+        final TextPaint textPaint = new TextPaint();
+        textPaint.setTypeface(typeface);
+        textPaint.setTextSize(FONT_SIZE_NORMAL);
+        textPaint.setColor(0xFF000000);
+
+        final Bitmap bitmap = Bitmap.createBitmap(FONT_SIZE_NORMAL, FONT_SIZE_NORMAL, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(0xFFFFFFFF);
+
+        final StaticLayout.Builder builder = StaticLayout.Builder.obtain(c, 0, c.length(), textPaint, FONT_SIZE_NORMAL);
+        final StaticLayout layout = builder.build();
+        layout.draw(canvas);
+
+        final int[] pixels = new int[FONT_SIZE_NORMAL * FONT_SIZE_NORMAL];
+        bitmap.getPixels(pixels, 0, FONT_SIZE_NORMAL, 0, 0, FONT_SIZE_NORMAL, FONT_SIZE_NORMAL);
+        return pixels;
+    }
+
+    /**
+     * Render a character into an array of pixels for testing.
+     *
+     * @param typeface the typeface to render in
+     * @param c the single-character string to render
+     * @return the pixels
+     */
+    private static int[] render(final Typeface typeface, final String c) {
+        //noinspection IfMayBeConditional
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return renderPost23(typeface, c);
+        }
+        else {
+            return renderPre23(typeface, c);
+        }
     }
 
     /**
