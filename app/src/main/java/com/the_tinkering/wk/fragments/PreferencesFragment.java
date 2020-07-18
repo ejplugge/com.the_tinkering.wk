@@ -50,7 +50,6 @@ import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.AudioUtil;
 import com.the_tinkering.wk.util.DbLogger;
-import com.the_tinkering.wk.util.TextUtil;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.List;

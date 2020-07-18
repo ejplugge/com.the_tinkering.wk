@@ -388,6 +388,7 @@ public class RigidGridLayout extends ViewGroup {
         /**
          * Force this view to be the first view of a new row.
          */
+        @SuppressWarnings("CanBeFinal")
         protected boolean nextRow;
 
         /**
@@ -419,6 +420,7 @@ public class RigidGridLayout extends ViewGroup {
          * @param width the width for this view
          * @param height the height for this view
          */
+        @SuppressWarnings("SameParameterValue")
         protected LayoutParams(final int width, final int height) {
             super(width, height);
             columnSpan = 1;

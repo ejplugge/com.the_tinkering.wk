@@ -19,6 +19,7 @@ package com.the_tinkering.wk.enums;
 /**
  * The layout style for subject cards.
  */
+@SuppressWarnings("unused")
 public enum SubjectCardLayout {
     /**
      * Normal linear layout.

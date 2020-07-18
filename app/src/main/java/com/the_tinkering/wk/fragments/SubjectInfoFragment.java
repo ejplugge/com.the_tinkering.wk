@@ -32,7 +32,6 @@ import com.the_tinkering.wk.views.SwipingScrollView;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A fragment to show the full subject info dump.

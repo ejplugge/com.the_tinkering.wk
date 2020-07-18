@@ -26,7 +26,6 @@ import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.ThemeUtil;
 
-import static com.the_tinkering.wk.Constants.API_KEY_PERMISSION_NOTICE;
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
