@@ -211,7 +211,7 @@ public class RigidGridLayout extends ViewGroup {
 
             // Determine the width of each cell in the grid, excluding the layout's padding and the child's margins,
             // but including the child's padding.
-            int cellWidth = width - getPaddingLeft() - getPaddingRight() - childMargin * 2;
+            int cellWidth = width - getPaddingLeft() - getPaddingRight() - numColumns * childMargin * 2;
             if (cellWidth < 0) {
                 cellWidth = 0;
             }
@@ -277,7 +277,7 @@ public class RigidGridLayout extends ViewGroup {
 
             // Same as when measuring, this is the width of each cell excluding the layout's padding and the child's margins.
             final int width = getMeasuredWidth();
-            int cellWidth = width - getPaddingLeft() - getPaddingRight() - childMargin * 2;
+            int cellWidth = width - getPaddingLeft() - getPaddingRight() - numColumns * childMargin * 2;
             if (cellWidth < 0) {
                 cellWidth = 0;
             }
