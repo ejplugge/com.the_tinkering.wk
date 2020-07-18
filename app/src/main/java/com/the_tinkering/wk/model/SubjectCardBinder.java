@@ -16,31 +16,51 @@
 
 package com.the_tinkering.wk.model;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.content.ContextCompat;
+
+import com.airbnb.lottie.SimpleColorFilter;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
+import com.the_tinkering.wk.enums.ActiveTheme;
+import com.the_tinkering.wk.enums.SubjectCardLayout;
 import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 /**
  * A class that can bind a subject's data to a subject card view, as directed by configuration properties.
  */
 public final class SubjectCardBinder {
+    private final SubjectCardLayout layout;
     private final List<Integer> layoutIds = new ArrayList<>();
 
     /**
      * The constructor.
+     * @param layout the layout style
      */
-    public SubjectCardBinder() {
-        layoutIds.add(R.layout.subject_card_radical);
-        layoutIds.add(R.layout.subject_card_kanji);
-        layoutIds.add(R.layout.subject_card_vocabulary);
+    public SubjectCardBinder(final SubjectCardLayout layout) {
+        this.layout = layout;
+        if (layout == SubjectCardLayout.NORMAL) {
+            layoutIds.add(R.layout.subject_card_radical);
+            layoutIds.add(R.layout.subject_card_kanji);
+            layoutIds.add(R.layout.subject_card_vocabulary);
+        }
+        else {
+            layoutIds.add(R.layout.subject_card_radical_compact);
+            layoutIds.add(R.layout.subject_card_kanji_compact);
+            layoutIds.add(R.layout.subject_card_vocabulary_compact);
+        }
     }
 
     /**
@@ -62,21 +82,11 @@ public final class SubjectCardBinder {
         return inflater.inflate(layoutIds.get(2), parent, false);
     }
 
-    /**
-     * Bind a subject to a view, filling in all of the relevant details, and setting an onClick listener.
-     * This does not register a SubjectChangeListener.
-     * @param view the view to bind to
-     * @param subject the subject to bind to the view
-     * @param onClickListener the onClick listener for the view
-     * @param showMeaning show a meaning if the subject has meanings
-     * @param showReading show a reading if the subject has readings
-     */
-    public void bind(final View view, final Subject subject, final View.OnClickListener onClickListener,
-                     final boolean showMeaning, final boolean showReading) {
+    private static void bindCommon(final View view, final Subject subject, final View.OnClickListener onClickListener,
+                            final boolean showMeaning, final boolean showReading) {
         final ViewProxy button = new ViewProxy(view, R.id.button);
         final ViewProxy meaning = new ViewProxy(view, R.id.meaning);
         final ViewProxy reading = new ViewProxy(view, R.id.reading);
-        final ViewProxy progress = new ViewProxy(view, R.id.progress);
 
         view.setBackgroundColor(subject.getButtonBackgroundColor());
 
@@ -101,6 +111,19 @@ public final class SubjectCardBinder {
             reading.setVisibility(false);
         }
 
+        view.setOnClickListener(onClickListener);
+        button.setOnClickListener(onClickListener);
+
+        final @Nullable Drawable bgDrawable = ContextCompat.getDrawable(view.getContext(), R.drawable.small_rounded_corners);
+        if (bgDrawable != null) {
+            bgDrawable.setColorFilter(new SimpleColorFilter(subject.getButtonBackgroundColor()));
+            view.setBackground(bgDrawable);
+        }
+    }
+
+    private static void bindNormal(final View view, final Subject subject) {
+        final ViewProxy progress = new ViewProxy(view, R.id.progress);
+
         final SrsSystem.Stage stage = subject.getSrsStage();
         final String stageName = subject.getType().isVocabulary() ? stage.getName() : stage.getShortName();
         if (stage.isLocked()) {
@@ -114,8 +137,92 @@ public final class SubjectCardBinder {
             progress.setText(stageName + " - " + subject.getShortNextReviewWaitTime());
             progress.setVisibility(true);
         }
+    }
 
-        view.setOnClickListener(onClickListener);
-        button.setOnClickListener(onClickListener);
+    private void bindCompact(final View view, final Subject subject) {
+        final ViewProxy waitTime = new ViewProxy(view, R.id.waitTime);
+        final ViewProxy stageLetter = new ViewProxy(view, R.id.stageLetter);
+
+        if (layout == SubjectCardLayout.COMPACT_NO_PROGRESSION) {
+            waitTime.setVisibility(false);
+            stageLetter.setVisibility(false);
+            return;
+        }
+
+        final @Nullable Date availableAt = subject.getAvailableAt();
+        final boolean availableNow = availableAt != null && availableAt.getTime() < System.currentTimeMillis();
+        if (availableAt == null) {
+            waitTime.setVisibility(false);
+        }
+        else {
+            waitTime.setText(subject.getShortNextReviewWaitTime());
+            waitTime.setVisibility(true);
+        }
+        final @Nullable Drawable bgDrawable = ContextCompat.getDrawable(view.getContext(), R.drawable.small_rounded_corners);
+        if (bgDrawable != null) {
+            final int textColor;
+            final int bgColor;
+            if (availableNow) {
+                textColor = ThemeUtil.getColor(R.attr.colorBackground);
+                bgColor = ThemeUtil.getColor(R.attr.colorPrimary);
+            }
+            else {
+                textColor = ThemeUtil.getColor(R.attr.colorPrimary);
+                bgColor = ThemeUtil.getColor(R.attr.colorBackground);
+            }
+
+            if (ThemeUtil.isLightColor(textColor)) {
+                waitTime.setShadowLayer(3, 1, 1, 0xFF000000);
+            }
+            else {
+                waitTime.setShadowLayer(0, 0, 0, 0);
+            }
+
+            bgDrawable.setColorFilter(new SimpleColorFilter(bgColor));
+            waitTime.setBackground(bgDrawable);
+            waitTime.setTextColor(textColor);
+        }
+
+        final SrsSystem.Stage stage = subject.getSrsStage();
+        final String letter = stage.getNameLetter();
+        final @Nullable Drawable stageBgDrawable = ContextCompat.getDrawable(view.getContext(), R.drawable.small_rounded_corners);
+        if (stageBgDrawable != null) {
+            final int textColor;
+            final int bgColor = ActiveTheme.getShallowStageBucketColors7()[stage.getGeneralStageBucket()];
+
+            if (ThemeUtil.isLightColor(bgColor)) {
+                stageLetter.setShadowLayer(0, 0, 0, 0);
+                textColor = ThemeUtil.getColor(R.attr.colorPrimaryDark);
+            }
+            else {
+                stageLetter.setShadowLayer(3, 1, 1, 0xFF000000);
+                textColor = ThemeUtil.getColor(R.attr.colorPrimaryLight);
+            }
+
+            stageLetter.setTextColor(textColor);
+            stageBgDrawable.setColorFilter(new SimpleColorFilter(bgColor));
+            stageLetter.setBackground(stageBgDrawable);
+        }
+        stageLetter.setText(letter);
+    }
+
+    /**
+     * Bind a subject to a view, filling in all of the relevant details, and setting an onClick listener.
+     * This does not register a SubjectChangeListener.
+     * @param view the view to bind to
+     * @param subject the subject to bind to the view
+     * @param onClickListener the onClick listener for the view
+     * @param showMeaning show a meaning if the subject has meanings
+     * @param showReading show a reading if the subject has readings
+     */
+    public void bind(final View view, final Subject subject, final View.OnClickListener onClickListener,
+                     final boolean showMeaning, final boolean showReading) {
+        bindCommon(view, subject, onClickListener, showMeaning, showReading);
+        if (layout == SubjectCardLayout.NORMAL) {
+            bindNormal(view, subject);
+        }
+        else {
+            bindCompact(view, subject);
+        }
     }
 }

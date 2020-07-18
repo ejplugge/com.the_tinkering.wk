@@ -98,11 +98,11 @@ public final class Post60ProgressBarView extends View {
         textColors = new int[colors.length];
         textShadow = new boolean[colors.length];
         for (int i=0; i<colors.length; i++) {
-            final int level = (colors[i] & 0xFF) + ((colors[i] >> 8) & 0xFF) + ((colors[i] >> 16) & 0xFF);
-            textColors[i] = level > 0x140
+            final boolean light = ThemeUtil.isLightColor(colors[i]);
+            textColors[i] = light
                     ? ThemeUtil.getColor(R.attr.colorPrimaryDark)
                     : ThemeUtil.getColor(R.attr.colorPrimaryLight);
-            textShadow[i] = level <= 0x140;
+            textShadow[i] = !light;
         }
     }
 

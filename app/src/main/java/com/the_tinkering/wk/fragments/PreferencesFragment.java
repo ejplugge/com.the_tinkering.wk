@@ -50,13 +50,16 @@ import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.AudioUtil;
 import com.the_tinkering.wk.util.DbLogger;
+import com.the_tinkering.wk.util.TextUtil;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.Constants.API_KEY_PERMISSION_NOTICE;
 import static com.the_tinkering.wk.Constants.ENABLE_ADVANCED_WARNING;
+import static com.the_tinkering.wk.Constants.EXPERIMENTAL_PREFERENCE_STATUS_NOTICE;
 import static com.the_tinkering.wk.Constants.RESET_DATABASE_WARNING;
 import static com.the_tinkering.wk.Constants.RESET_TUTORIALS_WARNING;
 import static com.the_tinkering.wk.Constants.UPLOAD_DEBUG_LOG_WARNING;
@@ -180,6 +183,9 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
         setVisibility("ime_hint_meaning", Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
         setVisibility("web_password", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
 
+        setSummaryHtml("api_key_help", API_KEY_PERMISSION_NOTICE);
+        setSummaryHtml("experimental_status", EXPERIMENTAL_PREFERENCE_STATUS_NOTICE);
+
         setNumberInputType("overdue_threshold");
         setNumberInputType("max_lesson_session_size");
         setNumberInputType("max_review_session_size");
@@ -282,6 +288,15 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.setSelection(editText.getText().length());
                 }));
+            }
+        });
+    }
+
+    private void setSummaryHtml(final CharSequence key, final String html) {
+        safe(() -> {
+            final @Nullable Preference pref = findPreference(key);
+            if (pref != null) {
+                pref.setSummary(TextUtil.renderHtml(html));
             }
         });
     }

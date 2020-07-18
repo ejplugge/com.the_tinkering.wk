@@ -615,6 +615,13 @@ public final class ViewProxy {
         }
     }
 
+    public void setBackground(final Drawable drawable) {
+        final @Nullable View delegate = getDelegate();
+        if (delegate != null) {
+            delegate.setBackground(drawable);
+        }
+    }
+
     public void setShadowLayer(final float radius, final float dx, final float dy, final int color) {
         final @Nullable View delegate = getDelegate();
         if (delegate instanceof TextView) {

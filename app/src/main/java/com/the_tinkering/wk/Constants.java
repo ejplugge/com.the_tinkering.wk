@@ -249,6 +249,14 @@ public final class Constants {
             + " <li>&nbsp;<tt>study_materials:update</tt></ul>";
 
     /**
+     * A note about the temporary status of experimental preferences.
+     */
+    public static final String EXPERIMENTAL_PREFERENCE_STATUS_NOTICE = "<b>These settings are of an experimental and temporary nature.</b>"
+            + " They can change arbitrarily at any time, and will at some point disappear completely."
+            + " They exist only for short-term experiments in layout and new functionalities."
+            + " <b>Don't get attached to them. They will go away.</b>";
+
+    /**
      * Confirmation warning for uploading the debug log.
      */
     public static final String UPLOAD_DEBUG_LOG_WARNING = "Do you want to upload the debug log file to the developer?<br/><br/>"

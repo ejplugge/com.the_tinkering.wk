@@ -24,6 +24,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.util.Consumer;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.SearchSortOrder;
@@ -57,7 +58,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
     private Collection<String> collapsedTags = new HashSet<>();
     private boolean showingForm = false;
     private @Nullable AdvancedSearchParameters parameters = null;
-    private final SubjectCardBinder binder = new SubjectCardBinder();
+    private final SubjectCardBinder binder = new SubjectCardBinder(GlobalSettings.Experimental.getSubjectCardLayoutSearch());
 
     /**
      * The constructor.

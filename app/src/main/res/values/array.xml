@@ -285,4 +285,16 @@
         <item>RECOMMENDATION</item>
         <item>STATUS</item>
     </string-array>
+
+    <string-array name="subjectCardLayouts">
+        <item>Normal</item>
+        <item>Compact with progression info</item>
+        <item>Compact without progression info</item>
+    </string-array>
+
+    <string-array name="subjectCardLayoutValues">
+        <item>NORMAL</item>
+        <item>COMPACT</item>
+        <item>COMPACT_NO_PROGRESSION</item>
+    </string-array>
 </resources>

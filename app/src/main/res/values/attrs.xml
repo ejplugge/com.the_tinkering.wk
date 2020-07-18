@@ -23,6 +23,12 @@
         <attr name="defaultTag" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="RigidGridLayout_Layout">
+        <attr name="layout_columnSpan" format="integer"/>
+        <attr name="layout_nextRow" format="boolean"/>
+        <attr name="android:layout_gravity"/>
+    </declare-styleable>
+
     <attr name="colorPrimaryInverse" format="reference"/>
     <attr name="colorPrimaryLight" format="reference"/>
     <attr name="colorPrimaryTonedDown" format="reference"/>

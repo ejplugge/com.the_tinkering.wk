@@ -710,6 +710,34 @@
 
     </PreferenceScreen>
 
+    <PreferenceScreen
+        app:key="experimental_settings"
+        app:title="Experimental (temporary) settings">
+
+        <com.the_tinkering.wk.components.InfoPreference
+            app:title="Caution"
+            app:key="experimental_status"/>
+
+        <ListPreference
+            app:key="exp_subject_card_layout_search"
+            app:title="Subject card layout in search results"
+            app:singleLineTitle="false"
+            app:entries="@array/subjectCardLayouts"
+            app:entryValues="@array/subjectCardLayoutValues"
+            app:defaultValue="NORMAL"
+            app:useSimpleSummaryProvider="true"/>
+
+        <ListPreference
+            app:key="exp_subject_card_layout_grid"
+            app:title="Subject card layout in other places"
+            app:singleLineTitle="false"
+            app:entries="@array/subjectCardLayouts"
+            app:entryValues="@array/subjectCardLayoutValues"
+            app:defaultValue="NORMAL"
+            app:useSimpleSummaryProvider="true"/>
+
+    </PreferenceScreen>
+
     <PreferenceCategory app:key="advanced" app:title="Advanced settings">
 
         <SwitchPreferenceCompat

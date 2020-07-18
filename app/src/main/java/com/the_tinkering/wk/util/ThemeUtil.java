@@ -49,4 +49,16 @@ public final class ThemeUtil {
         }
         return 0xFFFF0000;
     }
+
+    /**
+     * Determine if a color is light. Add up the RGB components, and if they exceed a specific level, the color is
+     * considered light.
+     *
+     * @param color the color to check
+     * @return true if it's considered light
+     */
+    public static boolean isLightColor(final int color) {
+        final int level = (color & 0xFF) + ((color >> 8) & 0xFF) + ((color >> 16) & 0xFF);
+        return level > 0x140;
+    }
 }

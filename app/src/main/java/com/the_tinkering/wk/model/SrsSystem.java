@@ -167,6 +167,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
             if (stage.isLocked()) {
                 stage.name = "Locked";
                 stage.shortName = "";
+                stage.nameLetter = "L";
                 stage.advancedSearchTag = "locked";
                 stage.passedIndex = -1;
                 stage.prePassedIndex = -1;
@@ -174,6 +175,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
             else if (stage.isInitial()) {
                 stage.name = "Initiate";
                 stage.shortName = stage.name;
+                stage.nameLetter = "I";
                 stage.advancedSearchTag = "initial";
                 stage.passedIndex = -1;
                 stage.prePassedIndex = -1;
@@ -181,6 +183,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
             else if (stage.isCompleted()) {
                 stage.name = "Burned";
                 stage.shortName = "Burned";
+                stage.nameLetter = "B";
                 stage.advancedSearchTag = "burned";
                 stage.passedIndex = -1;
                 stage.prePassedIndex = -1;
@@ -188,6 +191,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
             else if (stage.isPassed()) {
                 stage.name = "Guru " + getRomanNumeral(numPassedStages + 1);
                 stage.shortName = stage.name;
+                stage.nameLetter = "G";
                 stage.advancedSearchTag = "pass:" + numPassedStages;
                 stage.passedIndex = numPassedStages;
                 stage.prePassedIndex = -1;
@@ -196,6 +200,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
             else {
                 stage.name = "Apprentice " + getRomanNumeral(numPrePassedStages + 1);
                 stage.shortName = "Appr " + getRomanNumeral(numPrePassedStages + 1);
+                stage.nameLetter = "A";
                 stage.advancedSearchTag = "prepass:" + numPrePassedStages;
                 stage.passedIndex = -1;
                 stage.prePassedIndex = numPrePassedStages;
@@ -213,6 +218,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
                 enlightenedFound = true;
                 stage.name = "Enlightened";
                 stage.shortName = "Enl";
+                stage.nameLetter = "E";
                 stage.advancedSearchTag = "enlightened";
                 enlightenedStageId = stage.id;
             }
@@ -220,6 +226,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
                 masterFound = true;
                 stage.name = "Master";
                 stage.shortName = stage.name;
+                stage.nameLetter = "M";
                 stage.advancedSearchTag = "master";
                 masterStageId = stage.id;
             }
@@ -230,6 +237,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
             stage.post60ShallowBucket = stage.findPost60ShallowBucket();
             stage.srsBreakdownBucket = stage.findSrsBreakdownBucket();
             stage.timeLineBarChartBucket = stage.findTimeLineBarChartBucket();
+            stage.generalStageBucket = stage.findGeneralStageBucket();
         }
     }
 
@@ -309,6 +317,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
         @SuppressWarnings("InnerClassFieldHidesOuterClassField")
         private String name = "";
         private String shortName = "";
+        private String nameLetter = "";
         private String advancedSearchTag = "";
         private int passedIndex = 0;
         private int prePassedIndex = 0;
@@ -317,6 +326,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
         private int post60ShallowBucket = 0;
         private int srsBreakdownBucket = 0;
         private int timeLineBarChartBucket = 0;
+        private int generalStageBucket = 0;
 
         /**
          * The constructor.
@@ -470,6 +480,15 @@ public final class SrsSystem implements Comparable<SrsSystem> {
          */
         public String getShortName() {
             return shortName;
+        }
+
+        /**
+         * A single letter to identify the stage.
+         *
+         * @return the letter
+         */
+        public String getNameLetter() {
+            return nameLetter;
         }
 
         /**
@@ -725,6 +744,36 @@ public final class SrsSystem implements Comparable<SrsSystem> {
                 return 1;
             }
             return 0;
+        }
+
+        /**
+         * Get the bucket this stage belongs to in a general shallow SRS progression.
+         * @return the bucket 0..6
+         */
+        public int getGeneralStageBucket() {
+            return generalStageBucket;
+        }
+
+        private int findGeneralStageBucket() {
+            if (isLocked()) {
+                return 0;
+            }
+            if (isInitial()) {
+                return 1;
+            }
+            if (isCompleted()) {
+                return 6;
+            }
+            if (isEnlightened()) {
+                return 5;
+            }
+            if (isMaster()) {
+                return 4;
+            }
+            if (isPassed()) {
+                return 3;
+            }
+            return 2;
         }
 
         /**

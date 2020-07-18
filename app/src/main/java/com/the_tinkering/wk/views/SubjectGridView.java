@@ -19,13 +19,12 @@ package com.the_tinkering.wk.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Space;
-
-import androidx.gridlayout.widget.GridLayout;
 
 import com.the_tinkering.wk.Actment;
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.model.Subject;
@@ -49,13 +48,11 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
  * A custom view that shows a grid of subjects, showing the text, a meaning, a reading,
  * the SRS stage and the time until the next review.
  */
-public final class SubjectGridView extends GridLayout implements SubjectChangeListener, View.OnClickListener {
-    private final SubjectCardBinder binder = new SubjectCardBinder();
+public final class SubjectGridView extends RigidGridLayout implements SubjectChangeListener, View.OnClickListener {
+    private final SubjectCardBinder binder = new SubjectCardBinder(GlobalSettings.Experimental.getSubjectCardLayoutOther());
     private @Nullable WeakLcoRef<Actment> actmentRef = null;
     private List<Long> currentSubjectIds = Collections.emptyList();
     private int spans = 1;
-    private int currentRow = 0;
-    private int currentColumn = 0;
     private boolean showMeaningText = true;
     private boolean showReadingText = true;
 
@@ -82,43 +79,22 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
 
     private void init() {
         safe(() -> {
-            setOrientation(HORIZONTAL);
-
+            setChildMargin(dp2px(2));
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
             spans = (int) ((metrics.widthPixels / metrics.density + 10) / 90);
             if (spans < 1) {
                 spans = 1;
             }
-            setColumnCount(spans);
+            setNumColumns(spans);
         });
     }
 
-    private void addSpace() {
-        final Space space = new Space(getContext());
-        final LayoutParams params = new LayoutParams(spec(currentRow, 1, FILL, 1), spec(currentColumn, 1, FILL, 1));
-        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-        addView(space, params);
-        currentColumn++;
-    }
-
-    private void assignSpecs(final View view, final int numSpans) {
+    private static void assignLayoutParams(final View view, final int numSpans) {
         final LayoutParams params = (LayoutParams) view.getLayoutParams();
-
-        if (currentColumn > 0 && currentColumn + numSpans > spans) {
-            while (currentColumn < spans) {
-                addSpace();
-            }
-
-            currentColumn = 0;
-            currentRow++;
-        }
-
-        params.rowSpec = spec(currentRow, 1, FILL, 1);
-        params.columnSpec = spec(currentColumn, numSpans, FILL, 1);
-        currentColumn += numSpans;
-
-        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-
+        params.columnSpan = numSpans;
+        params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         view.setLayoutParams(params);
     }
 
@@ -134,7 +110,7 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
         else {
             numSpans = spans >= 6 ? 3 : spans;
         }
-        assignSpecs(view, numSpans);
+        assignLayoutParams(view, numSpans);
         view.setTag(R.id.subjectId, subject.getId());
         binder.bind(view, subject, this, showMeaningText, showReadingText);
         return view;
@@ -200,9 +176,6 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
                 final View cell = createSubjectCellView(subject);
                 addView(cell);
             }
-            while (currentColumn > 0 && currentColumn < spans) {
-                addSpace();
-            }
             SubjectChangeWatcher.getInstance().addListener(this);
         });
     }
@@ -263,5 +236,9 @@ public final class SubjectGridView extends GridLayout implements SubjectChangeLi
                 actmentRef.get().goToSubjectInfo((long) subjectIdTag, currentSubjectIds, FragmentTransitionAnimation.RTL);
             }
         });
+    }
+
+    private int dp2px(@SuppressWarnings("SameParameterValue") final int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 }

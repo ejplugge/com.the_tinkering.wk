@@ -34,6 +34,7 @@ import com.the_tinkering.wk.enums.ReviewOrder;
 import com.the_tinkering.wk.enums.SessionPriority;
 import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.enums.SpecialButtonBehavior;
+import com.the_tinkering.wk.enums.SubjectCardLayout;
 import com.the_tinkering.wk.enums.SubjectInfoDump;
 import com.the_tinkering.wk.enums.TimeLineBarChartGridStyle;
 import com.the_tinkering.wk.enums.TimeLineBarChartStyle;
@@ -1628,6 +1629,54 @@ public final class GlobalSettings {
                 return "https://jisho.org/search/%s";
             }
             return "";
+        }
+    }
+
+    /**
+     * Experimental settings.
+     */
+    public static final class Experimental {
+        /**
+         * Private constructor.
+         */
+        private Experimental() {
+            //
+        }
+
+        /**
+         * Subject card layout for search results.
+         *
+         * @return the value
+         */
+        public static SubjectCardLayout getSubjectCardLayoutSearch() {
+            final @Nullable String value = prefs().getString("exp_subject_card_layout_search", null);
+            if (value != null) {
+                try {
+                    return SubjectCardLayout.valueOf(value);
+                }
+                catch (final Exception e) {
+                    //
+                }
+            }
+            return SubjectCardLayout.NORMAL;
+        }
+
+        /**
+         * Subject card layout for grid layouts.
+         *
+         * @return the value
+         */
+        public static SubjectCardLayout getSubjectCardLayoutOther() {
+            final @Nullable String value = prefs().getString("exp_subject_card_layout_grid", null);
+            if (value != null) {
+                try {
+                    return SubjectCardLayout.valueOf(value);
+                }
+                catch (final Exception e) {
+                    //
+                }
+            }
+            return SubjectCardLayout.NORMAL;
         }
     }
 
