@@ -296,7 +296,7 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
         safe(() -> {
             final @Nullable Preference pref = findPreference(key);
             if (pref != null) {
-                pref.setSummary(TextUtil.renderHtml(html));
+                pref.setSummary(renderHtml(html));
             }
         });
     }

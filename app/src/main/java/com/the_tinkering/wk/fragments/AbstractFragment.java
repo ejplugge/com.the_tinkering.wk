@@ -259,7 +259,7 @@ public abstract class AbstractFragment extends Fragment implements Actment {
      * @param view the root view
      * @param savedInstanceState the instance state
      */
-    public abstract void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState);
+    protected abstract void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState);
 
     /**
      * Get the toolbar title for this fragment.

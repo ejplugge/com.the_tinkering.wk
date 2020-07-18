@@ -127,7 +127,7 @@ public class RigidGridLayout extends ViewGroup {
      *
      * @param numColumns the number
      */
-    public final void setNumColumns(final int numColumns) {
+    protected final void setNumColumns(final int numColumns) {
         this.numColumns = Math.max(numColumns, 1);
     }
 
@@ -136,7 +136,7 @@ public class RigidGridLayout extends ViewGroup {
      *
      * @param childMargin the margin in pixels
      */
-    public final void setChildMargin(final int childMargin) {
+    protected final void setChildMargin(final int childMargin) {
         this.childMargin = childMargin;
     }
 
@@ -383,17 +383,17 @@ public class RigidGridLayout extends ViewGroup {
         /**
          * The number of columns occupied by this view, -1 for 'whole row'.
          */
-        public int columnSpan;
+        protected int columnSpan;
 
         /**
          * Force this view to be the first view of a new row.
          */
-        public boolean nextRow;
+        protected boolean nextRow;
 
         /**
          * Gravity of a child view within the cell.
          */
-        public int gravity;
+        protected int gravity;
 
         private int rowAnchor = 0;
         private int columnAnchor = 0;
@@ -404,7 +404,7 @@ public class RigidGridLayout extends ViewGroup {
          * @param context Android context
          * @param attrs attribute set
          */
-        public LayoutParams(final Context context, final AttributeSet attrs) {
+        protected LayoutParams(final Context context, final AttributeSet attrs) {
             super(context, attrs);
             final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RigidGridLayout_Layout);
             columnSpan = a.getInt(R.styleable.RigidGridLayout_Layout_layout_columnSpan, 1);
@@ -419,7 +419,7 @@ public class RigidGridLayout extends ViewGroup {
          * @param width the width for this view
          * @param height the height for this view
          */
-        public LayoutParams(final int width, final int height) {
+        protected LayoutParams(final int width, final int height) {
             super(width, height);
             columnSpan = 1;
             nextRow = false;
@@ -447,7 +447,7 @@ public class RigidGridLayout extends ViewGroup {
          *
          * @param source the params to copy
          */
-        public LayoutParams(final ViewGroup.LayoutParams source) {
+        protected LayoutParams(final ViewGroup.LayoutParams source) {
             super(source);
             columnSpan = 1;
             nextRow = false;
@@ -459,7 +459,7 @@ public class RigidGridLayout extends ViewGroup {
          *
          * @param source the params to copy
          */
-        public LayoutParams(final RigidGridLayout.LayoutParams source) {
+        protected LayoutParams(final RigidGridLayout.LayoutParams source) {
             super(source);
             columnSpan = source.columnSpan;
             nextRow = source.nextRow;

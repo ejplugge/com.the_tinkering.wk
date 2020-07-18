@@ -33,5 +33,5 @@ public enum SubjectCardLayout {
     /**
      * Compact, without progression information.
      */
-    COMPACT_NO_PROGRESSION;
+    COMPACT_NO_PROGRESSION
 }
