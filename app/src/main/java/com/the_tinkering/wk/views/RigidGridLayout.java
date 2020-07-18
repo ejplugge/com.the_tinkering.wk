@@ -437,6 +437,7 @@ public class RigidGridLayout extends ViewGroup {
          * @param nextRow force this view to be the first view of a new row
          * @param gravity gravity of a child view within the cell
          */
+        @SuppressWarnings("unused")
         public LayoutParams(final int width, final int height, final int columnSpan, final boolean nextRow, final int gravity) {
             super(width, height);
             this.columnSpan = columnSpan;
