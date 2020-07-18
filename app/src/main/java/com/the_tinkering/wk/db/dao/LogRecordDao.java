@@ -19,7 +19,6 @@ package com.the_tinkering.wk.db.dao;
 import android.util.Log;
 
 import androidx.room.Dao;
-import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.the_tinkering.wk.db.model.LogRecord;
@@ -124,8 +123,21 @@ public abstract class LogRecordDao {
     /**
      * Room-generated method: insert a new record.
      *
+     * @param timestamp entity field
+     * @param tag entity field
+     * @param length entity field
+     * @param message entity field
+     */
+    @Query("INSERT INTO log_record (timestamp, tag, length, message) VALUES (:timestamp, :tag, :length, :message)")
+    protected abstract void insertHelper(long timestamp, @androidx.annotation.Nullable String tag,
+                                         int length, @androidx.annotation.Nullable String message);
+
+    /**
+     * Insert a new record.
+     *
      * @param record the record to insert
      */
-    @Insert
-    public abstract void insert(LogRecord record);
+    public final void insert(final LogRecord record) {
+        insertHelper(record.timestamp, record.tag, record.length, record.message);
+    }
 }

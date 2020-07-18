@@ -16,11 +16,6 @@
 
 package com.the_tinkering.wk.db.model;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import java.util.Date;
-
 import javax.annotation.Nullable;
 
 /**
@@ -28,93 +23,29 @@ import javax.annotation.Nullable;
  * Each row also contains the length of its message, to make it easier to trim excess
  * entries.
  */
-@Entity(tableName = "log_record")
 public final class LogRecord {
-    @PrimaryKey(autoGenerate = true) private long id = 0L;
-    private @Nullable Date timestamp;
-    private @Nullable String tag;
-    private int length = 0;
-    private @Nullable String message;
-
     /**
-     * The unique ID.
-     * @return the value
+     * Primary key.
      */
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * The unique ID.
-     * @param id the value
-     */
-    public void setId(final long id) {
-        this.id = id;
-    }
+    public long id = 0L;
 
     /**
      * Timestamp when the event was generated.
-     * @return the value
      */
-    public @Nullable Date getTimestamp() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        return timestamp;
-    }
-
-    /**
-     * Timestamp when the event was generated.
-     * @param timestamp the value
-     */
-    public void setTimestamp(final @Nullable Date timestamp) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        this.timestamp = timestamp;
-    }
+    public long timestamp = 0L;
 
     /**
      * The tag (class name) for this record.
-     * @return the value
      */
-    public @Nullable String getTag() {
-        return tag;
-    }
-
-    /**
-     * The tag (class name) for this record.
-     * @param tag the value
-     */
-    public void setTag(final @Nullable String tag) {
-        this.tag = tag;
-    }
+    public @Nullable String tag;
 
     /**
      * The length of the message string.
-     * @return the value
      */
-    public int getLength() {
-        return length;
-    }
-
-    /**
-     * The length of the message string.
-     * @param length the value
-     */
-    public void setLength(final int length) {
-        this.length = length;
-    }
+    public int length = 0;
 
     /**
      * The log message.
-     * @return the value
      */
-    public @Nullable String getMessage() {
-        return message;
-    }
-
-    /**
-     * The log message.
-     * @param message the value
-     */
-    public void setMessage(final @Nullable String message) {
-        this.message = message;
-    }
+    public @Nullable String message;
 }

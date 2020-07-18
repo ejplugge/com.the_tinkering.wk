@@ -120,7 +120,7 @@ public final class DbLogger {
             if (instance == null) {
                 return;
             }
-            instance.writeRecord(new Date(), clas, message, 20_000);
+            instance.writeRecord(System.currentTimeMillis(), clas, message, 20_000);
         } catch (final Exception e) {
             Log.e("CircularLogFile", "Exception while logging", e);
         }
@@ -142,7 +142,7 @@ public final class DbLogger {
             if (instance == null) {
                 return;
             }
-            instance.writeRecord(new Date(), clas, message, 20_000);
+            instance.writeRecord(System.currentTimeMillis(), clas, message, 20_000);
         } catch (final Exception e) {
             Log.e("CircularLogFile", "Exception while logging", e);
         }
@@ -164,7 +164,7 @@ public final class DbLogger {
             if (instance == null) {
                 return;
             }
-            instance.writeRecord(new Date(), clas, message, 20_000);
+            instance.writeRecord(System.currentTimeMillis(), clas, message, 20_000);
             final StringWriter writer = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(writer);
             throwable.printStackTrace(printWriter);
@@ -172,7 +172,7 @@ public final class DbLogger {
             printWriter.close();
             writer.flush();
             writer.close();
-            instance.writeRecord(new Date(), clas, writer.toString(), 50_000);
+            instance.writeRecord(System.currentTimeMillis(), clas, writer.toString(), 50_000);
         } catch (final Exception e) {
             Log.e("CircularLogFile", "Exception while logging", e);
         }
@@ -208,7 +208,7 @@ public final class DbLogger {
      * @param logMessage the message
      * @param maxLength the maximum length of the message to log
      */
-    private void writeRecord(final Date timestamp, final Class<?> clas, final String logMessage, final int maxLength) {
+    private void writeRecord(final long timestamp, final Class<?> clas, final String logMessage, final int maxLength) {
         if (isOnMainThread()) {
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -230,10 +230,10 @@ public final class DbLogger {
         }
 
         final LogRecord record = new LogRecord();
-        record.setTimestamp(timestamp);
-        record.setTag(getSimpleClassName(clas));
-        record.setMessage(message);
-        record.setLength(message.length());
+        record.timestamp = timestamp;
+        record.tag = getSimpleClassName(clas);
+        record.message = message;
+        record.length = message.length();
         db.logRecordDao().insert(record);
         if (mark >= 0) {
             mark += message.length();
@@ -255,9 +255,9 @@ public final class DbLogger {
             if (record == null) {
                 return;
             }
-            final String data = String.format("%s %s %s\n", record.getTimestamp(), record.getTag(), record.getMessage());
+            final String data = String.format("%s %s %s\n", new Date(record.timestamp), record.tag, record.message);
             stream.write(data.getBytes("UTF-8"));
-            id = record.getId();
+            id = record.id;
         }
     }
 

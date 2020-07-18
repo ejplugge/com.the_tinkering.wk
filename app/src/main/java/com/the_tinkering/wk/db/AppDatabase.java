@@ -40,7 +40,7 @@ import com.the_tinkering.wk.db.dao.SubjectViewsDao;
 import com.the_tinkering.wk.db.dao.TaskDefinitionDao;
 import com.the_tinkering.wk.db.model.AudioDownloadStatus;
 import com.the_tinkering.wk.db.model.LevelProgression;
-import com.the_tinkering.wk.db.model.LogRecord;
+import com.the_tinkering.wk.db.model.LogRecordEntityDefinition;
 import com.the_tinkering.wk.db.model.PronunciationAudioOwner;
 import com.the_tinkering.wk.db.model.Property;
 import com.the_tinkering.wk.db.model.SearchPreset;
@@ -88,7 +88,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.join;
         SrsSystemDefinition.class,
         LevelProgression.class,
         SessionItem.class,
-        LogRecord.class,
+        LogRecordEntityDefinition.class,
         AudioDownloadStatus.class,
         SearchPreset.class
 }, version = 65)
