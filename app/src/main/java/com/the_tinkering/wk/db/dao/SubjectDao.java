@@ -139,10 +139,17 @@ public abstract class SubjectDao {
     protected abstract void fixupBurnedAt();
 
     /**
+     * Fix up unlockedAt column so it never contains NULL values.
+     */
+    @Query("UPDATE subject SET unlockedAt = 0 WHERE unlockedAt IS NULL")
+    protected abstract void fixupUnlockedAt();
+
+    /**
      * Fix up date columns so they never contain NULL values.
      */
     public final void fixupDateFields() {
         fixupResurrectedAt();
         fixupBurnedAt();
+        fixupUnlockedAt();
     }
 }

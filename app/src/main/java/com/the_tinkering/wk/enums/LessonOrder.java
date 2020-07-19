@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.enums;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.db.model.Subject;
 
 import java.util.Comparator;
@@ -24,6 +26,7 @@ import java.util.Comparator;
  * The order to present lessons in. Each value will produce a comparator on demand.
  */
 @SuppressWarnings("unused")
+@SuppressLint("NewApi")
 public enum LessonOrder {
     /**
      * Completely random order. I.e., the comparator always returns 0 and doesn't impose an order.

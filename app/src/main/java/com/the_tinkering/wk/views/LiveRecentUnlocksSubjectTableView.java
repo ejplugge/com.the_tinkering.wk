@@ -85,7 +85,7 @@ public final class LiveRecentUnlocksSubjectTableView extends LiveSubjectTableVie
     @Override
     protected String getExtraText(final Subject subject) {
         return safe("", () -> {
-            if (subject.getUnlockedAt() == null) {
+            if (subject.getUnlockedAt() == 0) {
                 return "";
             }
             //noinspection AccessToNonThreadSafeStaticField

@@ -132,7 +132,7 @@ public abstract class SubjectCollectionsDao {
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND (resurrectedAt != 0 OR burnedAt = 0)"
-            + " AND unlockedAt != 0 AND unlockedAt IS NOT NULL AND (startedAt = 0 OR startedAt IS NULL)"
+            + " AND unlockedAt != 0 AND (startedAt = 0 OR startedAt IS NULL)"
             + " ORDER BY level, lessonPosition, id")
     protected abstract List<SubjectEntity> getAvailableLessonItemsHelper(final int maxLevel, final int userLevel);
 

@@ -271,7 +271,7 @@ public abstract class SubjectSyncDao {
             + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
             + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
             + " statisticPatched, leechScore, levelProgressScore, audioDownloadStatus,"
-            + " resurrectedAt, burnedAt"
+            + " resurrectedAt, burnedAt, unlockedAt"
             + " )"
             + " VALUES (:subjectId, :object, :characters, :slug, :documentUrl, :meaningMnemonic, :meaningHint, :readingMnemonic, :readingHint,"
             + " :searchTarget, :smallSearchTarget,"
@@ -280,7 +280,7 @@ public abstract class SubjectSyncDao {
             + " 0, :lessonPosition, :level, :hiddenAt,"
             + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :srsSystemId,"
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
-            + " 0, 0"
+            + " 0, 0, 0"
             + ")")
     protected abstract void tryInsertHelper(final long subjectId,
                                             final String object,
@@ -681,7 +681,7 @@ public abstract class SubjectSyncDao {
             + " WHERE id = :subjectId")
     protected abstract void patchAssignmentHelper(final long subjectId,
                                                   final long srsStageId,
-                                                  @androidx.annotation.Nullable final Date unlockedAt,
+                                                  final long unlockedAt,
                                                   @androidx.annotation.Nullable final Date startedAt,
                                                   @androidx.annotation.Nullable final Date availableAt,
                                                   @androidx.annotation.Nullable final Date passedAt,
@@ -702,7 +702,7 @@ public abstract class SubjectSyncDao {
      */
     public final void patchAssignment(final long subjectId,
                                       final long srsStageId,
-                                      final @Nullable Date unlockedAt,
+                                      final long unlockedAt,
                                       final @Nullable Date startedAt,
                                       final @Nullable Date availableAt,
                                       final @Nullable Date passedAt,
@@ -710,7 +710,7 @@ public abstract class SubjectSyncDao {
                                       final long resurrectedAt) {
         LOGGER.info("Patch assignment: id:%d stage:%d unlockedAt:%s startedAt:%s availableAt:%s passedAt:%s burnedAt:%s resurrectedAt:%s",
                 subjectId, srsStageId, unlockedAt, startedAt, availableAt, passedAt, burnedAt, resurrectedAt);
-        patchAssignmentHelper(subjectId, unlockedAt == null ? -999 : srsStageId, unlockedAt, startedAt, availableAt, passedAt, burnedAt, resurrectedAt);
+        patchAssignmentHelper(subjectId, unlockedAt == 0 ? -999 : srsStageId, unlockedAt, startedAt, availableAt, passedAt, burnedAt, resurrectedAt);
         SubjectChangeWatcher.getInstance().reportChange(subjectId);
     }
 
@@ -819,8 +819,8 @@ public abstract class SubjectSyncDao {
         }
 
         boolean changed = false;
-        if (subject.getUnlockedAt() == null) {
-            subject.setUnlockedAt(new Date(unlockedAt));
+        if (subject.getUnlockedAt() == 0) {
+            subject.setUnlockedAt(unlockedAt);
             changed = true;
         }
         if (subject.getStartedAt() != null) {
@@ -850,7 +850,7 @@ public abstract class SubjectSyncDao {
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND (resurrectedAt != 0 OR burnedAt = 0)"
-            + " AND unlockedAt != 0 AND unlockedAt IS NOT NULL AND (startedAt = 0 OR startedAt IS NULL)"
+            + " AND unlockedAt != 0 AND (startedAt = 0 OR startedAt IS NULL)"
             + " ORDER BY level, lessonPosition, id")
     protected abstract List<SubjectEntity> getAvailableLessonItemsHelper(final int maxLevel, final int userLevel);
 
@@ -865,7 +865,9 @@ public abstract class SubjectSyncDao {
     public final void forceLessonUnavailableExcept(final int userLevel, final int maxLevel, final Collection<Long> subjectIds) {
         for (final SubjectEntity subject: getAvailableLessonItemsHelper(userLevel, maxLevel)) {
             if (!subjectIds.contains(subject.id)) {
-                patchAssignment(subject.id, subject.srsStageId, subject.unlockedAt, subject.unlockedAt, subject.availableAt,
+                patchAssignment(subject.id, subject.srsStageId,
+                        subject.unlockedAt == null ? 0 : subject.unlockedAt.getTime(),
+                        subject.unlockedAt, subject.availableAt,
                         subject.passedAt,
                         subject.burnedAt == null ? 0 : subject.burnedAt.getTime(),
                         subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
@@ -894,8 +896,8 @@ public abstract class SubjectSyncDao {
             changed = true;
         }
         SrsSystem.Stage stage = subject.getSrsStage();
-        if (subject.getUnlockedAt() == null) {
-            subject.setUnlockedAt(new Date(availableAt));
+        if (subject.getUnlockedAt() == 0) {
+            subject.setUnlockedAt(availableAt);
             stage = stage.getSystem().getFirstStartedStage();
             subject.setSrsStage(stage);
             changed = true;
@@ -943,7 +945,9 @@ public abstract class SubjectSyncDao {
         final Date cutoff = new Date(System.currentTimeMillis() + Constants.HOUR);
         for (final SubjectEntity subject: getPendingReviewItemsHelper(maxLevel, userLevel, cutoff)) {
             if (!subjectIds.contains(subject.id)) {
-                patchAssignment(subject.id, subject.srsStageId, subject.unlockedAt, subject.unlockedAt, null,
+                patchAssignment(subject.id, subject.srsStageId,
+                        subject.unlockedAt == null ? 0 : subject.unlockedAt.getTime(),
+                        subject.unlockedAt, null,
                         subject.passedAt,
                         subject.burnedAt == null ? 0 : subject.burnedAt.getTime(),
                         subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());

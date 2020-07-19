@@ -1108,21 +1108,22 @@ public final class Subject implements PronunciationAudioOwner {
     }
 
     /**
-     * The timestamp when this subject was unlocked, or null if it is still locked.
+     * The timestamp when this subject was unlocked, or 0 if it is still locked.
      * @return the value
      */
-    public @Nullable Date getUnlockedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        return entity.unlockedAt;
+    public long getUnlockedAt() {
+        if (entity.unlockedAt == null) {
+            return 0;
+        }
+        return entity.unlockedAt.getTime();
     }
 
     /**
-     * The timestamp when this subject was unlocked, or null if it is still locked.
+     * The timestamp when this subject was unlocked, or 0 if it is still locked.
      * @param unlockedAt the value
      */
-    public void setUnlockedAt(final @Nullable Date unlockedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        entity.unlockedAt = unlockedAt;
+    public void setUnlockedAt(final long unlockedAt) {
+        entity.unlockedAt = unlockedAt == 0 ? null : new Date(unlockedAt);
     }
 
     /**
