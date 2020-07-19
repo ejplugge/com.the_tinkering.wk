@@ -18,9 +18,7 @@ package com.the_tinkering.wk.adapter.search;
 
 import android.view.View;
 
-import com.the_tinkering.wk.util.TextUtil;
-
-import java.util.Date;
+import static com.the_tinkering.wk.util.TextUtil.formatTimestamp;
 
 /**
  * View holder class for available-at header items.
@@ -57,7 +55,7 @@ public final class AvailableAtHeaderItemViewHolder extends HeaderItemViewHolder 
             titleStr = "Review available now";
         }
         else {
-            titleStr = TextUtil.formatTimestamp(new Date(item.getTimestamp()));
+            titleStr = formatTimestamp(item.getTimestamp());
         }
         title.setText(titleStr);
     }

@@ -237,6 +237,21 @@ public final class TextUtil {
     }
 
     /**
+     * Format a timestamp for informal display in subject info.
+     *
+     * @param value the timestap to format
+     * @return the formatted timestamp
+     */
+    public static String formatTimestamp(final long value) {
+        if (value == 0) {
+            return "";
+        }
+        final java.text.DateFormat dateFormatter = DateFormat.getMediumDateFormat(WkApplication.getInstance());
+        final java.text.DateFormat timeFormatter = DateFormat.getTimeFormat(WkApplication.getInstance());
+        return String.format("%s %s", dateFormatter.format(value), timeFormatter.format(value));
+    }
+
+    /**
      * Render a string as HTML for TextView instances, with limited tag support.
      *
      * @param source the HTML source test
