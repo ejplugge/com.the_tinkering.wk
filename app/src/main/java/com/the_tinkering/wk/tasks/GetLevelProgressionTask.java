@@ -27,10 +27,6 @@ import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveLevelDuration;
 
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 import static com.the_tinkering.wk.Constants.HOUR;
 
 /**
@@ -60,12 +56,12 @@ public final class GetLevelProgressionTask extends ApiTask {
     protected void runLocal() {
         final AppDatabase db = WkApplication.getDatabase();
         final LevelProgressionDao levelProgressionDao = db.levelProgressionDao();
-        final @Nullable Date lastGetLevelProgressionSuccess = db.propertiesDao().getLastLevelProgressionSyncSuccessDate(HOUR);
+        final long lastGetLevelProgressionSuccess = db.propertiesDao().getLastLevelProgressionSyncSuccessDate(HOUR);
 
         LiveApiProgress.reset(true, "Level progression");
 
         String uri = "/v2/level_progressions";
-        if (lastGetLevelProgressionSuccess != null) {
+        if (lastGetLevelProgressionSuccess != 0) {
             uri += "?updated_after=" + Converters.formatDate(lastGetLevelProgressionSuccess);
         }
 
@@ -73,8 +69,8 @@ public final class GetLevelProgressionTask extends ApiTask {
             return;
         }
 
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
-        db.propertiesDao().setLastLevelProgressionSyncSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
+        db.propertiesDao().setLastLevelProgressionSyncSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
         LiveLevelDuration.getInstance().forceUpdate();

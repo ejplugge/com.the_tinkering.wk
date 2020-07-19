@@ -95,45 +95,45 @@ public abstract class Job {
                 break;
         }
 
-        final @Nullable Date lastGetSrsSystemsSuccess = db.propertiesDao().getLastSrsSystemSyncSuccessDate();
-        if (lastGetSrsSystemsSuccess == null
-                || System.currentTimeMillis() - lastGetSrsSystemsSuccess.getTime() > WEEK) {
+        final long lastGetSrsSystemsSuccess = db.propertiesDao().getLastSrsSystemSyncSuccessDate();
+        if (lastGetSrsSystemsSuccess == 0
+                || System.currentTimeMillis() - lastGetSrsSystemsSuccess > WEEK) {
             db.assertGetSrsSystemsTask();
         }
 
-        final @Nullable Date lastGetLevelProgressionSuccess = db.propertiesDao().getLastLevelProgressionSyncSuccessDate(0);
-        if (lastGetLevelProgressionSuccess == null
-                || System.currentTimeMillis() - lastGetLevelProgressionSuccess.getTime() > WEEK) {
+        final long lastGetLevelProgressionSuccess = db.propertiesDao().getLastLevelProgressionSyncSuccessDate(0);
+        if (lastGetLevelProgressionSuccess == 0
+                || System.currentTimeMillis() - lastGetLevelProgressionSuccess > WEEK) {
             db.assertGetLevelProgressionTask();
         }
 
-        final @Nullable Date lastGetSubjectsSuccess = db.propertiesDao().getLastSubjectSyncSuccessDate(0);
-        if (lastGetSubjectsSuccess == null
-                || System.currentTimeMillis() - lastGetSubjectsSuccess.getTime() > DAY) {
+        final long lastGetSubjectsSuccess = db.propertiesDao().getLastSubjectSyncSuccessDate(0);
+        if (lastGetSubjectsSuccess == 0
+                || System.currentTimeMillis() - lastGetSubjectsSuccess > DAY) {
             db.assertGetSubjectsTask();
         }
 
-        final @Nullable Date lastGetAssignmentsSuccess = db.propertiesDao().getLastAssignmentSyncSuccessDate(0);
-        if (lastGetAssignmentsSuccess == null
-                || System.currentTimeMillis() - lastGetAssignmentsSuccess.getTime() > HOUR) {
+        final long lastGetAssignmentsSuccess = db.propertiesDao().getLastAssignmentSyncSuccessDate(0);
+        if (lastGetAssignmentsSuccess == 0
+                || System.currentTimeMillis() - lastGetAssignmentsSuccess > HOUR) {
             db.assertGetAssignmentsTask();
         }
 
-        final @Nullable Date lastGetReviewStatisticsSuccess = db.propertiesDao().getLastReviewStatisticSyncSuccessDate(0);
-        if (lastGetReviewStatisticsSuccess == null
-                || System.currentTimeMillis() - lastGetReviewStatisticsSuccess.getTime() > HOUR) {
+        final long lastGetReviewStatisticsSuccess = db.propertiesDao().getLastReviewStatisticSyncSuccessDate(0);
+        if (lastGetReviewStatisticsSuccess == 0
+                || System.currentTimeMillis() - lastGetReviewStatisticsSuccess > HOUR) {
             db.assertGetReviewStatisticsTask();
         }
 
-        final @Nullable Date lastGetStudyMaterialsSuccess = db.propertiesDao().getLastStudyMaterialSyncSuccessDate(0);
-        if (lastGetStudyMaterialsSuccess == null
-                || System.currentTimeMillis() - lastGetStudyMaterialsSuccess.getTime() > HOUR) {
+        final long lastGetStudyMaterialsSuccess = db.propertiesDao().getLastStudyMaterialSyncSuccessDate(0);
+        if (lastGetStudyMaterialsSuccess == 0
+                || System.currentTimeMillis() - lastGetStudyMaterialsSuccess > HOUR) {
             db.assertGetStudyMaterialsTask();
         }
 
-        final @Nullable Date lastGetSummarySuccess = db.propertiesDao().getLastSummarySyncSuccessDate();
-        if (lastGetSummarySuccess == null
-                || System.currentTimeMillis() - lastGetSummarySuccess.getTime() > HOUR) {
+        final long lastGetSummarySuccess = db.propertiesDao().getLastSummarySyncSuccessDate();
+        if (lastGetSummarySuccess == 0
+                || System.currentTimeMillis() - lastGetSummarySuccess > HOUR) {
             db.assertGetSummaryTask();
         }
 

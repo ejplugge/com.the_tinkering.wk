@@ -105,19 +105,19 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
         }
 
         if (GlobalSettings.Api.getAutoDownloadAudio()) {
-            final @Nullable Date lastAudioScanDate = db.propertiesDao().getLastAudioScanDate();
-            if (lastAudioScanDate == null || System.currentTimeMillis() - lastAudioScanDate.getTime() > DAY/2) {
+            final long lastAudioScanDate = db.propertiesDao().getLastAudioScanDate();
+            if (lastAudioScanDate == 0 || System.currentTimeMillis() - lastAudioScanDate > DAY/2) {
                 scanSubjects.addAll(db.subjectCollectionsDao().getByLevelRange(userLevel, userLevel));
                 AudioUtil.scheduleDownloadTasks(scanSubjects, 100);
-                db.propertiesDao().setLastAudioScanDate(new Date());
+                db.propertiesDao().setLastAudioScanDate(System.currentTimeMillis());
             }
         }
 
         if (GlobalSettings.Display.getShowPitchInfo()) {
-            final @Nullable Date lastPitchInfoScanDate = db.propertiesDao().getLastPitchInfoScanDate();
-            if (lastPitchInfoScanDate == null || System.currentTimeMillis() - lastPitchInfoScanDate.getTime() > DAY/2) {
+            final long lastPitchInfoScanDate = db.propertiesDao().getLastPitchInfoScanDate();
+            if (lastPitchInfoScanDate == 0 || System.currentTimeMillis() - lastPitchInfoScanDate > DAY/2) {
                 PitchInfoUtil.scheduleDownloadTasks(100);
-                db.propertiesDao().setLastPitchInfoScanDate(new Date());
+                db.propertiesDao().setLastPitchInfoScanDate(System.currentTimeMillis());
             }
         }
     }

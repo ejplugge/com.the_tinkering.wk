@@ -23,7 +23,6 @@ import com.the_tinkering.wk.db.model.Property;
 import com.the_tinkering.wk.enums.QuestionType;
 import com.the_tinkering.wk.enums.SessionType;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -58,12 +57,6 @@ public abstract class PropertiesDao {
     @Query("SELECT value FROM properties WHERE name = :name")
     protected abstract @Nullable String getPropertyHelper(final String name);
 
-    /**
-     * Get a property by name.
-     *
-     * @param name the name of the property
-     * @return the value or null if it doesn't exist
-     */
     private @Nullable String getProperty(final String name) {
         return safeNullable(() -> getPropertyHelper(name));
     }
@@ -85,22 +78,10 @@ public abstract class PropertiesDao {
     @Query("DELETE FROM properties WHERE name = :name")
     public abstract void deleteProperty(final String name);
 
-    /**
-     * Set a property.
-     *
-     * @param name the name of the property
-     * @param value the value of the property
-     */
     private void setProperty(final String name, final String value) {
         safe(() -> setPropertyHelper(name, value));
     }
 
-    /**
-     * Get a property (true/false) as a boolean.
-     *
-     * @param name the name of the property
-     * @return the value of the property, false if absent
-     */
     private boolean getBooleanProperty(final String name) {
         final @Nullable String value = getProperty(name);
 
@@ -111,22 +92,10 @@ public abstract class PropertiesDao {
         return isEqualIgnoreCase(value, "true");
     }
 
-    /**
-     * Set a property with a boolean value (true/false).
-     *
-     * @param name the name of the property
-     * @param value the value of the property
-     */
     private void setBooleanProperty(final String name, final boolean value) {
         setProperty(name, Boolean.toString(value));
     }
 
-    /**
-     * Get a property as an int.
-     *
-     * @param name the name of the property
-     * @return the value of the property, 0 if absent
-     */
     private int getIntegerProperty(final String name) {
         final @Nullable String value = getProperty(name);
 
@@ -137,82 +106,27 @@ public abstract class PropertiesDao {
         return safe(0, () -> Integer.parseInt(value, 10));
     }
 
-    /**
-     * Set a property with an int value.
-     *
-     * @param name the name of the property
-     * @param value the value of the property
-     */
     private void setIntegerProperty(final String name, final int value) {
         setProperty(name, Integer.toString(value));
     }
 
-    /**
-     * Get a property as a long.
-     *
-     * @param name the name of the property
-     * @return the value of the property, 0 if absent
-     */
-    private long getLongProperty(@SuppressWarnings("SameParameterValue") final String name) {
+    private long getLongProperty(final String name, final long delta) {
         final @Nullable String value = getProperty(name);
 
         if (isEmpty(value)) {
             return 0;
         }
 
-        return safe(0L, () -> Long.parseLong(value, 10));
+        long longValue = safe(0L, () -> Long.parseLong(value, 10));
+        if (longValue >= delta) {
+            longValue -= delta;
+        }
+
+        return longValue;
     }
 
-    /**
-     * Set a property with a long value.
-     *
-     * @param name the name of the property
-     * @param value the value of the property
-     */
-    private void setLongProperty(@SuppressWarnings("SameParameterValue") final String name, final long value) {
+    private void setLongProperty(final String name, final long value) {
         setProperty(name, Long.toString(value));
-    }
-
-    /**
-     * Get a property as a Date, represented in the database as a Unix timestamp in ms.
-     * A null Date is represented as 0. Subtract the delta in ms from the timestamp.
-     *
-     * @param name the name of the property
-     * @param delta a number of ms to subtract from the value
-     * @return the value of the property, null if absent
-     */
-    private @Nullable Date getDateProperty(final String name, final long delta) {
-        final @Nullable String value = getProperty(name);
-
-        if (value == null) {
-            return null;
-        }
-
-        long ts = safe(0L, () -> Long.parseLong(value));
-        if (ts == 0) {
-            return null;
-        }
-
-        if (ts >= delta) {
-            ts -= delta;
-        }
-        return new Date(ts);
-    }
-
-    /**
-     * Set a property as a Date, represented in the database as a Unix timestamp in ms.
-     * A null Date is represented as 0.
-     *
-     * @param name the name of the property
-     * @param value the value of the property
-     */
-    private void setDateProperty(final String name, final @Nullable Date value) {
-        if (value == null) {
-            setProperty(name, "0");
-        }
-        else {
-            setProperty(name, Long.toString(value.getTime()));
-        }
     }
 
     /**
@@ -254,222 +168,222 @@ public abstract class PropertiesDao {
     /**
      * When was the last successful API call?.
      *
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastApiSuccessDate() {
-        return getDateProperty("last_api_success", 0);
+    public final long getLastApiSuccessDate() {
+        return getLongProperty("last_api_success", 0);
     }
 
     /**
      * When was the last successful API call?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastApiSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_api_success", value);
+    public final void setLastApiSuccessDate(final long value) {
+        setLongProperty("last_api_success", value);
     }
 
     /**
      * When was the last successful user sync?.
      *
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastUserSyncSuccessDate() {
-        return getDateProperty("last_user_sync_success", 0);
+    public final long getLastUserSyncSuccessDate() {
+        return getLongProperty("last_user_sync_success", 0);
     }
 
     /**
      * When was the last successful user sync?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastUserSyncSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_user_sync_success", value);
+    public final void setLastUserSyncSuccessDate(final long value) {
+        setLongProperty("last_user_sync_success", value);
     }
 
     /**
      * When was the last successful subject sync?.
      *
      * @param delta a number of ms to subtract from the value
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastSubjectSyncSuccessDate(final long delta) {
-        return getDateProperty("last_subject_sync_success", delta);
+    public final long getLastSubjectSyncSuccessDate(final long delta) {
+        return getLongProperty("last_subject_sync_success", delta);
     }
 
     /**
      * When was the last successful subject sync?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastSubjectSyncSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_subject_sync_success", value);
+    public final void setLastSubjectSyncSuccessDate(final long value) {
+        setLongProperty("last_subject_sync_success", value);
     }
 
     /**
      * When was the last successful assignment sync?.
      *
      * @param delta a number of ms to subtract from the value
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastAssignmentSyncSuccessDate(final long delta) {
-        return getDateProperty("last_assignment_sync_success", delta);
+    public final long getLastAssignmentSyncSuccessDate(final long delta) {
+        return getLongProperty("last_assignment_sync_success", delta);
     }
 
     /**
      * When was the last successful assignment sync?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastAssignmentSyncSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_assignment_sync_success", value);
+    public final void setLastAssignmentSyncSuccessDate(final long value) {
+        setLongProperty("last_assignment_sync_success", value);
     }
 
     /**
      * When was the last successful review statistic sync?.
      *
      * @param delta a number of ms to subtract from the value
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastReviewStatisticSyncSuccessDate(final long delta) {
-        return getDateProperty("last_review_statistic_sync_success", delta);
+    public final long getLastReviewStatisticSyncSuccessDate(final long delta) {
+        return getLongProperty("last_review_statistic_sync_success", delta);
     }
 
     /**
      * When was the last successful review statistic sync?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastReviewStatisticSyncSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_review_statistic_sync_success", value);
+    public final void setLastReviewStatisticSyncSuccessDate(final long value) {
+        setLongProperty("last_review_statistic_sync_success", value);
     }
 
     /**
      * When was the last successful study material sync?.
      *
      * @param delta a number of ms to subtract from the value
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastStudyMaterialSyncSuccessDate(final long delta) {
-        return getDateProperty("last_study_material_sync_success", delta);
+    public final long getLastStudyMaterialSyncSuccessDate(final long delta) {
+        return getLongProperty("last_study_material_sync_success", delta);
     }
 
     /**
      * When was the last successful study material sync?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastStudyMaterialSyncSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_study_material_sync_success", value);
+    public final void setLastStudyMaterialSyncSuccessDate(final long value) {
+        setLongProperty("last_study_material_sync_success", value);
     }
 
     /**
      * When was the last successful SRS system sync?.
      *
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastSrsSystemSyncSuccessDate() {
-        return getDateProperty("last_srs_system_sync_success", 0);
+    public final long getLastSrsSystemSyncSuccessDate() {
+        return getLongProperty("last_srs_system_sync_success", 0);
     }
 
     /**
      * When was the last successful SRS system sync?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastSrsSystemSyncSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_srs_system_sync_success", value);
+    public final void setLastSrsSystemSyncSuccessDate(final long value) {
+        setLongProperty("last_srs_system_sync_success", value);
     }
 
     /**
      * When was the last successful level progression sync?.
      *
      * @param delta a number of ms to subtract from the value
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastLevelProgressionSyncSuccessDate(final long delta) {
-        return getDateProperty("last_level_progression_sync_success", delta);
+    public final long getLastLevelProgressionSyncSuccessDate(final long delta) {
+        return getLongProperty("last_level_progression_sync_success", delta);
     }
 
     /**
      * When was the last successful level progression sync?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastLevelProgressionSyncSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_level_progression_sync_success", value);
+    public final void setLastLevelProgressionSyncSuccessDate(final long value) {
+        setLongProperty("last_level_progression_sync_success", value);
     }
 
     /**
      * When was the last successful summary sync?.
      *
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastSummarySyncSuccessDate() {
-        return getDateProperty("last_summary_sync_success", 0);
+    public final long getLastSummarySyncSuccessDate() {
+        return getLongProperty("last_summary_sync_success", 0);
     }
 
     /**
      * When was the last successful summary sync?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastSummarySyncSuccessDate(final @Nullable Date value) {
-        setDateProperty("last_summary_sync_success", value);
+    public final void setLastSummarySyncSuccessDate(final long value) {
+        setLongProperty("last_summary_sync_success", value);
     }
 
     /**
      * When was the last time there was a check for audio that needed to be downloaded?.
      *
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastAudioScanDate() {
-        return getDateProperty("last_audio_scan", 0);
+    public final long getLastAudioScanDate() {
+        return getLongProperty("last_audio_scan", 0);
     }
 
     /**
      * When was the last time there was a check for audio that needed to be downloaded?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastAudioScanDate(final @Nullable Date value) {
-        setDateProperty("last_audio_scan", value);
+    public final void setLastAudioScanDate(final long value) {
+        setLongProperty("last_audio_scan", value);
     }
 
     /**
      * When was the last time there was a check for pitch info that needed to be downloaded?.
      *
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastPitchInfoScanDate() {
-        return getDateProperty("last_pitch_info_scan", 0);
+    public final long getLastPitchInfoScanDate() {
+        return getLongProperty("last_pitch_info_scan", 0);
     }
 
     /**
      * When was the last time there was a check for pitch info that needed to be downloaded?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastPitchInfoScanDate(final @Nullable Date value) {
-        setDateProperty("last_pitch_info_scan", value);
+    public final void setLastPitchInfoScanDate(final long value) {
+        setLongProperty("last_pitch_info_scan", value);
     }
 
     /**
      * When was the last availableAt for which a notification was issued?.
      *
-     * @return the timestamp, or null if not known
+     * @return the timestamp, or 0 if not known
      */
-    public final @Nullable Date getLastNotifiedReviewDate() {
-        return getDateProperty("last_notified_review_date", 0);
+    public final long getLastNotifiedReviewDate() {
+        return getLongProperty("last_notified_review_date", 0);
     }
 
     /**
      * When was the last availableAt for which a notification was issued?.
      *
-     * @param value the timestamp, or null if not known
+     * @param value the timestamp, or 0 if not known
      */
-    public final void setLastNotifiedReviewDate(final @Nullable Date value) {
-        setDateProperty("last_notified_review_date", value);
+    public final void setLastNotifiedReviewDate(final long value) {
+        setLongProperty("last_notified_review_date", value);
     }
 
     /**
@@ -478,8 +392,8 @@ public abstract class PropertiesDao {
      * @return the level, or 3 if not known
      */
     public final int getUserMaxLevelGranted() {
-        final @Nullable Date end = getDateProperty("user_max_level_granted_checked", -MONTH);
-        if (end == null || System.currentTimeMillis() > end.getTime()) {
+        final long end = getLongProperty("user_max_level_granted_checked", -MONTH);
+        if (end == 0 || System.currentTimeMillis() > end) {
             return 3;
         }
         return getIntegerProperty("user_max_level_granted");
@@ -492,7 +406,7 @@ public abstract class PropertiesDao {
      */
     public final void setUserMaxLevelGranted(final int value) {
         setIntegerProperty("user_max_level_granted", value);
-        setDateProperty("user_max_level_granted_checked", new Date());
+        setLongProperty("user_max_level_granted_checked", System.currentTimeMillis());
     }
 
     /**
@@ -689,7 +603,7 @@ public abstract class PropertiesDao {
      * @return the ID
      */
     public final long getCurrentItemId() {
-        return getLongProperty("current_item_id");
+        return getLongProperty("current_item_id", 0);
     }
 
     /**

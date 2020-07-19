@@ -58,12 +58,12 @@ public final class GetReviewStatisticsTask extends ApiTask {
     @Override
     protected void runLocal() {
         final AppDatabase db = WkApplication.getDatabase();
-        final @Nullable Date lastGetReviewStatisticsSuccess = db.propertiesDao().getLastReviewStatisticSyncSuccessDate(HOUR);
+        final long lastGetReviewStatisticsSuccess = db.propertiesDao().getLastReviewStatisticSyncSuccessDate(HOUR);
 
         LiveApiProgress.reset(true, "statistics");
 
         String uri = "/v2/review_statistics";
-        if (lastGetReviewStatisticsSuccess != null) {
+        if (lastGetReviewStatisticsSuccess != 0) {
             uri += "?updated_after=" + Converters.formatDate(lastGetReviewStatisticsSuccess);
         }
 
@@ -71,8 +71,8 @@ public final class GetReviewStatisticsTask extends ApiTask {
             return;
         }
 
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
-        db.propertiesDao().setLastReviewStatisticSyncSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
+        db.propertiesDao().setLastReviewStatisticSyncSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
         if (LiveApiProgress.getNumProcessedEntities() > 0) {

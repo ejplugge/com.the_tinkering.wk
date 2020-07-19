@@ -76,7 +76,7 @@ public final class GetPatchedReviewStatisticsTask extends ApiTask {
         }
         db.subjectDao().resolvePatchedReviewStatistics(subjectIds);
 
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
         if (LiveApiProgress.getNumProcessedEntities() > 0) {

@@ -104,17 +104,17 @@ public enum ApiState {
             return ERROR;
         }
 
-        final @Nullable Date lastApiSuccess = db.propertiesDao().getLastApiSuccessDate();
-        if (lastApiSuccess == null) {
+        final long lastApiSuccess = db.propertiesDao().getLastApiSuccessDate();
+        if (lastApiSuccess == 0) {
             return UNKNOWN;
         }
 
-        if (System.currentTimeMillis() - lastApiSuccess.getTime() > HOUR) {
+        if (System.currentTimeMillis() - lastApiSuccess > HOUR) {
             return EXPIRED;
         }
 
-        final @Nullable Date lastGetUserSuccess = db.propertiesDao().getLastUserSyncSuccessDate();
-        if (lastGetUserSuccess == null || System.currentTimeMillis() - lastGetUserSuccess.getTime() > HOUR) {
+        final long lastGetUserSuccess = db.propertiesDao().getLastUserSyncSuccessDate();
+        if (lastGetUserSuccess == 0 || System.currentTimeMillis() - lastGetUserSuccess > HOUR) {
             return REFRESH_USER_DATA;
         }
         return OK;

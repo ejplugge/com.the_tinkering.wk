@@ -57,12 +57,12 @@ public final class GetStudyMaterialsTask extends ApiTask {
     @Override
     protected void runLocal() {
         final AppDatabase db = WkApplication.getDatabase();
-        final @Nullable Date lastGetStudyMaterialsSuccess = db.propertiesDao().getLastStudyMaterialSyncSuccessDate(HOUR);
+        final long lastGetStudyMaterialsSuccess = db.propertiesDao().getLastStudyMaterialSyncSuccessDate(HOUR);
 
         LiveApiProgress.reset(true, "study materials");
 
         String uri = "/v2/study_materials";
-        if (lastGetStudyMaterialsSuccess != null) {
+        if (lastGetStudyMaterialsSuccess != 0) {
             uri += "?updated_after=" + Converters.formatDate(lastGetStudyMaterialsSuccess);
         }
 
@@ -70,8 +70,8 @@ public final class GetStudyMaterialsTask extends ApiTask {
             return;
         }
 
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
-        db.propertiesDao().setLastStudyMaterialSyncSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
+        db.propertiesDao().setLastStudyMaterialSyncSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
     }

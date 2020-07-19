@@ -70,7 +70,6 @@ import com.the_tinkering.wk.tasks.ReportSessionItemTask;
 import com.the_tinkering.wk.tasks.ScanAudioDownloadStatusTask;
 import com.the_tinkering.wk.tasks.SubmitStudyMaterialTask;
 
-import java.util.Date;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
@@ -594,9 +593,9 @@ public abstract class AppDatabase extends RoomDatabase {
         assertGetReviewStatisticsTask();
         assertGetStudyMaterialsTask();
         assertGetSummaryTask();
-        final @Nullable Date lastGetSrsSystemsSuccess = propertiesDao().getLastSrsSystemSyncSuccessDate();
-        if (lastGetSrsSystemsSuccess == null
-                || System.currentTimeMillis() - lastGetSrsSystemsSuccess.getTime() > DAY) {
+        final long lastGetSrsSystemsSuccess = propertiesDao().getLastSrsSystemSyncSuccessDate();
+        if (lastGetSrsSystemsSuccess == 0
+                || System.currentTimeMillis() - lastGetSrsSystemsSuccess > DAY) {
             assertGetSrsSystemsTask();
         }
         JobRunnerService.schedule(TickJob.class, "");
@@ -608,15 +607,15 @@ public abstract class AppDatabase extends RoomDatabase {
     public final void resetDatabase() {
         propertiesDao().setApiInError(false);
         propertiesDao().setApiKeyRejected(false);
-        propertiesDao().setLastApiSuccessDate(null);
-        propertiesDao().setLastUserSyncSuccessDate(null);
-        propertiesDao().setLastSubjectSyncSuccessDate(null);
-        propertiesDao().setLastAssignmentSyncSuccessDate(null);
-        propertiesDao().setLastReviewStatisticSyncSuccessDate(null);
-        propertiesDao().setLastStudyMaterialSyncSuccessDate(null);
-        propertiesDao().setLastSrsSystemSyncSuccessDate(null);
-        propertiesDao().setLastLevelProgressionSyncSuccessDate(null);
-        propertiesDao().setLastSummarySyncSuccessDate(null);
+        propertiesDao().setLastApiSuccessDate(0);
+        propertiesDao().setLastUserSyncSuccessDate(0);
+        propertiesDao().setLastSubjectSyncSuccessDate(0);
+        propertiesDao().setLastAssignmentSyncSuccessDate(0);
+        propertiesDao().setLastReviewStatisticSyncSuccessDate(0);
+        propertiesDao().setLastStudyMaterialSyncSuccessDate(0);
+        propertiesDao().setLastSrsSystemSyncSuccessDate(0);
+        propertiesDao().setLastLevelProgressionSyncSuccessDate(0);
+        propertiesDao().setLastSummarySyncSuccessDate(0);
         propertiesDao().setSessionType(SessionType.NONE);
         propertiesDao().setSessionOnkun(false);
         Session.getInstance().reset();

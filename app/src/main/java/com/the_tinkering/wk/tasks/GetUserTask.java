@@ -94,8 +94,8 @@ public final class GetUserTask extends ApiTask {
 
         db.propertiesDao().setApiKeyRejected(false);
         db.propertiesDao().setApiInError(false);
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
-        db.propertiesDao().setLastUserSyncSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
+        db.propertiesDao().setLastUserSyncSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
         LiveLevelDuration.getInstance().forceUpdate();

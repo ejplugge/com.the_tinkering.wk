@@ -75,7 +75,7 @@ public final class GetPatchedStudyMaterialsTask extends ApiTask {
         }
         db.subjectDao().resolvePatchedStudyMaterials(subjectIds);
 
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
     }

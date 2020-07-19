@@ -97,8 +97,8 @@ public final class GetSummaryTask extends ApiTask {
         }
         db.subjectSyncDao().forceUpcomingReviewUnavailableExcept(userLevel, maxLevel, subjectIds);
 
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
-        db.propertiesDao().setLastSummarySyncSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
+        db.propertiesDao().setLastSummarySyncSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
         LiveTimeLine.getInstance().update();

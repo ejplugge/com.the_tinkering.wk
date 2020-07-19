@@ -270,6 +270,30 @@ public final class Converters {
     }
 
     /**
+     * Format a date as a String for API use.
+     *
+     * @param date the date
+     * @return the formatted date or null if date is 0
+     */
+    public static @Nullable String formatDate(final long date) {
+        if (date == 0) {
+            return null;
+        }
+
+        final Calendar result = new GregorianCalendar(TimeZone.getTimeZone("Z"), Locale.ROOT);
+        result.setTimeInMillis(date);
+        return String.format(Locale.ROOT, "%04d-%02d-%02dT%02d:%02d:%02d.%03d000Z",
+                result.get(Calendar.YEAR),
+                result.get(Calendar.MONTH) + 1,
+                result.get(Calendar.DAY_OF_MONTH),
+                result.get(Calendar.HOUR_OF_DAY),
+                result.get(Calendar.MINUTE),
+                result.get(Calendar.SECOND),
+                result.get(Calendar.MILLISECOND)
+        );
+    }
+
+    /**
      * Parse a date from the API.
      *
      * @param date the date String

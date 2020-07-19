@@ -34,10 +34,7 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 
-import java.util.Date;
 import java.util.Set;
-
-import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.HOUR;
 
@@ -67,12 +64,12 @@ public final class GetSubjectsTask extends ApiTask {
     @Override
     protected void runLocal() {
         final AppDatabase db = WkApplication.getDatabase();
-        final @Nullable Date lastGetSubjectsSuccess = db.propertiesDao().getLastSubjectSyncSuccessDate(HOUR);
+        final long lastGetSubjectsSuccess = db.propertiesDao().getLastSubjectSyncSuccessDate(HOUR);
 
         LiveApiProgress.reset(true, "subjects");
 
         String uri = "/v2/subjects";
-        if (lastGetSubjectsSuccess != null) {
+        if (lastGetSubjectsSuccess != 0) {
             uri += "?updated_after=" + Converters.formatDate(lastGetSubjectsSuccess);
         }
 
@@ -95,12 +92,12 @@ public final class GetSubjectsTask extends ApiTask {
             return;
         }
 
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
-        db.propertiesDao().setLastSubjectSyncSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
+        db.propertiesDao().setLastSubjectSyncSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
         if (LiveApiProgress.getNumProcessedEntities() > 0) {
-            db.propertiesDao().setLastAudioScanDate(null);
+            db.propertiesDao().setLastAudioScanDate(0);
             LiveTimeLine.getInstance().update();
             LiveLevelProgress.getInstance().update();
             LiveJoyoProgress.getInstance().update();

@@ -67,12 +67,12 @@ public final class GetAssignmentsTask extends ApiTask {
     @Override
     protected void runLocal() {
         final AppDatabase db = WkApplication.getDatabase();
-        final @Nullable Date lastGetAssignmentsSuccess = db.propertiesDao().getLastAssignmentSyncSuccessDate(HOUR);
+        final long lastGetAssignmentsSuccess = db.propertiesDao().getLastAssignmentSyncSuccessDate(HOUR);
 
         LiveApiProgress.reset(true, "assignments");
 
         String uri = "/v2/assignments";
-        if (lastGetAssignmentsSuccess != null) {
+        if (lastGetAssignmentsSuccess != 0) {
             uri += "?updated_after=" + Converters.formatDate(lastGetAssignmentsSuccess);
         }
 
@@ -81,8 +81,8 @@ public final class GetAssignmentsTask extends ApiTask {
         }
 
         db.propertiesDao().setSyncReminder(false);
-        db.propertiesDao().setLastApiSuccessDate(new Date(System.currentTimeMillis()));
-        db.propertiesDao().setLastAssignmentSyncSuccessDate(new Date(System.currentTimeMillis()));
+        db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
+        db.propertiesDao().setLastAssignmentSyncSuccessDate(System.currentTimeMillis());
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);
         LiveApiState.getInstance().forceUpdate();
         if (LiveApiProgress.getNumProcessedEntities() > 0) {

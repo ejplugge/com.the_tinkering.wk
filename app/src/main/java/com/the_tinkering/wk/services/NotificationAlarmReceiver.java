@@ -194,11 +194,11 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
         final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
         final int userLevel = db.propertiesDao().getUserLevel();
         final boolean vacationMode = db.propertiesDao().getVacationMode();
-        @Nullable Date lastDate = db.propertiesDao().getLastNotifiedReviewDate();
-        if (lastDate == null) {
-            lastDate = getTopOfHour(System.currentTimeMillis() - Constants.HOUR);
+        long lastDate = db.propertiesDao().getLastNotifiedReviewDate();
+        if (lastDate == 0) {
+            lastDate = getTopOfHour(System.currentTimeMillis() - Constants.HOUR).getTime();
         }
-        final NotificationContext ctx = db.subjectAggregatesDao().getNotificationContext(maxLevel, userLevel, lastDate, new Date());
+        final NotificationContext ctx = db.subjectAggregatesDao().getNotificationContext(maxLevel, userLevel, new Date(lastDate), new Date());
 
         if (GlobalSettings.Other.getEnableNotifications()) {
             if (vacationMode) {
@@ -206,7 +206,8 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
             }
             else if (ctx.getNumNewReviews() > 0) {
                 postNotification(context, ctx);
-                db.propertiesDao().setLastNotifiedReviewDate(ctx.getNewestAvailableAt());
+                final @Nullable Date newestAvailableAt = ctx.getNewestAvailableAt();
+                db.propertiesDao().setLastNotifiedReviewDate(newestAvailableAt == null ? 0 : newestAvailableAt.getTime());
             }
             else if (ctx.getNumLessons() == 0 && ctx.getNumReviews() == 0) {
                 cancelNotification();

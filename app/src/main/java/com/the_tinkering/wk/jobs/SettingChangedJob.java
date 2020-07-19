@@ -51,8 +51,8 @@ public final class SettingChangedJob extends Job {
             case "api_key":
                 db.propertiesDao().setApiKeyRejected(false);
                 db.propertiesDao().setApiInError(false);
-                db.propertiesDao().setLastApiSuccessDate(null);
-                db.propertiesDao().setLastUserSyncSuccessDate(null);
+                db.propertiesDao().setLastApiSuccessDate(0);
+                db.propertiesDao().setLastUserSyncSuccessDate(0);
                 db.assertGetUserTask();
                 LiveApiState.getInstance().forceUpdate();
                 break;
