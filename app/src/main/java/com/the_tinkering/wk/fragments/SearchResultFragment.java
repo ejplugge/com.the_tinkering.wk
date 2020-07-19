@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -156,6 +157,7 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
         }
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         resultView.setDelegate(view, R.id.resultView);

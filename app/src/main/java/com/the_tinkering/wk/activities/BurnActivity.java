@@ -148,7 +148,7 @@ public final class BurnActivity extends AbstractActivity {
             }
             if (subject != null) {
                 db.subjectSyncDao().patchAssignment(id, subject.getSrsSystem().getCompletedStage().getId(),
-                        subject.getUnlockedAt(), subject.getStartedAt(), null,
+                        subject.getUnlockedAt(), subject.getStartedAt(), 0,
                         subject.getPassedAt(), System.currentTimeMillis(), 0);
             }
         }

@@ -36,7 +36,6 @@ import javax.annotation.Nullable;
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.util.ObjectSupport.getWaitTimeAsInformalString;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
-import static java.util.Objects.requireNonNull;
 
 /**
  * A custom view that describes the number of upcoming reviews and when they happen.
@@ -118,7 +117,7 @@ public final class UpcomingReviewsView extends AppCompatTextView {
         }
         else {
             if (hasUpcomingReviews) {
-                final long waitTime = requireNonNull(timeLine.getUpcomingReviewDate()).getTime() - System.currentTimeMillis();
+                final long waitTime = timeLine.getUpcomingReviewDate() - System.currentTimeMillis();
                 text = String.format(Locale.ROOT, "%d reviews %s, %d upcoming in next %s",
                         timeLine.getNumSingleSlotUpcomingReviews(), getWaitTimeAsInformalString(waitTime), timeLine.getNumUpcomingReviews(),
                         timeLineSizeDesc);

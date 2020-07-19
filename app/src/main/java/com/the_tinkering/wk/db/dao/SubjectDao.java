@@ -157,6 +157,12 @@ public abstract class SubjectDao {
     protected abstract void fixupPassedAt();
 
     /**
+     * Fix up availableAt column so it never contains NULL values.
+     */
+    @Query("UPDATE subject SET availableAt = 0 WHERE availableAt IS NULL")
+    protected abstract void fixupAvailableAt();
+
+    /**
      * Fix up date columns so they never contain NULL values.
      */
     public final void fixupDateFields() {
@@ -165,5 +171,6 @@ public abstract class SubjectDao {
         fixupUnlockedAt();
         fixupStartedAt();
         fixupPassedAt();
+        fixupAvailableAt();
     }
 }

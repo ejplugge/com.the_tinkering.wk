@@ -1050,9 +1050,11 @@ public final class Subject implements PronunciationAudioOwner {
      * or null if no review is scheduled yet.
      * @return the value
      */
-    public @Nullable Date getAvailableAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        return entity.availableAt;
+    public long getAvailableAt() {
+        if (entity.availableAt == null) {
+            return 0;
+        }
+        return entity.availableAt.getTime();
     }
 
     /**
@@ -1060,9 +1062,8 @@ public final class Subject implements PronunciationAudioOwner {
      * or null if no review is scheduled yet.
      * @param availableAt the value
      */
-    public void setAvailableAt(final @Nullable Date availableAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        entity.availableAt = availableAt;
+    public void setAvailableAt(final long availableAt) {
+        entity.availableAt = availableAt == 0 ? null : new Date(availableAt);
     }
 
     /**
@@ -1889,11 +1890,11 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the wait time
      */
     public String getShortNextReviewWaitTime() {
-        if (getAvailableAt() == null) {
+        if (getAvailableAt() == 0) {
             return "locked";
         }
         final long now = System.currentTimeMillis();
-        final long next = getAvailableAt().getTime();
+        final long next = getAvailableAt();
         return getShortWaitTimeAsInformalString(next - now);
     }
 }

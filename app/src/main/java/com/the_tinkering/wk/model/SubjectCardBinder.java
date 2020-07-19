@@ -33,7 +33,6 @@ import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -129,7 +128,7 @@ public final class SubjectCardBinder {
         if (stage.isLocked()) {
             progress.setVisibility(false);
         }
-        else if (subject.getAvailableAt() == null) {
+        else if (subject.getAvailableAt() == 0) {
             progress.setText(stageName);
             progress.setVisibility(true);
         }
@@ -149,9 +148,9 @@ public final class SubjectCardBinder {
             return;
         }
 
-        final @Nullable Date availableAt = subject.getAvailableAt();
-        final boolean availableNow = availableAt != null && availableAt.getTime() < System.currentTimeMillis();
-        if (availableAt == null) {
+        final long availableAt = subject.getAvailableAt();
+        final boolean availableNow = availableAt != 0 && availableAt < System.currentTimeMillis();
+        if (availableAt == 0) {
             waitTime.setVisibility(false);
         }
         else {

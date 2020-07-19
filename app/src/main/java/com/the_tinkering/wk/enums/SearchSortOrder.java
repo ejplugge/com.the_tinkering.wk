@@ -25,7 +25,6 @@ import com.the_tinkering.wk.db.model.Subject;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -73,33 +72,33 @@ public enum SearchSortOrder {
         @Override
         public Comparator<Subject> getComparator(final long searchTime) {
             return Comparator.<Subject>comparingLong(subject -> {
-                final @Nullable Date date = subject.getAvailableAt();
-                return date == null ? 0 : Math.max(date.getTime(), searchTime);
+                final long date = subject.getAvailableAt();
+                return date == 0 ? 0 : Math.max(date, searchTime);
             }).thenComparingInt(Subject::getTypeOrder);
         }
 
         @Override
         public String getTopLevelTag(final Subject subject, final long searchTime) {
-            final @Nullable Date date = subject.getAvailableAt();
-            if (date == null) {
+            final long date = subject.getAvailableAt();
+            if (date == 0) {
                 return "0";
             }
-            else if (date.getTime() <= searchTime) {
+            else if (date <= searchTime) {
                 return Long.toString(searchTime);
             }
-            return Long.toString(date.getTime());
+            return Long.toString(date);
         }
 
         @Override
         public HeaderItem createTopLevelHeaderItem(final Subject subject, final long searchTime) {
-            final @Nullable Date date = subject.getAvailableAt();
-            if (date == null) {
+            final long date = subject.getAvailableAt();
+            if (date == 0) {
                 return new AvailableAtHeaderItem(0);
             }
-            else if (date.getTime() <= searchTime) {
+            else if (date <= searchTime) {
                 return new AvailableAtHeaderItem(searchTime);
             }
-            return new AvailableAtHeaderItem(date.getTime());
+            return new AvailableAtHeaderItem(date);
         }
     },
 

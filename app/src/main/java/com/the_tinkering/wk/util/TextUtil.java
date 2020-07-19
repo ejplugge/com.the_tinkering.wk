@@ -33,7 +33,6 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.components.WaniKaniTagHandler;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -219,21 +218,6 @@ public final class TextUtil {
             s = GT_PATTERN.matcher(s).replaceAll("&gt;");
         }
         return s;
-    }
-
-    /**
-     * Format a timestamp for informal display in subject info.
-     *
-     * @param value the date to format
-     * @return the formatted timestamp
-     */
-    public static String formatTimestamp(final @Nullable Date value) {
-        if (value == null) {
-            return "";
-        }
-        final java.text.DateFormat dateFormatter = DateFormat.getMediumDateFormat(WkApplication.getInstance());
-        final java.text.DateFormat timeFormatter = DateFormat.getTimeFormat(WkApplication.getInstance());
-        return String.format("%s %s", dateFormatter.format(value), timeFormatter.format(value));
     }
 
     /**

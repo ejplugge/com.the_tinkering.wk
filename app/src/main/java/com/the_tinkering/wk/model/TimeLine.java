@@ -20,10 +20,7 @@ import com.the_tinkering.wk.db.model.Subject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
@@ -148,14 +145,14 @@ public final class TimeLine {
      * @param requiredForLevelUp is this item on the level-up progression path?
      */
     public void addReview(final Subject review, final boolean requiredForLevelUp) {
-        if (review.getAvailableAt() == null) {
+        if (review.getAvailableAt() == 0) {
             return;
         }
-        if (review.getAvailableAt().getTime() < createdAt) {
+        if (review.getAvailableAt() < createdAt) {
             availableReviews.add(review);
         }
 
-        final long delay = review.getAvailableAt().getTime() - firstSlot;
+        final long delay = review.getAvailableAt() - firstSlot;
         int slot = (int) (delay / HOUR);
         if (slot < 0) {
             slot = 0;
@@ -252,14 +249,14 @@ public final class TimeLine {
      *
      * @return the date, or null if no upcoming reviews in this timeline.
      */
-    public @Nullable Date getUpcomingReviewDate() {
+    public long getUpcomingReviewDate() {
         for (int i=1; i<timeLine.size(); i++) {
             final List<Subject> slot = timeLine.get(i);
             if (!slot.isEmpty()) {
                 return slot.get(0).getAvailableAt();
             }
         }
-        return null;
+        return 0;
     }
 
     /**

@@ -302,7 +302,7 @@ public final class SearchUtil {
         }
 
         if (parameters.upcomingReviewLessThan != null || parameters.upcomingReviewMoreThan != null) {
-            sb.append(" AND availableAt IS NOT NULL AND availableAt != 0");
+            sb.append(" AND availableAt != 0");
         }
 
         if (parameters.upcomingReviewLessThan != null) {

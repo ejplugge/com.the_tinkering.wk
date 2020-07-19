@@ -31,7 +31,6 @@ import com.the_tinkering.wk.util.WebClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -149,7 +148,7 @@ public final class ResurrectActivity extends AbstractActivity {
             }
             if (subject != null) {
                 db.subjectSyncDao().patchAssignment(id, subject.getSrsSystem().getFirstStartedStage().getId(),
-                        subject.getUnlockedAt(), subject.getStartedAt(), new Date(),
+                        subject.getUnlockedAt(), subject.getStartedAt(), System.currentTimeMillis(),
                         subject.getPassedAt(), 0, System.currentTimeMillis());
             }
         }
