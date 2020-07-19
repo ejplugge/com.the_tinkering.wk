@@ -19,13 +19,11 @@ package com.the_tinkering.wk.components;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.util.AccessPattern;
 import com.the_tinkering.wk.db.Converters;
 
 import java.io.IOException;
-import java.util.Date;
-
-import javax.annotation.Nullable;
 
 /**
  * Custom deserializer for dates, hardcoded for the format used in the WaniKani API.
@@ -37,25 +35,42 @@ import javax.annotation.Nullable;
  *     sidestep the problem by making a simple custom parser.
  * </p>
  */
-public final class WaniKaniApiDateDeserializer extends StdDeserializer<Date> {
-    /**
-     * For serialization.
-     */
-    private static final long serialVersionUID = -477653136384621832L;
-
-    /**
-     * The constructor.
-     */
-    @SuppressWarnings("unused")
-    public WaniKaniApiDateDeserializer() {
-        super(Date.class);
+public final class WaniKaniApiDateDeserializer extends JsonDeserializer<Long> {
+    @Override
+    public Long deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+        if (p.hasToken(JsonToken.VALUE_STRING)) {
+            return Converters.parseTimestamp(p.getText().trim());
+        }
+        return 0L;
     }
 
     @Override
-    public @Nullable Date deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
-        if (p.hasToken(JsonToken.VALUE_STRING)) {
-            return Converters.parseDate(p.getText().trim());
-        }
-        return null;
+    public boolean isCachable() {
+        return true;
+    }
+
+    @Override
+    public Class<?> handledType() {
+        return Long.class;
+    }
+
+    @Override
+    public Long getNullValue(final DeserializationContext ctxt) {
+        return 0L;
+    }
+
+    @Override
+    public AccessPattern getNullAccessPattern() {
+        return AccessPattern.CONSTANT;
+    }
+
+    @Override
+    public AccessPattern getEmptyAccessPattern() {
+        return AccessPattern.CONSTANT;
+    }
+
+    @Override
+    public Object getEmptyValue(final DeserializationContext ctxt) {
+        return 0L;
     }
 }

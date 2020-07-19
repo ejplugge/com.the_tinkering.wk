@@ -70,7 +70,7 @@ public final class GetSubjectsTask extends ApiTask {
 
         String uri = "/v2/subjects";
         if (lastGetSubjectsSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatDate(lastGetSubjectsSuccess);
+            uri += "?updated_after=" + Converters.formatTimestamp(lastGetSubjectsSuccess);
         }
 
         final Set<Long> existingSubjectIds = db.subjectViewsDao().getAllSubjectIds();

@@ -25,10 +25,6 @@ import com.the_tinkering.wk.db.model.TaskDefinition;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
 
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 import static com.the_tinkering.wk.Constants.HOUR;
 
 /**
@@ -63,7 +59,7 @@ public final class GetStudyMaterialsTask extends ApiTask {
 
         String uri = "/v2/study_materials";
         if (lastGetStudyMaterialsSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatDate(lastGetStudyMaterialsSuccess);
+            uri += "?updated_after=" + Converters.formatTimestamp(lastGetStudyMaterialsSuccess);
         }
 
         if (!collectionApiCall(uri, ApiStudyMaterial.class, t -> db.subjectSyncDao().insertOrUpdateStudyMaterial(t, false))) {

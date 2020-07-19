@@ -19,7 +19,7 @@ package com.the_tinkering.wk.api.model;
 import javax.annotation.Nullable;
 
 /**
- * Convenience interface for WK API entities to allow their ID, object, updatedAt to be set
+ * Convenience interface for WK API entities to allow their ID and object to be set
  * outside of the normal ObjectMapper.
  */
 public interface WaniKaniEntity {

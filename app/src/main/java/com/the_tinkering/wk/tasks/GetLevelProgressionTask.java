@@ -62,7 +62,7 @@ public final class GetLevelProgressionTask extends ApiTask {
 
         String uri = "/v2/level_progressions";
         if (lastGetLevelProgressionSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatDate(lastGetLevelProgressionSuccess);
+            uri += "?updated_after=" + Converters.formatTimestamp(lastGetLevelProgressionSuccess);
         }
 
         if (!collectionApiCall(uri, ApiLevelProgression.class, levelProgressionDao::insertOrUpdate)) {

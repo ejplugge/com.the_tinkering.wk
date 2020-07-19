@@ -28,16 +28,18 @@ import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.tasks.ApiTask;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
-import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Various data conversion tools.
@@ -249,72 +251,27 @@ public final class Converters {
      * Format a date as a String for API use.
      *
      * @param date the date
-     * @return the formatted date or null if date is null
-     */
-    public static @Nullable String formatDate(final @Nullable Date date) {
-        if (date == null) {
-            return null;
-        }
-
-        final Calendar result = new GregorianCalendar(TimeZone.getTimeZone("Z"), Locale.ROOT);
-        result.setTime(date);
-        return String.format(Locale.ROOT, "%04d-%02d-%02dT%02d:%02d:%02d.%03d000Z",
-                result.get(Calendar.YEAR),
-                result.get(Calendar.MONTH) + 1,
-                result.get(Calendar.DAY_OF_MONTH),
-                result.get(Calendar.HOUR_OF_DAY),
-                result.get(Calendar.MINUTE),
-                result.get(Calendar.SECOND),
-                result.get(Calendar.MILLISECOND)
-        );
-    }
-
-    /**
-     * Format a date as a String for API use.
-     *
-     * @param date the date
      * @return the formatted date or null if date is 0
      */
-    public static @Nullable String formatDate(final long date) {
+    public static @Nullable String formatTimestamp(final long date) {
         if (date == 0) {
             return null;
         }
 
-        final Calendar result = new GregorianCalendar(TimeZone.getTimeZone("Z"), Locale.ROOT);
-        result.setTimeInMillis(date);
-        return String.format(Locale.ROOT, "%04d-%02d-%02dT%02d:%02d:%02d.%03d000Z",
-                result.get(Calendar.YEAR),
-                result.get(Calendar.MONTH) + 1,
-                result.get(Calendar.DAY_OF_MONTH),
-                result.get(Calendar.HOUR_OF_DAY),
-                result.get(Calendar.MINUTE),
-                result.get(Calendar.SECOND),
-                result.get(Calendar.MILLISECOND)
-        );
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
     /**
-     * Parse a date from the API.
+     * Parse a timestamp from the API.
      *
-     * @param date the date String
-     * @return the parsed date or null if date is null or is unparseable
+     * @param date the date string
+     * @return the parsed timestamp or 0 if date is null, empty or is unparseable
      */
-    public static @Nullable Date parseDate(final @Nullable String date) {
+    public static long parseTimestamp(final @Nullable CharSequence date) {
         if (isEmpty(date)) {
-            return null;
+            return 0;
         }
 
-        return safeNullable(() -> {
-            final Calendar result = new GregorianCalendar(TimeZone.getTimeZone("Z"), Locale.ROOT);
-            result.clear();
-            result.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4), 10));
-            result.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7), 10) - 1);
-            result.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date.substring(8, 10), 10));
-            result.set(Calendar.HOUR_OF_DAY, Integer.parseInt(date.substring(11, 13), 10));
-            result.set(Calendar.MINUTE, Integer.parseInt(date.substring(14, 16), 10));
-            result.set(Calendar.SECOND, Integer.parseInt(date.substring(17, 19), 10));
-            result.set(Calendar.MILLISECOND, Integer.parseInt(date.substring(20, 23), 10));
-            return result.getTime();
-        });
+        return safe(0L, () -> ZonedDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toInstant().toEpochMilli());
     }
 }

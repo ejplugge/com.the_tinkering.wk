@@ -26,10 +26,6 @@ import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 import static com.the_tinkering.wk.Constants.HOUR;
 
 /**
@@ -64,7 +60,7 @@ public final class GetReviewStatisticsTask extends ApiTask {
 
         String uri = "/v2/review_statistics";
         if (lastGetReviewStatisticsSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatDate(lastGetReviewStatisticsSuccess);
+            uri += "?updated_after=" + Converters.formatTimestamp(lastGetReviewStatisticsSuccess);
         }
 
         if (!collectionApiCall(uri, ApiReviewStatistic.class, t -> db.subjectSyncDao().insertOrUpdateReviewStatistic(t))) {

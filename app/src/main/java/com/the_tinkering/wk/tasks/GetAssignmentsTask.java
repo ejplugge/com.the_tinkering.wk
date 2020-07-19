@@ -35,10 +35,6 @@ import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
 
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 import static com.the_tinkering.wk.Constants.HOUR;
 
 /**
@@ -73,7 +69,7 @@ public final class GetAssignmentsTask extends ApiTask {
 
         String uri = "/v2/assignments";
         if (lastGetAssignmentsSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatDate(lastGetAssignmentsSuccess);
+            uri += "?updated_after=" + Converters.formatTimestamp(lastGetAssignmentsSuccess);
         }
 
         if (!collectionApiCall(uri, ApiAssignment.class, t -> db.subjectSyncDao().insertOrUpdateAssignment(t))) {

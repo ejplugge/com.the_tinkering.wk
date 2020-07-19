@@ -17,40 +17,36 @@
 package com.the_tinkering.wk.components;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.the_tinkering.wk.db.Converters;
 
 import java.io.IOException;
-import java.util.Date;
 
 import javax.annotation.Nullable;
 
 /**
  * Custom serializer for dates, hardcoded for the format used in the WaniKani API.
- * This the serializing counterpart to WaniKaniApiDateDeserializer.
+ * This the serializing counterpart to WaniKaniApiDateDeserializerNew.
  */
-public final class WaniKaniApiDateSerializer extends StdSerializer<Date> {
-    /**
-     * For serialization.
-     */
-    private static final long serialVersionUID = -7517817866239623130L;
-
-    /**
-     * The constructor.
-     */
-    @SuppressWarnings("unused")
-    public WaniKaniApiDateSerializer() {
-        super(Date.class);
-    }
-
+public final class WaniKaniApiDateSerializer extends JsonSerializer<Long> {
     @Override
-    public void serialize(final @Nullable Date value, final JsonGenerator gen, final SerializerProvider provider) throws IOException {
-        if (value == null) {
+    public void serialize(final @Nullable Long value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+        if (value == null || value == 0L) {
             gen.writeNull();
             return;
         }
 
-        gen.writeString(Converters.formatDate(value));
+        gen.writeString(Converters.formatTimestamp(value));
+    }
+
+    @Override
+    public Class<Long> handledType() {
+        return Long.class;
+    }
+
+    @Override
+    public boolean isEmpty(final SerializerProvider provider, final @Nullable Long value) {
+        return value == null || value == 0L;
     }
 }
