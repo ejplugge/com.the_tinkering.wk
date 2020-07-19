@@ -20,8 +20,6 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 
-import java.util.Date;
-
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.HOUR;
