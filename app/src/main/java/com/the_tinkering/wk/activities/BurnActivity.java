@@ -31,7 +31,6 @@ import com.the_tinkering.wk.util.WebClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -150,7 +149,7 @@ public final class BurnActivity extends AbstractActivity {
             if (subject != null) {
                 db.subjectSyncDao().patchAssignment(id, subject.getSrsSystem().getCompletedStage().getId(),
                         subject.getUnlockedAt(), subject.getStartedAt(), null,
-                        subject.getPassedAt(), new Date(), System.currentTimeMillis());
+                        subject.getPassedAt(), System.currentTimeMillis(), 0);
             }
         }
         publisher.progress("Status: Finished", false, false, -1L);

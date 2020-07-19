@@ -271,7 +271,7 @@ public abstract class SubjectSyncDao {
             + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
             + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
             + " statisticPatched, leechScore, levelProgressScore, audioDownloadStatus,"
-            + " resurrectedAt"
+            + " resurrectedAt, burnedAt"
             + " )"
             + " VALUES (:subjectId, :object, :characters, :slug, :documentUrl, :meaningMnemonic, :meaningHint, :readingMnemonic, :readingHint,"
             + " :searchTarget, :smallSearchTarget,"
@@ -280,7 +280,7 @@ public abstract class SubjectSyncDao {
             + " 0, :lessonPosition, :level, :hiddenAt,"
             + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :srsSystemId,"
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
-            + " 0"
+            + " 0, 0"
             + ")")
     protected abstract void tryInsertHelper(final long subjectId,
                                             final String object,
@@ -369,10 +369,10 @@ public abstract class SubjectSyncDao {
             + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
             + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
             + " statisticPatched, frequency, joyoGrade, jlptLevel, levelProgressScore, leechScore, srsSystemId,"
-            + " resurrectedAt"
+            + " resurrectedAt, burnedAt"
             + ") VALUES (:id,"
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
-            + " 0"
+            + " 0, 0"
             + ")")
     protected abstract void tryInsertHelperIdOnly(final long id);
 
@@ -685,7 +685,7 @@ public abstract class SubjectSyncDao {
                                                   @androidx.annotation.Nullable final Date startedAt,
                                                   @androidx.annotation.Nullable final Date availableAt,
                                                   @androidx.annotation.Nullable final Date passedAt,
-                                                  @androidx.annotation.Nullable final Date burnedAt,
+                                                  final long burnedAt,
                                                   final long resurrectedAt);
 
     /**
@@ -706,7 +706,7 @@ public abstract class SubjectSyncDao {
                                       final @Nullable Date startedAt,
                                       final @Nullable Date availableAt,
                                       final @Nullable Date passedAt,
-                                      final @Nullable Date burnedAt,
+                                      final long burnedAt,
                                       final long resurrectedAt) {
         LOGGER.info("Patch assignment: id:%d stage:%d unlockedAt:%s startedAt:%s availableAt:%s passedAt:%s burnedAt:%s resurrectedAt:%s",
                 subjectId, srsStageId, unlockedAt, startedAt, availableAt, passedAt, burnedAt, resurrectedAt);
@@ -849,7 +849,7 @@ public abstract class SubjectSyncDao {
     @Query("SELECT * FROM subject"
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
-            + " AND (resurrectedAt != 0 OR (burnedAt IS NULL OR burnedAt = 0))"
+            + " AND (resurrectedAt != 0 OR burnedAt = 0)"
             + " AND unlockedAt != 0 AND unlockedAt IS NOT NULL AND (startedAt = 0 OR startedAt IS NULL)"
             + " ORDER BY level, lessonPosition, id")
     protected abstract List<SubjectEntity> getAvailableLessonItemsHelper(final int maxLevel, final int userLevel);
@@ -866,7 +866,9 @@ public abstract class SubjectSyncDao {
         for (final SubjectEntity subject: getAvailableLessonItemsHelper(userLevel, maxLevel)) {
             if (!subjectIds.contains(subject.id)) {
                 patchAssignment(subject.id, subject.srsStageId, subject.unlockedAt, subject.unlockedAt, subject.availableAt,
-                        subject.passedAt, subject.burnedAt, subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
+                        subject.passedAt,
+                        subject.burnedAt == null ? 0 : subject.burnedAt.getTime(),
+                        subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
             }
         }
     }
@@ -942,7 +944,9 @@ public abstract class SubjectSyncDao {
         for (final SubjectEntity subject: getPendingReviewItemsHelper(maxLevel, userLevel, cutoff)) {
             if (!subjectIds.contains(subject.id)) {
                 patchAssignment(subject.id, subject.srsStageId, subject.unlockedAt, subject.unlockedAt, null,
-                        subject.passedAt, subject.burnedAt, subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
+                        subject.passedAt,
+                        subject.burnedAt == null ? 0 : subject.burnedAt.getTime(),
+                        subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
             }
         }
     }

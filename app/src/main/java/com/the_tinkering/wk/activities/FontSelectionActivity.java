@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.activities;
 
+import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.TableLayout;
@@ -46,6 +47,7 @@ public final class FontSelectionActivity extends AbstractActivity {
         super(R.layout.activity_font_selection, R.menu.generic_options_menu);
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreateLocal(final @Nullable Bundle savedInstanceState) {
         fontList.setDelegate(this, R.id.fontList);

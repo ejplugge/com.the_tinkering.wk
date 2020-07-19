@@ -1066,12 +1066,14 @@ public final class Subject implements PronunciationAudioOwner {
     }
 
     /**
-     * The timestamp when this subject was burned, or null if it hasn't been burned yet.
+     * The timestamp when this subject was burned, or 0 if it hasn't been burned yet.
      * @return the value
      */
-    public @Nullable Date getBurnedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        return entity.burnedAt;
+    public long getBurnedAt() {
+        if (entity.burnedAt == null) {
+            return 0;
+        }
+        return entity.burnedAt.getTime();
     }
 
     /**
@@ -1124,7 +1126,7 @@ public final class Subject implements PronunciationAudioOwner {
     }
 
     /**
-     * The timestamp when this subject was resurrected from burned status, or null if it hasn't been resurrected.
+     * The timestamp when this subject was resurrected from burned status, or 0 if it hasn't been resurrected.
      * @return the value
      */
     public long getResurrectedAt() {

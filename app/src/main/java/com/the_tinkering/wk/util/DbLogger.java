@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.util;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Looper;
@@ -249,6 +250,7 @@ public final class DbLogger {
      * @param stream the stream to write to
      * @throws IOException if the writing fails for some reason
      */
+    @SuppressLint("NewApi")
     private void writeLogContents(final OutputStream stream) throws IOException {
         stream.write(String.format("%s version %s, username %s\n", Identification.APP_NAME, BuildConfig.VERSION_NAME,
                 db.propertiesDao().getUsername()).getBytes("UTF-8"));

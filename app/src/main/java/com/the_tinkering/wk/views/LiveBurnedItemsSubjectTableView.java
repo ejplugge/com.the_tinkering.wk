@@ -85,7 +85,7 @@ public final class LiveBurnedItemsSubjectTableView extends LiveSubjectTableView 
     @Override
     protected String getExtraText(final Subject subject) {
         return safe("", () -> {
-            if (subject.getBurnedAt() == null) {
+            if (subject.getBurnedAt() == 0) {
                 return "";
             }
             //noinspection AccessToNonThreadSafeStaticField

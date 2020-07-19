@@ -132,11 +132,11 @@ public final class ReportSessionItemJob extends Job {
         final long available = ts + interval + 30 * SECOND;
 
         final @Nullable Date availableAt;
-        @Nullable Date burnedAt = subject.getBurnedAt();
+        long burnedAt = subject.getBurnedAt();
         @Nullable Date passedAt = subject.getPassedAt();
         if (newSrsStage.isCompleted()) {
-            if (burnedAt == null) {
-                burnedAt = now;
+            if (burnedAt == 0) {
+                burnedAt = ts;
             }
             availableAt = null;
         }

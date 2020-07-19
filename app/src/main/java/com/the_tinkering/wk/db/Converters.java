@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.db;
 
+import android.annotation.SuppressLint;
+
 import androidx.room.TypeConverter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -253,6 +255,7 @@ public final class Converters {
      * @param date the date
      * @return the formatted date or null if date is 0
      */
+    @SuppressLint("NewApi")
     public static @Nullable String formatTimestamp(final long date) {
         if (date == 0) {
             return null;
@@ -267,6 +270,7 @@ public final class Converters {
      * @param date the date string
      * @return the parsed timestamp or 0 if date is null, empty or is unparseable
      */
+    @SuppressLint("NewApi")
     public static long parseTimestamp(final @Nullable CharSequence date) {
         if (isEmpty(date)) {
             return 0;
