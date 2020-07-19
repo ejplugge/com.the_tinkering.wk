@@ -88,7 +88,7 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
                 scanSubjects.add(subject);
             });
 
-            final @Nullable Date longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, cutoff);
+            final @Nullable Date longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, cutoff.getTime());
             timeLine.setLongTermUpcomingReviewDate(longDate);
             if (longDate == null) {
                 timeLine.setNumLongTermUpcomingReviews(0);

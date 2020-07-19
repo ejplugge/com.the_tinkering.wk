@@ -198,7 +198,7 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
         if (lastDate == 0) {
             lastDate = getTopOfHour(System.currentTimeMillis() - Constants.HOUR).getTime();
         }
-        final NotificationContext ctx = db.subjectAggregatesDao().getNotificationContext(maxLevel, userLevel, new Date(lastDate), new Date());
+        final NotificationContext ctx = db.subjectAggregatesDao().getNotificationContext(maxLevel, userLevel, lastDate, System.currentTimeMillis());
 
         if (GlobalSettings.Other.getEnableNotifications()) {
             if (vacationMode) {
@@ -215,7 +215,7 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
         }
 
         if (SessionWidgetProvider.hasWidgets()) {
-            final @Nullable Date upcoming = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, new Date());
+            final @Nullable Date upcoming = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, System.currentTimeMillis());
             ctx.setMoreReviewsDate(upcoming);
             new Handler(Looper.getMainLooper()).post(() -> SessionWidgetProvider.checkAndUpdateWidgets(ctx));
         }

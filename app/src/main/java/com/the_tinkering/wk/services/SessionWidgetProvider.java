@@ -207,7 +207,7 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
             final AppDatabase db = WkApplication.getDatabase();
             final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
             final int userLevel = db.propertiesDao().getUserLevel();
-            final Date now = new Date();
+            final long now = System.currentTimeMillis();
             final NotificationContext ctx = db.subjectAggregatesDao().getNotificationContext(maxLevel, userLevel, now, now);
             ctx.setMoreReviewsDate(db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, now));
 
