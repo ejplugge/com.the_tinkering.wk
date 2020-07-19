@@ -206,8 +206,7 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
             }
             else if (ctx.getNumNewReviews() > 0) {
                 postNotification(context, ctx);
-                final @Nullable Date newestAvailableAt = ctx.getNewestAvailableAt();
-                db.propertiesDao().setLastNotifiedReviewDate(newestAvailableAt == null ? 0 : newestAvailableAt.getTime());
+                db.propertiesDao().setLastNotifiedReviewDate(ctx.getNewestAvailableAt());
             }
             else if (ctx.getNumLessons() == 0 && ctx.getNumReviews() == 0) {
                 cancelNotification();
@@ -215,7 +214,7 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
         }
 
         if (SessionWidgetProvider.hasWidgets()) {
-            final @Nullable Date upcoming = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, System.currentTimeMillis());
+            final long upcoming = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, System.currentTimeMillis());
             ctx.setMoreReviewsDate(upcoming);
             new Handler(Looper.getMainLooper()).post(() -> SessionWidgetProvider.checkAndUpdateWidgets(ctx));
         }

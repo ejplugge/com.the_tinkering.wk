@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.annotation.Nullable;
-
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.Constants.HOUR;
 
@@ -88,9 +86,9 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
                 scanSubjects.add(subject);
             });
 
-            final @Nullable Date longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, cutoff.getTime());
+            final long longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, cutoff.getTime());
             timeLine.setLongTermUpcomingReviewDate(longDate);
-            if (longDate == null) {
+            if (longDate == 0) {
                 timeLine.setNumLongTermUpcomingReviews(0);
             }
             else {

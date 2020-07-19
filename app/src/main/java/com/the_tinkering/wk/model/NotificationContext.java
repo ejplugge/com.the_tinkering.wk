@@ -18,10 +18,6 @@ package com.the_tinkering.wk.model;
 
 import androidx.room.Ignore;
 
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 /**
  * The context of information needed for notifications.
  */
@@ -29,9 +25,9 @@ public final class NotificationContext {
     private int numLessons = 0;
     private int numReviews = 0;
     private int numNewReviews = 0;
-    private @Nullable Date newestAvailableAt;
+    private long newestAvailableAt = 0L;
     @Ignore
-    private @Nullable Date moreReviewsDate = null;
+    private long moreReviewsDate = 0L;
 
     /**
      * Number of lessons currently available.
@@ -85,8 +81,7 @@ public final class NotificationContext {
      * The date when the newest available review became available.
      * @return the value
      */
-    public @Nullable Date getNewestAvailableAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getNewestAvailableAt() {
         return newestAvailableAt;
     }
 
@@ -94,8 +89,7 @@ public final class NotificationContext {
      * The date when the newest available review became available.
      * @param newestAvailableAt the value
      */
-    public void setNewestAvailableAt(final @Nullable Date newestAvailableAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setNewestAvailableAt(final long newestAvailableAt) {
         this.newestAvailableAt = newestAvailableAt;
     }
 
@@ -104,8 +98,7 @@ public final class NotificationContext {
      *
      * @return the next date when new reviews will become available
      */
-    public @Nullable Date getMoreReviewsDate() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getMoreReviewsDate() {
         return moreReviewsDate;
     }
 
@@ -114,8 +107,7 @@ public final class NotificationContext {
      *
      * @param moreReviewsDate the next date when new reviews will become available
      */
-    public void setMoreReviewsDate(final @Nullable Date moreReviewsDate) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setMoreReviewsDate(final long moreReviewsDate) {
         this.moreReviewsDate = moreReviewsDate;
     }
 }

@@ -36,8 +36,9 @@ import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.NotificationContext;
 import com.the_tinkering.wk.util.ObjectSupport;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
@@ -66,22 +67,20 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
         final Intent intent = new Intent(context, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-        final @Nullable Date upcoming = ctx.getMoreReviewsDate();
+        final long upcoming = ctx.getMoreReviewsDate();
 
         final int lessonCount = ctx.getNumLessons();
         final int reviewCount = ctx.getNumReviews();
         final @Nullable String upcomingMessage;
-        if (upcoming == null) {
+        if (upcoming == 0) {
             upcomingMessage = null;
         }
-        else if (upcoming.getTime() - System.currentTimeMillis() < DAY) {
-            final Calendar cal = Calendar.getInstance();
-            cal.setTime(upcoming);
-            upcomingMessage = String.format(Locale.ROOT, "More at %02d:%02d",
-                    cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        else if (upcoming - System.currentTimeMillis() < DAY) {
+            final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(upcoming), ZoneId.systemDefault());
+            upcomingMessage = String.format(Locale.ROOT, "More at %02d:%02d", dt.getHour(), dt.getMinute());
         }
         else {
-            final float days = ((float) (upcoming.getTime() - System.currentTimeMillis())) / DAY;
+            final float days = ((float) (upcoming - System.currentTimeMillis())) / DAY;
             upcomingMessage = String.format(Locale.ROOT, "More in %.1fd", days);
         }
 

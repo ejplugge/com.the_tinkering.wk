@@ -106,7 +106,7 @@ public final class UpcomingReviewsView extends AppCompatTextView {
             }
             else {
                 if (hasLongTermUpcomingReviews) {
-                    final long waitTime = requireNonNull(timeLine.getLongTermUpcomingReviewDate()).getTime() - System.currentTimeMillis();
+                    final long waitTime = timeLine.getLongTermUpcomingReviewDate() - System.currentTimeMillis();
                     final float waitTimeDays = (waitTime * 1.0f) / DAY;
                     text = String.format(Locale.ROOT, "%d reviews available now, %d in %1.1f days",
                             timeLine.getNumAvailableReviews(), timeLine.getNumLongTermUpcomingReviews(), waitTimeDays);
@@ -125,7 +125,7 @@ public final class UpcomingReviewsView extends AppCompatTextView {
             }
             else {
                 if (hasLongTermUpcomingReviews) {
-                    final long waitTime = requireNonNull(timeLine.getLongTermUpcomingReviewDate()).getTime() - System.currentTimeMillis();
+                    final long waitTime = timeLine.getLongTermUpcomingReviewDate() - System.currentTimeMillis();
                     final float waitTimeDays = (waitTime * 1.0f) / DAY;
                     text = String.format(Locale.ROOT, "%d reviews available in %1.1f days",
                             timeLine.getNumLongTermUpcomingReviews(), waitTimeDays);

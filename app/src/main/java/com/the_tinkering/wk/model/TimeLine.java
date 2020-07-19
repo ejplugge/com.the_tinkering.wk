@@ -39,7 +39,7 @@ public final class TimeLine {
     private final List<Subject> availableReviews = new ArrayList<>();
     private final List<List<Subject>> timeLine = new ArrayList<>();
     private final List<Integer> numRequiredForLevelUp = new ArrayList<>();
-    private @Nullable Date longTermUpcomingReviewDate = null;
+    private long longTermUpcomingReviewDate = 0;
     private int numLongTermUpcomingReviews = 0;
 
     /**
@@ -71,8 +71,7 @@ public final class TimeLine {
      * The next timestamp beyond the timeline when a review will become available.
      * @return the value
      */
-    public @Nullable Date getLongTermUpcomingReviewDate() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getLongTermUpcomingReviewDate() {
         return longTermUpcomingReviewDate;
     }
 
@@ -80,8 +79,7 @@ public final class TimeLine {
      * The next timestamp beyond the timeline when a review will become available.
      * @param longTermUpcomingReviewDate the value
      */
-    public void setLongTermUpcomingReviewDate(final @Nullable Date longTermUpcomingReviewDate) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setLongTermUpcomingReviewDate(final long longTermUpcomingReviewDate) {
         this.longTermUpcomingReviewDate = longTermUpcomingReviewDate;
     }
 
@@ -271,7 +269,7 @@ public final class TimeLine {
      * @return true if there are
      */
     public boolean hasLongTermUpcomingReviews() {
-        return longTermUpcomingReviewDate != null;
+        return longTermUpcomingReviewDate != 0;
     }
 
     /**

@@ -46,7 +46,7 @@ public abstract class SubjectAggregatesDao {
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND availableAt != 0 AND availableAt >= :cutoff"
             + " ORDER BY availableAt LIMIT 1")
-    public abstract @Nullable Date getNextLongTermReviewDate(final int maxLevel, final int userLevel, final long cutoff);
+    public abstract long getNextLongTermReviewDate(final int maxLevel, final int userLevel, final long cutoff);
 
     /**
      * Room-generated method: get the number of reviews that will become available at the specified time.
@@ -60,7 +60,7 @@ public abstract class SubjectAggregatesDao {
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND availableAt = :targetDate")
-    public abstract int getNextLongTermReviewCount(final int maxLevel, final int userLevel, final Date targetDate);
+    public abstract int getNextLongTermReviewCount(final int maxLevel, final int userLevel, final long targetDate);
 
     /**
      * Room-generated method: get statistics for notifications.
