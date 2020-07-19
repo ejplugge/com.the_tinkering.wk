@@ -271,7 +271,7 @@ public abstract class SubjectSyncDao {
             + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
             + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
             + " statisticPatched, leechScore, levelProgressScore, audioDownloadStatus,"
-            + " resurrectedAt, burnedAt, unlockedAt, startedAt"
+            + " resurrectedAt, burnedAt, unlockedAt, startedAt, passedAt"
             + " )"
             + " VALUES (:subjectId, :object, :characters, :slug, :documentUrl, :meaningMnemonic, :meaningHint, :readingMnemonic, :readingHint,"
             + " :searchTarget, :smallSearchTarget,"
@@ -280,7 +280,7 @@ public abstract class SubjectSyncDao {
             + " 0, :lessonPosition, :level, :hiddenAt,"
             + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :srsSystemId,"
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
-            + " 0, 0, 0, 0"
+            + " 0, 0, 0, 0, 0"
             + ")")
     protected abstract void tryInsertHelper(final long subjectId,
                                             final String object,
@@ -369,10 +369,10 @@ public abstract class SubjectSyncDao {
             + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
             + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
             + " statisticPatched, frequency, joyoGrade, jlptLevel, levelProgressScore, leechScore, srsSystemId,"
-            + " resurrectedAt, burnedAt, unlockedAt, startedAt"
+            + " resurrectedAt, burnedAt, unlockedAt, startedAt, passedAt"
             + ") VALUES (:id,"
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
-            + " 0, 0, 0, 0"
+            + " 0, 0, 0, 0, 0"
             + ")")
     protected abstract void tryInsertHelperIdOnly(final long id);
 
@@ -684,7 +684,7 @@ public abstract class SubjectSyncDao {
                                                   final long unlockedAt,
                                                   final long startedAt,
                                                   @androidx.annotation.Nullable final Date availableAt,
-                                                  @androidx.annotation.Nullable final Date passedAt,
+                                                  final long passedAt,
                                                   final long burnedAt,
                                                   final long resurrectedAt);
 
@@ -705,7 +705,7 @@ public abstract class SubjectSyncDao {
                                       final long unlockedAt,
                                       final long startedAt,
                                       final @Nullable Date availableAt,
-                                      final @Nullable Date passedAt,
+                                      final long passedAt,
                                       final long burnedAt,
                                       final long resurrectedAt) {
         LOGGER.info("Patch assignment: id:%d stage:%d unlockedAt:%s startedAt:%s availableAt:%s passedAt:%s burnedAt:%s resurrectedAt:%s",
@@ -869,7 +869,7 @@ public abstract class SubjectSyncDao {
                         subject.unlockedAt == null ? 0 : subject.unlockedAt.getTime(),
                         subject.unlockedAt == null ? 0 : subject.unlockedAt.getTime(),
                         subject.availableAt,
-                        subject.passedAt,
+                        subject.passedAt == null ? 0 : subject.passedAt.getTime(),
                         subject.burnedAt == null ? 0 : subject.burnedAt.getTime(),
                         subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
             }
@@ -950,7 +950,7 @@ public abstract class SubjectSyncDao {
                         subject.unlockedAt == null ? 0 : subject.unlockedAt.getTime(),
                         subject.startedAt == null ? 0 : subject.startedAt.getTime(),
                         null,
-                        subject.passedAt,
+                        subject.passedAt == null ? 0 : subject.passedAt.getTime(),
                         subject.burnedAt == null ? 0 : subject.burnedAt.getTime(),
                         subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
             }

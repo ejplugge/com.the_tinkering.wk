@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.model;
 
+import android.annotation.SuppressLint;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.the_tinkering.wk.util.PitchInfoDeserializer;
@@ -36,6 +38,7 @@ import static java.util.Objects.requireNonNull;
 @JsonSerialize(using = PitchInfoSerializer.class)
 @JsonDeserialize(using = PitchInfoDeserializer.class)
 public final class PitchInfo implements Comparable<PitchInfo> {
+    @SuppressLint("NewApi")
     private static final Comparator<PitchInfo> COMPARATOR = Comparator.nullsFirst(
             Comparator.comparing(PitchInfo::getReading, Comparator.nullsFirst(Comparator.naturalOrder())))
             .thenComparing(PitchInfo::getPartOfSpeech, Comparator.nullsFirst(Comparator.naturalOrder()))

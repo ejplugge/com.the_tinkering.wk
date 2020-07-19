@@ -1082,9 +1082,11 @@ public final class Subject implements PronunciationAudioOwner {
      * always reliable.
      * @return the value
      */
-    public @Nullable Date getPassedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        return entity.passedAt;
+    public long getPassedAt() {
+        if (entity.passedAt == null) {
+            return 0;
+        }
+        return entity.passedAt.getTime();
     }
 
     /**

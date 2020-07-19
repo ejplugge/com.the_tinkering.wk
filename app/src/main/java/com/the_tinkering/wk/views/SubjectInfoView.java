@@ -591,7 +591,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         tableStartedAt.setText(subject.getFormattedStartedAt());
         tableStartedAt.setParentVisibility(subject.getStartedAt() != 0);
         tablePassedAt.setText(subject.getFormattedPassedAt());
-        tablePassedAt.setParentVisibility(subject.getPassedAt() != null);
+        tablePassedAt.setParentVisibility(subject.getPassedAt() != 0);
         tableBurnedAt.setText(subject.getFormattedBurnedAt());
         tableBurnedAt.setParentVisibility(subject.getBurnedAt() != 0);
         tableResurrectedAt.setText(subject.getFormattedResurrectedAt());

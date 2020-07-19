@@ -108,7 +108,7 @@ public abstract class SubjectViewsDao {
      */
     @Query("SELECT level, object AS type, COUNT(id) AS count FROM subject"
             + " WHERE subject.hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :userLevel AND passedAt IS NOT NULL AND passedAt != 0"
+            + " AND level <= :userLevel AND passedAt != 0"
             + " GROUP BY level, object")
     public abstract List<LevelProgressItem> getLevelProgressPassedItems(int userLevel);
 

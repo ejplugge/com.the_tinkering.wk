@@ -145,11 +145,25 @@ public abstract class SubjectDao {
     protected abstract void fixupUnlockedAt();
 
     /**
+     * Fix up startedAt column so it never contains NULL values.
+     */
+    @Query("UPDATE subject SET startedAt = 0 WHERE startedAt IS NULL")
+    protected abstract void fixupStartedAt();
+
+    /**
+     * Fix up passedAt column so it never contains NULL values.
+     */
+    @Query("UPDATE subject SET passedAt = 0 WHERE passedAt IS NULL")
+    protected abstract void fixupPassedAt();
+
+    /**
      * Fix up date columns so they never contain NULL values.
      */
     public final void fixupDateFields() {
         fixupResurrectedAt();
         fixupBurnedAt();
         fixupUnlockedAt();
+        fixupStartedAt();
+        fixupPassedAt();
     }
 }

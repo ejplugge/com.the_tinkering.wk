@@ -127,12 +127,11 @@ public final class ReportSessionItemJob extends Job {
 
         final SrsSystem.Stage newSrsStage = subject.getSrsStage().getNewStage(itemMeaningIncorrect + itemReadingIncorrect);
         final long interval = newSrsStage.getInterval();
-        final Date now = new Date(ts);
         final long available = ts + interval + 30 * SECOND;
 
         final @Nullable Date availableAt;
         long burnedAt = subject.getBurnedAt();
-        @Nullable Date passedAt = subject.getPassedAt();
+        long passedAt = subject.getPassedAt();
         if (newSrsStage.isCompleted()) {
             if (burnedAt == 0) {
                 burnedAt = ts;
@@ -144,7 +143,7 @@ public final class ReportSessionItemJob extends Job {
         }
         boolean justPassed = false;
         if (newSrsStage.isPassed() && !subject.isPassed()) {
-            passedAt = now;
+            passedAt = ts;
             if (subject.hasAmalgamations()) {
                 justPassed = true;
                 db.propertiesDao().setSyncReminder(true);
