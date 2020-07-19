@@ -46,9 +46,9 @@ public abstract class SubjectCollectionsDao {
     }
 
     /**
-     * Room-generated method: get a list of all subjects unlocked after a cutoff Date.
+     * Room-generated method: get a list of all subjects unlocked after a cutoff date.
      *
-     * @param cutoff the cutoff Date
+     * @param cutoff the cutoff date
      * @return the list
      */
     @Query("SELECT * FROM subject"
@@ -58,9 +58,9 @@ public abstract class SubjectCollectionsDao {
     public abstract List<SubjectEntity> getRecentUnlocksHelper(final Date cutoff);
 
     /**
-     * Get a list of all subjects unlocked after a cutoff Date.
+     * Get a list of all subjects unlocked after a cutoff date.
      *
-     * @param cutoff the cutoff Date
+     * @param cutoff the cutoff date
      * @return the list
      */
     public final List<Subject> getRecentUnlocks(final Date cutoff) {
@@ -106,10 +106,10 @@ public abstract class SubjectCollectionsDao {
     }
 
     /**
-     * Get a list of all subjects burned after a cutoff Date.
+     * Get a list of all subjects burned after a cutoff date.
      *
      * @param filter the SRS stage filter
-     * @param cutoff the cutoff Date
+     * @param cutoff the cutoff date
      * @return the list
      */
     public final List<Subject> getBurnedItems(final String filter, final Date cutoff) {
@@ -132,7 +132,7 @@ public abstract class SubjectCollectionsDao {
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND (resurrectedAt != 0 OR burnedAt = 0)"
-            + " AND unlockedAt != 0 AND (startedAt = 0 OR startedAt IS NULL)"
+            + " AND unlockedAt != 0 AND startedAt = 0"
             + " ORDER BY level, lessonPosition, id")
     protected abstract List<SubjectEntity> getAvailableLessonItemsHelper(final int maxLevel, final int userLevel);
 
@@ -149,11 +149,11 @@ public abstract class SubjectCollectionsDao {
 
     /**
      * Room-generated method: get a list of all subjects available for review, where the review
-     * becomes/became available before the given cutoff Date.
+     * becomes/became available before the given cutoff date.
      *
      * @param maxLevel the maximum level available on the user's subscription
      * @param userLevel the user's level
-     * @param cutoff the cutoff Date
+     * @param cutoff the cutoff date
      * @return the list
      */
     @Query("SELECT * FROM subject"
@@ -164,11 +164,11 @@ public abstract class SubjectCollectionsDao {
 
     /**
      * Get a list of all subjects available for review, where the review
-     * becomes/became available before the given cutoff Date.
+     * becomes/became available before the given cutoff date.
      *
      * @param maxLevel the maximum level available on the user's subscription
      * @param userLevel the user's level
-     * @param cutoff the cutoff Date
+     * @param cutoff the cutoff date
      * @return the list
      */
     public final List<Subject> getUpcomingReviewItems(final int maxLevel, final int userLevel, final long cutoff) {

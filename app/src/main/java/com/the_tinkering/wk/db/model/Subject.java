@@ -1092,9 +1092,11 @@ public final class Subject implements PronunciationAudioOwner {
      * or null if it hasn't been started yet.
      * @return the value
      */
-    public @Nullable Date getStartedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        return entity.startedAt;
+    public long getStartedAt() {
+        if (entity.startedAt == null) {
+            return 0;
+        }
+        return entity.startedAt.getTime();
     }
 
     /**
@@ -1102,9 +1104,8 @@ public final class Subject implements PronunciationAudioOwner {
      * or null if it hasn't been started yet.
      * @param startedAt the value
      */
-    public void setStartedAt(final @Nullable Date startedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        entity.startedAt = startedAt;
+    public void setStartedAt(final long startedAt) {
+        entity.startedAt = startedAt == 0 ? null : new Date(startedAt);
     }
 
     /**

@@ -110,12 +110,11 @@ public final class ReportSessionItemJob extends Job {
             return;
         }
 
-        final Date now = new Date(ts);
         final SrsSystem.Stage stage = subject.getSrsSystem().getFirstStartedStage();
         final long interval = stage.getInterval();
         final long available = ts + interval + 30 * SECOND;
 
-        db.subjectSyncDao().patchAssignment(subjectId, stage.getId(), subject.getUnlockedAt(), now, new Date(getTopOfHour(available)),
+        db.subjectSyncDao().patchAssignment(subjectId, stage.getId(), subject.getUnlockedAt(), ts, new Date(getTopOfHour(available)),
                 subject.getPassedAt(), subject.getBurnedAt(), subject.getResurrectedAt());
     }
 

@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.util;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.Lifecycle;
@@ -259,6 +260,7 @@ public final class ObjectSupport {
      * @param ts the timestamp to check
      * @return the date with minute, second and millisecond set to 0
      */
+    @SuppressLint("NewApi")
     public static long getTopOfHour(final long ts) {
         final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
         return dt.toInstant().toEpochMilli();
@@ -302,6 +304,7 @@ public final class ObjectSupport {
      * @param <T> the type of the return value
      * @return the result from the supplier, or defaultValue if the supplier threw an exception
      */
+    @SuppressLint("NewApi")
     public static <T> T safe(final Supplier<T> defaultValueSupplier, final ThrowingSupplier<? extends T> supplier) {
         try {
             return requireNonNull(supplier.get());
@@ -477,6 +480,7 @@ public final class ObjectSupport {
          * @return the result
          * @throws Exception if anything went wrong
          */
+        @SuppressWarnings({"RedundantThrows", "RedundantSuppression"})
         @Nullable Result doInBackground(ProgressPublisher<Progress> publisher) throws Exception;
     }
 
