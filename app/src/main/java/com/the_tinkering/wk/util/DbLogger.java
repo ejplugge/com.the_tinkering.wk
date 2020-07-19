@@ -37,7 +37,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
@@ -255,7 +258,8 @@ public final class DbLogger {
             if (record == null) {
                 return;
             }
-            final String data = String.format("%s %s %s\n", new Date(record.timestamp), record.tag, record.message);
+            final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(record.timestamp), ZoneId.systemDefault());
+            final String data = String.format("%s %s %s\n", dt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), record.tag, record.message);
             stream.write(data.getBytes("UTF-8"));
             id = record.id;
         }
