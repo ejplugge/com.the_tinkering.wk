@@ -21,6 +21,10 @@ import android.os.AsyncTask;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -272,13 +276,9 @@ public final class ObjectSupport {
      * @param ts the timestamp to check
      * @return the date with minute, second and millisecond set to 0
      */
-    public static Date getTopOfHour(final long ts) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(ts));
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+    public static long getTopOfHour(final long ts) {
+        final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneId.systemDefault()).truncatedTo(ChronoUnit.HOURS);
+        return dt.toInstant().toEpochMilli();
     }
 
     /**

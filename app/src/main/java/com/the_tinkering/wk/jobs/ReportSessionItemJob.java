@@ -67,6 +67,7 @@ public final class ReportSessionItemJob extends Job {
      *
      * @param data parameters
      */
+    @SuppressWarnings("unused")
     public ReportSessionItemJob(final String data) {
         super(data);
         final String[] parts = data.split(" ");
@@ -114,7 +115,7 @@ public final class ReportSessionItemJob extends Job {
         final long interval = stage.getInterval();
         final long available = ts + interval + 30 * SECOND;
 
-        db.subjectSyncDao().patchAssignment(subjectId, stage.getId(), subject.getUnlockedAt(), now, getTopOfHour(available),
+        db.subjectSyncDao().patchAssignment(subjectId, stage.getId(), subject.getUnlockedAt(), now, new Date(getTopOfHour(available)),
                 subject.getPassedAt(), subject.getBurnedAt(), subject.getResurrectedAt());
     }
 
@@ -140,7 +141,7 @@ public final class ReportSessionItemJob extends Job {
             availableAt = null;
         }
         else {
-            availableAt = getTopOfHour(available);
+            availableAt = new Date(getTopOfHour(available));
         }
         boolean justPassed = false;
         if (newSrsStage.isPassed() && !subject.isPassed()) {

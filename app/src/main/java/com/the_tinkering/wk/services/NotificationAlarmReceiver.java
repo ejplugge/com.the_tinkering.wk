@@ -41,7 +41,6 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.NotificationContext;
 import com.the_tinkering.wk.util.Logger;
 
-import java.util.Date;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
@@ -86,17 +85,17 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
      * can be delayed a bit by the device.
      */
     private static void scheduleAlarm() {
-        final Date topOfThisHour = getTopOfHour(System.currentTimeMillis());
+        final long topOfThisHour = getTopOfHour(System.currentTimeMillis());
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             final Intent intent = new Intent(WkApplication.getInstance(), NotificationAlarmReceiver.class);
             final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
                     0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, topOfThisHour.getTime() + Constants.HOUR, pendingIntent);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, topOfThisHour + Constants.HOUR, pendingIntent);
             }
             else {
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, topOfThisHour.getTime(), AlarmManager.INTERVAL_HOUR, pendingIntent);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, topOfThisHour, AlarmManager.INTERVAL_HOUR, pendingIntent);
             }
         }
     }
@@ -196,7 +195,7 @@ public final class NotificationAlarmReceiver extends BroadcastReceiver {
         final boolean vacationMode = db.propertiesDao().getVacationMode();
         long lastDate = db.propertiesDao().getLastNotifiedReviewDate();
         if (lastDate == 0) {
-            lastDate = getTopOfHour(System.currentTimeMillis() - Constants.HOUR).getTime();
+            lastDate = getTopOfHour(System.currentTimeMillis() - Constants.HOUR);
         }
         final NotificationContext ctx = db.subjectAggregatesDao().getNotificationContext(maxLevel, userLevel, lastDate, System.currentTimeMillis());
 
