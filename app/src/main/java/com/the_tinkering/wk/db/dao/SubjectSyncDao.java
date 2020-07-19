@@ -30,15 +30,14 @@ import com.the_tinkering.wk.api.model.ApiSubject;
 import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.db.model.SubjectEntity;
+import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.livedata.SubjectChangeWatcher;
 import com.the_tinkering.wk.model.SrsSystem;
-import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.ReferenceDataUtil;
 import com.the_tinkering.wk.util.SearchUtil;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -920,18 +919,18 @@ public abstract class SubjectSyncDao {
 
     /**
      * Room-generated method: get a list of all subjects available for review, where the review
-     * becomes/became available before the given cutoff Date.
+     * becomes/became available before the given cutoff date.
      *
      * @param maxLevel the maximum level available on the user's subscription
      * @param userLevel the user's level
-     * @param cutoff the cutoff Date
+     * @param cutoff the cutoff date
      * @return the list
      */
     @Query("SELECT * FROM subject"
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND availableAt != 0 AND availableAt < :cutoff")
-    protected abstract List<SubjectEntity> getPendingReviewItemsHelper(final int maxLevel, final int userLevel, final Date cutoff);
+    protected abstract List<SubjectEntity> getPendingReviewItemsHelper(final int maxLevel, final int userLevel, final long cutoff);
 
     /**
      * For selected subjects, forcibly patch them so no review is available for them in the next hour.
@@ -943,7 +942,7 @@ public abstract class SubjectSyncDao {
      */
     public final void forceUpcomingReviewUnavailableExcept(final int userLevel, final int maxLevel,
                                                            final Collection<Long> subjectIds) {
-        final Date cutoff = new Date(System.currentTimeMillis() + Constants.HOUR);
+        final long cutoff = System.currentTimeMillis() + Constants.HOUR;
         for (final SubjectEntity subject: getPendingReviewItemsHelper(maxLevel, userLevel, cutoff)) {
             if (!subjectIds.contains(subject.id)) {
                 patchAssignment(subject.id, subject.srsStageId,

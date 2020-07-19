@@ -23,7 +23,6 @@ import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,7 +54,7 @@ public final class LiveRecentUnlocks extends ConservativeLiveData<List<Subject>>
     protected void updateLocal() {
         if (GlobalSettings.Dashboard.getShowRecentUnlocks() || hasNullValue()) {
             final AppDatabase db = WkApplication.getDatabase();
-            final Date cutoff = new Date(System.currentTimeMillis() - Constants.MONTH);
+            final long cutoff = System.currentTimeMillis() - Constants.MONTH;
             instance.postValue(db.subjectCollectionsDao().getRecentUnlocks(cutoff));
         }
         else {

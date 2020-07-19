@@ -31,11 +31,11 @@ import java.util.List;
 @Dao
 public abstract class SubjectAggregatesDao {
     /**
-     * Room-generated method: get the next timestamp when a review becomes available, after the given cutoff Date.
+     * Room-generated method: get the next timestamp when a review becomes available, after the given cutoff date.
      *
      * @param maxLevel the maximum level available on the user's subscription
      * @param userLevel the user's level
-     * @param cutoff the cutoff Date
+     * @param cutoff the cutoff date
      * @return the available timestamp or null if there are no long-term upcoming reviews
      */
     @Query("SELECT availableAt FROM subject"
@@ -72,7 +72,7 @@ public abstract class SubjectAggregatesDao {
      * @param maxLevel the maximum level available on the user's subscription
      * @param userLevel the user's level
      * @param lastDate the last availableAt date for a review reported as a notification
-     * @param cutoff the current Date
+     * @param cutoff the current date
      * @return a POJO containing the results
      */
     @Query("SELECT numLessons, numReviews, numNewReviews, newestAvailableAt FROM "

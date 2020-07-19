@@ -28,7 +28,6 @@ import com.the_tinkering.wk.enums.SubjectType;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +54,7 @@ public abstract class SubjectCollectionsDao {
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND unlockedAt != 0 AND unlockedAt >= :cutoff"
             + " ORDER BY unlockedAt DESC, level DESC, lessonPosition DESC, id DESC LIMIT 10")
-    public abstract List<SubjectEntity> getRecentUnlocksHelper(final Date cutoff);
+    public abstract List<SubjectEntity> getRecentUnlocksHelper(final long cutoff);
 
     /**
      * Get a list of all subjects unlocked after a cutoff date.
@@ -63,7 +62,7 @@ public abstract class SubjectCollectionsDao {
      * @param cutoff the cutoff date
      * @return the list
      */
-    public final List<Subject> getRecentUnlocks(final Date cutoff) {
+    public final List<Subject> getRecentUnlocks(final long cutoff) {
         return buildList(getRecentUnlocksHelper(cutoff));
     }
 
@@ -112,13 +111,13 @@ public abstract class SubjectCollectionsDao {
      * @param cutoff the cutoff date
      * @return the list
      */
-    public final List<Subject> getBurnedItems(final String filter, final Date cutoff) {
+    public final List<Subject> getBurnedItems(final String filter, final long cutoff) {
         final String sql = String.format(Locale.ROOT, "SELECT * FROM subject"
                 + " WHERE hiddenAt = 0 AND %s AND object IS NOT NULL"
                 + " AND burnedAt != 0 AND burnedAt >= ?"
                 + " ORDER BY burnedAt DESC, level DESC, lessonPosition DESC, id DESC LIMIT 10", filter);
 
-        return getSubjectsWithRawQuery(new SimpleSQLiteQuery(sql, new Object[] {cutoff.getTime()}));
+        return getSubjectsWithRawQuery(new SimpleSQLiteQuery(sql, new Object[] {cutoff}));
     }
 
     /**

@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.enums;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.adapter.search.AvailableAtHeaderItem;
 import com.the_tinkering.wk.adapter.search.HeaderItem;
 import com.the_tinkering.wk.adapter.search.ItemTypeHeaderItem;
@@ -33,6 +35,7 @@ import javax.annotation.Nullable;
  * Sort order for advanced search.
  */
 @SuppressWarnings("JavaDoc")
+@SuppressLint("NewApi")
 public enum SearchSortOrder {
     TYPE("Type", true) {
         @Override

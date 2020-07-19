@@ -23,7 +23,6 @@ import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.model.SrsSystemRepository;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import static com.the_tinkering.wk.Constants.MONTH;
@@ -57,7 +56,7 @@ public final class LiveBurnedItems extends ConservativeLiveData<List<Subject>> {
     protected void updateLocal() {
         if (GlobalSettings.Dashboard.getShowBurnedItems() || hasNullValue()) {
             final AppDatabase db = WkApplication.getDatabase();
-            final Date cutoff = new Date(System.currentTimeMillis() - MONTH);
+            final long cutoff = System.currentTimeMillis() - MONTH;
             final List<Subject> items = db.subjectCollectionsDao().getBurnedItems(SrsSystemRepository.getBurnedFilter(), cutoff);
             instance.postValue(items);
         }

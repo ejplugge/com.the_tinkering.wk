@@ -23,7 +23,6 @@ import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.db.model.SubjectEntity;
 
 import java.util.Collection;
-import java.util.Date;
 
 import javax.annotation.Nullable;
 
@@ -99,8 +98,8 @@ public abstract class SubjectDao {
      * @param lastIncorrectAnswer the new timestamp
      */
     @Query("UPDATE subject SET lastIncorrectAnswer = :lastIncorrectAnswer "
-            + "WHERE id = :id AND (lastIncorrectAnswer IS NULL OR lastIncorrectAnswer < :lastIncorrectAnswer)")
-    public abstract void updateLastIncorrectAnswer(final long id, final Date lastIncorrectAnswer);
+            + "WHERE id = :id AND lastIncorrectAnswer < :lastIncorrectAnswer")
+    public abstract void updateLastIncorrectAnswer(final long id, final long lastIncorrectAnswer);
 
     /**
      * Room-generated method: clear the statisticPatched flag from a collection of subjects.

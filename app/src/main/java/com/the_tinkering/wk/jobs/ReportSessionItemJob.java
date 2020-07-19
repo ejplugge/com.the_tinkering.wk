@@ -20,16 +20,14 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
+import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.model.SrsSystem;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
-
-import java.util.Date;
 
 import javax.annotation.Nullable;
 
@@ -246,7 +244,7 @@ public final class ReportSessionItemJob extends Job {
         }
 
         if (itemMeaningIncorrect > 0 || itemReadingIncorrect > 0) {
-            db.subjectDao().updateLastIncorrectAnswer(subjectId, new Date(ts));
+            db.subjectDao().updateLastIncorrectAnswer(subjectId, ts);
         }
 
         if (updateLiveData) {
