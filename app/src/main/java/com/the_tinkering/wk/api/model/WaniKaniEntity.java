@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.api.model;
 
-import java.util.Date;
-
 import javax.annotation.Nullable;
 
 /**
@@ -38,11 +36,4 @@ public interface WaniKaniEntity {
      * @param object the type
      */
     void setObject(@Nullable String object);
-
-    /**
-     * The last time the entity was updated.
-     *
-     * @param updatedAt the timestamp
-     */
-    void setUpdatedAt(@Nullable Date updatedAt);
 }

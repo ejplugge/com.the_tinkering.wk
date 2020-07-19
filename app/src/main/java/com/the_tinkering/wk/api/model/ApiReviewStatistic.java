@@ -18,8 +18,6 @@ package com.the_tinkering.wk.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
-
 import javax.annotation.Nullable;
 
 /**
@@ -54,11 +52,6 @@ public final class ApiReviewStatistic implements WaniKaniEntity {
 
     @Override
     public void setObject(final @Nullable String object) {
-        //
-    }
-
-    @Override
-    public void setUpdatedAt(final @Nullable Date updatedAt) {
         //
     }
 

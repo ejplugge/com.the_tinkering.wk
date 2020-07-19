@@ -40,9 +40,6 @@ public final class ApiSubject implements WaniKaniEntity {
     @JsonProperty("created_at") private @Nullable Date createdAt = null;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("updated_at") private @Nullable Date updatedAt = null;
-    @JsonSerialize(using = WaniKaniApiDateSerializer.class)
-    @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
     @JsonProperty("hidden_at") private @Nullable Date hiddenAt = null;
     @JsonProperty("document_url") private @Nullable String documentUrl = null;
     @JsonProperty("lesson_position") private int lessonPosition = 0;
@@ -88,21 +85,6 @@ public final class ApiSubject implements WaniKaniEntity {
     @Override
     public void setObject(final @Nullable String object) {
         this.object = object;
-    }
-
-    /**
-     * Timestamp when this subject was last updated.
-     * @return the value
-     */
-    public @Nullable Date getUpdatedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        return updatedAt;
-    }
-
-    @Override
-    public void setUpdatedAt(final @Nullable Date updatedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        this.updatedAt = updatedAt;
     }
 
     /**

@@ -70,11 +70,6 @@ public final class ApiLevelProgression implements WaniKaniEntity {
         //
     }
 
-    @Override
-    public void setUpdatedAt(final @Nullable Date updatedAt) {
-        //
-    }
-
     /**
      * Timestamp when this level was abandoned (because of a reset), or null if not abandoned.
      * @return the value

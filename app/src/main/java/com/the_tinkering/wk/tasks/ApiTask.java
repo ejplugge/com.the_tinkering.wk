@@ -310,7 +310,6 @@ public abstract class ApiTask {
         final T value = mapper.readValue(parser, cls);
         value.setId(body.get("id").asInt());
         value.setObject(body.get("object").asText());
-        value.setUpdatedAt(Converters.parseDate(body.get("data_updated_at").asText()));
         return value;
     }
 

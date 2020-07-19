@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -50,11 +49,6 @@ public final class ApiStudyMaterial implements WaniKaniEntity {
 
     @Override
     public void setObject(final @Nullable String object) {
-        //
-    }
-
-    @Override
-    public void setUpdatedAt(final @Nullable Date updatedAt) {
         //
     }
 

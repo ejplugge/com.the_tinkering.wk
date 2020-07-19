@@ -72,11 +72,6 @@ public final class ApiAssignment implements WaniKaniEntity {
         //
     }
 
-    @Override
-    public void setUpdatedAt(final @Nullable Date updatedAt) {
-        //
-    }
-
     /**
      * The timestamp when the next available review becomes available for this subject,
      * or null if no review is scheduled yet.
