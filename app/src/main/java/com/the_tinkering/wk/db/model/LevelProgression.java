@@ -16,25 +16,17 @@
 
 package com.the_tinkering.wk.db.model;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 /**
  * Room entity for the level_progression table. This records the coarse-grained progression in levels.
  */
-@Entity(tableName = "level_progression")
 public final class LevelProgression {
-    @PrimaryKey private long id = 0L;
-    private @Nullable Date abandonedAt;
-    private @Nullable Date completedAt;
-    private @Nullable Date createdAt;
-    private @Nullable Date passedAt;
-    private @Nullable Date startedAt;
-    private @Nullable Date unlockedAt;
+    private long id = 0L;
+    private long abandonedAt = 0L;
+    private long completedAt = 0L;
+    private long createdAt = 0L;
+    private long passedAt = 0L;
+    private long startedAt = 0L;
+    private long unlockedAt = 0L;
     private int level = 0;
 
     /**
@@ -57,8 +49,7 @@ public final class LevelProgression {
      * Timestamp when this level was abandoned (because of a reset), or null if not abandoned.
      * @return the value
      */
-    public @Nullable Date getAbandonedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getAbandonedAt() {
         return abandonedAt;
     }
 
@@ -66,8 +57,7 @@ public final class LevelProgression {
      * Timestamp when this level was abandoned (because of a reset), or null if not abandoned.
      * @param abandonedAt the value
      */
-    public void setAbandonedAt(final @Nullable Date abandonedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setAbandonedAt(final long abandonedAt) {
         this.abandonedAt = abandonedAt;
     }
 
@@ -75,8 +65,7 @@ public final class LevelProgression {
      * Timestamp when this level was completed (all subjects burned), or null if not completed.
      * @return the value
      */
-    public @Nullable Date getCompletedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getCompletedAt() {
         return completedAt;
     }
 
@@ -84,8 +73,7 @@ public final class LevelProgression {
      * Timestamp when this level was completed (all subjects burned), or null if not completed.
      * @param completedAt the value
      */
-    public void setCompletedAt(final @Nullable Date completedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setCompletedAt(final long completedAt) {
         this.completedAt = completedAt;
     }
 
@@ -93,8 +81,7 @@ public final class LevelProgression {
      * Timestamp when this record was created.
      * @return the value
      */
-    public @Nullable Date getCreatedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getCreatedAt() {
         return createdAt;
     }
 
@@ -102,8 +89,7 @@ public final class LevelProgression {
      * Timestamp when this record was created.
      * @param createdAt the value
      */
-    public void setCreatedAt(final @Nullable Date createdAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setCreatedAt(final long createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -111,8 +97,7 @@ public final class LevelProgression {
      * Timestamp when this level was passed (all subjects passed), or null if not passed.
      * @return the value
      */
-    public @Nullable Date getPassedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getPassedAt() {
         return passedAt;
     }
 
@@ -120,8 +105,7 @@ public final class LevelProgression {
      * Timestamp when this level was passed (all subjects passed), or null if not passed.
      * @param passedAt the value
      */
-    public void setPassedAt(final @Nullable Date passedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setPassedAt(final long passedAt) {
         this.passedAt = passedAt;
     }
 
@@ -129,8 +113,7 @@ public final class LevelProgression {
      * Timestamp when this level was started, or null if not started.
      * @return the value
      */
-    public @Nullable Date getStartedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getStartedAt() {
         return startedAt;
     }
 
@@ -138,8 +121,7 @@ public final class LevelProgression {
      * Timestamp when this level was started, or null if not started.
      * @param startedAt the value
      */
-    public void setStartedAt(final @Nullable Date startedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setStartedAt(final long startedAt) {
         this.startedAt = startedAt;
     }
 
@@ -147,8 +129,7 @@ public final class LevelProgression {
      * Timestamp when this level was unlocked, or null if not unlocked.
      * @return the value
      */
-    public @Nullable Date getUnlockedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getUnlockedAt() {
         return unlockedAt;
     }
 
@@ -156,8 +137,7 @@ public final class LevelProgression {
      * Timestamp when this level was unlocked, or null if not unlocked.
      * @param unlockedAt the value
      */
-    public void setUnlockedAt(final @Nullable Date unlockedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setUnlockedAt(final long unlockedAt) {
         this.unlockedAt = unlockedAt;
     }
 
@@ -183,15 +163,13 @@ public final class LevelProgression {
      *
      * @return the date
      */
-    public @Nullable Date getSince() {
-        if (unlockedAt != null) {
-            //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getSince() {
+        if (unlockedAt != 0) {
             return unlockedAt;
         }
-        if (startedAt != null) {
-            //noinspection AssignmentOrReturnOfFieldWithMutableType
+        if (startedAt != 0) {
             return startedAt;
         }
-        return null;
+        return 0;
     }
 }

@@ -34,7 +34,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -75,34 +74,6 @@ public final class Converters {
             objectMapper.getDateFormat().setTimeZone(TimeZone.getTimeZone("Z"));
         }
         return objectMapper;
-    }
-
-    /**
-     * Convert a long to a Date.
-     *
-     * @param value the Unix timestamp in ms
-     * @return the Date instance or null if value is 0
-     */
-    @TypeConverter
-    public static @Nullable Date longToDate(final long value) {
-        if (value == 0L) {
-            return null;
-        }
-        return new Date(value);
-    }
-
-    /**
-     * Convert a Date to a long.
-     *
-     * @param value the Date instance or null
-     * @return the Unix timestamp in ms or 0 if value is null
-     */
-    @TypeConverter
-    public static long dateToLong(final @Nullable Date value) {
-        if (value == null) {
-            return 0L;
-        }
-        return value.getTime();
     }
 
     /**
