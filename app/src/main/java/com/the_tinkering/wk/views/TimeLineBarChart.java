@@ -212,12 +212,12 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
         final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(firstSlot + index * HOUR), ZoneId.systemDefault());
         //noinspection IfMayBeConditional
         if (index < 24) {
-            return String.format(Locale.ROOT, "%02d:00", dt.getHour());
+            return String.format(Locale.ROOT, "%02d:%02d", dt.getHour(), dt.getMinute());
         }
         else {
-            return String.format(Locale.ROOT, "%s %02d:00",
+            return String.format(Locale.ROOT, "%s %02d:%02d",
                     Constants.WEEKDAY_NAMES[dt.getDayOfWeek().getValue()],
-                    dt.getHour());
+                    dt.getHour(), dt.getMinute());
         }
     }
 

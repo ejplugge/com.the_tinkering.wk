@@ -22,13 +22,11 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -256,13 +254,13 @@ public final class ObjectSupport {
     }
 
     /**
-     * Create a Date instance that represents the start of the hour represented by the argument.
+     * Create a timestamp that represents the start of the hour represented by the argument.
      *
      * @param ts the timestamp to check
      * @return the date with minute, second and millisecond set to 0
      */
     public static long getTopOfHour(final long ts) {
-        final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneId.systemDefault()).truncatedTo(ChronoUnit.HOURS);
+        final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
         return dt.toInstant().toEpochMilli();
     }
 
