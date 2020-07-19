@@ -20,10 +20,6 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.LevelDuration;
 
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
 
 /**
@@ -56,12 +52,12 @@ public final class LiveLevelDuration extends ConservativeLiveData<LevelDuration>
         final AppDatabase db = WkApplication.getDatabase();
         final int level = db.propertiesDao().getUserLevel();
 
-        @Nullable Date since = db.levelProgressionDao().getLevelReachedDate(level);
-        if (since == null) {
+        long since = db.levelProgressionDao().getLevelReachedDate(level);
+        if (since == 0) {
             since = db.subjectAggregatesDao().getLevelReachedDate(level);
         }
-        if (since == null) {
-            since = new Date();
+        if (since == 0) {
+            since = System.currentTimeMillis();
         }
 
         final String username = orElse(db.propertiesDao().getUsername(), "");
@@ -72,6 +68,6 @@ public final class LiveLevelDuration extends ConservativeLiveData<LevelDuration>
 
     @Override
     public LevelDuration getDefaultValue() {
-        return new LevelDuration(0, new Date(), "");
+        return new LevelDuration(0, System.currentTimeMillis(), "");
     }
 }

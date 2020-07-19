@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.db.model;
 
+import android.annotation.SuppressLint;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.the_tinkering.wk.GlobalSettings;
@@ -581,6 +583,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the list
      */
+    @SuppressLint("NewApi")
     private List<Meaning> getAcceptedMeanings() {
         return getMeanings().stream()
                 .filter(Meaning::isAcceptedAnswer)
@@ -601,6 +604,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return true if it does
      */
+    @SuppressLint("NewApi")
     private boolean hasAcceptedMeanings() {
         return getMeanings().stream()
                 .anyMatch(Meaning::isAcceptedAnswer);
@@ -611,6 +615,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the number
      */
+    @SuppressLint("NewApi")
     private long getNumAcceptedMeanings() {
         return getMeanings().stream()
                 .filter(Meaning::isAcceptedAnswer)
@@ -622,6 +627,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the meaning
      */
+    @SuppressLint("NewApi")
     public String getOneMeaning() {
         return getMeanings().stream().reduce((t, u) -> {
             if (t.isPrimary()) {
@@ -642,6 +648,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the list
      */
+    @SuppressLint("NewApi")
     public List<Reading> getAcceptedReadings() {
         return getReadings().stream()
                 .filter(Reading::isAcceptedAnswer)
@@ -662,6 +669,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return true if it does
      */
+    @SuppressLint("NewApi")
     private boolean hasAcceptedReadings() {
         return getReadings().stream()
                 .anyMatch(Reading::isAcceptedAnswer);
@@ -672,6 +680,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the number
      */
+    @SuppressLint("NewApi")
     private long getNumAcceptedReadings() {
         return getReadings().stream()
                 .filter(Reading::isAcceptedAnswer)
@@ -692,6 +701,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the meaning
      */
+    @SuppressLint("NewApi")
     public String getOneReading() {
         return getReadings().stream().reduce((t, u) -> {
             if (t.isPrimary()) {
@@ -721,6 +731,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the list
      */
+    @SuppressLint("NewApi")
     public List<Reading> getOnYomiReadings() {
         return getReadings().stream()
                 .filter(Reading::isOnYomi)
@@ -732,6 +743,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the list
      */
+    @SuppressLint("NewApi")
     public List<Reading> getKunYomiReadings() {
         return getReadings().stream()
                 .filter(Reading::isKunYomi)
@@ -743,6 +755,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return true if it does
      */
+    @SuppressLint("NewApi")
     public boolean hasOnYomi() {
         return getReadings().stream()
                 .anyMatch(Reading::isOnYomi);
@@ -753,6 +766,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return true if it does
      */
+    @SuppressLint("NewApi")
     public boolean hasKunYomi() {
         return getReadings().stream()
                 .anyMatch(Reading::isKunYomi);
@@ -763,6 +777,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return true if it does
      */
+    @SuppressLint("NewApi")
     public boolean hasNanori() {
         return getReadings().stream()
                 .anyMatch(Reading::isNanori);
@@ -773,6 +788,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return true if it does
      */
+    @SuppressLint("NewApi")
     public boolean hasAcceptedOnYomi() {
         return getReadings().stream()
                 .filter(Reading::isAcceptedAnswer)
@@ -784,6 +800,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return true if it does
      */
+    @SuppressLint("NewApi")
     public boolean hasAcceptedKunYomi() {
         return getReadings().stream()
                 .filter(Reading::isAcceptedAnswer)
@@ -796,6 +813,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param value the reading
      * @return true if it is
      */
+    @SuppressLint("NewApi")
     public boolean isPrimaryReading(final @Nullable String value) {
         return getReadings().stream()
                 .filter(Reading::isPrimary)
@@ -926,11 +944,13 @@ public final class Subject implements PronunciationAudioOwner {
         return entity.parsedPitchInfo;
     }
 
+    @SuppressLint("NewApi")
     private boolean hasPitchInfoFor(final CharSequence reading) {
         final String kana = requireNonNull(PseudoIme.toKatakana(reading));
         return getPitchInfo().stream().anyMatch(info -> isEqual(kana, info.getReading()));
     }
 
+    @SuppressLint("NewApi")
     private boolean hasFallbackPitchInfo() {
         return getPitchInfo().stream().anyMatch(info -> info.getReading() == null);
     }
@@ -941,6 +961,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param reading the reading to check
      * @return the list
      */
+    @SuppressLint("NewApi")
     public List<PitchInfo> getPitchInfoFor(final CharSequence reading) {
         final String kana = requireNonNull(PseudoIme.toKatakana(reading));
 
@@ -1573,6 +1594,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param prefix prefix to add to the produced text
      * @return the text
      */
+    @SuppressLint("NewApi")
     public CharSequence getMeaningRichText(final CharSequence prefix) {
         final String html = getAcceptedMeanings().stream()
                 .map(meaning -> meaning.isPrimary() && getNumAcceptedMeanings() > 1
@@ -1667,6 +1689,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param prefix prefix to add to the produced text
      * @return the text
      */
+    @SuppressLint("NewApi")
     public CharSequence getRegularReadingRichText(final CharSequence prefix) {
         final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
         final String html = getAcceptedReadings().stream()
@@ -1724,6 +1747,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param prefix prefix to add to the produced text
      * @return the text
      */
+    @SuppressLint("NewApi")
     public CharSequence getAcceptedOnYomiRichText(final CharSequence prefix) {
         final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
         final String html = getReadings().stream()
@@ -1740,6 +1764,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param prefix prefix to add to the produced text
      * @return the text
      */
+    @SuppressLint("NewApi")
     public CharSequence getAcceptedKunYomiRichText(final CharSequence prefix) {
         final String html = getReadings().stream()
                 .filter(Reading::isOnYomi)
@@ -1754,6 +1779,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the text
      */
+    @SuppressLint("NewApi")
     public CharSequence getOnYomiRichText() {
         final boolean showOnInKatakana = GlobalSettings.Other.getShowOnInKatakana();
         final String html = getReadings().stream()
@@ -1768,6 +1794,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the text
      */
+    @SuppressLint("NewApi")
     public CharSequence getKunYomiRichText() {
         final String html = getReadings().stream()
                 .filter(Reading::isKunYomi)
@@ -1781,6 +1808,7 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the text
      */
+    @SuppressLint("NewApi")
     public CharSequence getNanoriRichText() {
         final String html = getReadings().stream()
                 .filter(Reading::isNanori)

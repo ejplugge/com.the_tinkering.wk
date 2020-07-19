@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.model;
 
-import java.util.Date;
-
 import static com.the_tinkering.wk.Constants.DAY;
 
 /**
@@ -25,7 +23,7 @@ import static com.the_tinkering.wk.Constants.DAY;
  */
 public final class LevelDuration {
     private final int level;
-    private final Date since;
+    private final long since;
     private final String username;
 
     /**
@@ -35,9 +33,8 @@ public final class LevelDuration {
      * @param since the date of the first unlock in this level
      * @param username the user's username
      */
-    public LevelDuration(final int level, final Date since, final String username) {
+    public LevelDuration(final int level, final long since, final String username) {
         this.level = level;
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
         this.since = since;
         this.username = username;
     }
@@ -51,12 +48,12 @@ public final class LevelDuration {
             return false;
         }
         final LevelDuration other = (LevelDuration) obj;
-        return level == other.level && since.equals(other.since) && username.equals(other.username);
+        return level == other.level && since == other.since && username.equals(other.username);
     }
 
     @Override
     public int hashCode() {
-        return since.hashCode() + level + username.hashCode();
+        return (int) since + level + username.hashCode();
     }
 
     /**
@@ -73,7 +70,7 @@ public final class LevelDuration {
      * @return the number of days
      */
     public float getDaysAtCurrentLevel() {
-        long duration = System.currentTimeMillis() - since.getTime();
+        long duration = System.currentTimeMillis() - since;
         if (duration < 0) {
             duration = 0;
         }

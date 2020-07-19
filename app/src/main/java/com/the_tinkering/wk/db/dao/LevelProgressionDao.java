@@ -64,15 +64,15 @@ public abstract class LevelProgressionDao {
      * @param userLevel the level to look for
      * @return the timestamp or null if not started or unknown.
      */
-    public final @Nullable Date getLevelReachedDate(final int userLevel) {
-        @Nullable Date since = null;
+    public final long getLevelReachedDate(final int userLevel) {
+        long since = 0;
         for (final LevelProgression lp: getForLevel(userLevel)) {
             final @Nullable Date date = lp.getSince();
             if (date == null) {
                 continue;
             }
-            if (since == null || date.after(since)) {
-                since = date;
+            if (since == 0 || date.getTime() > since) {
+                since = date.getTime();
             }
         }
         return since;

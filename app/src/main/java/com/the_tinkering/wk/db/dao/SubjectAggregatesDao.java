@@ -23,10 +23,7 @@ import com.the_tinkering.wk.model.JlptProgressItem;
 import com.the_tinkering.wk.model.JoyoProgressItem;
 import com.the_tinkering.wk.model.NotificationContext;
 
-import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 /**
  * DAO for subjects.
@@ -98,7 +95,7 @@ public abstract class SubjectAggregatesDao {
      * @return the date or null if not reached yet
      */
     @Query("SELECT MIN(unlockedAt) FROM subject WHERE hiddenAt = 0 AND object IS NOT NULL AND unlockedAt != 0 AND level = :level")
-    public abstract @Nullable Date getLevelReachedDate(final int level);
+    public abstract long getLevelReachedDate(final int level);
 
     /**
      * Room-generated method: get the highest level of any subject in the database.
