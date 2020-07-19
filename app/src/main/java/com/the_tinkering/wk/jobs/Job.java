@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.jobs;
 
+import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
@@ -30,16 +31,12 @@ import com.the_tinkering.wk.services.SessionWidgetProvider;
 import com.the_tinkering.wk.util.DbLogger;
 import com.the_tinkering.wk.util.Logger;
 
-import java.util.Calendar;
-
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.Constants.REFERENCE_DATA_VERSION;
 import static com.the_tinkering.wk.Constants.WEEK;
 import static com.the_tinkering.wk.enums.OnlineStatus.NO_CONNECTION;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
-import static java.util.Calendar.HOUR_OF_DAY;
-import static java.util.Calendar.MINUTE;
 
 /**
  * Abstract base class for background jobs. These are actions that need to
@@ -49,8 +46,8 @@ import static java.util.Calendar.MINUTE;
 public abstract class Job {
     private static final Logger LOGGER = Logger.get(Job.class);
 
-    private static int currentHour = -1;
-    private static int currentMinute = -1;
+    private static long currentHour = -1;
+    private static long currentMinute = -1;
 
     /**
      * The parameters for this job, encoded in a string in a class-specific format.
@@ -160,18 +157,19 @@ public abstract class Job {
 
         boolean timeLineNeedsUpdate = LiveTimeLine.getInstance().hasNullValue();
         final TimeLine timeLine = LiveTimeLine.getInstance().get();
-        final Calendar now = Calendar.getInstance();
-        if (currentHour != now.get(HOUR_OF_DAY)) {
+        final long nowMinute = System.currentTimeMillis() / Constants.MINUTE;
+        final long nowHour = nowMinute / 60;
+        if (currentHour != nowHour) {
             timeLineNeedsUpdate = true;
         }
-        if (currentMinute != now.get(MINUTE) && !timeLine.hasAvailableReviews() && timeLine.hasUpcomingReviews()) {
+        if (currentMinute != nowMinute && !timeLine.hasAvailableReviews() && timeLine.hasUpcomingReviews()) {
             timeLineNeedsUpdate = true;
         }
         if (timeLineNeedsUpdate) {
             LiveTimeLine.getInstance().update();
             SessionWidgetProvider.checkAndUpdateWidgets();
-            currentHour = now.get(HOUR_OF_DAY);
-            currentMinute = now.get(MINUTE);
+            currentHour = nowHour;
+            currentMinute = nowMinute;
         }
 
         DbLogger.trim();
