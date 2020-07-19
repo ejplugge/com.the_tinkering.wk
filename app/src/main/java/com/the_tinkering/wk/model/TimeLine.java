@@ -33,8 +33,8 @@ import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
  * A lesson or review is represented by the subject it's for.
  */
 public final class TimeLine {
-    private final Date createdAt;
-    private final Date firstSlot;
+    private final long createdAt;
+    private final long firstSlot;
     private final List<Subject> availableLessons = new ArrayList<>();
     private final List<Subject> availableReviews = new ArrayList<>();
     private final List<List<Subject>> timeLine = new ArrayList<>();
@@ -48,7 +48,7 @@ public final class TimeLine {
      * @param size the size of the timeline in hours.
      */
     public TimeLine(final int size) {
-        createdAt = new Date();
+        createdAt = System.currentTimeMillis();
         for (int i = 0; i < size; i++) {
             timeLine.add(new ArrayList<>());
             numRequiredForLevelUp.add(0);
@@ -62,8 +62,7 @@ public final class TimeLine {
      * This is the top of the hour at the time this object was created.
      * @return the value
      */
-    public Date getFirstSlot() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getFirstSlot() {
         return firstSlot;
     }
 
@@ -152,11 +151,11 @@ public final class TimeLine {
         if (review.getAvailableAt() == null) {
             return;
         }
-        if (review.getAvailableAt().before(createdAt)) {
+        if (review.getAvailableAt().getTime() < createdAt) {
             availableReviews.add(review);
         }
 
-        final long delay = review.getAvailableAt().getTime() - firstSlot.getTime();
+        final long delay = review.getAvailableAt().getTime() - firstSlot;
         int slot = (int) (delay / HOUR);
         if (slot < 0) {
             slot = 0;

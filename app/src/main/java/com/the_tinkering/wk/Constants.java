@@ -54,7 +54,7 @@ public final class Constants {
      * Short names of weekdays for timeline bar chart.
      */
     @SuppressWarnings("PublicStaticArrayField")
-    public static final String[] WEEKDAY_NAMES = {"", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    public static final String[] WEEKDAY_NAMES = {"", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 
     /**
      * Time units in milliseconds: second.

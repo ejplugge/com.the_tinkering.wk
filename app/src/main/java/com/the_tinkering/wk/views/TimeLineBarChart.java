@@ -46,8 +46,10 @@ import com.the_tinkering.wk.model.SrsSystem;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.util.ThemeUtil;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -56,9 +58,8 @@ import java.util.Locale;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
+import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
-import static java.util.Calendar.DAY_OF_WEEK;
-import static java.util.Calendar.HOUR_OF_DAY;
 
 /**
  * Custom bar chart for the timeline.
@@ -89,7 +90,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
     private @Nullable GestureDetectorCompat gestureDetector = null;
     private @Nullable Scroller scroller = null;
     private float prevVerticalScrollRawY = 0;
-    private final Calendar firstSlotCalendar = Calendar.getInstance();
+    private long firstSlot = 0;
     private @Nullable Drawable arrowIcon = null;
 
     /**
@@ -208,13 +209,16 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
      * @return the formatted label
      */
     private String getBarLabel(final int index) {
+        final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(firstSlot + index * HOUR), ZoneId.systemDefault());
+        //noinspection IfMayBeConditional
         if (index < 24) {
-            final int hour = (firstSlotCalendar.get(HOUR_OF_DAY) + index) % 24;
-            return String.format(Locale.ROOT, "%02d:00", hour);
+            return String.format(Locale.ROOT, "%02d:00", dt.getHour());
         }
-        final Calendar calendar = (Calendar) firstSlotCalendar.clone();
-        calendar.add(HOUR_OF_DAY, index);
-        return String.format(Locale.ROOT, "%s %02d:00", Constants.WEEKDAY_NAMES[calendar.get(DAY_OF_WEEK)], calendar.get(HOUR_OF_DAY));
+        else {
+            return String.format(Locale.ROOT, "%s %02d:00",
+                    Constants.WEEKDAY_NAMES[dt.getDayOfWeek().getValue()],
+                    dt.getHour());
+        }
     }
 
     /**
@@ -713,7 +717,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
                 break;
         }
 
-        firstSlotCalendar.setTime(timeLine.getFirstSlot());
+        firstSlot = timeLine.getFirstSlot();
         numShownBars = GlobalSettings.Dashboard.getTimeLineChartSizeShown();
 
         setVisibility(View.VISIBLE);

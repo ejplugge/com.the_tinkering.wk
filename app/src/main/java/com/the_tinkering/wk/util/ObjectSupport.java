@@ -258,21 +258,6 @@ public final class ObjectSupport {
     /**
      * Create a Date instance that represents the start of the hour represented by the argument.
      *
-     * @param date the date to check
-     * @return the date with minute, second and millisecond set to 0
-     */
-    public static Date getTopOfHour(final Date date) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-
-    /**
-     * Create a Date instance that represents the start of the hour represented by the argument.
-     *
      * @param ts the timestamp to check
      * @return the date with minute, second and millisecond set to 0
      */
