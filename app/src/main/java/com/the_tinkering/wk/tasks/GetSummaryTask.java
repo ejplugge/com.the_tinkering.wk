@@ -26,7 +26,6 @@ import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 
 import javax.annotation.Nullable;
@@ -79,7 +78,7 @@ public final class GetSummaryTask extends ApiTask {
                 continue;
             }
             for (final long id: session.getSubjectIds()) {
-                db.subjectSyncDao().forceLessonAvailable(id, new Date(session.getAvailableAt()), userLevel, maxLevel);
+                db.subjectSyncDao().forceLessonAvailable(id, session.getAvailableAt(), userLevel, maxLevel);
                 subjectIds.add(id);
             }
         }
@@ -91,7 +90,7 @@ public final class GetSummaryTask extends ApiTask {
                 continue;
             }
             for (final long id: session.getSubjectIds()) {
-                db.subjectSyncDao().forceReviewAvailable(id, new Date(session.getAvailableAt()), userLevel, maxLevel);
+                db.subjectSyncDao().forceReviewAvailable(id, session.getAvailableAt(), userLevel, maxLevel);
                 subjectIds.add(id);
             }
         }

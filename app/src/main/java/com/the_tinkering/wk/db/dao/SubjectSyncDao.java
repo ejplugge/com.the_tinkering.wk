@@ -808,15 +808,15 @@ public abstract class SubjectSyncDao {
      * @param userLevel the user's level
      * @param maxLevel the max level granted by the user's subscription
      */
-    public final void forceLessonAvailable(final long id, final @Nullable Date unlockedAt, final int userLevel, final int maxLevel) {
+    public final void forceLessonAvailable(final long id, final long unlockedAt, final int userLevel, final int maxLevel) {
         final @Nullable Subject subject = getById(id);
-        if (subject == null || unlockedAt == null || subject.getLevel() > userLevel || subject.getLevel() > maxLevel) {
+        if (subject == null || unlockedAt == 0 || subject.getLevel() > userLevel || subject.getLevel() > maxLevel) {
             return;
         }
 
         boolean changed = false;
         if (subject.getUnlockedAt() == null) {
-            subject.setUnlockedAt(unlockedAt);
+            subject.setUnlockedAt(new Date(unlockedAt));
             changed = true;
         }
         if (subject.getStartedAt() != null) {
@@ -876,26 +876,26 @@ public abstract class SubjectSyncDao {
      * @param userLevel the user's level
      * @param maxLevel the max level granted by the user's subscription
      */
-    public final void forceReviewAvailable(final long id, final @Nullable Date availableAt, final int userLevel, final int maxLevel) {
+    public final void forceReviewAvailable(final long id, final long availableAt, final int userLevel, final int maxLevel) {
         final @Nullable Subject subject = getById(id);
-        if (subject == null || availableAt == null || subject.getLevel() > userLevel || subject.getLevel() > maxLevel) {
+        if (subject == null || availableAt == 0 || subject.getLevel() > userLevel || subject.getLevel() > maxLevel) {
             return;
         }
 
         boolean changed = false;
-        if (subject.getAvailableAt() == null || subject.getAvailableAt().after(availableAt)) {
-            subject.setAvailableAt(availableAt);
+        if (subject.getAvailableAt() == null || subject.getAvailableAt().getTime() > availableAt) {
+            subject.setAvailableAt(new Date(availableAt));
             changed = true;
         }
         SrsSystem.Stage stage = subject.getSrsStage();
         if (subject.getUnlockedAt() == null) {
-            subject.setUnlockedAt(availableAt);
+            subject.setUnlockedAt(new Date(availableAt));
             stage = stage.getSystem().getFirstStartedStage();
             subject.setSrsStage(stage);
             changed = true;
         }
         if (subject.getStartedAt() == null) {
-            subject.setStartedAt(availableAt);
+            subject.setStartedAt(new Date(availableAt));
             changed = true;
         }
         if (stage.isCompleted()) {
