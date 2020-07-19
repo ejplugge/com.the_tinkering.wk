@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.model;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
@@ -291,6 +293,7 @@ s     *
      *
      * @return the number
      */
+    @SuppressLint("NewApi")
     public long getNumActiveItems() {
         return items.stream().filter(SessionItem::isActive).count();
     }
@@ -300,6 +303,7 @@ s     *
      *
      * @return the number
      */
+    @SuppressLint("NewApi")
     public long getNumPendingItems() {
         return items.stream().filter(SessionItem::isPending).count();
     }
@@ -309,6 +313,7 @@ s     *
      *
      * @return the number
      */
+    @SuppressLint("NewApi")
     private long getNumFinishedItems() {
         return items.stream().filter(item -> item.isReported() || item.isPending()).count();
     }
@@ -318,6 +323,7 @@ s     *
      *
      * @return the number
      */
+    @SuppressLint("NewApi")
     private long getNumLiveItems() {
         return items.stream().filter(item -> !item.isAbandoned()).count();
     }
@@ -327,6 +333,7 @@ s     *
      *
      * @return the number
      */
+    @SuppressLint("NewApi")
     public long getNumStartedItems() {
         return items.stream().filter(SessionItem::isStarted).count();
     }
@@ -336,6 +343,7 @@ s     *
      *
      * @return the number
      */
+    @SuppressLint("NewApi")
     public long getNumReportedItems() {
         return items.stream().filter(SessionItem::isReported).count();
     }
@@ -393,6 +401,7 @@ s     *
      * Choose a question from the available questions, taking into account
      * order requirements and other relevant configuration.
      */
+    @SuppressLint("NewApi")
     public void chooseQuestion() {
         if (currentQuestion != null || isFinishing() || isInactive()) {
             return;
@@ -1012,6 +1021,7 @@ s     *
      * If the app process has been restarted with an active session,
      * repopulate it from the database.
      */
+    @SuppressLint("NewApi")
     public void load() {
         if (loaded) {
             return;
@@ -1240,6 +1250,7 @@ s     *
      *
      * @param subjects list of subjects
      */
+    @SuppressLint("NewApi")
     public void startNewLessonSession(final List<Subject> subjects) {
         if (subjects.isEmpty()) {
             throw new IllegalArgumentException();
@@ -1284,6 +1295,7 @@ s     *
      *
      * @param subjects list of subjects
      */
+    @SuppressLint("NewApi")
     public void startNewReviewSession(final List<Subject> subjects) {
         if (subjects.isEmpty()) {
             throw new IllegalArgumentException();
@@ -1332,6 +1344,7 @@ s     *
      *
      * @param subjects list of subjects
      */
+    @SuppressLint("NewApi")
     public void startNewSelfStudySession(final List<Subject> subjects) {
         if (subjects.isEmpty()) {
             throw new IllegalArgumentException();
@@ -1381,6 +1394,7 @@ s     *
      * @param id the subject ID
      * @return the item or null if not found
      */
+    @SuppressLint("NewApi")
     public @Nullable SessionItem findItemBySubjectId(final long id) {
         return items.stream().filter(item -> item.getId() == id).findAny().orElse(null);
     }

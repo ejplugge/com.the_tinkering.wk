@@ -29,7 +29,6 @@ import com.the_tinkering.wk.util.PitchInfoUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.Constants.HOUR;
@@ -80,13 +79,13 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
             });
 
             final long ahead = size * HOUR;
-            final Date cutoff = new Date(System.currentTimeMillis() + ahead);
+            final long cutoff = System.currentTimeMillis() + ahead;
             db.subjectCollectionsDao().getUpcomingReviewItems(maxLevel, userLevel, cutoff).forEach(subject -> {
                 timeLine.addReview(subject, !subject.isPassed() && levelUpIds.contains(subject.getId()));
                 scanSubjects.add(subject);
             });
 
-            final long longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, cutoff.getTime());
+            final long longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, cutoff);
             timeLine.setLongTermUpcomingReviewDate(longDate);
             if (longDate == 0) {
                 timeLine.setNumLongTermUpcomingReviews(0);

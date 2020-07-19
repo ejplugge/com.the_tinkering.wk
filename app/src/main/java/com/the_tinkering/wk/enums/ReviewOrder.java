@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.enums;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.db.model.Subject;
 
 import java.util.Comparator;
@@ -23,6 +25,7 @@ import java.util.Comparator;
 /**
  * The order to present reviews/self-study in. Each value will produce a comparator on demand.
  */
+@SuppressLint("NewApi")
 @SuppressWarnings("unused")
 public enum ReviewOrder {
     /**

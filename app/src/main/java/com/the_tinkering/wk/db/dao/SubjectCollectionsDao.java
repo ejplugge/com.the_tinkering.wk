@@ -160,7 +160,7 @@ public abstract class SubjectCollectionsDao {
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND availableAt != 0 AND availableAt < :cutoff")
-    protected abstract List<SubjectEntity> getUpcomingReviewItemsHelper(final int maxLevel, final int userLevel, final Date cutoff);
+    protected abstract List<SubjectEntity> getUpcomingReviewItemsHelper(final int maxLevel, final int userLevel, final long cutoff);
 
     /**
      * Get a list of all subjects available for review, where the review
@@ -171,7 +171,7 @@ public abstract class SubjectCollectionsDao {
      * @param cutoff the cutoff Date
      * @return the list
      */
-    public final List<Subject> getUpcomingReviewItems(final int maxLevel, final int userLevel, final Date cutoff) {
+    public final List<Subject> getUpcomingReviewItems(final int maxLevel, final int userLevel, final long cutoff) {
         return buildList(getUpcomingReviewItemsHelper(maxLevel, userLevel, cutoff));
     }
 
