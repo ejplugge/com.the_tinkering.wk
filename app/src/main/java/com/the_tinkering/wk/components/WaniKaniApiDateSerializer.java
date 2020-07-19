@@ -30,6 +30,14 @@ import javax.annotation.Nullable;
  * This the serializing counterpart to WaniKaniApiDateDeserializerNew.
  */
 public final class WaniKaniApiDateSerializer extends JsonSerializer<Long> {
+    /**
+     * The constructor.
+     */
+    @SuppressWarnings({"unused", "RedundantNoArgConstructor"})
+    public WaniKaniApiDateSerializer() {
+        //
+    }
+
     @Override
     public void serialize(final @Nullable Long value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
         if (value == null || value == 0L) {

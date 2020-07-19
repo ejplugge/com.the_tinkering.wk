@@ -36,6 +36,14 @@ import java.io.IOException;
  * </p>
  */
 public final class WaniKaniApiDateDeserializer extends JsonDeserializer<Long> {
+    /**
+     * The constructor.
+     */
+    @SuppressWarnings({"unused", "RedundantNoArgConstructor"})
+    public WaniKaniApiDateDeserializer() {
+        //
+    }
+
     @Override
     public Long deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
         if (p.hasToken(JsonToken.VALUE_STRING)) {
