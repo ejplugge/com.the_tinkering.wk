@@ -125,4 +125,17 @@ public abstract class SubjectDao {
      */
     @Query("UPDATE subject SET studyMaterialPatched = 0 WHERE studyMaterialPatched AND id in (:subjectIds)")
     public abstract void resolvePatchedStudyMaterials(Collection<Long> subjectIds);
+
+    /**
+     * Fix up resurrectedAt column so it never contains NULL values.
+     */
+    @Query("UPDATE subject SET resurrectedAt = 0 WHERE resurrectedAt IS NULL")
+    protected abstract void fixupResurrectedAt();
+
+    /**
+     * Fix up date columns so they never contain NULL values.
+     */
+    public final void fixupDateFields() {
+        fixupResurrectedAt();
+    }
 }

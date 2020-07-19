@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -208,6 +209,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
      * @param index the timeslot
      * @return the formatted label
      */
+    @SuppressLint("NewApi")
     private String getBarLabel(final int index) {
         final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(firstSlot + index * HOUR), ZoneId.systemDefault());
         //noinspection IfMayBeConditional
@@ -253,6 +255,14 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
         }
     }
 
+    private List<BarEntry> getSortedEntries() {
+        final List<BarEntry> sortedEntries = new ArrayList<>(entries);
+        Collections.sort(sortedEntries,
+                Comparator.<BarEntry>comparingInt(entry -> entry.barCount)
+                        .thenComparingInt(entry -> entry.index));
+        return sortedEntries;
+    }
+
     /**
      * Draw the actual bars for the chart, including labels, level-up markers, and the waterfall line.
      *
@@ -284,10 +294,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
         paint.setColor(colorPrimary);
 
         final List<RectF> labels = new ArrayList<>();
-        final List<BarEntry> sortedEntries = new ArrayList<>(entries);
-        Collections.sort(sortedEntries,
-                Comparator.<BarEntry>comparingInt(entry -> entry.barCount)
-                        .thenComparingInt(entry -> entry.index));
+        final List<BarEntry> sortedEntries = getSortedEntries();
 
         // The count above each bar
         for (final BarEntry entry: sortedEntries) {

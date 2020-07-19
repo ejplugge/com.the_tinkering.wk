@@ -273,7 +273,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
      *
      * @return the stage
      */
-    private Stage getCompletedStage() {
+    public Stage getCompletedStage() {
         return getStage(completedStageId);
     }
 

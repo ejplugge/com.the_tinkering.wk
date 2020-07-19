@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 
@@ -341,6 +342,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         });
     }
 
+    @SuppressLint("NewApi")
     private void showItems() {
         showButton.setVisibility(false);
         incorrectSummary.setVisibility(false);

@@ -148,9 +148,9 @@ public final class BurnActivity extends AbstractActivity {
                 }
             }
             if (subject != null) {
-                db.subjectSyncDao().patchAssignment(id, subject.getSrsSystem().getFirstStartedStage().getId(),
-                        subject.getUnlockedAt(), subject.getStartedAt(), new Date(),
-                        subject.getPassedAt(), subject.getBurnedAt(), new Date());
+                db.subjectSyncDao().patchAssignment(id, subject.getSrsSystem().getCompletedStage().getId(),
+                        subject.getUnlockedAt(), subject.getStartedAt(), null,
+                        subject.getPassedAt(), new Date(), System.currentTimeMillis());
             }
         }
         publisher.progress("Status: Finished", false, false, -1L);

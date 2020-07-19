@@ -150,7 +150,7 @@ public final class ResurrectActivity extends AbstractActivity {
             if (subject != null) {
                 db.subjectSyncDao().patchAssignment(id, subject.getSrsSystem().getFirstStartedStage().getId(),
                         subject.getUnlockedAt(), subject.getStartedAt(), new Date(),
-                        subject.getPassedAt(), subject.getResurrectedAt(), new Date());
+                        subject.getPassedAt(), null, System.currentTimeMillis());
             }
         }
         publisher.progress("Status: Finished", false, false, -1L);
