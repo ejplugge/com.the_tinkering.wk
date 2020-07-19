@@ -181,7 +181,7 @@ public abstract class SubjectSyncDao {
                                            final String pronunciationAudios,
                                            final int lessonPosition,
                                            final int level,
-                                           @androidx.annotation.Nullable final Date hiddenAt,
+                                           final long hiddenAt,
                                            final int frequency,
                                            final int joyoGrade,
                                            final int jlptLevel,
@@ -302,7 +302,7 @@ public abstract class SubjectSyncDao {
                                             final String pronunciationAudios,
                                             final int lessonPosition,
                                             final int level,
-                                            @androidx.annotation.Nullable final Date hiddenAt,
+                                            final long hiddenAt,
                                             final int frequency,
                                             final int joyoGrade,
                                             final int jlptLevel,
@@ -437,12 +437,12 @@ public abstract class SubjectSyncDao {
     protected abstract int tryUpdateHelperAssignment(final long subjectId,
                                                      final long assignmentId,
                                                      final long srsStageId,
-                                                     @androidx.annotation.Nullable final Date availableAt,
-                                                     @androidx.annotation.Nullable final Date burnedAt,
-                                                     @androidx.annotation.Nullable final Date passedAt,
-                                                     @androidx.annotation.Nullable final Date resurrectedAt,
-                                                     @androidx.annotation.Nullable final Date startedAt,
-                                                     @androidx.annotation.Nullable final Date unlockedAt);
+                                                     final long availableAt,
+                                                     final long burnedAt,
+                                                     final long passedAt,
+                                                     final long resurrectedAt,
+                                                     final long startedAt,
+                                                     final long unlockedAt);
 
     /**
      * Try to update a subject record from an API assignment instance.
@@ -454,7 +454,7 @@ public abstract class SubjectSyncDao {
         final int count = tryUpdateHelperAssignment(
                 apiAssignment.getSubjectId(),
                 apiAssignment.getId(),
-                apiAssignment.getUnlockedAt() == null ? -999 : apiAssignment.getSrsStageId(),
+                apiAssignment.getUnlockedAt() == 0 ? -999 : apiAssignment.getSrsStageId(),
                 apiAssignment.getAvailableAt(),
                 apiAssignment.getBurnedAt(),
                 apiAssignment.getPassedAt(),

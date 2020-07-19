@@ -23,7 +23,6 @@ import com.the_tinkering.wk.components.WaniKaniApiDateDeserializer;
 import com.the_tinkering.wk.components.WaniKaniApiDateSerializer;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -37,10 +36,10 @@ public final class ApiSubject implements WaniKaniEntity {
     private @Nullable String object = null;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("created_at") private @Nullable Date createdAt = null;
+    @JsonProperty("created_at") private long createdAt = 0;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("hidden_at") private @Nullable Date hiddenAt = null;
+    @JsonProperty("hidden_at") private long hiddenAt = 0;
     @JsonProperty("document_url") private @Nullable String documentUrl = null;
     @JsonProperty("lesson_position") private int lessonPosition = 0;
     @JsonProperty("spaced_repetition_system_id") private long srsSystemId = 0;
@@ -91,8 +90,7 @@ public final class ApiSubject implements WaniKaniEntity {
      * Timestamp when this subject was created.
      * @return the value
      */
-    public @Nullable Date getCreatedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getCreatedAt() {
         return createdAt;
     }
 
@@ -100,28 +98,25 @@ public final class ApiSubject implements WaniKaniEntity {
      * Timestamp when this subject was created.
      * @param createdAt the value
      */
-    public void setCreatedAt(final @Nullable Date createdAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setCreatedAt(final long createdAt) {
         this.createdAt = createdAt;
     }
 
     /**
-     * Timestamp when this subject was hidden, or null if it isn't hidden.
+     * Timestamp when this subject was hidden, or 0 if it isn't hidden.
      * A hidden subject is still maintained, but is treated as non-existent almost everywhere.
      * @return the value
      */
-    public @Nullable Date getHiddenAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getHiddenAt() {
         return hiddenAt;
     }
 
     /**
-     * Timestamp when this subject was hidden, or null if it isn't hidden.
+     * Timestamp when this subject was hidden, or 0 if it isn't hidden.
      * A hidden subject is still maintained, but is treated as non-existent almost everywhere.
      * @param hiddenAt the value
      */
-    public void setHiddenAt(final @Nullable Date hiddenAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setHiddenAt(final long hiddenAt) {
         this.hiddenAt = hiddenAt;
     }
 

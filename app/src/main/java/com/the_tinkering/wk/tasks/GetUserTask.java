@@ -27,8 +27,6 @@ import com.the_tinkering.wk.livedata.LiveLevelDuration;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.livedata.LiveVacationMode;
 
-import java.util.Date;
-
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
@@ -82,7 +80,7 @@ public final class GetUserTask extends ApiTask {
         db.propertiesDao().setUsername(orElse(user.getUsername(), ""));
 
         final boolean oldVacationMode = db.propertiesDao().getVacationMode();
-        final boolean newVacationMode = user.getCurrentVacationStartedAt() != null;
+        final boolean newVacationMode = user.getCurrentVacationStartedAt() != 0;
         if (oldVacationMode != newVacationMode) {
             db.propertiesDao().setVacationMode(newVacationMode);
             LiveTimeLine.getInstance().update();

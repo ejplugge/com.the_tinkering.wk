@@ -22,10 +22,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.the_tinkering.wk.components.WaniKaniApiDateDeserializer;
 import com.the_tinkering.wk.components.WaniKaniApiDateSerializer;
 
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 /**
  * Model class used in the API to start an assignment (submit a lesson result).
  */
@@ -33,23 +29,21 @@ import javax.annotation.Nullable;
 public final class ApiStartAssignment {
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("started_at") private @Nullable Date startedAt = null;
+    @JsonProperty("started_at") private long startedAt = 0;
 
     /**
-     * The timestamp when the assignment was started, or null to request that the API set the current time as timestamp.
+     * The timestamp when the assignment was started, or 0 to request that the API set the current time as timestamp.
      * @return the value
      */
-    public @Nullable Date getStartedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getStartedAt() {
         return startedAt;
     }
 
     /**
-     * The timestamp when the assignment was started, or null to request that the API set the current time as timestamp.
+     * The timestamp when the assignment was started, or 0 to request that the API set the current time as timestamp.
      * @param startedAt the value
      */
-    public void setStartedAt(final @Nullable Date startedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setStartedAt(final long startedAt) {
         this.startedAt = startedAt;
     }
 }

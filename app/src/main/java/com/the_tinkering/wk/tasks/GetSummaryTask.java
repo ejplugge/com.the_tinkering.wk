@@ -75,11 +75,11 @@ public final class GetSummaryTask extends ApiTask {
 
         final Collection<Long> subjectIds = new HashSet<>();
         for (final ApiSummarySession session: summary.getLessons()) {
-            if (session.getAvailableAt() == null) {
+            if (session.getAvailableAt() == 0) {
                 continue;
             }
             for (final long id: session.getSubjectIds()) {
-                db.subjectSyncDao().forceLessonAvailable(id, session.getAvailableAt(), userLevel, maxLevel);
+                db.subjectSyncDao().forceLessonAvailable(id, new Date(session.getAvailableAt()), userLevel, maxLevel);
                 subjectIds.add(id);
             }
         }
@@ -87,11 +87,11 @@ public final class GetSummaryTask extends ApiTask {
 
         subjectIds.clear();
         for (final ApiSummarySession session: summary.getReviews()) {
-            if (session.getAvailableAt() == null) {
+            if (session.getAvailableAt() == 0) {
                 continue;
             }
             for (final long id: session.getSubjectIds()) {
-                db.subjectSyncDao().forceReviewAvailable(id, session.getAvailableAt(), userLevel, maxLevel);
+                db.subjectSyncDao().forceReviewAvailable(id, new Date(session.getAvailableAt()), userLevel, maxLevel);
                 subjectIds.add(id);
             }
         }

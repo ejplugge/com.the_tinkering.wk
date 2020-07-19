@@ -22,10 +22,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.the_tinkering.wk.components.WaniKaniApiDateDeserializer;
 import com.the_tinkering.wk.components.WaniKaniApiDateSerializer;
 
-import java.util.Date;
-
-import javax.annotation.Nullable;
-
 /**
  * Model class used in the API to create a new review record.
  */
@@ -59,7 +55,7 @@ public final class ApiCreateReview {
         @JsonProperty("incorrect_reading_answers") private int incorrectReadingAnswers = 0;
         @JsonSerialize(using = WaniKaniApiDateSerializer.class)
         @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-        @JsonProperty("created_at") private @Nullable Date createdAt = null;
+        @JsonProperty("created_at") private long createdAt = 0;
 
         /**
          * The ID of the subject this review is for.
@@ -110,20 +106,18 @@ public final class ApiCreateReview {
         }
 
         /**
-         * The timestamp when the review was created, or null to request that the API set the current time as timestamp.
+         * The timestamp when the review was created, or 0 to request that the API set the current time as timestamp.
          * @return the value
          */
-        public @Nullable Date getCreatedAt() {
-            //noinspection AssignmentOrReturnOfFieldWithMutableType
+        public long getCreatedAt() {
             return createdAt;
         }
 
         /**
-         * The timestamp when the review was created, or null to request that the API set the current time as timestamp.
+         * The timestamp when the review was created, or 0 to request that the API set the current time as timestamp.
          * @param createdAt the value
          */
-        public void setCreatedAt(final @Nullable Date createdAt) {
-            //noinspection AssignmentOrReturnOfFieldWithMutableType
+        public void setCreatedAt(final long createdAt) {
             this.createdAt = createdAt;
         }
     }

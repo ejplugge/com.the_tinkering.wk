@@ -22,8 +22,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.the_tinkering.wk.components.WaniKaniApiDateDeserializer;
 import com.the_tinkering.wk.components.WaniKaniApiDateSerializer;
 
-import java.util.Date;
-
 import javax.annotation.Nullable;
 
 /**
@@ -34,22 +32,22 @@ public final class ApiLevelProgression implements WaniKaniEntity {
     private long id = 0;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("abandoned_at") private @Nullable Date abandonedAt;
+    @JsonProperty("abandoned_at") private long abandonedAt = 0L;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("completed_at") private @Nullable Date completedAt;
+    @JsonProperty("completed_at") private long completedAt = 0L;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("created_at") private @Nullable Date createdAt;
+    @JsonProperty("created_at") private long createdAt = 0L;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("passed_at") private @Nullable Date passedAt;
+    @JsonProperty("passed_at") private long passedAt = 0L;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("started_at") private @Nullable Date startedAt;
+    @JsonProperty("started_at") private long startedAt = 0L;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("unlocked_at") private @Nullable Date unlockedAt;
+    @JsonProperty("unlocked_at") private long unlockedAt = 0L;
     @JsonProperty("level") private int level = 0;
 
     /**
@@ -71,38 +69,34 @@ public final class ApiLevelProgression implements WaniKaniEntity {
     }
 
     /**
-     * Timestamp when this level was abandoned (because of a reset), or null if not abandoned.
+     * Timestamp when this level was abandoned (because of a reset), or 0 if not abandoned.
      * @return the value
      */
-    public @Nullable Date getAbandonedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getAbandonedAt() {
         return abandonedAt;
     }
 
     /**
-     * Timestamp when this level was abandoned (because of a reset), or null if not abandoned.
+     * Timestamp when this level was abandoned (because of a reset), or 0 if not abandoned.
      * @param abandonedAt the value
      */
-    public void setAbandonedAt(final @Nullable Date abandonedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setAbandonedAt(final long abandonedAt) {
         this.abandonedAt = abandonedAt;
     }
 
     /**
-     * Timestamp when this level was completed (all subjects burned), or null if not completed.
+     * Timestamp when this level was completed (all subjects burned), or 0 if not completed.
      * @return the value
      */
-    public @Nullable Date getCompletedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getCompletedAt() {
         return completedAt;
     }
 
     /**
-     * Timestamp when this level was completed (all subjects burned), or null if not completed.
+     * Timestamp when this level was completed (all subjects burned), or 0 if not completed.
      * @param completedAt the value
      */
-    public void setCompletedAt(final @Nullable Date completedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setCompletedAt(final long completedAt) {
         this.completedAt = completedAt;
     }
 
@@ -110,8 +104,7 @@ public final class ApiLevelProgression implements WaniKaniEntity {
      * Timestamp when this record was created.
      * @return the value
      */
-    public @Nullable Date getCreatedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getCreatedAt() {
         return createdAt;
     }
 
@@ -119,62 +112,55 @@ public final class ApiLevelProgression implements WaniKaniEntity {
      * Timestamp when this record was created.
      * @param createdAt the value
      */
-    public void setCreatedAt(final @Nullable Date createdAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setCreatedAt(final long createdAt) {
         this.createdAt = createdAt;
     }
 
     /**
-     * Timestamp when this level was passed (all subjects passed), or null if not passed.
+     * Timestamp when this level was passed (all subjects passed), or 0 if not passed.
      * @return the value
      */
-    public @Nullable Date getPassedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getPassedAt() {
         return passedAt;
     }
 
     /**
-     * Timestamp when this level was passed (all subjects passed), or null if not passed.
+     * Timestamp when this level was passed (all subjects passed), or 0 if not passed.
      * @param passedAt the value
      */
-    public void setPassedAt(final @Nullable Date passedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setPassedAt(final long passedAt) {
         this.passedAt = passedAt;
     }
 
     /**
-     * Timestamp when this level was started, or null if not started.
+     * Timestamp when this level was started, or 0 if not started.
      * @return the value
      */
-    public @Nullable Date getStartedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getStartedAt() {
         return startedAt;
     }
 
     /**
-     * Timestamp when this level was started, or null if not started.
+     * Timestamp when this level was started, or 0 if not started.
      * @param startedAt the value
      */
-    public void setStartedAt(final @Nullable Date startedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setStartedAt(final long startedAt) {
         this.startedAt = startedAt;
     }
 
     /**
-     * Timestamp when this level was unlocked, or null if not unlocked.
+     * Timestamp when this level was unlocked, or 0 if not unlocked.
      * @return the value
      */
-    public @Nullable Date getUnlockedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getUnlockedAt() {
         return unlockedAt;
     }
 
     /**
-     * Timestamp when this level was unlocked, or null if not unlocked.
+     * Timestamp when this level was unlocked, or 0 if not unlocked.
      * @param unlockedAt the value
      */
-    public void setUnlockedAt(final @Nullable Date unlockedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setUnlockedAt(final long unlockedAt) {
         this.unlockedAt = unlockedAt;
     }
 

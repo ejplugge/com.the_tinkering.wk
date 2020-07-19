@@ -23,10 +23,7 @@ import com.the_tinkering.wk.components.WaniKaniApiDateDeserializer;
 import com.the_tinkering.wk.components.WaniKaniApiDateSerializer;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 /**
  * Model class for a lesson/review session in the summary endpoint of the API.
@@ -35,15 +32,14 @@ import javax.annotation.Nullable;
 public final class ApiSummarySession {
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("available_at") private @Nullable Date availableAt = null;
+    @JsonProperty("available_at") private long availableAt = 0;
     @JsonProperty("subject_ids") private List<Long> subjectIds = Collections.emptyList();
 
     /**
      * Timestamp when the subjects in this session will become or have become available.
      * @return the value
      */
-    public @Nullable Date getAvailableAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getAvailableAt() {
         return availableAt;
     }
 
@@ -51,8 +47,7 @@ public final class ApiSummarySession {
      * Timestamp when the subjects in this session will become or have become available.
      * @param availableAt the value
      */
-    public void setAvailableAt(final @Nullable Date availableAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setAvailableAt(final long availableAt) {
         this.availableAt = availableAt;
     }
 

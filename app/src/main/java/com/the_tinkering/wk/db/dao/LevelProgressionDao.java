@@ -93,12 +93,12 @@ public abstract class LevelProgressionDao {
             exists = false;
         }
 
-        lp.setAbandonedAt(apiLevelProgression.getAbandonedAt());
-        lp.setCompletedAt(apiLevelProgression.getCompletedAt());
-        lp.setCreatedAt(apiLevelProgression.getCreatedAt());
-        lp.setPassedAt(apiLevelProgression.getPassedAt());
-        lp.setStartedAt(apiLevelProgression.getStartedAt());
-        lp.setUnlockedAt(apiLevelProgression.getUnlockedAt());
+        lp.setAbandonedAt(apiLevelProgression.getAbandonedAt() == 0 ? null : new Date(apiLevelProgression.getAbandonedAt()));
+        lp.setCompletedAt(apiLevelProgression.getCompletedAt() == 0 ? null : new Date(apiLevelProgression.getCompletedAt()));
+        lp.setCreatedAt(apiLevelProgression.getCreatedAt() == 0 ? null : new Date(apiLevelProgression.getCreatedAt()));
+        lp.setPassedAt(apiLevelProgression.getPassedAt() == 0 ? null : new Date(apiLevelProgression.getPassedAt()));
+        lp.setStartedAt(apiLevelProgression.getStartedAt() == 0 ? null : new Date(apiLevelProgression.getStartedAt()));
+        lp.setUnlockedAt(apiLevelProgression.getUnlockedAt() == 0 ? null : new Date(apiLevelProgression.getUnlockedAt()));
         lp.setLevel(apiLevelProgression.getLevel());
 
         if (exists) {

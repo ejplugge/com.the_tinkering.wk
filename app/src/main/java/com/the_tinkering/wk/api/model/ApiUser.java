@@ -22,8 +22,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.the_tinkering.wk.components.WaniKaniApiDateDeserializer;
 import com.the_tinkering.wk.components.WaniKaniApiDateSerializer;
 
-import java.util.Date;
-
 import javax.annotation.Nullable;
 
 /**
@@ -36,7 +34,7 @@ public final class ApiUser {
     @JsonProperty("max_level_granted_by_subscription") private int maxLevelGrantedBySubscription = 0;
     @JsonSerialize(using = WaniKaniApiDateSerializer.class)
     @JsonDeserialize(using = WaniKaniApiDateDeserializer.class)
-    @JsonProperty("current_vacation_started_at") private @Nullable Date currentVacationStartedAt = null;
+    @JsonProperty("current_vacation_started_at") private long currentVacationStartedAt = 0;
     private @Nullable ApiSubscription subscription = null;
     private @Nullable String username = null;
 
@@ -89,20 +87,18 @@ public final class ApiUser {
     }
 
     /**
-     * Timestamp when the user went on vacation, or null if the user is not on vacation.
+     * Timestamp when the user went on vacation, or 0 if the user is not on vacation.
      * @return the value
      */
-    public @Nullable Date getCurrentVacationStartedAt() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public long getCurrentVacationStartedAt() {
         return currentVacationStartedAt;
     }
 
     /**
-     * Timestamp when the user went on vacation, or null if the user is not on vacation.
+     * Timestamp when the user went on vacation, or 0 if the user is not on vacation.
      * @param currentVacationStartedAt the value
      */
-    public void setCurrentVacationStartedAt(final @Nullable Date currentVacationStartedAt) {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
+    public void setCurrentVacationStartedAt(final long currentVacationStartedAt) {
         this.currentVacationStartedAt = currentVacationStartedAt;
     }
 

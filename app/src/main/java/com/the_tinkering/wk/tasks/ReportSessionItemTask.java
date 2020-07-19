@@ -41,7 +41,6 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
 import com.the_tinkering.wk.util.Logger;
 
-import java.util.Date;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
@@ -134,7 +133,7 @@ public final class ReportSessionItemTask extends ApiTask {
             if (assignmentId > 0) {
                 final ApiStartAssignment requestBody = new ApiStartAssignment();
                 if (timestamp > 0 && System.currentTimeMillis() - timestamp > Constants.MINUTE * 5) {
-                    requestBody.setStartedAt(new Date(timestamp));
+                    requestBody.setStartedAt(timestamp);
                 }
                 final String url = String.format(Locale.ROOT, "/v2/assignments/%d/start", assignmentId);
                 final @Nullable JsonNode responseBody = postApiCall(url, "PUT", requestBody);
@@ -171,7 +170,7 @@ public final class ReportSessionItemTask extends ApiTask {
             requestBody.getReview().setIncorrectMeaningAnswers(meaningIncorrect);
             requestBody.getReview().setIncorrectReadingAnswers(readingIncorrect);
             if (timestamp > 0 && System.currentTimeMillis() - timestamp > Constants.MINUTE * 5) {
-                requestBody.getReview().setCreatedAt(new Date(timestamp));
+                requestBody.getReview().setCreatedAt(timestamp);
             }
             final String url = "/v2/reviews";
             final @Nullable JsonNode responseBody = postApiCall(url, "POST", requestBody);
