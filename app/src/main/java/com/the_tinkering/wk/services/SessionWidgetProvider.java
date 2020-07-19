@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.services;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -52,6 +53,21 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
  * Implementation of the app widget.
  */
 public final class SessionWidgetProvider extends AppWidgetProvider {
+    @SuppressLint("NewApi")
+    private static @Nullable String getUpcomingMessage(final long upcoming) {
+        if (upcoming == 0) {
+            return null;
+        }
+        else if (upcoming - System.currentTimeMillis() < DAY) {
+            final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(upcoming), ZoneId.systemDefault());
+            return String.format(Locale.ROOT, "More at %02d:%02d", dt.getHour(), dt.getMinute());
+        }
+        else {
+            final float days = ((float) (upcoming - System.currentTimeMillis())) / DAY;
+            return String.format(Locale.ROOT, "More in %.1fd", days);
+        }
+    }
+
     /**
      * Update all instances of the widget, using the supplied data.
      *
@@ -71,18 +87,7 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
 
         final int lessonCount = ctx.getNumLessons();
         final int reviewCount = ctx.getNumReviews();
-        final @Nullable String upcomingMessage;
-        if (upcoming == 0) {
-            upcomingMessage = null;
-        }
-        else if (upcoming - System.currentTimeMillis() < DAY) {
-            final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(upcoming), ZoneId.systemDefault());
-            upcomingMessage = String.format(Locale.ROOT, "More at %02d:%02d", dt.getHour(), dt.getMinute());
-        }
-        else {
-            final float days = ((float) (upcoming - System.currentTimeMillis())) / DAY;
-            upcomingMessage = String.format(Locale.ROOT, "More in %.1fd", days);
-        }
+        final @Nullable String upcomingMessage = getUpcomingMessage(upcoming);
 
         for (final int id: manager.getAppWidgetIds(name)) {
             final Bundle options = manager.getAppWidgetOptions(id);

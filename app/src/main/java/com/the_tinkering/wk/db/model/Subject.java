@@ -41,7 +41,6 @@ import com.the_tinkering.wk.util.PseudoIme;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -1051,10 +1050,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the value
      */
     public long getAvailableAt() {
-        if (entity.availableAt == null) {
-            return 0;
-        }
-        return entity.availableAt.getTime();
+        return entity.availableAt;
     }
 
     /**
@@ -1063,7 +1059,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param availableAt the value
      */
     public void setAvailableAt(final long availableAt) {
-        entity.availableAt = availableAt == 0 ? null : new Date(availableAt);
+        entity.availableAt = availableAt;
     }
 
     /**
@@ -1071,10 +1067,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the value
      */
     public long getBurnedAt() {
-        if (entity.burnedAt == null) {
-            return 0;
-        }
-        return entity.burnedAt.getTime();
+        return entity.burnedAt;
     }
 
     /**
@@ -1084,10 +1077,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the value
      */
     public long getPassedAt() {
-        if (entity.passedAt == null) {
-            return 0;
-        }
-        return entity.passedAt.getTime();
+        return entity.passedAt;
     }
 
     /**
@@ -1096,10 +1086,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the value
      */
     public long getStartedAt() {
-        if (entity.startedAt == null) {
-            return 0;
-        }
-        return entity.startedAt.getTime();
+        return entity.startedAt;
     }
 
     /**
@@ -1108,7 +1095,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param startedAt the value
      */
     public void setStartedAt(final long startedAt) {
-        entity.startedAt = startedAt == 0 ? null : new Date(startedAt);
+        entity.startedAt = startedAt;
     }
 
     /**
@@ -1116,10 +1103,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the value
      */
     public long getUnlockedAt() {
-        if (entity.unlockedAt == null) {
-            return 0;
-        }
-        return entity.unlockedAt.getTime();
+        return entity.unlockedAt;
     }
 
     /**
@@ -1127,7 +1111,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @param unlockedAt the value
      */
     public void setUnlockedAt(final long unlockedAt) {
-        entity.unlockedAt = unlockedAt == 0 ? null : new Date(unlockedAt);
+        entity.unlockedAt = unlockedAt;
     }
 
     /**
@@ -1135,10 +1119,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the value
      */
     public long getResurrectedAt() {
-        if (entity.resurrectedAt == null) {
-            return 0;
-        }
-        return entity.resurrectedAt.getTime();
+        return entity.resurrectedAt;
     }
 
     /**
@@ -1162,7 +1143,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the value
      */
     public boolean isPassed() {
-        return entity.passedAt != null;
+        return entity.passedAt != 0;
     }
 
     /**
@@ -1180,7 +1161,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it is
      */
     public boolean isOverdue() {
-        if (entity.availableAt == null || isLocked()) {
+        if (entity.availableAt == 0 || isLocked()) {
             return false;
         }
         final SrsSystem.Stage stage = getSrsStage();
@@ -1190,7 +1171,7 @@ public final class Subject implements PronunciationAudioOwner {
         if (stage.isCompleted()) {
             return false;
         }
-        final double since = System.currentTimeMillis() - entity.availableAt.getTime();
+        final double since = System.currentTimeMillis() - entity.availableAt;
         if (since <= 0) {
             return false;
         }
@@ -1222,7 +1203,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it is
      */
     public boolean isLocked() {
-        return entity.unlockedAt == null;
+        return entity.unlockedAt == 0;
     }
 
     /**
@@ -1234,9 +1215,9 @@ public final class Subject implements PronunciationAudioOwner {
     public boolean isEligibleForSessionType(final SessionType sessionType) {
         switch (sessionType) {
             case LESSON:
-                return entity.unlockedAt != null && entity.startedAt == null && (entity.resurrectedAt != null || entity.burnedAt == null);
+                return entity.unlockedAt != 0 && entity.startedAt == 0 && (entity.resurrectedAt != 0 || entity.burnedAt == 0);
             case REVIEW:
-                return entity.availableAt != null && entity.availableAt.getTime() <= System.currentTimeMillis();
+                return entity.availableAt != 0 && entity.availableAt <= System.currentTimeMillis();
             case NONE:
             case SELF_STUDY:
             default:

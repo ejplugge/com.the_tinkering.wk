@@ -17,9 +17,7 @@
 package com.the_tinkering.wk.db.model;
 
 import androidx.room.ColumnInfo;
-import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
 
 import com.the_tinkering.wk.api.model.AuxiliaryMeaning;
 import com.the_tinkering.wk.api.model.ContextSentence;
@@ -29,7 +27,6 @@ import com.the_tinkering.wk.api.model.Reading;
 import com.the_tinkering.wk.model.PitchInfo;
 import com.the_tinkering.wk.enums.SubjectType;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -45,14 +42,13 @@ import javax.annotation.Nullable;
  * a single entity for convenience - subject, assignment, review statistics, study materials
  * and reference data.
  */
-@Entity(tableName = "subject")
 public final class SubjectEntity {
     // From base subject
 
     /**
      * The unique ID.
      */
-    @PrimaryKey public long id = 0L;
+    public long id = 0L;
 
     /**
      * The type of subject, one of "radical", "kanji", "vocabulary".
@@ -70,7 +66,7 @@ public final class SubjectEntity {
      * Timestamp when this subject was hidden, or null if it isn't hidden.
      * A hidden subject is still maintained, but is treated as non-existent almost everywhere.
      */
-    public @Nullable Date hiddenAt;
+    public long hiddenAt = 0L;
 
     /**
      * The ordinal position within the level of this subject. Affects ordering but nothing else.
@@ -194,34 +190,34 @@ public final class SubjectEntity {
      * The timestamp when the next available review becomes available for this subject,
      * or null if no review is scheduled yet.
      */
-    @ColumnInfo(index = true) public @Nullable Date availableAt;
+    @ColumnInfo(index = true) public long availableAt = 0L;
 
     /**
      * The timestamp when this subject was burned, or null if it hasn't been burned yet.
      */
-    @ColumnInfo(index = true) public @Nullable Date burnedAt;
+    @ColumnInfo(index = true) public long burnedAt = 0L;
 
     /**
      * The timestamp when this subject was passed, i.e. reached Guru I for the first time.
      * Note: for older assignments, this field used to be empty. They have been backfilled since then.
      */
-    public @Nullable Date passedAt;
+    public long passedAt = 0L;
 
     /**
      * The timestamp when this subject was resurrected from burned status, or null if it hasn't been resurrected.
      */
-    public @Nullable Date resurrectedAt;
+    public long resurrectedAt = 0L;
 
     /**
      * The timestamp when this subject was started, i.e. when the lesson for this subject was completed,
      * or null if it hasn't been started yet.
      */
-    @ColumnInfo(index = true) public @Nullable Date startedAt;
+    public long startedAt = 0L;
 
     /**
      * The timestamp when this subject was unlocked, or null if it is still locked.
      */
-    @ColumnInfo(index = true) public @Nullable Date unlockedAt;
+    public long unlockedAt = 0L;
 
     /**
      * True if this subject has passed, i.e. has reached Guru I at some point.
@@ -249,7 +245,7 @@ public final class SubjectEntity {
     /**
      * The timestamp when the last incorrect answer was given for this subject.
      */
-    public @Nullable Date lastIncorrectAnswer;
+    public long lastIncorrectAnswer = 0L;
 
     /**
      * True if this subject's assignment has been patched locally but this hasn't been replaced with an API updated version yet.

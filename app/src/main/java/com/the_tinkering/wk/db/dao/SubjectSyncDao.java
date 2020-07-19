@@ -864,13 +864,8 @@ public abstract class SubjectSyncDao {
     public final void forceLessonUnavailableExcept(final int userLevel, final int maxLevel, final Collection<Long> subjectIds) {
         for (final SubjectEntity subject: getAvailableLessonItemsHelper(userLevel, maxLevel)) {
             if (!subjectIds.contains(subject.id)) {
-                patchAssignment(subject.id, subject.srsStageId,
-                        subject.unlockedAt == null ? 0 : subject.unlockedAt.getTime(),
-                        subject.unlockedAt == null ? 0 : subject.unlockedAt.getTime(),
-                        subject.availableAt == null ? 0 : subject.availableAt.getTime(),
-                        subject.passedAt == null ? 0 : subject.passedAt.getTime(),
-                        subject.burnedAt == null ? 0 : subject.burnedAt.getTime(),
-                        subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
+                patchAssignment(subject.id, subject.srsStageId, subject.unlockedAt, subject.unlockedAt,
+                        subject.availableAt, subject.passedAt, subject.burnedAt, subject.resurrectedAt);
             }
         }
     }
@@ -945,13 +940,8 @@ public abstract class SubjectSyncDao {
         final long cutoff = System.currentTimeMillis() + Constants.HOUR;
         for (final SubjectEntity subject: getPendingReviewItemsHelper(maxLevel, userLevel, cutoff)) {
             if (!subjectIds.contains(subject.id)) {
-                patchAssignment(subject.id, subject.srsStageId,
-                        subject.unlockedAt == null ? 0 : subject.unlockedAt.getTime(),
-                        subject.startedAt == null ? 0 : subject.startedAt.getTime(),
-                        0,
-                        subject.passedAt == null ? 0 : subject.passedAt.getTime(),
-                        subject.burnedAt == null ? 0 : subject.burnedAt.getTime(),
-                        subject.resurrectedAt == null ? 0 : subject.resurrectedAt.getTime());
+                patchAssignment(subject.id, subject.srsStageId, subject.unlockedAt, subject.startedAt,
+                        0, subject.passedAt, subject.burnedAt, subject.resurrectedAt);
             }
         }
     }

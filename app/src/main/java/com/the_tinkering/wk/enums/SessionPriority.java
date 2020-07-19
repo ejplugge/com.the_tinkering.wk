@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.enums;
 
+import android.annotation.SuppressLint;
+
 import com.the_tinkering.wk.db.model.Subject;
 
 import java.util.Collection;
@@ -25,6 +27,7 @@ import java.util.Comparator;
  * The items in a session that should be given priority over the rest.
  */
 @SuppressWarnings({"BoundedWildcard", "unused"})
+@SuppressLint("NewApi")
 public enum SessionPriority {
     /**
      * None, all are treated equally.

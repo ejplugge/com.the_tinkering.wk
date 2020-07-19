@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.db.dao;
 
+import android.annotation.SuppressLint;
+
 import androidx.room.Dao;
 import androidx.room.Query;
 import androidx.room.RawQuery;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
  */
 @Dao
 public abstract class SubjectCollectionsDao {
+    @SuppressLint("NewApi")
     private static List<Subject> buildList(final Collection<SubjectEntity> list) {
         return list.stream().map(Subject::new).collect(Collectors.toList());
     }

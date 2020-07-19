@@ -255,6 +255,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
         }
     }
 
+    @SuppressLint("NewApi")
     private List<BarEntry> getSortedEntries() {
         final List<BarEntry> sortedEntries = new ArrayList<>(entries);
         Collections.sort(sortedEntries,
