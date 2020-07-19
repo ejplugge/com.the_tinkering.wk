@@ -25,7 +25,6 @@ import androidx.lifecycle.LifecycleOwner;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.ActiveTheme;
-import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.model.SrsBreakDown;
 import com.the_tinkering.wk.proxy.ViewProxy;
@@ -100,15 +99,11 @@ public final class SrsBreakDownView extends ConstraintLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        safe(() -> {
-            LiveSrsBreakDown.getInstance().observe(lifecycleOwner, t -> safe(() -> {
-                if (t != null) {
-                    update(t);
-                }
-            }));
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveSrsBreakDown.getInstance().ping()));
-        });
+        safe(() -> LiveSrsBreakDown.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+            if (t != null) {
+                update(t);
+            }
+        })));
     }
 
     /**

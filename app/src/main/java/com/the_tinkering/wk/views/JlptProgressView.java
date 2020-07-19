@@ -113,10 +113,7 @@ public final class JlptProgressView extends TableLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        safe(() -> {
-            LiveJlptProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t)));
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveJlptProgress.getInstance().ping()));
-        });
+        safe(() -> LiveJlptProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t))));
     }
 
     /**

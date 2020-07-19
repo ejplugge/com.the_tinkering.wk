@@ -38,6 +38,7 @@ import com.the_tinkering.wk.enums.OnlineStatus;
 import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.enums.SubjectInfoDump;
 import com.the_tinkering.wk.jobs.NetworkStateChangedJob;
+import com.the_tinkering.wk.livedata.LiveAudioDownloadStatus;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
@@ -48,9 +49,11 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveSearchPresets;
 import com.the_tinkering.wk.livedata.LiveSessionProgress;
+import com.the_tinkering.wk.livedata.LiveSessionState;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveSrsSystems;
 import com.the_tinkering.wk.livedata.LiveTaskCounts;
+import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.livedata.LiveVacationMode;
 import com.the_tinkering.wk.livedata.LiveWorkInfos;
 import com.the_tinkering.wk.model.Session;
@@ -116,6 +119,21 @@ public final class WkApplication extends MultiDexApplication {
         safe(() -> LiveTaskCounts.getInstance().initialize());
         safe(() -> LiveWorkInfos.getInstance().initialize());
         safe(() -> LiveSearchPresets.getInstance().initialize());
+
+        LiveFirstTimeSetup.getInstance().observeForever(t -> safe(() -> {
+            LiveTimeLine.getInstance().ping();
+            LiveSrsBreakDown.getInstance().ping();
+            LiveRecentUnlocks.getInstance().ping();
+            LiveCriticalCondition.getInstance().ping();
+            LiveBurnedItems.getInstance().ping();
+            LiveLevelProgress.getInstance().ping();
+            LiveLevelDuration.getInstance().ping();
+            LiveJoyoProgress.getInstance().ping();
+            LiveJlptProgress.getInstance().ping();
+        }));
+        LiveVacationMode.getInstance().observeForever(t -> safe(() -> LiveTimeLine.getInstance().ping()));
+        LiveSessionState.getInstance().observeForever(t -> safe(() -> LiveTimeLine.getInstance().ping()));
+        LiveTaskCounts.getInstance().observeForever(t -> safe(() -> LiveAudioDownloadStatus.getInstance().ping()));
     }
 
     @SuppressWarnings({"deprecation", "RedundantSuppression"})

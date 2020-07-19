@@ -25,7 +25,6 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
-import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.proxy.ViewProxy;
@@ -77,15 +76,11 @@ public final class AvailableSessionsView extends ConstraintLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        safe(() -> {
-            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> {
-                if (t != null) {
-                    update(t);
-                }
-            }));
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
-        });
+        safe(() -> LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+            if (t != null) {
+                update(t);
+            }
+        })));
     }
 
     /**

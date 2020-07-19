@@ -187,7 +187,7 @@ public final class BrowseOverviewFragment extends AbstractFragment {
             }
         }
 
-        LiveSearchPresets.getInstance().observe(getViewLifecycleOwner(), t -> safe(() -> {
+        safe(() -> LiveSearchPresets.getInstance().observe(getViewLifecycleOwner(), t -> safe(() -> {
             if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
                 presetHeader.setVisibility(false);
                 presetDivider.setVisibility(false);
@@ -199,7 +199,7 @@ public final class BrowseOverviewFragment extends AbstractFragment {
                 presetDivider.setVisibility(true);
                 presetSpinner.setParentVisibility(true);
             }
-        }));
+        })));
 
         presetButton.setOnClickListener(v -> safe(() -> {
             final @Nullable Object selection = presetSpinner.getSelection();

@@ -152,10 +152,7 @@ public final class LessonReviewBreakdownView extends TableLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        safe(() -> {
-            LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t)));
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveTimeLine.getInstance().ping()));
-        });
+        safe(() -> LiveTimeLine.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t))));
     }
 
     /**

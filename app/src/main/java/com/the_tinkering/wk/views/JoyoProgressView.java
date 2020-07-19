@@ -121,10 +121,7 @@ public final class JoyoProgressView extends TableLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        safe(() -> {
-            LiveJoyoProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t)));
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveJoyoProgress.getInstance().ping()));
-        });
+        safe(() -> LiveJoyoProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> update(t))));
     }
 
     /**

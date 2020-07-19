@@ -27,7 +27,6 @@ import androidx.lifecycle.Observer;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
-import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -75,10 +74,7 @@ public final class LiveBurnedItemsSubjectTableView extends LiveSubjectTableView 
 
     @Override
     protected void registerObserver(final LifecycleOwner lifecycleOwner, final Observer<? super List<Subject>> observer) {
-        safe(() -> {
-            LiveBurnedItems.getInstance().observe(lifecycleOwner, observer);
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveBurnedItems.getInstance().ping()));
-        });
+        safe(() -> LiveBurnedItems.getInstance().observe(lifecycleOwner, observer));
     }
 
     @Override

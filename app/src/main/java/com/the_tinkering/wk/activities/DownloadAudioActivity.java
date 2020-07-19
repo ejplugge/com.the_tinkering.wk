@@ -84,8 +84,6 @@ public final class DownloadAudioActivity extends AbstractActivity {
             }
         }));
 
-        LiveTaskCounts.getInstance().observe(this, t -> safe(() -> LiveAudioDownloadStatus.getInstance().ping()));
-
         LiveAudioMoveStatus.getInstance().observe(this, t -> safe(() -> {
             if (LiveAudioMoveStatus.getInstance().isActive()) {
                 moveButton.disableInteraction();

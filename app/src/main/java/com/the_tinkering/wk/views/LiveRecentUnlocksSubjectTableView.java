@@ -26,7 +26,6 @@ import androidx.lifecycle.Observer;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.db.model.Subject;
-import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 
 import java.text.SimpleDateFormat;
@@ -75,10 +74,7 @@ public final class LiveRecentUnlocksSubjectTableView extends LiveSubjectTableVie
 
     @Override
     protected void registerObserver(final LifecycleOwner lifecycleOwner, final Observer<? super List<Subject>> observer) {
-        safe(() -> {
-            LiveRecentUnlocks.getInstance().observe(lifecycleOwner, observer);
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveRecentUnlocks.getInstance().ping()));
-        });
+        safe(() -> LiveRecentUnlocks.getInstance().observe(lifecycleOwner, observer));
     }
 
     @Override

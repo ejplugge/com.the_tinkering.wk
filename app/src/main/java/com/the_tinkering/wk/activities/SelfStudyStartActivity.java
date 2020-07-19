@@ -143,7 +143,7 @@ public final class SelfStudyStartActivity extends AbstractActivity {
             }
         }
 
-        LiveSearchPresets.getInstance().observe(this, t -> safe(() -> {
+        safe(() -> LiveSearchPresets.getInstance().observe(this, t -> safe(() -> {
             if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
                 presetHeader.setVisibility(false);
                 presetDivider.setVisibility(false);
@@ -155,7 +155,7 @@ public final class SelfStudyStartActivity extends AbstractActivity {
                 presetDivider.setVisibility(true);
                 presetSpinner.setParentVisibility(true);
             }
-        }));
+        })));
 
         presetButton.setOnClickListener(v -> safe(() -> {
             if (!interactionEnabled) {

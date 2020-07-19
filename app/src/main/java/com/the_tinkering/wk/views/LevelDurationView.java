@@ -24,7 +24,6 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
-import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveLevelDuration;
 import com.the_tinkering.wk.model.LevelDuration;
 
@@ -61,15 +60,11 @@ public final class LevelDurationView extends AppCompatTextView {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        safe(() -> {
-            LiveLevelDuration.getInstance().observe(lifecycleOwner, t -> safe(() -> {
-                if (t != null) {
-                    update(t);
-                }
-            }));
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveLevelDuration.getInstance().ping()));
-        });
+        safe(() -> LiveLevelDuration.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+            if (t != null) {
+                update(t);
+            }
+        })));
     }
 
     /**

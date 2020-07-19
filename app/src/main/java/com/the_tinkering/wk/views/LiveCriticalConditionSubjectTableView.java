@@ -27,7 +27,6 @@ import androidx.lifecycle.Observer;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
-import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 
 import java.util.List;
 import java.util.Locale;
@@ -72,10 +71,7 @@ public final class LiveCriticalConditionSubjectTableView extends LiveSubjectTabl
 
     @Override
     protected void registerObserver(final LifecycleOwner lifecycleOwner, final Observer<? super List<Subject>> observer) {
-        safe(() -> {
-            LiveCriticalCondition.getInstance().observe(lifecycleOwner, observer);
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveCriticalCondition.getInstance().ping()));
-        });
+        safe(() -> LiveCriticalCondition.getInstance().observe(lifecycleOwner, observer));
     }
 
     @Override

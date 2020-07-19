@@ -25,7 +25,6 @@ import androidx.lifecycle.LifecycleOwner;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.ActiveTheme;
-import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.model.LevelProgress;
 import com.the_tinkering.wk.proxy.ViewProxy;
@@ -98,15 +97,11 @@ public final class LevelProgressView extends TableLayout {
      * @param lifecycleOwner the lifecycle owner
      */
     public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        safe(() -> {
-            LiveLevelProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> {
-                if (t != null) {
-                    update(t);
-                }
-            }));
-
-            LiveFirstTimeSetup.getInstance().observe(lifecycleOwner, t -> safe(() -> LiveLevelProgress.getInstance().ping()));
-        });
+        safe(() -> LiveLevelProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> {
+            if (t != null) {
+                update(t);
+            }
+        })));
     }
 
     /**
