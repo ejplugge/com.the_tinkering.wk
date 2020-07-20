@@ -1,5 +1,5 @@
 
-### Version 2.0.0, 2020-XX-XX:
+### Version 2.0.0, 2020-07-20:
 
 - Add a hint when answering a reading question incorrectly because of the common niyuu/nyuu にゆう/にゅう mistake.
 
