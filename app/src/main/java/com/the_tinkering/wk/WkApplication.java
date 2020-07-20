@@ -251,8 +251,6 @@ public final class WkApplication extends MultiDexApplication {
         protected @Nullable Void doInBackground(final Void... params) {
             final AppDatabase db = requireNonNull(database);
 
-            db.subjectDao().fixupDateFields();
-
             safe(() -> {
                 db.propertiesDao().deleteProperty("migration_done_audio1");
                 db.propertiesDao().deleteProperty("self_study_configuration");

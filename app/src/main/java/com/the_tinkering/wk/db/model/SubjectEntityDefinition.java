@@ -34,7 +34,7 @@ public final class SubjectEntityDefinition {
     @ColumnInfo(name = "object")
     public @Nullable SubjectType type;
     @ColumnInfo(name = "typeCode")
-    public int unused = 0;
+    public int stars = 0;
     public @Nullable Long hiddenAt;
     public int lessonPosition = 0;
     public long srsSystemId = 0L;

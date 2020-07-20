@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 // - Remove resurrected boolean from assignment data
 // - Remove audioDownloadStatus int
 // - Remove levelProgressScore int
-// - Remove typeCode int
+// - Reuse typeCode int for stars
 
 /**
  * Room entity for the subject table. This class combines all information about a subject in
@@ -59,8 +59,9 @@ public final class SubjectEntity {
     /**
      * Unused.
      */
+    @SuppressWarnings("unused")
     @ColumnInfo(name = "typeCode")
-    public int unused = 0;
+    public int stars = 0;
 
     /**
      * Timestamp when this subject was hidden, or null if it isn't hidden.
