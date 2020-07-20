@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.fragments;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -216,14 +215,8 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
         }, null, result -> {
             if (result != null) {
                 adapter.setResult(result);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !isEmpty(GlobalSettings.Api.getWebPassword())) {
-                    canResurrect = result.stream().anyMatch(Subject::isResurrectable);
-                    canBurn = result.stream().anyMatch(Subject::isBurnable);
-                }
-                else {
-                    canResurrect = false;
-                    canBurn = false;
-                }
+                canResurrect = result.stream().anyMatch(Subject::isResurrectable);
+                canBurn = result.stream().anyMatch(Subject::isBurnable);
             }
             updateViews();
         });

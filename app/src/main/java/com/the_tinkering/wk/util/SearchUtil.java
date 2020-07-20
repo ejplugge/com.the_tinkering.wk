@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.Constants.MAX_SEARCH_HITS;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
@@ -313,6 +314,20 @@ public final class SearchUtil {
         if (parameters.upcomingReviewMoreThan != null) {
             sb.append(" AND availableAt >= ");
             sb.append(System.currentTimeMillis() + parameters.upcomingReviewMoreThan * HOUR);
+        }
+
+        if (parameters.burnedLessThan != null || parameters.burnedMoreThan != null) {
+            sb.append(" AND burnedAt != 0");
+        }
+
+        if (parameters.burnedLessThan != null) {
+            sb.append(" AND burnedAt >= ");
+            sb.append(System.currentTimeMillis() - parameters.burnedLessThan * DAY);
+        }
+
+        if (parameters.burnedMoreThan != null) {
+            sb.append(" AND burnedAt <= ");
+            sb.append(System.currentTimeMillis() - parameters.burnedMoreThan * DAY);
         }
 
         if (parameters.incorrectAnswerWithin != null) {

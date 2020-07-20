@@ -8,6 +8,18 @@
   and of metered connections that are WiFi (such as hotspots created by another Android device). Basically, if you're using
   a metered WiFi connection, FD will act as if you're on cellular data.
 
+- Add a small drop shadow to text in a few places to increase contrast and readability, especially in the Light theme.
+
+- Hide reading in subject cards if shown during a quiz and reading-related information is suppressed.
+
+- Refactor out some legacy functionality in preparation for Android 11 support.
+
+- Add a temporary, experimental option to change the layout of the subject cards in search results and subject tables.
+  This option will only be there temporarily to try out some different layout options, in a future update it will disappear
+  or be replaced with something more permanent.
+
+- Add a 'burned less/more than X days ago' filter to the advanced search form.
+
 ### Version 1.26.0, 2020-07-10:
 
 - Update pitch info data for new vocab subjects

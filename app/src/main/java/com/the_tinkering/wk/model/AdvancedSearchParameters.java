@@ -38,6 +38,8 @@ public final class AdvancedSearchParameters {
     public @Nullable Integer upcomingReviewLessThan = null;
     public @Nullable Integer upcomingReviewMoreThan = null;
     public @Nullable Integer incorrectAnswerWithin = null;
+    public @Nullable Integer burnedLessThan = null;
+    public @Nullable Integer burnedMoreThan = null;
     public SearchSortOrder sortOrder = SearchSortOrder.TYPE;
     public final Collection<String> srsStages = new HashSet<>();
     public final Collection<SubjectType> itemTypes = EnumSet.noneOf(SubjectType.class);

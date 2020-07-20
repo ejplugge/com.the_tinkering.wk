@@ -310,6 +310,92 @@
             android:gravity="start|center_vertical"
             android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
+            android:text="Burned less than:"
+            style="@style/WK.TextView.Normal"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/burnedLessDays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:importantForAutofill="no"
+                android:selectAllOnFocus="true"
+                android:text=""
+                android:ems="2"
+                android:inputType="number"
+                tools:ignore="LabelFor"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:text="days ago"
+                android:labelFor="@id/reviewLessHours"
+                style="@style/WK.TextView.Normal"/>
+
+        </LinearLayout>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:gravity="start|center_vertical"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="Burned more than:"
+            style="@style/WK.TextView.Normal"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/burnedMoreDays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:importantForAutofill="no"
+                android:selectAllOnFocus="true"
+                android:text=""
+                android:ems="2"
+                android:inputType="number"
+                tools:ignore="LabelFor"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:text="days ago"
+                android:labelFor="@id/reviewLessHours"
+                style="@style/WK.TextView.Normal"/>
+
+        </LinearLayout>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:gravity="start|center_vertical"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
             android:text="Sort order:"
             style="@style/WK.TextView.Normal"/>
 

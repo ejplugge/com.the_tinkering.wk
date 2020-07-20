@@ -60,6 +60,8 @@ public final class AdvancedSearchFormView extends TableLayout {
     private final ViewProxy reviewLessHours = new ViewProxy();
     private final ViewProxy reviewMoreHours = new ViewProxy();
     private final ViewProxy incorrectHours = new ViewProxy();
+    private final ViewProxy burnedLessDays = new ViewProxy();
+    private final ViewProxy burnedMoreDays = new ViewProxy();
     private final ViewProxy sortOrder = new ViewProxy();
 
     /**
@@ -162,6 +164,8 @@ public final class AdvancedSearchFormView extends TableLayout {
         reviewLessHours.setDelegate(this, R.id.reviewLessHours);
         reviewMoreHours.setDelegate(this, R.id.reviewMoreHours);
         incorrectHours.setDelegate(this, R.id.incorrectHours);
+        burnedLessDays.setDelegate(this, R.id.burnedLessDays);
+        burnedMoreDays.setDelegate(this, R.id.burnedMoreDays);
         sortOrder.setDelegate(this, R.id.sortOrder);
 
         searchButton1.setText(searchButtonLabel);
@@ -303,6 +307,16 @@ public final class AdvancedSearchFormView extends TableLayout {
             safe(() -> parameters.incorrectAnswerWithin = Integer.parseInt(incorrectHoursStr, 10));
         }
 
+        final String burnedLessDaysStr = burnedLessDays.getText();
+        if (!burnedLessDaysStr.isEmpty()) {
+            safe(() -> parameters.burnedLessThan = Integer.parseInt(burnedLessDaysStr, 10));
+        }
+
+        final String burnedMoreDaysStr = burnedMoreDays.getText();
+        if (!burnedMoreDaysStr.isEmpty()) {
+            safe(() -> parameters.burnedMoreThan = Integer.parseInt(burnedMoreDaysStr, 10));
+        }
+
         parameters.leechesOnly = limitToLeeches.isChecked();
 
         final @Nullable Object selectedSortOrder = sortOrder.getSelection();
@@ -394,6 +408,20 @@ public final class AdvancedSearchFormView extends TableLayout {
         }
         else {
             incorrectHours.setText(parameters.incorrectAnswerWithin);
+        }
+
+        if (parameters.burnedLessThan == null) {
+            burnedLessDays.setText("");
+        }
+        else {
+            burnedLessDays.setText(parameters.burnedLessThan);
+        }
+
+        if (parameters.burnedMoreThan == null) {
+            burnedMoreDays.setText("");
+        }
+        else {
+            burnedMoreDays.setText(parameters.burnedMoreThan);
         }
 
         limitToLeeches.setChecked(parameters.leechesOnly);

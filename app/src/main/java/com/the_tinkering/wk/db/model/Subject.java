@@ -17,6 +17,7 @@
 package com.the_tinkering.wk.db.model;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -1185,6 +1186,12 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it is
      */
     public boolean isResurrectable() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return false;
+        }
+        if (isEmpty(GlobalSettings.Api.getWebPassword())) {
+            return false;
+        }
         return getSrsStage().isCompleted();
     }
 
@@ -1194,6 +1201,12 @@ public final class Subject implements PronunciationAudioOwner {
      * @return true if it is
      */
     public boolean isBurnable() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return false;
+        }
+        if (isEmpty(GlobalSettings.Api.getWebPassword())) {
+            return false;
+        }
         return !getSrsStage().isCompleted() && getResurrectedAt() != 0;
     }
 

@@ -677,7 +677,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
             amalgamationsTable.setSubjectIds(actment, subject.getAmalgamationSubjectIds(), true, showReadingRelated);
         }
 
-        if (subject.isResurrectable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {
+        if (subject.isResurrectable()) {
             resurrectButton.setVisibility(true);
             resurrectButton.setOnClickListener(v -> goToResurrectActivity(subject.getId()));
         }
@@ -685,7 +685,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
             resurrectButton.setVisibility(false);
         }
 
-        if (subject.isBurnable() && !isEmpty(GlobalSettings.Api.getWebPassword())) {
+        if (subject.isBurnable()) {
             burnButton.setVisibility(true);
             burnButton.setOnClickListener(v -> goToBurnActivity(subject.getId()));
         }
