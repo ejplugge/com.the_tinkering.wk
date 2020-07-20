@@ -40,6 +40,7 @@ import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -56,6 +57,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
     private final ViewProxy specialButton3 = new ViewProxy();
     private final ViewProxy finishButton = new ViewProxy();
     private final ViewProxy showButton = new ViewProxy();
+    private final ViewProxy resurrectIncorrectButton = new ViewProxy();
     private final ViewProxy correctHeader = new ViewProxy();
     private final ViewProxy correctTable = new ViewProxy();
     private final ViewProxy correctSummary = new ViewProxy();
@@ -89,6 +91,32 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         finishButton.requestFocus();
     }
 
+    @SuppressLint("NewApi")
+    private static boolean hasResurrecttableIncorrect() {
+        //noinspection ConstantConditions
+        return session.getItems().stream()
+                .filter(SessionItem::hasIncorrectAnswers)
+                .map(SessionItem::getSubject)
+                .filter(Objects::nonNull)
+                .anyMatch(Subject::isResurrectable);
+    }
+
+    @SuppressLint("NewApi")
+    private static long[] getResurrectableIds() {
+        //noinspection ConstantConditions
+        final List<Long> resurrectableSubjectIds = session.getItems().stream()
+                .filter(SessionItem::hasIncorrectAnswers)
+                .map(SessionItem::getSubject)
+                .filter(Objects::nonNull)
+                .map(Subject::getId)
+                .collect(Collectors.toList());
+        final long[] ids = new long[resurrectableSubjectIds.size()];
+        for (int i=0; i<ids.length; i++) {
+            ids[i] = resurrectableSubjectIds.get(i);
+        }
+        return ids;
+    }
+
     @Override
     public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         specialButton1.setDelegate(view, R.id.specialButton1);
@@ -96,6 +124,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         specialButton3.setDelegate(view, R.id.specialButton3);
         finishButton.setDelegate(view, R.id.finishButton);
         showButton.setDelegate(view, R.id.showButton);
+        resurrectIncorrectButton.setDelegate(view, R.id.resurrectIncorrectButton);
         correctHeader.setDelegate(view, R.id.correctHeader);
         correctTable.setDelegate(view, R.id.correctTable);
         correctSummary.setDelegate(view, R.id.correctSummary);
@@ -213,6 +242,14 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
             showItems();
             enableInteraction();
         }));
+
+        if (hasResurrecttableIncorrect()) {
+            resurrectIncorrectButton.setVisibility(true);
+            resurrectIncorrectButton.setOnClickListener(v -> safe(() -> goToResurrectActivity(getResurrectableIds())));
+        }
+        else {
+            resurrectIncorrectButton.setVisibility(false);
+        }
     }
 
     @Override

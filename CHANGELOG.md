@@ -20,6 +20,8 @@
 
 - Add a 'burned less/more than X days ago' filter to the advanced search form.
 
+- On the session summary screen, add a button to bulk-resurrect items in that session that had incorrect answers.
+
 ### Version 1.26.0, 2020-07-10:
 
 - Update pitch info data for new vocab subjects
