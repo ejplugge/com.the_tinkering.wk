@@ -19,6 +19,7 @@ package com.the_tinkering.wk.util;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 import androidx.sqlite.db.SupportSQLiteQuery;
 
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.model.ApiSubject;
 import com.the_tinkering.wk.api.model.AuxiliaryMeaning;
@@ -333,6 +334,17 @@ public final class SearchUtil {
         if (parameters.incorrectAnswerWithin != null) {
             sb.append(" AND lastIncorrectAnswer != 0 AND lastIncorrectAnswer >= ");
             sb.append(System.currentTimeMillis() - parameters.incorrectAnswerWithin * HOUR);
+        }
+
+        if (GlobalSettings.Other.getEnableStarsRatings()) {
+            final Collection<String> starsRatingFragments = new ArrayList<>();
+            for (final Integer rating: parameters.starsRatings) {
+                starsRatingFragments.add(rating.toString());
+            }
+            if (!starsRatingFragments.isEmpty()) {
+                sb.append(" AND typeCode IN ");
+                sb.append(join(", ", "(", ")", starsRatingFragments));
+            }
         }
 
         final Collection<String> srsStageFragments = new ArrayList<>();

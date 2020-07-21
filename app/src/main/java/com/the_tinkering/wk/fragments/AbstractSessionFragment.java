@@ -49,6 +49,7 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
     private final ViewProxy specialButton3 = new ViewProxy();
     private final ViewProxy questionType = new ViewProxy();
     private final ViewProxy questionText = new ViewProxy();
+    private final ViewProxy starsRating = new ViewProxy();
 
     /**
      * The singleton session for convenience.
@@ -96,6 +97,7 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
         specialButton3.setDelegate(view, R.id.specialButton3);
         questionType.setDelegate(view, R.id.questionType);
         questionText.setDelegate(view, R.id.questionText);
+        starsRating.setDelegate(view, R.id.starsRating);
 
         // Set the background color to match the type of subject (radical, kanji, vocab)
         questionView.setBackgroundColor(subject.getBackgroundColor());
@@ -103,6 +105,10 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
         // Show a "15/50" display in the corner to show how many items in the session
         // have been finished already
         progress.setText(session.getProgressText());
+
+        // Show the stars rating
+        starsRating.setVisibility(GlobalSettings.Other.getEnableStarsRatings());
+        starsRating.setSubject(subject);
 
         // Show the current item's SRS stage in the top center
         srsIndicator.setText(subject.getSrsStage().getName());

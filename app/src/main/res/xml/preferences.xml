@@ -697,6 +697,13 @@
             app:key="search_engine_5"/>
 
         <SwitchPreferenceCompat
+            app:key="enable_stars_ratings"
+            app:title="Enable stars ratings for subjects"
+            app:singleLineTitle="false"
+            app:defaultValue="false"
+            app:summary="If enabled you can give stars ratings to subjects and use those ratings as search filters"/>
+
+        <SwitchPreferenceCompat
             app:key="show_onyomi_in_katakana"
             app:title="Show on'yomi readings in Katakana"
             app:singleLineTitle="false"

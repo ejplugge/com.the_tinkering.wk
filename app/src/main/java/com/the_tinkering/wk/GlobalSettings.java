@@ -1630,6 +1630,15 @@ public final class GlobalSettings {
             }
             return "";
         }
+
+        /**
+         * Show stars ratings for subjects.
+         *
+         * @return the value
+         */
+        public static boolean getEnableStarsRatings() {
+            return prefs().getBoolean("enable_stars_ratings", false);
+        }
     }
 
     /**

@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 // - Remove resurrected boolean from assignment data
 // - Remove audioDownloadStatus int
 // - Remove levelProgressScore int
-// - Reuse typeCode int for stars
+// - Reuse typeCode int for numStars
 
 /**
  * Room entity for the subject table. This class combines all information about a subject in
@@ -57,11 +57,12 @@ public final class SubjectEntity {
     public @Nullable SubjectType type;
 
     /**
-     * Unused.
+     * The stars rating (0-5) given to the subject by the user. This reuses the typeCode database column that
+     * was retired a while ago. On the next 'recreate and clone' style DB migration this will be straightened out.
      */
     @SuppressWarnings("unused")
     @ColumnInfo(name = "typeCode")
-    public int stars = 0;
+    public int numStars = 0;
 
     /**
      * Timestamp when this subject was hidden, or null if it isn't hidden.

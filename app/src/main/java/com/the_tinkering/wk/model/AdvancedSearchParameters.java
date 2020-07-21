@@ -41,6 +41,7 @@ public final class AdvancedSearchParameters {
     public @Nullable Integer burnedLessThan = null;
     public @Nullable Integer burnedMoreThan = null;
     public SearchSortOrder sortOrder = SearchSortOrder.TYPE;
+    public final Collection<Integer> starsRatings = new HashSet<>();
     public final Collection<String> srsStages = new HashSet<>();
     public final Collection<SubjectType> itemTypes = EnumSet.noneOf(SubjectType.class);
     public final Collection<Integer> jlptLevels = new HashSet<>();

@@ -55,6 +55,7 @@ import com.the_tinkering.wk.util.ViewUtil;
 import com.the_tinkering.wk.views.AdvancedSearchFormView;
 import com.the_tinkering.wk.views.LevelProgressBarView;
 import com.the_tinkering.wk.views.Post60ProgressBarView;
+import com.the_tinkering.wk.views.StarsRatingView;
 import com.the_tinkering.wk.views.SubjectGridView;
 import com.the_tinkering.wk.views.SubjectInfoButtonView;
 import com.the_tinkering.wk.views.SubjectInfoHeadlineView;
@@ -272,6 +273,9 @@ public final class ViewProxy {
         }
         else if (delegate instanceof SubjectInfoHeadlineView) {
             ((SubjectInfoHeadlineView) delegate).setSubject(subject);
+        }
+        else if (delegate instanceof StarsRatingView) {
+            ((StarsRatingView) delegate).setSubject(subject);
         }
     }
 

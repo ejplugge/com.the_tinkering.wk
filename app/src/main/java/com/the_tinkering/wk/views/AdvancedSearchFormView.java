@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TableLayout;
 
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.SearchSortOrder;
 import com.the_tinkering.wk.enums.SubjectType;
@@ -44,6 +45,7 @@ public final class AdvancedSearchFormView extends TableLayout {
     private String searchButtonLabel = "Search";
     private boolean sortOrderVisibility = true;
 
+    private final List<ViewProxy> starsRatingSwitches = new ArrayList<>();
     private final List<ViewProxy> srsStageSwitches = new ArrayList<>();
     private final List<ViewProxy> srsStageLabels = new ArrayList<>();
     private final List<ViewProxy> itemTypeSwitches = new ArrayList<>();
@@ -63,6 +65,7 @@ public final class AdvancedSearchFormView extends TableLayout {
     private final ViewProxy burnedLessDays = new ViewProxy();
     private final ViewProxy burnedMoreDays = new ViewProxy();
     private final ViewProxy sortOrder = new ViewProxy();
+    private final ViewProxy starsRatingsHeader = new ViewProxy();
 
     /**
      * The constructor.
@@ -91,6 +94,13 @@ public final class AdvancedSearchFormView extends TableLayout {
     private void init() {
         inflate(getContext(), R.layout.advanced_search, this);
         setShrinkAllColumns(true);
+
+        starsRatingSwitches.add(new ViewProxy(this, R.id.starsRating0));
+        starsRatingSwitches.add(new ViewProxy(this, R.id.starsRating1));
+        starsRatingSwitches.add(new ViewProxy(this, R.id.starsRating2));
+        starsRatingSwitches.add(new ViewProxy(this, R.id.starsRating3));
+        starsRatingSwitches.add(new ViewProxy(this, R.id.starsRating4));
+        starsRatingSwitches.add(new ViewProxy(this, R.id.starsRating5));
 
         srsStageSwitches.add(new ViewProxy(this, R.id.srsStage00));
         srsStageSwitches.add(new ViewProxy(this, R.id.srsStage01));
@@ -167,6 +177,7 @@ public final class AdvancedSearchFormView extends TableLayout {
         burnedLessDays.setDelegate(this, R.id.burnedLessDays);
         burnedMoreDays.setDelegate(this, R.id.burnedMoreDays);
         sortOrder.setDelegate(this, R.id.sortOrder);
+        starsRatingsHeader.setDelegate(this, R.id.starsRatingsHeader);
 
         searchButton1.setText(searchButtonLabel);
         searchButton2.setText(searchButtonLabel);
@@ -176,6 +187,19 @@ public final class AdvancedSearchFormView extends TableLayout {
         sortOrder.setAdapter(adapter);
         sortOrder.setSelection(0);
         sortOrder.setParentVisibility(sortOrderVisibility);
+
+        starsRatingSwitches.get(0).setTag(R.id.advancedSearchSwitchTag, 0);
+        starsRatingSwitches.get(1).setTag(R.id.advancedSearchSwitchTag, 1);
+        starsRatingSwitches.get(2).setTag(R.id.advancedSearchSwitchTag, 2);
+        starsRatingSwitches.get(3).setTag(R.id.advancedSearchSwitchTag, 3);
+        starsRatingSwitches.get(4).setTag(R.id.advancedSearchSwitchTag, 4);
+        starsRatingSwitches.get(5).setTag(R.id.advancedSearchSwitchTag, 5);
+
+        final boolean starsEnabled = GlobalSettings.Other.getEnableStarsRatings();
+        for (final ViewProxy rating: starsRatingSwitches) {
+            rating.setParentVisibility(starsEnabled);
+        }
+        starsRatingsHeader.setVisibility(starsEnabled);
 
         srsStageLabels.get(0).setText("Locked");
         srsStageSwitches.get(0).setTag(R.id.advancedSearchSwitchTag, "locked");
@@ -324,6 +348,13 @@ public final class AdvancedSearchFormView extends TableLayout {
             parameters.sortOrder = SearchSortOrder.forDescription((String) selectedSortOrder, SearchSortOrder.TYPE);
         }
 
+        for (final ViewProxy rating: starsRatingSwitches) {
+            final @Nullable Object tag = rating.getTag(R.id.advancedSearchSwitchTag);
+            if (tag instanceof Integer && rating.isChecked()) {
+                parameters.starsRatings.add((Integer) tag);
+            }
+        }
+
         for (final ViewProxy stage: srsStageSwitches) {
             final @Nullable Object tag = stage.getTag(R.id.advancedSearchSwitchTag);
             if (tag instanceof String && stage.isChecked()) {
@@ -427,6 +458,13 @@ public final class AdvancedSearchFormView extends TableLayout {
         limitToLeeches.setChecked(parameters.leechesOnly);
 
         sortOrder.setSelection(parameters.sortOrder.ordinal());
+
+        for (final ViewProxy rating: starsRatingSwitches) {
+            final @Nullable Object tag = rating.getTag(R.id.advancedSearchSwitchTag);
+            if (tag instanceof Integer) {
+                rating.setChecked(parameters.starsRatings.contains(tag));
+            }
+        }
 
         for (final ViewProxy stage: srsStageSwitches) {
             final @Nullable Object tag = stage.getTag(R.id.advancedSearchSwitchTag);

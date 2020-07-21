@@ -102,6 +102,15 @@ public abstract class SubjectDao {
     public abstract void updateLastIncorrectAnswer(final long id, final long lastIncorrectAnswer);
 
     /**
+     * Room-generated method: update the stars rating.
+     *
+     * @param id the subject ID
+     * @param numStars the new rating
+     */
+    @Query("UPDATE subject SET typeCode = :numStars WHERE id = :id")
+    public abstract void updateStars(final long id, final int numStars);
+
+    /**
      * Room-generated method: clear the statisticPatched flag from a collection of subjects.
      *
      * @param subjectIds the subject IDs

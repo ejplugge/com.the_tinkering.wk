@@ -1,4 +1,10 @@
 
+### Version 2.1.0, 2020-XX-XX:
+
+- Android 11 compatibility
+
+- Add an option to star subjects for search filters and self-study
+
 ### Version 2.0.0, 2020-07-20:
 
 - Add a hint when answering a reading question incorrectly because of the common niyuu/nyuu にゆう/にゅう mistake.

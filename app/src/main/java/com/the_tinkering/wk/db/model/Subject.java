@@ -1411,6 +1411,15 @@ public final class Subject implements PronunciationAudioOwner {
         return !isEmpty(entity.readingNote);
     }
 
+    /**
+     * Get the stars rating the user gave to this item. 0 = no stars, the default. 1-5 are the non-default options.
+     *
+     * @return the number of start, 0-5
+     */
+    public int getNumStars() {
+        return entity.numStars;
+    }
+
     /*
      *************************************************************************************************************************************************
      * Some presentation-related methods for the subject.
