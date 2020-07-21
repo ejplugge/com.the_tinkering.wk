@@ -19,6 +19,11 @@ package com.the_tinkering.wk.fragments;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -27,6 +32,7 @@ import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.jobs.ReportSessionItemJob;
+import com.the_tinkering.wk.jobs.UpdateSubjectStarsJob;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
@@ -34,11 +40,13 @@ import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -74,6 +82,10 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
     private final ViewProxy incorrectKanji = new ViewProxy();
     private final ViewProxy incorrectVocabulary = new ViewProxy();
     private final ViewProxy finishProgressBar = new ViewProxy();
+    private final ViewProxy incorrectStarSpinner = new ViewProxy();
+    private final ViewProxy incorrectStarButton = new ViewProxy();
+    private final ViewProxy correctStarSpinner = new ViewProxy();
+    private final ViewProxy correctStarButton = new ViewProxy();
 
     /**
      * The constructor.
@@ -141,6 +153,10 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         incorrectKanji.setDelegate(view, R.id.incorrectKanji);
         incorrectVocabulary.setDelegate(view, R.id.incorrectVocabulary);
         finishProgressBar.setDelegate(view, R.id.finishProgressBar);
+        incorrectStarSpinner.setDelegate(view, R.id.incorrectStarSpinner);
+        incorrectStarButton.setDelegate(view, R.id.incorrectStarButton);
+        correctStarSpinner.setDelegate(view, R.id.correctStarSpinner);
+        correctStarButton.setDelegate(view, R.id.correctStarButton);
 
         int numCorrectRadicals = 0;
         int numCorrectKanji = 0;
@@ -251,6 +267,42 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         else {
             resurrectIncorrectButton.setVisibility(false);
         }
+
+        final String[] names = {"☆ ☆ ☆ ☆ ☆", "★ ☆ ☆ ☆ ☆", "★ ★ ☆ ☆ ☆", "★ ★ ★ ☆ ☆", "★ ★ ★ ★ ☆", "★ ★ ★ ★ ★"};
+        final SpinnerAdapter adapter = new ArrayAdapter<>(view.getContext(), R.layout.spinner_item, names);
+        incorrectStarSpinner.setAdapter(adapter);
+        correctStarSpinner.setAdapter(adapter);
+
+        incorrectStarSpinner.setParentVisibility(false);
+        correctStarSpinner.setParentVisibility(false);
+
+        incorrectStarButton.setOnClickListener(v -> safe(() -> {
+            final @Nullable Object selection = incorrectStarSpinner.getSelection();
+            if (selection instanceof CharSequence) {
+                int newNumStars = 0;
+                final CharSequence s = (CharSequence) selection;
+                for (int i=0; i<s.length(); i++) {
+                    if (s.charAt(i) == '★') {
+                        newNumStars++;
+                    }
+                }
+                updateIncorrectStars(newNumStars);
+            }
+        }));
+
+        correctStarButton.setOnClickListener(v -> safe(() -> {
+            final @Nullable Object selection = correctStarSpinner.getSelection();
+            if (selection instanceof CharSequence) {
+                int newNumStars = 0;
+                final CharSequence s = (CharSequence) selection;
+                for (int i=0; i<s.length(); i++) {
+                    if (s.charAt(i) == '★') {
+                        newNumStars++;
+                    }
+                }
+                updateCorrectStars(newNumStars);
+            }
+        }));
     }
 
     @Override
@@ -428,5 +480,54 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
 
         correctTable.setVisibility(View.VISIBLE);
         correctTable.setSubjects(this, correctSubjects, true, true);
+
+        incorrectStarSpinner.setParentVisibility(GlobalSettings.Other.getEnableStarRatings());
+        correctStarSpinner.setParentVisibility(GlobalSettings.Other.getEnableStarRatings());
+    }
+
+    @SuppressLint("NewApi")
+    private void updateIncorrectStars(final int newNumStars) {
+        final List<Subject> subjects = session.getItems().stream()
+                .filter(SessionItem::hasIncorrectAnswers)
+                .map(SessionItem::getSubject)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        final String message = String.format(Locale.ROOT, "Do you want to set the star rating for %d subject%s to %d star%s?",
+                subjects.size(), subjects.size() == 1 ? "" : "s", newNumStars, newNumStars == 1 ? "" : "s");
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Set star ratings?")
+                .setMessage(message)
+                .setNegativeButton("No", (dialog, which) -> {})
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                    subjects.forEach(subject -> JobRunnerService.schedule(UpdateSubjectStarsJob.class,
+                            String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars)));
+                    Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show();
+                }))
+                .create().show();
+    }
+
+    @SuppressLint("NewApi")
+    private void updateCorrectStars(final int newNumStars) {
+        final List<Subject> subjects = session.getItems().stream()
+                .filter(item -> !item.hasIncorrectAnswers())
+                .map(SessionItem::getSubject)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        final String message = String.format(Locale.ROOT, "Do you want to set the star rating for %d subject%s to %d star%s?",
+                subjects.size(), subjects.size() == 1 ? "" : "s", newNumStars, newNumStars == 1 ? "" : "s");
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Set star ratings?")
+                .setMessage(message)
+                .setNegativeButton("No", (dialog, which) -> {})
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                    subjects.forEach(subject -> JobRunnerService.schedule(UpdateSubjectStarsJob.class,
+                            String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars)));
+                    Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show();
+                }))
+                .create().show();
     }
 }

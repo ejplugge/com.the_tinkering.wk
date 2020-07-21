@@ -413,12 +413,35 @@
             android:focusable="false"
             style="@style/WK.TextView.Large.Bold"/>
 
+        <LinearLayout
+            android:id="@+id/incorrectStarSpinnerRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/incorrectHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Spinner
+                android:id="@+id/incorrectStarSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/incorrectStarButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bulk set star rating"
+                style="@style/WK.Button.Normal"/>
+
+        </LinearLayout>
+
         <com.the_tinkering.wk.views.SubjectGridView
             android:id="@+id/incorrectTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/incorrectHeader"
+            app:layout_constraintTop_toBottomOf="@id/incorrectStarSpinnerRow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:visibility="gone"/>
@@ -436,12 +459,35 @@
             android:focusable="false"
             style="@style/WK.TextView.Large.Bold"/>
 
+        <LinearLayout
+            android:id="@+id/correctStarSpinnerRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/correctHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Spinner
+                android:id="@+id/correctStarSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/correctStarButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bulk set star rating"
+                style="@style/WK.Button.Normal"/>
+
+        </LinearLayout>
+
         <com.the_tinkering.wk.views.SubjectGridView
             android:id="@+id/correctTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/correctHeader"
+            app:layout_constraintTop_toBottomOf="@id/correctStarSpinnerRow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:visibility="gone"/>

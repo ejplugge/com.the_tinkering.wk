@@ -280,8 +280,8 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
     private void updateStars(final int newNumStars) {
         final List<Subject> subjects = adapter.getSubjects();
 
-        final String message = String.format(Locale.ROOT, "Do you want to set the star rating for %d subjects to %d star%s?",
-                subjects.size(), newNumStars, newNumStars == 1 ? "" : "s");
+        final String message = String.format(Locale.ROOT, "Do you want to set the star rating for %d subject%s to %d star%s?",
+                subjects.size(), subjects.size() == 1 ? "" : "s", newNumStars, newNumStars == 1 ? "" : "s");
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Set star ratings?")
