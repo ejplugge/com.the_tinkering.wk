@@ -80,7 +80,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
     private final ViewProxy onYomi = new ViewProxy();
     private final ViewProxy kunYomi = new ViewProxy();
     private final ViewProxy nanori = new ViewProxy();
-    private final ViewProxy starsRating = new ViewProxy();
+    private final ViewProxy starRating = new ViewProxy();
     private final ViewProxy meaningDivider = new ViewProxy();
     private final ViewProxy meaningMnemonic = new ViewProxy();
     private final ViewProxy meaningHint = new ViewProxy();
@@ -270,7 +270,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         onYomi.setDelegate(this, R.id.onYomi);
         kunYomi.setDelegate(this, R.id.kunYomi);
         nanori.setDelegate(this, R.id.nanori);
-        starsRating.setDelegate(this, R.id.starsRating);
+        starRating.setDelegate(this, R.id.starRating);
         meaningDivider.setDelegate(this, R.id.meaningDivider);
         meaningMnemonic.setDelegate(this, R.id.meaningMnemonic);
         meaningHint.setDelegate(this, R.id.meaningHint);
@@ -532,9 +532,9 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         nanori.setJapaneseLocale();
         nanori.setVisibility(showReadingAnswers && subject.hasNanori());
 
-        // Stars rating
-        starsRating.setVisibility(GlobalSettings.Other.getEnableStarsRatings());
-        starsRating.setSubject(subject);
+        // Star rating
+        starRating.setVisibility(GlobalSettings.Other.getEnableStarRatings());
+        starRating.setSubject(subject);
 
         // Meaning mnemonic
         meaningDivider.setVisibility(subject.hasMeaningMnemonic() && (showMeaningRelated || showMeaningAnswers && subject.hasMeaningSynonyms()));

@@ -102,7 +102,7 @@ public abstract class SubjectDao {
     public abstract void updateLastIncorrectAnswer(final long id, final long lastIncorrectAnswer);
 
     /**
-     * Room-generated method: update the stars rating.
+     * Room-generated method: update the star rating.
      *
      * @param id the subject ID
      * @param numStars the new rating

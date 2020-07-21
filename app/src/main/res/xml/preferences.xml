@@ -697,11 +697,11 @@
             app:key="search_engine_5"/>
 
         <SwitchPreferenceCompat
-            app:key="enable_stars_ratings"
-            app:title="Enable stars ratings for subjects"
+            app:key="enable_star_ratings"
+            app:title="Enable star ratings for subjects"
             app:singleLineTitle="false"
             app:defaultValue="false"
-            app:summary="If enabled you can give stars ratings to subjects and use those ratings as search filters"/>
+            app:summary="If enabled you can give star ratings to subjects and use those ratings as search filters"/>
 
         <SwitchPreferenceCompat
             app:key="show_onyomi_in_katakana"

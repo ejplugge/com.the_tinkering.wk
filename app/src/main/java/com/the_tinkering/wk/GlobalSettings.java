@@ -1632,12 +1632,12 @@ public final class GlobalSettings {
         }
 
         /**
-         * Show stars ratings for subjects.
+         * Show star ratings for subjects.
          *
          * @return the value
          */
-        public static boolean getEnableStarsRatings() {
-            return prefs().getBoolean("enable_stars_ratings", false);
+        public static boolean getEnableStarRatings() {
+            return prefs().getBoolean("enable_star_ratings", false);
         }
     }
 

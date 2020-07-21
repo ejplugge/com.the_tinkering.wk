@@ -37,9 +37,9 @@ import javax.annotation.Nullable;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
- * A custom view that shows a subject's stars rating and allows the user to change it by tapping the stars.
+ * A custom view that shows a subject's star rating and allows the user to change it by tapping the stars.
  */
-public final class StarsRatingView extends LinearLayout implements SubjectChangeListener {
+public final class StarRatingView extends LinearLayout implements SubjectChangeListener {
     private final List<ViewProxy> stars = new ArrayList<>();
 
     private @Nullable Subject subject = null;
@@ -49,7 +49,7 @@ public final class StarsRatingView extends LinearLayout implements SubjectChange
      *
      * @param context Android context
      */
-    public StarsRatingView(final Context context) {
+    public StarRatingView(final Context context) {
         super(context);
         safe(this::init);
     }
@@ -60,7 +60,7 @@ public final class StarsRatingView extends LinearLayout implements SubjectChange
      * @param context Android context
      * @param attrs attribute set
      */
-    public StarsRatingView(final Context context, final AttributeSet attrs) {
+    public StarRatingView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         safe(this::init);
     }
@@ -69,7 +69,7 @@ public final class StarsRatingView extends LinearLayout implements SubjectChange
      * Initialize the view by observing the relevant LiveData instances.
      */
     private void init() {
-        inflate(getContext(), R.layout.stars_rating, this);
+        inflate(getContext(), R.layout.star_rating, this);
         setOrientation(HORIZONTAL);
 
         stars.add(new ViewProxy(this, R.id.star1));

@@ -1412,7 +1412,7 @@ public final class Subject implements PronunciationAudioOwner {
     }
 
     /**
-     * Get the stars rating the user gave to this item. 0 = no stars, the default. 1-5 are the non-default options.
+     * Get the star rating the user gave to this item. 0 = no stars, the default. 1-5 are the non-default options.
      *
      * @return the number of start, 0-5
      */

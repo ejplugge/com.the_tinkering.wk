@@ -57,7 +57,7 @@ public final class SubjectEntity {
     public @Nullable SubjectType type;
 
     /**
-     * The stars rating (0-5) given to the subject by the user. This reuses the typeCode database column that
+     * The star rating (0-5) given to the subject by the user. This reuses the typeCode database column that
      * was retired a while ago. On the next 'recreate and clone' style DB migration this will be straightened out.
      */
     @SuppressWarnings("unused")

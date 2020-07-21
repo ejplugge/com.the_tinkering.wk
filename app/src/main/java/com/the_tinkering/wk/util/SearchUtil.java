@@ -336,14 +336,14 @@ public final class SearchUtil {
             sb.append(System.currentTimeMillis() - parameters.incorrectAnswerWithin * HOUR);
         }
 
-        if (GlobalSettings.Other.getEnableStarsRatings()) {
-            final Collection<String> starsRatingFragments = new ArrayList<>();
-            for (final Integer rating: parameters.starsRatings) {
-                starsRatingFragments.add(rating.toString());
+        if (GlobalSettings.Other.getEnableStarRatings()) {
+            final Collection<String> starRatingFragments = new ArrayList<>();
+            for (final Integer rating: parameters.starRatings) {
+                starRatingFragments.add(rating.toString());
             }
-            if (!starsRatingFragments.isEmpty()) {
+            if (!starRatingFragments.isEmpty()) {
                 sb.append(" AND typeCode IN ");
-                sb.append(join(", ", "(", ")", starsRatingFragments));
+                sb.append(join(", ", "(", ")", starRatingFragments));
             }
         }
 

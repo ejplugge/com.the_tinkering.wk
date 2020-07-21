@@ -409,7 +409,7 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/starsRatingsHeader"
+        android:id="@+id/starRatingsHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp">
@@ -421,56 +421,56 @@
             android:gravity="start|center_vertical"
             android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
-            android:text="Stars rating:"
+            android:text="Star rating:"
             style="@style/WK.TextView.Normal"/>
 
     </TableRow>
 
     <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starsRating0"
+            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating0"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="☆ ☆ ☆ ☆ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starsRating0" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <Switch android:id="@+id/starRating0" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
     <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starsRating1"
+            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating1"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ☆ ☆ ☆ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starsRating1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <Switch android:id="@+id/starRating1" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
     <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starsRating2"
+            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating2"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ★ ☆ ☆ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starsRating2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <Switch android:id="@+id/starRating2" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
     <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starsRating3"
+            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating3"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ★ ★ ☆ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starsRating3" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <Switch android:id="@+id/starRating3" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
     <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starsRating4"
+            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating4"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ★ ★ ★ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starsRating4" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <Switch android:id="@+id/starRating4" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
     <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starsRating5"
+            android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating5"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ★ ★ ★ ★:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starsRating5" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <Switch android:id="@+id/starRating5" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 

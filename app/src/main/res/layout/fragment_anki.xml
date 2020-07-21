@@ -153,8 +153,8 @@
                     app:layout_constraintTop_toBottomOf="@id/levelUpToastText"
                     style="@style/WK.TextView.CustomToast"/>
 
-                <com.the_tinkering.wk.views.StarsRatingView
-                    android:id="@+id/starsRating"
+                <com.the_tinkering.wk.views.StarRatingView
+                    android:id="@+id/starRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
