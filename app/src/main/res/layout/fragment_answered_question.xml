@@ -31,7 +31,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp"
             android:paddingBottom="8dp"
             android:orientation="vertical">
 
@@ -57,8 +56,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
                     android:text=""
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -188,6 +187,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
+                android:paddingHorizontal="8dp"
                 android:gravity="center_horizontal"
                 android:text=""
                 android:elevation="4dp"
@@ -200,6 +200,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
+                android:paddingHorizontal="8dp"
                 android:gravity="center_horizontal"
                 android:text=""
                 style="@style/WK.TextView.Normal"/>
@@ -211,7 +212,7 @@
                 android:layout_marginTop="4dp"
                 android:text=""
                 android:background="@drawable/rounded_corners"
-                android:padding="2dp"
+                android:padding="8dp"
                 android:visibility="gone"
                 android:layout_weight="0"
                 style="@style/WK.TextView.CustomToast"/>
@@ -223,7 +224,7 @@
                 android:layout_marginTop="4dp"
                 android:text=""
                 android:background="@drawable/rounded_corners"
-                android:padding="6dp"
+                android:padding="8dp"
                 android:visibility="gone"
                 android:layout_weight="0"
                 style="@style/WK.TextView.CustomToast"/>
@@ -232,7 +233,8 @@
                 android:id="@+id/subjectInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="8dp"/>
 
         </LinearLayout>
 
@@ -242,8 +244,9 @@
         android:id="@+id/nextButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next"
         android:layout_gravity="end"
+        android:text="Next"
+        android:paddingHorizontal="8dp"
         style="@style/WK.Button.Borderless"/>
 
 </LinearLayout>

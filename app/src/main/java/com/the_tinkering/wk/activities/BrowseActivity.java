@@ -62,7 +62,11 @@ public final class BrowseActivity extends AbstractActivity {
 
             final long id = getIntent().getLongExtra("id", -1);
             if (id > 0) {
-                loadSubjectInfoFragment(id, getIntent().getLongArrayExtra("ids"), FragmentTransitionAnimation.NONE);
+                @Nullable long[] ids = getIntent().getLongArrayExtra("ids");
+                if (ids == null) {
+                    ids = new long[0];
+                }
+                loadSubjectInfoFragment(id, ids, FragmentTransitionAnimation.NONE);
                 return;
             }
 
@@ -144,7 +148,7 @@ public final class BrowseActivity extends AbstractActivity {
      * @param ids the list of context subject IDs
      * @param animation the transition animation to use for the transition
      */
-    public void loadSubjectInfoFragment(final long id, final @Nullable long[] ids, final FragmentTransitionAnimation animation) {
+    public void loadSubjectInfoFragment(final long id, final long[] ids, final FragmentTransitionAnimation animation) {
         final Fragment fragment = SubjectInfoFragment.newInstance(id, ids);
         final FragmentManager manager = getSupportFragmentManager();
         final FragmentTransaction transaction = manager.beginTransaction();
