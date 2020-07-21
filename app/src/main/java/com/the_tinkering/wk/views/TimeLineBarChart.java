@@ -735,7 +735,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
     /**
      * A data set entry for one timeslot in the timeline.
      */
-    static final class BarEntry {
+    private static final class BarEntry {
         /**
          * The index of the bar in the overall timeline.
          */
@@ -772,7 +772,6 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
          */
         BarEntry(final int index, final int[] values, final int numLevelUpItems, final int barCount, final int cumulativeCount) {
             this.index = index;
-            //noinspection AssignmentOrReturnOfFieldWithMutableType
             this.values = values;
             this.numLevelUpItems = numLevelUpItems;
             this.barCount = barCount;

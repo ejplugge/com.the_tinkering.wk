@@ -215,6 +215,7 @@ public final class FontStorageUtil {
                 baseDirectory = WkApplication.getInstance().getFilesDir();
             }
             baseDirectory = new File(baseDirectory, FONTS_DIRECTORY_NAME);
+            @androidx.annotation.Nullable
             final @Nullable String[] names = baseDirectory.list();
             if (names != null) {
                 for (final String name: names) {

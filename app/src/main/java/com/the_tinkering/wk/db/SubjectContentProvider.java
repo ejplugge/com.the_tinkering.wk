@@ -88,7 +88,7 @@ public final class SubjectContentProvider extends ContentProvider {
     /**
      * Cursor implementation for search results.
      */
-    static final class SubjectCursor extends AbstractCursor {
+    private static final class SubjectCursor extends AbstractCursor {
         private final List<Subject> subjects;
 
         /**
@@ -137,16 +137,16 @@ public final class SubjectContentProvider extends ContentProvider {
         }
 
         @Override
-        public @Nullable byte[] getBlob(final int column) {
+        public byte[] getBlob(final int column) {
             final @Nullable String value = getString(column);
             if (value == null) {
-                return null;
+                return new byte[0];
             }
             try {
                 return value.getBytes("UTF-8");
             } catch (final UnsupportedEncodingException e) {
                 // Can't happen
-                return null;
+                return new byte[0];
             }
         }
 

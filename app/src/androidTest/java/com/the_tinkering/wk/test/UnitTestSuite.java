@@ -19,6 +19,9 @@ package com.the_tinkering.wk.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+/**
+ * A bare suite to contain the database migration tests.
+ */
 @RunWith(Suite.class)
 @Suite.SuiteClasses(DatabaseMigrationTest.class)
 public class UnitTestSuite {

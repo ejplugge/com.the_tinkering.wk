@@ -51,6 +51,7 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.isTrue;
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
 import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
@@ -370,7 +371,7 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
             @Override
             public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
                 safe(() -> {
-                    final boolean active = (boolean) questionEdit.getTag();
+                    final boolean active = isTrue(questionEdit.getTag());
                     if (!active) {
                         return;
                     }
@@ -385,7 +386,7 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
             @Override
             public void afterTextChanged(final Editable s) {
                 safe(() -> {
-                    final boolean active = (boolean) questionEdit.getTag();
+                    final boolean active = isTrue(questionEdit.getTag());
                     if (!active) {
                         return;
                     }
@@ -408,7 +409,7 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
             return false;
         }
 
-        final boolean active = (boolean) questionEdit.getTag();
+        final boolean active = isTrue(questionEdit.getTag());
         if (!active) {
             return false;
         }

@@ -583,6 +583,7 @@ public final class AudioUtil {
      */
     private static void deleteDirectory(final File directory) {
         try {
+            @androidx.annotation.Nullable
             final @Nullable File[] files = directory.listFiles();
             if (files != null) {
                 for (final File file : files) {
@@ -700,6 +701,7 @@ public final class AudioUtil {
      */
     private static boolean hasFiles(final File dir) {
         try {
+            @androidx.annotation.Nullable
             final @Nullable File[] children = dir.listFiles();
             if (children != null) {
                 for (final File child: children) {
@@ -759,6 +761,7 @@ public final class AudioUtil {
     private static int numFiles(final File dir) {
         int count = 0;
         try {
+            @androidx.annotation.Nullable
             final @Nullable File[] children = dir.listFiles();
             if (children != null) {
                 for (final File child: children) {
@@ -819,6 +822,7 @@ public final class AudioUtil {
      */
     private static boolean iterateMisplacedAudioFilesHelper(final File dir, final Function<? super File, Boolean> consumer) {
         try {
+            @androidx.annotation.Nullable
             final @Nullable File[] children = dir.listFiles();
             if (children != null) {
                 for (final File child: children) {

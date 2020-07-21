@@ -56,13 +56,11 @@ public final class SubjectInfoFragment extends AbstractFragment implements Swipi
      * @param ids the context list of subject IDs
      * @return the fragment
      */
-    public static SubjectInfoFragment newInstance(final long id, final @Nullable long[] ids) {
+    public static SubjectInfoFragment newInstance(final long id, final long[] ids) {
         final SubjectInfoFragment fragment = new SubjectInfoFragment();
         final Bundle args = new Bundle();
         args.putLong("id", id);
-        if (ids != null) {
-            args.putLongArray("ids", ids);
-        }
+        args.putLongArray("ids", ids);
         fragment.setArguments(args);
         return fragment;
     }

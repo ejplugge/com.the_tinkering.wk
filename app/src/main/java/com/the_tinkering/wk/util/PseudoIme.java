@@ -489,7 +489,7 @@ public final class PseudoIme {
     /**
      * A dummy implementation of Editable that is just capable enough for the fixup() method.
       */
-    static final class DummyEditable implements Editable {
+    private static final class DummyEditable implements Editable {
         /**
          * The current contents of the editable.
          */

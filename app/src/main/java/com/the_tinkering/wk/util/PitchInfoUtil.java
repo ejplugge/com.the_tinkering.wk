@@ -124,6 +124,7 @@ public final class PitchInfoUtil {
         if (!dir.exists()) {
             return 0;
         }
+        @androidx.annotation.Nullable
         final @Nullable String[] files = dir.list();
         if (files == null) {
             return 0;

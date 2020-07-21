@@ -53,7 +53,7 @@ import javax.annotation.Nullable;
 /**
  * Stripped down version of the Android AsyncTask that is now deprecated in Android 11.
  */
-@SuppressWarnings({"AccessToStaticFieldLockedOnInstance", "FieldAccessedSynchronizedAndUnsynchronized"})
+@SuppressWarnings({"AccessToStaticFieldLockedOnInstance", "FieldAccessedSynchronizedAndUnsynchronized", "SynchronizedMethod"})
 public abstract class AsyncTask<Result> {
     private static final int CORE_POOL_SIZE = 1;
     private static final int MAXIMUM_POOL_SIZE = 20;
