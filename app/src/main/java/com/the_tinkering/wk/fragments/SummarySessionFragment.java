@@ -35,16 +35,17 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
-import com.the_tinkering.wk.util.ObjectSupport;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
@@ -321,9 +322,9 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         return FragmentTransitionAnimation.LTR;
     }
 
+    @SuppressLint("NewApi")
     @SuppressWarnings("SameReturnValue")
-    private static @Nullable Void doInBackground(@SuppressWarnings("BoundedWildcard")
-                                                 final ObjectSupport.ProgressPublisher<Integer> publisher) throws Exception {
+    private static @Nullable Void doInBackground(final Consumer<Object[]> publisher) {
         int count = 0;
         for (final SessionItem item: WkApplication.getDatabase().sessionItemDao().getAll()) {
             if (item.isPending()) {
@@ -336,7 +337,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                         item.getLastAnswer(),
                         false);
                 job.run();
-                publisher.progress(++count);
+                publisher.accept(new Object[] {++count});
             }
         }
 
@@ -361,11 +362,11 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         finishProgressBar.setProgress(0);
         finishProgressBar.setVisibility(View.VISIBLE);
 
-        ObjectSupport.<Void, Integer, Void>runAsync(
+        runAsync(
                 this,
                 SummarySessionFragment::doInBackground,
                 values -> {
-            int progress = values[0];
+            int progress = (int) values[0];
             if (progress < 0) {
                 progress = 0;
             }

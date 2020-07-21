@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.activities;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 
@@ -26,15 +27,16 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.ObjectSupport;
 import com.the_tinkering.wk.util.WebClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -110,12 +112,13 @@ public final class ResurrectActivity extends AbstractActivity {
         //
     }
 
+    @SuppressLint("NewApi")
     @SuppressWarnings("SameReturnValue")
-    private @Nullable Void doInBackground(final ObjectSupport.ProgressPublisher<Object> publisher) throws Exception {
+    private @Nullable Void doInBackground(final Consumer<Object[]> publisher) {
         if (WebClient.getInstance().getLastLoginState() != 1) {
-            publisher.progress("Status: Logging in...", false, false, -1L);
+            publisher.accept(new Object[] {"Status: Logging in...", false, false, -1L});
             WebClient.getInstance().doLogin();
-            publisher.progress("Status: " + WebClient.getInstance().getLastLoginMessage(), false, false, -1L);
+            publisher.accept(new Object[] {"Status: " + WebClient.getInstance().getLastLoginMessage(), false, false, -1L});
         }
 
         final AppDatabase db = WkApplication.getDatabase();
@@ -127,22 +130,22 @@ public final class ResurrectActivity extends AbstractActivity {
             final long id = subjectIds.get(0);
             final @Nullable Subject subject = db.subjectDao().getById(id);
             if (WebClient.getInstance().getLastLoginState() != 1) {
-                publisher.progress(null, false, true, -1L);
+                publisher.accept(new Object[] {null, false, true, -1L});
                 i++;
             }
             else if (subject == null || !subject.isResurrectable()) {
-                publisher.progress(null, true, false, id);
+                publisher.accept(new Object[] {null, true, false, id});
                 subjectIds.remove(i);
             }
             else {
                 final CharSequence title = subject.getInfoTitle("Status: Resurrecting: ", "");
-                publisher.progress(title, false, false, -1L);
+                publisher.accept(new Object[] {title, false, false, -1L});
                 if (WebClient.getInstance().resurrect(subject)) {
-                    publisher.progress(null, true, false, id);
+                    publisher.accept(new Object[] {null, true, false, id});
                     subjectIds.remove(i);
                 }
                 else {
-                    publisher.progress(null, false, true, -1L);
+                    publisher.accept(new Object[] {null, false, true, -1L});
                     i++;
                 }
             }
@@ -152,7 +155,7 @@ public final class ResurrectActivity extends AbstractActivity {
                         subject.getPassedAt(), 0, System.currentTimeMillis());
             }
         }
-        publisher.progress("Status: Finished", false, false, -1L);
+        publisher.accept(new Object[] {"Status: Finished", false, false, -1L});
         return null;
     }
 
@@ -202,7 +205,7 @@ public final class ResurrectActivity extends AbstractActivity {
             success = 0;
             fail = 0;
             stopped = false;
-            ObjectSupport.<Void, Object, Void>runAsync(
+            runAsync(
                     this,
                     this::doInBackground,
                     this::onPublishProgress,

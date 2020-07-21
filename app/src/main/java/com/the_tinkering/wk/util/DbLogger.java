@@ -18,7 +18,6 @@ package com.the_tinkering.wk.util;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.Log;
 
@@ -214,15 +213,25 @@ public final class DbLogger {
      */
     private void writeRecord(final long timestamp, final Class<?> clas, final String logMessage, final int maxLength) {
         if (isOnMainThread()) {
-            new AsyncTask<Void, Void, Void>() {
+            new AsyncTask<Void>() {
                 @Override
-                protected Void doInBackground(final Void... params) {
+                public Void doInBackground() {
                     try {
                         writeRecord(timestamp, clas, logMessage, maxLength);
                     } catch (final Exception e) {
                         logUnexpectedError(getClass(), e);
                     }
                     return null;
+                }
+
+                @Override
+                public void onPostExecute(@Nullable final Void result) {
+                    //
+                }
+
+                @Override
+                public void onProgressUpdate(final Object[] values) {
+                    //
                 }
             }.execute();
             return;

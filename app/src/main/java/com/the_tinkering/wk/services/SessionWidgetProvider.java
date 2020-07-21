@@ -35,7 +35,6 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.activities.MainActivity;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.NotificationContext;
-import com.the_tinkering.wk.util.ObjectSupport;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -47,6 +46,7 @@ import javax.annotation.Nullable;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.the_tinkering.wk.Constants.DAY;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -207,7 +207,7 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
 
         final @Nullable PowerManager.WakeLock heldWakeLock = wl;
 
-        ObjectSupport.<Void, Void, NotificationContext>runAsync(null, publisher -> {
+        runAsync(null, publisher -> {
             final AppDatabase db = WkApplication.getDatabase();
             final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
             final int userLevel = db.propertiesDao().getUserLevel();

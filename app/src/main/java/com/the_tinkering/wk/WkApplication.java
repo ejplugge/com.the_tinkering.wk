@@ -24,7 +24,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.os.AsyncTask;
 import android.os.Build;
 
 import androidx.core.net.ConnectivityManagerCompat;
@@ -58,6 +57,7 @@ import com.the_tinkering.wk.livedata.LiveVacationMode;
 import com.the_tinkering.wk.livedata.LiveWorkInfos;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.services.JobRunnerService;
+import com.the_tinkering.wk.util.AsyncTask;
 import com.the_tinkering.wk.util.DbLogger;
 
 import javax.annotation.Nullable;
@@ -246,9 +246,9 @@ public final class WkApplication extends MultiDexApplication {
         return onlineStatus;
     }
 
-    private static final class Task extends AsyncTask<Void, Void, Void> {
+    private static final class Task extends AsyncTask<Void> {
         @Override
-        protected @Nullable Void doInBackground(final Void... params) {
+        public @Nullable Void doInBackground() {
             final AppDatabase db = requireNonNull(database);
 
             safe(() -> {
@@ -345,6 +345,16 @@ public final class WkApplication extends MultiDexApplication {
             });
 
             return null;
+        }
+
+        @Override
+        public void onPostExecute(final @Nullable Void result) {
+            //
+        }
+
+        @Override
+        public void onProgressUpdate(final Object[] values) {
+            //
         }
     }
 }

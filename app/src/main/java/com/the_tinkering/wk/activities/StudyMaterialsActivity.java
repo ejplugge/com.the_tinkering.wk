@@ -31,7 +31,6 @@ import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.jobs.SaveStudyMaterialJob;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.JobRunnerService;
-import com.the_tinkering.wk.util.ObjectSupport;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +38,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
@@ -92,7 +92,7 @@ public final class StudyMaterialsActivity extends AbstractActivity {
             final Uri uri = requireNonNull(getIntent().getData());
             final String[] path = requireNonNull(uri.getPath()).split("/");
             final long id = Long.parseLong(path[1]);
-            ObjectSupport.<Void, Void, Subject>runAsync(
+            runAsync(
                     this,
                     publisher -> WkApplication.getDatabase().subjectDao().getById(id),
                     null,

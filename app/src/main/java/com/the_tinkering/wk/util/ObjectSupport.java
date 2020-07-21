@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.util;
 
 import android.annotation.SuppressLint;
-import android.os.AsyncTask;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
@@ -31,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -354,50 +354,40 @@ public final class ObjectSupport {
      * @param background run on the background thread, returns a result
      * @param progress run on the UI thread to report progress
      * @param post run on the UI thread to report the result
-     * @param params the parameters for background
-     * @param <Params> the type of the parameters
-     * @param <Progress> the type of the progress values
      * @param <Result> the type of the result
      */
-    @SafeVarargs
-    public static <Params, Progress, Result> void runAsync(final @Nullable LifecycleOwner lifecycleOwner,
-                                                           final DoInBackground<Progress, Result> background,
-                                                           final @Nullable ObjectSupport.OnProgressUpdate<? super Progress> progress,
-                                                           final @Nullable OnPostExecute<? super Result> post,
-                                                           final Params... params) {
-        new AsyncTask<Params, Progress, Result>() {
-            @SafeVarargs
-            @SuppressWarnings("AnonymousClassVariableHidesContainingMethodVariable")
+    public static <Result> void runAsync(final @Nullable LifecycleOwner lifecycleOwner,
+                                                           final ThrowingFunction<Consumer<Object[]>, Result> background,
+                                                           final @Nullable Consumer<Object[]> progress,
+                                                           final @Nullable Consumer<? super Result> post) {
+        new AsyncTask<Result>() {
             @Override
-            protected final @Nullable Result doInBackground(final Params... params) {
-                return safeNullable(() -> {
-                    //noinspection Convert2MethodRef
-                    final ProgressPublisher<Progress> publisher = values -> publishProgress(values);
-                    return background.doInBackground(publisher);
-                });
+            public @Nullable Result doInBackground() {
+                return safeNullable(() -> background.apply(this::publishProgress));
             }
 
-            @SafeVarargs
+            @SuppressLint("NewApi")
             @Override
-            protected final void onProgressUpdate(final Progress... values) {
+            public void onProgressUpdate(final Object[] values) {
                 safe(() -> {
                     if (progress != null
                             && (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
-                        progress.onProgressUpdate(values);
+                        progress.accept(values);
                     }
                 });
             }
 
+            @SuppressLint("NewApi")
             @Override
-            protected void onPostExecute(final @Nullable Result result) {
+            public void onPostExecute(final @Nullable Result result) {
                 safe(() -> {
                     if (post != null
                             && (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
-                        post.onPostExecute(result);
+                        post.accept(result);
                     }
                 });
             }
-        }.execute(params);
+        }.execute();
     }
 
     /**
@@ -449,68 +439,20 @@ public final class ObjectSupport {
     }
 
     /**
-     * A Consumer variant for AsyncTask.publishProgress().
+     * A Function variant that can throw an exception.
      *
-     * @param <Progress> the type of progress values
+     * @param <T> the type of the argument
+     * @param <R> the type of the result
      */
     @FunctionalInterface
-    public interface ProgressPublisher<Progress> {
+    public interface ThrowingFunction<T, R> {
         /**
-         * Publish progress.
+         * Apply the function.
          *
-         * @param values the progress values
-         * @throws Exception if anything went wrong
-         */
-        @SuppressWarnings({"unchecked", "RedundantThrows", "RedundantSuppression"})
-        void progress(Progress... values) throws Exception;
-    }
-
-    /**
-     * An interface for the work to do in doInBackground in an AsyncTask.
-     *
-     * @param <Progress> the type of the progress values
-     * @param <Result> the type of the result
-     */
-    @FunctionalInterface
-    public interface DoInBackground<Progress, Result> {
-        /**
-         * Run the background operation. Same as AsyncTask.doInBackground, but it gets an explicit reference to a publisher that can publish progress.
-         *
-         * @param publisher the publisher that can process progress values
+         * @param arg the function argument
          * @return the result
          * @throws Exception if anything went wrong
          */
-        @SuppressWarnings({"RedundantThrows", "RedundantSuppression"})
-        @Nullable Result doInBackground(ProgressPublisher<Progress> publisher) throws Exception;
-    }
-
-    /**
-     * An interface for the work to do in onProgressUpdate in an AsyncTask.
-     *
-     * @param <Progress> the type of the progress values
-     */
-    @FunctionalInterface
-    public interface OnProgressUpdate<Progress> {
-        /**
-         * Report progress. Same as AsyncTask.onProgressUpdate, but it gets an explicit reference to the task.
-         *
-         * @param values the progress values
-         */
-        void onProgressUpdate(Progress[] values);
-    }
-
-    /**
-     * An interface for the work to do in onPostExecute in an AsyncTask.
-     *
-     * @param <Result> the type of the result
-     */
-    @FunctionalInterface
-    public interface OnPostExecute<Result> {
-        /**
-         * Report the result. Same as AsyncTask.onPostExecute.
-         *
-         * @param result the result
-         */
-        void onPostExecute(@Nullable Result result);
+        @Nullable R apply(T arg) throws Exception;
     }
 }
