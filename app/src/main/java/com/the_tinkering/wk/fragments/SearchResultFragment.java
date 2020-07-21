@@ -279,9 +279,20 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
     @SuppressLint("NewApi")
     private void updateStars(final int newNumStars) {
         final List<Subject> subjects = adapter.getSubjects();
-        subjects.forEach(subject -> JobRunnerService.schedule(UpdateSubjectStarsJob.class,
-                String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars)));
-        Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show();
+
+        final String message = String.format(Locale.ROOT, "Do you want to set the star rating for %d subjects to %d star%s?",
+                subjects.size(), newNumStars, newNumStars == 1 ? "" : "s");
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Set star ratings?")
+                .setMessage(message)
+                .setNegativeButton("No", (dialog, which) -> {})
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                    subjects.forEach(subject -> JobRunnerService.schedule(UpdateSubjectStarsJob.class,
+                            String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars)));
+                    Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show();
+                }))
+                .create().show();
     }
 
     private boolean onMenuItemClickBase(final MenuItem item) {
