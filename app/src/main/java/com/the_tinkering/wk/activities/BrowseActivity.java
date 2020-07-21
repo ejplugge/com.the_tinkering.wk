@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.Identification;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
@@ -212,6 +213,36 @@ public final class BrowseActivity extends AbstractActivity {
                 if (burnItem != null) {
                     burnItem.setOnMenuItemClickListener(listener);
                     burnItem.setVisible(canBurn);
+                }
+                final @Nullable MenuItem star0Item = menu.findItem(R.id.action_search_result_star0);
+                if (star0Item != null) {
+                    star0Item.setOnMenuItemClickListener(listener);
+                    star0Item.setVisible(GlobalSettings.Other.getEnableStarsRatings());
+                }
+                final @Nullable MenuItem star1Item = menu.findItem(R.id.action_search_result_star1);
+                if (star1Item != null) {
+                    star1Item.setOnMenuItemClickListener(listener);
+                    star1Item.setVisible(GlobalSettings.Other.getEnableStarsRatings());
+                }
+                final @Nullable MenuItem star2Item = menu.findItem(R.id.action_search_result_star2);
+                if (star2Item != null) {
+                    star2Item.setOnMenuItemClickListener(listener);
+                    star2Item.setVisible(GlobalSettings.Other.getEnableStarsRatings());
+                }
+                final @Nullable MenuItem star3Item = menu.findItem(R.id.action_search_result_star3);
+                if (star3Item != null) {
+                    star3Item.setOnMenuItemClickListener(listener);
+                    star3Item.setVisible(GlobalSettings.Other.getEnableStarsRatings());
+                }
+                final @Nullable MenuItem star4Item = menu.findItem(R.id.action_search_result_star4);
+                if (star4Item != null) {
+                    star4Item.setOnMenuItemClickListener(listener);
+                    star4Item.setVisible(GlobalSettings.Other.getEnableStarsRatings());
+                }
+                final @Nullable MenuItem star5Item = menu.findItem(R.id.action_search_result_star5);
+                if (star5Item != null) {
+                    star5Item.setOnMenuItemClickListener(listener);
+                    star5Item.setVisible(GlobalSettings.Other.getEnableStarsRatings());
                 }
                 subMenu.setVisible(true);
             }

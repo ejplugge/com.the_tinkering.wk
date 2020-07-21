@@ -40,10 +40,12 @@ import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.SearchPreset;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.SearchSortOrder;
+import com.the_tinkering.wk.jobs.UpdateSubjectStarsJob;
 import com.the_tinkering.wk.livedata.LiveSearchPresets;
 import com.the_tinkering.wk.model.AdvancedSearchParameters;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.SearchUtil;
 import com.the_tinkering.wk.util.ThemeUtil;
 
@@ -51,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 
@@ -273,6 +276,14 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
         }, null, result -> Toast.makeText(requireContext(), "Preset '" + preset.name + "' saved", Toast.LENGTH_SHORT).show());
     }
 
+    @SuppressLint("NewApi")
+    private void updateStars(final int newNumStars) {
+        final List<Subject> subjects = adapter.getSubjects();
+        subjects.forEach(subject -> JobRunnerService.schedule(UpdateSubjectStarsJob.class,
+                String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars)));
+        Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show();
+    }
+
     private boolean onMenuItemClickBase(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search_result_refine: {
@@ -350,6 +361,30 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
             }
             case R.id.action_search_result_burn: {
                 goToBurnActivity(adapter.getBurnableSubjectIds());
+                return true;
+            }
+            case R.id.action_search_result_star0: {
+                updateStars(0);
+                return true;
+            }
+            case R.id.action_search_result_star1: {
+                updateStars(1);
+                return true;
+            }
+            case R.id.action_search_result_star2: {
+                updateStars(2);
+                return true;
+            }
+            case R.id.action_search_result_star3: {
+                updateStars(3);
+                return true;
+            }
+            case R.id.action_search_result_star4: {
+                updateStars(4);
+                return true;
+            }
+            case R.id.action_search_result_star5: {
+                updateStars(5);
                 return true;
             }
         }

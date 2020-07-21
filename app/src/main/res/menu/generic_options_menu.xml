@@ -55,6 +55,24 @@
             <item android:id="@+id/action_search_result_burn"
                 android:title="Burn resurrected items"
                 app:showAsAction="never"/>
+            <item android:id="@+id/action_search_result_star0"
+                android:title="Set to ☆ ☆ ☆ ☆ ☆"
+                app:showAsAction="never"/>
+            <item android:id="@+id/action_search_result_star1"
+                android:title="Set to ★ ☆ ☆ ☆ ☆"
+                app:showAsAction="never"/>
+            <item android:id="@+id/action_search_result_star2"
+                android:title="Set to ★ ★ ☆ ☆ ☆"
+                app:showAsAction="never"/>
+            <item android:id="@+id/action_search_result_star3"
+                android:title="Set to ★ ★ ★ ☆ ☆"
+                app:showAsAction="never"/>
+            <item android:id="@+id/action_search_result_star4"
+                android:title="Set to ★ ★ ★ ★ ☆"
+                app:showAsAction="never"/>
+            <item android:id="@+id/action_search_result_star5"
+                android:title="Set to ★ ★ ★ ★ ★"
+                app:showAsAction="never"/>
         </menu>
     </item>
     <item android:id="@+id/action_view_last_finished"
