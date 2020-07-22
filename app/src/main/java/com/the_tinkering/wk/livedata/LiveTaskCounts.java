@@ -24,7 +24,6 @@ import com.the_tinkering.wk.model.TaskCounts;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -76,10 +75,7 @@ public final class LiveTaskCounts extends LiveData<TaskCounts> {
                         postValue(t);
                     }
                 }));
-                runAsync(null, publisher -> {
-                    LiveApiProgress.getInstance().setSyncReminder(WkApplication.getDatabase().propertiesDao().getSyncReminder());
-                    return null;
-                }, null, null);
+                LiveApiProgress.getInstance().setSyncReminder(WkApplication.getDatabase().propertiesDao().getSyncReminder());
             }
         });
     }

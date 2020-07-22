@@ -38,7 +38,6 @@ import com.the_tinkering.wk.fragments.SummarySessionFragment;
 import com.the_tinkering.wk.fragments.UnansweredSessionFragment;
 import com.the_tinkering.wk.jobs.AbandonSessionItemJob;
 import com.the_tinkering.wk.jobs.FinishSessionJob;
-import com.the_tinkering.wk.jobs.SetCurrentSessionItemJob;
 import com.the_tinkering.wk.livedata.LiveSessionProgress;
 import com.the_tinkering.wk.livedata.LiveSessionState;
 import com.the_tinkering.wk.livedata.SubjectChangeListener;
@@ -411,9 +410,9 @@ s     *
         FloatingUiState.setCurrentAnswer("");
         if (state == IN_LESSON_PRESENTATION) {
             setCurrentQuestion(questions.get(0), QuestionChoiceReason.STARTING_LESSON_SESSION);
-            currentItem = items.get(0);
-            JobRunnerService.schedule(SetCurrentSessionItemJob.class,
-                    String.format(Locale.ROOT, "%d %s", currentItem.getId(), currentQuestion.getType()));
+            currentItem = requireNonNull(items.get(0));
+            WkApplication.getDatabase().propertiesDao().setCurrentItemId(currentItem.getId());
+            WkApplication.getDatabase().propertiesDao().setCurrentQuestionType(currentQuestion.getType());
             FloatingUiState.audioPlayed = false;
             FloatingUiState.showDumpStage = null;
             LOGGER.info("Choose question: %s in lesson presentation", currentItem);
@@ -501,8 +500,8 @@ s     *
         final int index = nextRandomInt(i);
         setCurrentQuestion(candidateQuestions.get(index), questionChoiceReason);
         currentItem = currentQuestion.getItem();
-        JobRunnerService.schedule(SetCurrentSessionItemJob.class,
-                String.format(Locale.ROOT, "%d %s", currentItem.getId(), currentQuestion.getType()));
+        WkApplication.getDatabase().propertiesDao().setCurrentItemId(currentItem.getId());
+        WkApplication.getDatabase().propertiesDao().setCurrentQuestionType(currentQuestion.getType());
         FloatingUiState.audioPlayed = false;
         FloatingUiState.showDumpStage = null;
         for (final SessionItem item: items) {
@@ -534,9 +533,9 @@ s     *
             return;
         }
         setCurrentQuestion(questions.get(0), QuestionChoiceReason.MOVE_TO_NEXT_LESSON_ITEM);
-        currentItem = items.get(index);
-        JobRunnerService.schedule(SetCurrentSessionItemJob.class,
-                String.format(Locale.ROOT, "%d %s", currentItem.getId(), questions.get(0).getType()));
+        currentItem = requireNonNull(items.get(index));
+        WkApplication.getDatabase().propertiesDao().setCurrentItemId(currentItem.getId());
+        WkApplication.getDatabase().propertiesDao().setCurrentQuestionType(questions.get(0).getType());
         FloatingUiState.audioPlayed = false;
         FloatingUiState.showDumpStage = null;
         LOGGER.info("Move to next lesson item: %s", currentItem);
@@ -563,9 +562,9 @@ s     *
             return;
         }
         setCurrentQuestion(questions.get(0), QuestionChoiceReason.MOVE_TO_PREVIOUS_LESSON_ITEM);
-        currentItem = items.get(index);
-        JobRunnerService.schedule(SetCurrentSessionItemJob.class,
-                String.format(Locale.ROOT, "%d %s", currentItem.getId(), questions.get(0).getType()));
+        currentItem = requireNonNull(items.get(index));
+        WkApplication.getDatabase().propertiesDao().setCurrentItemId(currentItem.getId());
+        WkApplication.getDatabase().propertiesDao().setCurrentQuestionType(questions.get(0).getType());
         FloatingUiState.audioPlayed = false;
         FloatingUiState.showDumpStage = null;
         LOGGER.info("Move to previous lesson item: %s", currentItem);
@@ -810,8 +809,8 @@ s     *
             setCurrentQuestion(history.pop(), QuestionChoiceReason.UNDO_AND_RETRY);
             currentQuestion.undo();
             currentItem = currentQuestion.getItem();
-            JobRunnerService.schedule(SetCurrentSessionItemJob.class,
-                    String.format(Locale.ROOT, "%d %s", currentItem.getId(), currentQuestion.getType()));
+            WkApplication.getDatabase().propertiesDao().setCurrentItemId(currentItem.getId());
+            WkApplication.getDatabase().propertiesDao().setCurrentQuestionType(currentQuestion.getType());
             putBack(currentQuestion);
             LOGGER.info("Undo and retry: %s popped question from history stack", currentQuestion);
         }

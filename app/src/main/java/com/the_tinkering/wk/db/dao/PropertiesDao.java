@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.db.dao;
 
+import android.annotation.SuppressLint;
+
 import androidx.room.Dao;
 import androidx.room.Query;
 
@@ -23,7 +25,10 @@ import com.the_tinkering.wk.db.model.Property;
 import com.the_tinkering.wk.enums.QuestionType;
 import com.the_tinkering.wk.enums.SessionType;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import javax.annotation.Nullable;
 
@@ -32,14 +37,16 @@ import static com.the_tinkering.wk.db.Converters.sessionTypeToString;
 import static com.the_tinkering.wk.db.Converters.stringToSessionType;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.isEqualIgnoreCase;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
-import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
 
 /**
  * DAO for properties: various key/value records that record useful data that doesn't count as settings.
  */
 @Dao
 public abstract class PropertiesDao {
+    private @Nullable Map<String, String> properties = null;
+
     /**
      * Room-generated method: get all properties.
      *
@@ -49,16 +56,30 @@ public abstract class PropertiesDao {
     public abstract List<Property> getAll();
 
     /**
-     * Room-generated method: get a property by name.
-     *
-     * @param name the name of the property
-     * @return the value or null if it doesn't exist
+     * Preload the property cache.
      */
-    @Query("SELECT value FROM properties WHERE name = :name")
-    protected abstract @Nullable String getPropertyHelper(final String name);
+    @SuppressLint("NewApi")
+    public final void preload() {
+        if (properties != null) {
+            return;
+        }
+        final Semaphore semaphore = new Semaphore(0);
+        new Thread(() -> {
+            safe(() -> {
+                final Map<String, String> map = new HashMap<>();
+                getAll().forEach(property -> map.put(property.name, property.value));
+                properties = map;
+            });
+            semaphore.release();
+        }).start();
+        safe(semaphore::acquire);
+    }
 
     private @Nullable String getProperty(final String name) {
-        return safeNullable(() -> getPropertyHelper(name));
+        if (properties == null) {
+            preload();
+        }
+        return properties.get(name);
     }
 
     /**
@@ -70,16 +91,39 @@ public abstract class PropertiesDao {
     @Query("INSERT OR REPLACE INTO properties (name, value) VALUES (:name, :value)")
     protected abstract void setPropertyHelper(final String name, final String value);
 
+    private void setProperty(final String name, final String value) {
+        if (properties == null) {
+            preload();
+        }
+        properties.put(name, value);
+        runAsync(null, publisher -> {
+            setPropertyHelper(name, value);
+            return null;
+        }, null, null);
+    }
+
     /**
      * Room-generated method: delete a property.
      *
      * @param name the name of the property
      */
     @Query("DELETE FROM properties WHERE name = :name")
-    public abstract void deleteProperty(final String name);
+    protected abstract void deletePropertyHelper(final String name);
 
-    private void setProperty(final String name, final String value) {
-        safe(() -> setPropertyHelper(name, value));
+    /**
+     * Delete a property by name, if it exists.
+     *
+     * @param name the property's name
+     */
+    public final void deleteProperty(final String name) {
+        if (properties == null) {
+            preload();
+        }
+        properties.remove(name);
+        runAsync(null, publisher -> {
+            deletePropertyHelper(name);
+            return null;
+        }, null, null);
     }
 
     private boolean getBooleanProperty(final String name) {
