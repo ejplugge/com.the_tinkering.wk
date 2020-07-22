@@ -30,6 +30,7 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.db.AppDatabase;
+import com.the_tinkering.wk.enums.OnlineStatus;
 import com.the_tinkering.wk.jobs.Job;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveWorkInfos;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -74,6 +76,10 @@ public final class BackgroundSyncWorker extends Worker {
         safe(() -> {
             if (GlobalSettings.Api.getEnableBackgroundSync()) {
                 LOGGER.info("Background sync starts: %s %s", ApiState.getCurrentApiState(), WkApplication.getInstance().getOnlineStatus());
+                if (WkApplication.getInstance().getOnlineStatus() == OnlineStatus.NO_CONNECTION) {
+                    LOGGER.info("Online status is NO_CONNECTION - wait for the network status callback to settle");
+                    Thread.sleep(2 * SECOND);
+                }
                 if (LiveApiState.getInstance().get() == ApiState.ERROR) {
                     final AppDatabase db = WkApplication.getDatabase();
                     db.propertiesDao().setApiInError(false);
