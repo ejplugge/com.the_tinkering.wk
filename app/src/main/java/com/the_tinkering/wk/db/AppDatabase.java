@@ -307,6 +307,8 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("UPDATE subject SET passedAt = 0 WHERE passedAt IS NULL");
             database.execSQL("UPDATE subject SET availableAt = 0 WHERE availableAt IS NULL");
             database.execSQL("UPDATE subject SET typeCode = 0");
+            database.execSQL("UPDATE subject SET srsSystemId = 1 WHERE srsSystemId < 1 AND level > 2");
+            database.execSQL("UPDATE subject SET srsSystemId = 2 WHERE srsSystemId < 1 AND level <= 2");
         }
     };
 
