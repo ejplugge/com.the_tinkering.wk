@@ -52,6 +52,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
  * Utility methods for searching.
  */
 public final class SearchUtil {
+    private static final Logger LOGGER = Logger.get(SearchUtil.class);
     private static final Pattern TERM_PATTERN = Pattern.compile("[\\p{Z}\\s]");
     private static final Pattern PERC_PATTERN = Pattern.compile("%");
     private static final Pattern US_PATTERN = Pattern.compile("_");
@@ -385,7 +386,9 @@ public final class SearchUtil {
 
         sb.append(" ORDER BY level, lessonPosition, id");
 
-        final SupportSQLiteQuery query = new SimpleSQLiteQuery(sb.toString());
+        final String sql = sb.toString();
+        LOGGER.info("Advanced search query: %s", sql);
+        final SupportSQLiteQuery query = new SimpleSQLiteQuery(sql);
         return WkApplication.getDatabase().subjectCollectionsDao().getSubjectsWithRawQuery(query);
     }
 
