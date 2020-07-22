@@ -71,6 +71,16 @@ public final class BrowseActivity extends AbstractActivity {
                 return;
             }
 
+            final int searchType = getIntent().getIntExtra("searchType", -1);
+            if (searchType >= 0) {
+                final @Nullable String searchParameters = getIntent().getStringExtra("searchParameters");
+                final @Nullable String presetName = getIntent().getStringExtra("presetName");
+                if (searchParameters != null) {
+                    loadSearchResultFragment(presetName, searchType, searchParameters);
+                    return;
+                }
+            }
+
             final @Nullable Uri uri = getIntent().getData();
             if (uri != null && Identification.APP_URI_SCHEME.equals(uri.getScheme()) && "subject-info".equals(uri.getAuthority())) {
                 final @Nullable String s = uri.getPath();

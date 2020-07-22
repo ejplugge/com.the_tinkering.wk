@@ -613,6 +613,23 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
         });
     }
 
+    @Override
+    public final void goToSearchResult(final int searchType, final String searchParameters, final @Nullable String presetName) {
+        safe(() -> {
+            if (this instanceof BrowseActivity) {
+                ((BrowseActivity) this).loadSearchResultFragment(presetName, searchType, searchParameters);
+                return;
+            }
+            final Intent intent = new Intent(this, BrowseActivity.class);
+            intent.putExtra("searchType", searchType);
+            intent.putExtra("searchParameters", searchParameters);
+            if (presetName != null) {
+                intent.putExtra("presetName", presetName);
+            }
+            startActivity(intent);
+        });
+    }
+
     /**
      * Go to the resurrect activity with the supplied list of subject IDs to resurrect.
      *

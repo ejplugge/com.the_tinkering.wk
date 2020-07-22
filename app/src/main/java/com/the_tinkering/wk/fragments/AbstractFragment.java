@@ -234,6 +234,14 @@ public abstract class AbstractFragment extends Fragment implements Actment {
         }
     }
 
+    @Override
+    public final void goToSearchResult(final int searchType, final String searchParameters, final @Nullable String presetName) {
+        final @Nullable AbstractActivity activity = getAbstractActivity();
+        if (activity != null) {
+            activity.goToSearchResult(searchType, searchParameters, presetName);
+        }
+    }
+
     /**
      * Translate DIPs to pixels.
      *

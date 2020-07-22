@@ -54,4 +54,14 @@ public interface Actment extends LifecycleOwner {
      * @param animation the transition animation to use if we're already on the browse activity
      */
     void goToSubjectInfo(long id, long[] ids, FragmentTransitionAnimation animation);
+
+    /**
+     * Jump to the search result with the given details. Start a new browse activity if needed, or replace the
+     * current fragment if we're already on one.
+     *
+     * @param searchType the search type
+     * @param searchParameters the search parameters
+     * @param presetName the name of the preset this is for
+     */
+    void goToSearchResult(int searchType, String searchParameters, @Nullable String presetName);
 }
