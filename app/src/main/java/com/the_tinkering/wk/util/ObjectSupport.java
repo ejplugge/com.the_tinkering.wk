@@ -21,10 +21,6 @@ import android.annotation.SuppressLint;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -262,8 +258,7 @@ public final class ObjectSupport {
      */
     @SuppressLint("NewApi")
     public static long getTopOfHour(final long ts) {
-        final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
-        return dt.toInstant().toEpochMilli();
+        return ts - (ts % HOUR);
     }
 
     /**

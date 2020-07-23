@@ -20,7 +20,6 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiAssignment;
 import com.the_tinkering.wk.db.AppDatabase;
-import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.TaskDefinition;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
@@ -36,6 +35,7 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.services.SessionWidgetProvider;
 
 import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.util.TextUtil.formatTimestampForApi;
 
 /**
  * Task to fetch any assignments that have been updated since the last time this task was run.
@@ -69,7 +69,7 @@ public final class GetAssignmentsTask extends ApiTask {
 
         String uri = "/v2/assignments";
         if (lastGetAssignmentsSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatTimestamp(lastGetAssignmentsSuccess);
+            uri += "?updated_after=" + formatTimestampForApi(lastGetAssignmentsSuccess);
         }
 
         if (!collectionApiCall(uri, ApiAssignment.class, t -> db.subjectSyncDao().insertOrUpdateAssignment(t))) {

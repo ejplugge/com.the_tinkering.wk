@@ -20,12 +20,12 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiStudyMaterial;
 import com.the_tinkering.wk.db.AppDatabase;
-import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.TaskDefinition;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
 
 import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.util.TextUtil.formatTimestampForApi;
 
 /**
  * Task to fetch any study materials that have been updated since the last time this task was run.
@@ -59,7 +59,7 @@ public final class GetStudyMaterialsTask extends ApiTask {
 
         String uri = "/v2/study_materials";
         if (lastGetStudyMaterialsSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatTimestamp(lastGetStudyMaterialsSuccess);
+            uri += "?updated_after=" + formatTimestampForApi(lastGetStudyMaterialsSuccess);
         }
 
         if (!collectionApiCall(uri, ApiStudyMaterial.class, t -> db.subjectSyncDao().insertOrUpdateStudyMaterial(t, false))) {

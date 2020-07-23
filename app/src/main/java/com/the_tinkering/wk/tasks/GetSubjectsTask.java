@@ -21,7 +21,6 @@ import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiSubject;
 import com.the_tinkering.wk.api.model.Reading;
 import com.the_tinkering.wk.db.AppDatabase;
-import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.TaskDefinition;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
@@ -37,6 +36,7 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import java.util.Set;
 
 import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.util.TextUtil.formatTimestampForApi;
 
 /**
  * Task to fetch any subjects that have been updated since the last time this task was run.
@@ -70,7 +70,7 @@ public final class GetSubjectsTask extends ApiTask {
 
         String uri = "/v2/subjects";
         if (lastGetSubjectsSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatTimestamp(lastGetSubjectsSuccess);
+            uri += "?updated_after=" + formatTimestampForApi(lastGetSubjectsSuccess);
         }
 
         final Set<Long> existingSubjectIds = db.subjectViewsDao().getAllSubjectIds();

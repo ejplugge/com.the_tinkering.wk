@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.util;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -29,11 +30,18 @@ import android.text.format.DateFormat;
 
 import androidx.core.text.HtmlCompat;
 
+import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.components.WaniKaniTagHandler;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -42,6 +50,7 @@ import javax.annotation.Nullable;
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.isTrue;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Utility class for dealing with text rendering.
@@ -226,13 +235,75 @@ public final class TextUtil {
      * @param value the timestap to format
      * @return the formatted timestamp
      */
-    public static String formatTimestamp(final long value) {
+    public static String formatTimestampForDisplay(final long value) {
         if (value == 0) {
             return "";
         }
         final java.text.DateFormat dateFormatter = DateFormat.getMediumDateFormat(WkApplication.getInstance());
         final java.text.DateFormat timeFormatter = DateFormat.getTimeFormat(WkApplication.getInstance());
         return String.format("%s %s", dateFormatter.format(value), timeFormatter.format(value));
+    }
+
+    /**
+     * Format a date as a String for API use.
+     *
+     * @param date the date
+     * @return the formatted date or null if date is 0
+     */
+    @SuppressLint("NewApi")
+    public static @Nullable String formatTimestampForApi(final long date) {
+        if (date == 0) {
+            return null;
+        }
+
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+
+    /**
+     * Parse a timestamp from the API.
+     *
+     * @param date the date string
+     * @return the parsed timestamp or 0 if date is null, empty or is unparseable
+     */
+    @SuppressLint("NewApi")
+    public static long parseTimestampFromApi(final @Nullable CharSequence date) {
+        if (isEmpty(date)) {
+            return 0;
+        }
+
+        return safe(0L, () -> ZonedDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toInstant().toEpochMilli());
+    }
+
+    /**
+     * Format the timestamp as a short representation of the time without seconds, taking into account
+     * the user's 24-hour clock setting. Prefix with the day of week (3 letter abbreviation) if indicated.
+     * @param ts the timestamp
+     * @param includeDayOfWeek include short weekdat prefix
+     * @return the formatted time
+     */
+    @SuppressLint("NewApi")
+    public static String formatShortTimeForDisplay(final long ts, final boolean includeDayOfWeek) {
+        final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneId.systemDefault());
+        final int hour = dt.getHour();
+        final int minute = dt.getMinute();
+        String s;
+        if (DateFormat.is24HourFormat(WkApplication.getInstance())) {
+            s = String.format(Locale.ROOT, "%02d:%02d", hour, minute);
+        }
+        else {
+            final int hour12 = (hour == 0) ? 12 : (hour > 12) ? hour - 12 : hour;
+            //noinspection IfMayBeConditional
+            if (minute == 0) {
+                s = String.format(Locale.ROOT, "%d%s", hour12, hour >= 12 ? "pm" : "am");
+            }
+            else {
+                s = String.format(Locale.ROOT, "%d.%02d%s", hour12, minute, hour >= 12 ? "pm" : "am");
+            }
+        }
+        if (includeDayOfWeek) {
+            s = String.format(Locale.ROOT, "%s %s", Constants.WEEKDAY_NAMES[dt.getDayOfWeek().getValue()], s);
+        }
+        return s;
     }
 
     /**

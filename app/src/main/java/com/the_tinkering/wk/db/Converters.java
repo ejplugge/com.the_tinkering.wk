@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.db;
 
-import android.annotation.SuppressLint;
-
 import androidx.room.TypeConverter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -30,17 +28,10 @@ import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.tasks.ApiTask;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Various data conversion tools.
@@ -218,35 +209,5 @@ public final class Converters {
             return null;
         }
         return value.getDbTypeName();
-    }
-
-    /**
-     * Format a date as a String for API use.
-     *
-     * @param date the date
-     * @return the formatted date or null if date is 0
-     */
-    @SuppressLint("NewApi")
-    public static @Nullable String formatTimestamp(final long date) {
-        if (date == 0) {
-            return null;
-        }
-
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-    }
-
-    /**
-     * Parse a timestamp from the API.
-     *
-     * @param date the date string
-     * @return the parsed timestamp or 0 if date is null, empty or is unparseable
-     */
-    @SuppressLint("NewApi")
-    public static long parseTimestamp(final @Nullable CharSequence date) {
-        if (isEmpty(date)) {
-            return 0;
-        }
-
-        return safe(0L, () -> ZonedDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toInstant().toEpochMilli());
     }
 }

@@ -36,7 +36,6 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.Subject;
@@ -47,20 +46,17 @@ import com.the_tinkering.wk.model.SrsSystem;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.util.ThemeUtil;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static com.the_tinkering.wk.util.TextUtil.formatShortTimeForDisplay;
 
 /**
  * Custom bar chart for the timeline.
@@ -211,16 +207,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
      */
     @SuppressLint("NewApi")
     private String getBarLabel(final int index) {
-        final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(firstSlot + index * HOUR), ZoneId.systemDefault());
-        //noinspection IfMayBeConditional
-        if (index < 24) {
-            return String.format(Locale.ROOT, "%02d:%02d", dt.getHour(), dt.getMinute());
-        }
-        else {
-            return String.format(Locale.ROOT, "%s %02d:%02d",
-                    Constants.WEEKDAY_NAMES[dt.getDayOfWeek().getValue()],
-                    dt.getHour(), dt.getMinute());
-        }
+        return formatShortTimeForDisplay(firstSlot + index * HOUR, index >= 24);
     }
 
     /**

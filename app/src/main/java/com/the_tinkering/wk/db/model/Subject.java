@@ -56,7 +56,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
 import static com.the_tinkering.wk.util.ObjectSupport.join;
 import static com.the_tinkering.wk.util.ObjectSupport.removeDuplicates;
 import static com.the_tinkering.wk.util.TextUtil.escapeHtml;
-import static com.the_tinkering.wk.util.TextUtil.formatTimestamp;
+import static com.the_tinkering.wk.util.TextUtil.formatTimestampForDisplay;
 import static com.the_tinkering.wk.util.TextUtil.renderHtml;
 import static java.util.Objects.requireNonNull;
 
@@ -1557,7 +1557,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the formatted value
      */
     public String getFormattedAvailableAt() {
-        return formatTimestamp(getAvailableAt());
+        return formatTimestampForDisplay(getAvailableAt());
     }
 
     /**
@@ -1565,7 +1565,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the formatted value
      */
     public String getFormattedBurnedAt() {
-        return formatTimestamp(getBurnedAt());
+        return formatTimestampForDisplay(getBurnedAt());
     }
 
     /**
@@ -1573,7 +1573,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the formatted value
      */
     public String getFormattedPassedAt() {
-        return formatTimestamp(getPassedAt());
+        return formatTimestampForDisplay(getPassedAt());
     }
 
     /**
@@ -1581,7 +1581,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the formatted value
      */
     public String getFormattedResurrectedAt() {
-        return formatTimestamp(getResurrectedAt());
+        return formatTimestampForDisplay(getResurrectedAt());
     }
 
     /**
@@ -1589,7 +1589,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the formatted value
      */
     public String getFormattedStartedAt() {
-        return formatTimestamp(getStartedAt());
+        return formatTimestampForDisplay(getStartedAt());
     }
 
     /**
@@ -1597,7 +1597,7 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the formatted value
      */
     public String getFormattedUnlockedAt() {
-        return formatTimestamp(getUnlockedAt());
+        return formatTimestampForDisplay(getUnlockedAt());
     }
 
     /**

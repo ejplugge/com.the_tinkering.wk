@@ -20,13 +20,13 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiReviewStatistic;
 import com.the_tinkering.wk.db.AppDatabase;
-import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.TaskDefinition;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 
 import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.util.TextUtil.formatTimestampForApi;
 
 /**
  * Task to fetch any review statistics that have been updated since the last time this task was run.
@@ -60,7 +60,7 @@ public final class GetReviewStatisticsTask extends ApiTask {
 
         String uri = "/v2/review_statistics";
         if (lastGetReviewStatisticsSuccess != 0) {
-            uri += "?updated_after=" + Converters.formatTimestamp(lastGetReviewStatisticsSuccess);
+            uri += "?updated_after=" + formatTimestampForApi(lastGetReviewStatisticsSuccess);
         }
 
         if (!collectionApiCall(uri, ApiReviewStatistic.class, t -> db.subjectSyncDao().insertOrUpdateReviewStatistic(t))) {

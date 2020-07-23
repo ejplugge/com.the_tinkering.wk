@@ -21,9 +21,10 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.util.AccessPattern;
-import com.the_tinkering.wk.db.Converters;
 
 import java.io.IOException;
+
+import static com.the_tinkering.wk.util.TextUtil.parseTimestampFromApi;
 
 /**
  * Custom deserializer for dates, hardcoded for the format used in the WaniKani API.
@@ -47,7 +48,7 @@ public final class WaniKaniApiDateDeserializer extends JsonDeserializer<Long> {
     @Override
     public Long deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
         if (p.hasToken(JsonToken.VALUE_STRING)) {
-            return Converters.parseTimestamp(p.getText().trim());
+            return parseTimestampFromApi(p.getText().trim());
         }
         return 0L;
     }

@@ -19,11 +19,12 @@ package com.the_tinkering.wk.components;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.the_tinkering.wk.db.Converters;
 
 import java.io.IOException;
 
 import javax.annotation.Nullable;
+
+import static com.the_tinkering.wk.util.TextUtil.formatTimestampForApi;
 
 /**
  * Custom serializer for dates, hardcoded for the format used in the WaniKani API.
@@ -45,7 +46,7 @@ public final class WaniKaniApiDateSerializer extends JsonSerializer<Long> {
             return;
         }
 
-        gen.writeString(Converters.formatTimestamp(value));
+        gen.writeString(formatTimestampForApi(value));
     }
 
     @Override

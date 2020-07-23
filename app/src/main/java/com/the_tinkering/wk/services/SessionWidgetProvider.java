@@ -35,10 +35,8 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.activities.MainActivity;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.NotificationContext;
+import com.the_tinkering.wk.util.TextUtil;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
@@ -59,8 +57,7 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
             return null;
         }
         else if (upcoming - System.currentTimeMillis() < DAY) {
-            final ZonedDateTime dt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(upcoming), ZoneId.systemDefault());
-            return String.format(Locale.ROOT, "More at %02d:%02d", dt.getHour(), dt.getMinute());
+            return "More at " + TextUtil.formatShortTimeForDisplay(upcoming, false);
         }
         else {
             final float days = ((float) (upcoming - System.currentTimeMillis())) / DAY;
