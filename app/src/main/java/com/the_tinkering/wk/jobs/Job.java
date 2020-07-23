@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.jobs;
 
-import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
@@ -33,6 +32,7 @@ import com.the_tinkering.wk.util.Logger;
 
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.Constants.MINUTE;
 import static com.the_tinkering.wk.Constants.REFERENCE_DATA_VERSION;
 import static com.the_tinkering.wk.Constants.WEEK;
 import static com.the_tinkering.wk.enums.OnlineStatus.NO_CONNECTION;
@@ -109,25 +109,25 @@ public abstract class Job {
 
         final long lastGetAssignmentsSuccess = db.propertiesDao().getLastAssignmentSyncSuccessDate(0);
         if (lastGetAssignmentsSuccess == 0
-                || System.currentTimeMillis() - lastGetAssignmentsSuccess > HOUR) {
+                || System.currentTimeMillis() - lastGetAssignmentsSuccess > HOUR - MINUTE * 5) {
             db.assertGetAssignmentsTask();
         }
 
         final long lastGetReviewStatisticsSuccess = db.propertiesDao().getLastReviewStatisticSyncSuccessDate(0);
         if (lastGetReviewStatisticsSuccess == 0
-                || System.currentTimeMillis() - lastGetReviewStatisticsSuccess > HOUR) {
+                || System.currentTimeMillis() - lastGetReviewStatisticsSuccess > HOUR - MINUTE * 5) {
             db.assertGetReviewStatisticsTask();
         }
 
         final long lastGetStudyMaterialsSuccess = db.propertiesDao().getLastStudyMaterialSyncSuccessDate(0);
         if (lastGetStudyMaterialsSuccess == 0
-                || System.currentTimeMillis() - lastGetStudyMaterialsSuccess > HOUR) {
+                || System.currentTimeMillis() - lastGetStudyMaterialsSuccess > HOUR - MINUTE * 5) {
             db.assertGetStudyMaterialsTask();
         }
 
         final long lastGetSummarySuccess = db.propertiesDao().getLastSummarySyncSuccessDate();
         if (lastGetSummarySuccess == 0
-                || System.currentTimeMillis() - lastGetSummarySuccess > HOUR) {
+                || System.currentTimeMillis() - lastGetSummarySuccess > HOUR - MINUTE * 5) {
             db.assertGetSummaryTask();
         }
 
@@ -157,7 +157,7 @@ public abstract class Job {
 
         boolean timeLineNeedsUpdate = LiveTimeLine.getInstance().hasNullValue();
         final TimeLine timeLine = LiveTimeLine.getInstance().get();
-        final long nowMinute = System.currentTimeMillis() / Constants.MINUTE;
+        final long nowMinute = System.currentTimeMillis() / MINUTE;
         final long nowHour = nowMinute / 60;
         if (currentHour != nowHour) {
             timeLineNeedsUpdate = true;
