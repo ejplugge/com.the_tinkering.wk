@@ -1779,7 +1779,7 @@ public final class Subject implements PronunciationAudioOwner {
     @SuppressLint("NewApi")
     public CharSequence getAcceptedKunYomiRichText(final CharSequence prefix) {
         final String html = getReadings().stream()
-                .filter(Reading::isOnYomi)
+                .filter(Reading::isKunYomi)
                 .filter(reading -> !hasAcceptedKunYomi() || reading.isAcceptedAnswer())
                 .map(reading -> reading.getValue(false))
                 .collect(Collectors.joining(", ", prefix, ""));
