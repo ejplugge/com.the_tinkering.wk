@@ -8,6 +8,7 @@
 - Add an option to star subjects for search filters and self-study
 
 - The SRS breakdown boxes on the dashboard are now clickable and will take you to a search result page for that box's category.
+  Same for the level progression chart below that.
 
 ### Version 2.0.0, 2020-07-20:
 

@@ -550,7 +550,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
      *
      * @return the menu or null if it doesn't exist (yet).
      */
-    protected final @Nullable Menu getMenu() {
+    public final @Nullable Menu getMenu() {
         return safeNullable(() -> {
             final @Nullable Toolbar toolbar = getToolbar();
             if (toolbar == null) {

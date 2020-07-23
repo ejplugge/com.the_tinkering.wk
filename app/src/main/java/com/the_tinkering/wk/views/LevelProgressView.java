@@ -20,8 +20,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TableLayout;
 
-import androidx.lifecycle.LifecycleOwner;
-
+import com.the_tinkering.wk.Actment;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.ActiveTheme;
@@ -29,9 +28,12 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.model.LevelProgress;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.ThemeUtil;
+import com.the_tinkering.wk.util.WeakLcoRef;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.widget.TableLayout.LayoutParams.WRAP_CONTENT;
@@ -42,6 +44,8 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
  */
 public final class LevelProgressView extends TableLayout {
     private final List<ViewProxy> legendBuckets = new ArrayList<>();
+
+    private @Nullable WeakLcoRef<Actment> actmentRef = null;
 
     /**
      * The constructor.
@@ -94,14 +98,17 @@ public final class LevelProgressView extends TableLayout {
     /**
      * Set the lifecycle owner for this view, to hook LiveData observers to.
      *
-     * @param lifecycleOwner the lifecycle owner
+     * @param actment the lifecycle owner
      */
-    public void setLifecycleOwner(final LifecycleOwner lifecycleOwner) {
-        safe(() -> LiveLevelProgress.getInstance().observe(lifecycleOwner, t -> safe(() -> {
-            if (t != null) {
-                update(t);
-            }
-        })));
+    public void setLifecycleOwner(final Actment actment) {
+        safe(() -> {
+            actmentRef = new WeakLcoRef<>(actment);
+            LiveLevelProgress.getInstance().observe(actment, t -> safe(() -> {
+                if (t != null) {
+                    update(t);
+                }
+            }));
+        });
     }
 
     /**
@@ -128,7 +135,7 @@ public final class LevelProgressView extends TableLayout {
                 rowLayoutParams.height = WRAP_CONTENT;
                 addView(row, i, rowLayoutParams);
             }
-            ((LevelProgressRowView) getChildAt(i)).setEntry(entry);
+            ((LevelProgressRowView) getChildAt(i)).setEntry(actmentRef, entry);
             i++;
         }
 

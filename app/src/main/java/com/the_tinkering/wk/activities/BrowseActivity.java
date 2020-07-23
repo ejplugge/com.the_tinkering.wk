@@ -27,7 +27,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.Identification;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
@@ -180,81 +179,6 @@ public final class BrowseActivity extends AbstractActivity {
             final @Nullable MenuItem subMenu = menu.findItem(R.id.action_search_result);
             if (subMenu != null) {
                 subMenu.setVisible(false);
-            }
-        }
-    }
-
-    /**
-     * Show the search results submenu, with selected options available.
-     *
-     * @param listener listener for item click events
-     * @param canRefine can this search result be refined with an advanced search form?
-     * @param canStartSelfStudy can a self-study quiz be started from this result
-     * @param canResurrect does the current result have resurrectable subjects
-     * @param canBurn does the current result have burnable subjects
-     */
-    public void showSearchResultMenu(final MenuItem.OnMenuItemClickListener listener, final boolean canRefine,
-                                     final boolean canStartSelfStudy, final boolean canResurrect, final boolean canBurn) {
-        final @Nullable Menu menu = getMenu();
-        if (menu != null) {
-            final @Nullable MenuItem subMenu = menu.findItem(R.id.action_search_result);
-            if (subMenu != null) {
-                final @Nullable MenuItem refineItem = menu.findItem(R.id.action_search_result_refine);
-                if (refineItem != null) {
-                    refineItem.setOnMenuItemClickListener(listener);
-                    refineItem.setVisible(canRefine);
-                }
-                final @Nullable MenuItem savePresetItem = menu.findItem(R.id.action_search_result_save_preset);
-                if (savePresetItem != null) {
-                    savePresetItem.setOnMenuItemClickListener(listener);
-                    savePresetItem.setVisible(true);
-                }
-                final @Nullable MenuItem selfStudyItem = menu.findItem(R.id.action_search_result_self_study);
-                if (selfStudyItem != null) {
-                    selfStudyItem.setOnMenuItemClickListener(listener);
-                    selfStudyItem.setVisible(canStartSelfStudy);
-                }
-                final @Nullable MenuItem resurrectItem = menu.findItem(R.id.action_search_result_resurrect);
-                if (resurrectItem != null) {
-                    resurrectItem.setOnMenuItemClickListener(listener);
-                    resurrectItem.setVisible(canResurrect);
-                }
-                final @Nullable MenuItem burnItem = menu.findItem(R.id.action_search_result_burn);
-                if (burnItem != null) {
-                    burnItem.setOnMenuItemClickListener(listener);
-                    burnItem.setVisible(canBurn);
-                }
-                final @Nullable MenuItem star0Item = menu.findItem(R.id.action_search_result_star0);
-                if (star0Item != null) {
-                    star0Item.setOnMenuItemClickListener(listener);
-                    star0Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
-                }
-                final @Nullable MenuItem star1Item = menu.findItem(R.id.action_search_result_star1);
-                if (star1Item != null) {
-                    star1Item.setOnMenuItemClickListener(listener);
-                    star1Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
-                }
-                final @Nullable MenuItem star2Item = menu.findItem(R.id.action_search_result_star2);
-                if (star2Item != null) {
-                    star2Item.setOnMenuItemClickListener(listener);
-                    star2Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
-                }
-                final @Nullable MenuItem star3Item = menu.findItem(R.id.action_search_result_star3);
-                if (star3Item != null) {
-                    star3Item.setOnMenuItemClickListener(listener);
-                    star3Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
-                }
-                final @Nullable MenuItem star4Item = menu.findItem(R.id.action_search_result_star4);
-                if (star4Item != null) {
-                    star4Item.setOnMenuItemClickListener(listener);
-                    star4Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
-                }
-                final @Nullable MenuItem star5Item = menu.findItem(R.id.action_search_result_star5);
-                if (star5Item != null) {
-                    star5Item.setOnMenuItemClickListener(listener);
-                    star5Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
-                }
-                subMenu.setVisible(true);
             }
         }
     }

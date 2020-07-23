@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -33,7 +35,6 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.activities.AbstractActivity;
-import com.the_tinkering.wk.activities.BrowseActivity;
 import com.the_tinkering.wk.activities.SessionActivity;
 import com.the_tinkering.wk.adapter.search.SearchResultAdapter;
 import com.the_tinkering.wk.db.Converters;
@@ -64,7 +65,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
 /**
  * Fragment to show a simple search result.
  */
-public final class SearchResultFragment extends AbstractFragment implements MenuItem.OnMenuItemClickListener {
+public final class SearchResultFragment extends AbstractFragment {
     private int searchType = 0;
     private String searchParameters = "1";
     private String searchDescription = "";
@@ -136,6 +137,8 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
             searchDescription = args.getString("searchDescription", "");
             presetName = args.getString("presetName", null);
         }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -295,7 +298,22 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
                 .create().show();
     }
 
-    private boolean onMenuItemClickBase(final MenuItem item) {
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        safe(() -> {
+            super.onSaveInstanceState(outState);
+            outState.putStringArrayList("collapsedTags", new ArrayList<>(adapter.getCollapsedTags()));
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        updateMenu();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search_result_refine: {
                 if (searchType != 1) {
@@ -399,26 +417,66 @@ public final class SearchResultFragment extends AbstractFragment implements Menu
                 return true;
             }
         }
-        return false;
-    }
 
-    @Override
-    public boolean onMenuItemClick(final MenuItem item) {
-        return safe(false, () -> onMenuItemClickBase(item));
-    }
-
-    @Override
-    public void onSaveInstanceState(final Bundle outState) {
-        safe(() -> {
-            super.onSaveInstanceState(outState);
-            outState.putStringArrayList("collapsedTags", new ArrayList<>(adapter.getCollapsedTags()));
-        });
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateMenu() {
         final @Nullable AbstractActivity activity = getAbstractActivity();
-        if (activity instanceof BrowseActivity) {
-            ((BrowseActivity) activity).showSearchResultMenu(this, searchType != 1, adapter.getNumSubjects() > 0, canResurrect, canBurn);
+        if (activity == null) {
+            return;
+        }
+
+        final @Nullable Menu menu = activity.getMenu();
+        if (menu != null) {
+            final @Nullable MenuItem subMenu = menu.findItem(R.id.action_search_result);
+            if (subMenu != null) {
+                final @Nullable MenuItem refineItem = menu.findItem(R.id.action_search_result_refine);
+                if (refineItem != null) {
+                    refineItem.setVisible(searchType != 1);
+                }
+                final @Nullable MenuItem savePresetItem = menu.findItem(R.id.action_search_result_save_preset);
+                if (savePresetItem != null) {
+                    savePresetItem.setVisible(true);
+                }
+                final @Nullable MenuItem selfStudyItem = menu.findItem(R.id.action_search_result_self_study);
+                if (selfStudyItem != null) {
+                    selfStudyItem.setVisible(adapter.getNumSubjects() > 0);
+                }
+                final @Nullable MenuItem resurrectItem = menu.findItem(R.id.action_search_result_resurrect);
+                if (resurrectItem != null) {
+                    resurrectItem.setVisible(canResurrect);
+                }
+                final @Nullable MenuItem burnItem = menu.findItem(R.id.action_search_result_burn);
+                if (burnItem != null) {
+                    burnItem.setVisible(canBurn);
+                }
+                final @Nullable MenuItem star0Item = menu.findItem(R.id.action_search_result_star0);
+                if (star0Item != null) {
+                    star0Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
+                }
+                final @Nullable MenuItem star1Item = menu.findItem(R.id.action_search_result_star1);
+                if (star1Item != null) {
+                    star1Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
+                }
+                final @Nullable MenuItem star2Item = menu.findItem(R.id.action_search_result_star2);
+                if (star2Item != null) {
+                    star2Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
+                }
+                final @Nullable MenuItem star3Item = menu.findItem(R.id.action_search_result_star3);
+                if (star3Item != null) {
+                    star3Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
+                }
+                final @Nullable MenuItem star4Item = menu.findItem(R.id.action_search_result_star4);
+                if (star4Item != null) {
+                    star4Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
+                }
+                final @Nullable MenuItem star5Item = menu.findItem(R.id.action_search_result_star5);
+                if (star5Item != null) {
+                    star5Item.setVisible(GlobalSettings.Other.getEnableStarRatings());
+                }
+                subMenu.setVisible(true);
+            }
         }
     }
 }
