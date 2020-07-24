@@ -226,7 +226,6 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
      * @param semaphore the method will call release() on this semaphone when the work is done
      */
     public static void processAlarm(final AlertContext ctx, final Semaphore semaphore) {
-        LOGGER.debug("SessionWidgetProvider.processAlarm");
         safe(() -> new Handler(Looper.getMainLooper()).post(() -> {
             safe(() -> {
                 if (hasWidgets()) {

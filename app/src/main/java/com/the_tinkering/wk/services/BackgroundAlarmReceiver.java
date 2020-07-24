@@ -140,7 +140,6 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
      */
     public static void processAlarm(final @Nullable PowerManager.WakeLock wakeLock, final boolean skipBackgroundSync) {
         runAsync(null, publisher -> {
-            LOGGER.debug("Processing background alarm");
             if (isAlarmRequired()) {
                 final AppDatabase db = WkApplication.getDatabase();
                 final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();

@@ -168,7 +168,6 @@ public final class NotificationWorker {
      * @param semaphore the method will call release() on this semaphone when the work is done
      */
     public static void processAlarm(final AlertContext ctx, final Semaphore semaphore) {
-        LOGGER.debug("NotificationWorker.processAlarm");
         safe(() -> new Handler(Looper.getMainLooper()).post(() -> {
             safe(() -> processAlarmHelper(ctx));
             semaphore.release();

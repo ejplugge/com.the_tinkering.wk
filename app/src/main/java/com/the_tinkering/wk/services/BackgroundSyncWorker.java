@@ -56,7 +56,6 @@ public final class BackgroundSyncWorker {
      * @param semaphore the method will call release() on this semaphone when the work is done
      */
     public static void processAlarm(final Semaphore semaphore) {
-        LOGGER.debug("BackgroundSyncWorker.processAlarm");
         safe(() -> {
             if (GlobalSettings.Api.getEnableBackgroundSync()) {
                 final long topOfHour1 = getTopOfHour(System.currentTimeMillis());
