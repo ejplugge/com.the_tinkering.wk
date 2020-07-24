@@ -485,6 +485,7 @@ s     *
         }
         if (hasDelayed && hasUndelayed) {
             final List<Question> list = candidateQuestions.stream()
+                    .filter(question -> question.getItem().getBucket() == currentBucket)
                     .filter(question -> question.getItem().getChoiceDelay() == 0)
                     .collect(Collectors.toList());
             if (!list.isEmpty()) {

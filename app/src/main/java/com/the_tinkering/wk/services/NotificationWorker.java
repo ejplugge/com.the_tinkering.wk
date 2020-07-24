@@ -125,7 +125,7 @@ public final class NotificationWorker {
             boolean needsPost = false;
             boolean needsSound = false;
             final AlertContext lastCtx = WkApplication.getDatabase().propertiesDao().getLastNotificationAlertContext();
-            if (ctx.getNewestAvailableAt() != lastCtx.getNewestAvailableAt()) {
+            if (ctx.getNewestAvailableAt() > lastCtx.getNewestAvailableAt()) {
                 needsPost = true;
                 needsSound = true;
             }
