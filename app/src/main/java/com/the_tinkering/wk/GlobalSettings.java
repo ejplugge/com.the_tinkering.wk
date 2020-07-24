@@ -896,6 +896,15 @@ public final class GlobalSettings {
             }
             return VoicePreference.RANDOM;
         }
+
+        /**
+         * Use audio focus for playing audio.
+         *
+         * @return the value
+         */
+        public static boolean getUseAudioFocus() {
+            return prefs().getBoolean("use_audio_focus", true);
+        }
     }
 
     /**

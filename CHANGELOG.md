@@ -16,12 +16,19 @@
 - Add an option to adjust notification updates to happen only for new reviews, once per hour, or continuously whenever
   the data for the notifications changes.
 
-- Improve alarm robustness, making it more likely that notification alarms, widget updates and background syncs happen reliably every hour,
+- Improve alarm robustness, making it more likely that notification updates, widget updates and background syncs happen reliably every hour,
   hopefully even when the app is subject to aggressive battery optimization. If you're very careful about battery lifetime, and you have in
   the past excluded FD from battery optimization, you may want to try re-enabling it for FD. Updates should now happen properly
   even with battery optimization enabled, although it will still depend on the specific modifications made by each device manufacturer.
+  Unfortunately, misbehaving apps have resulted in Android imposing more and more draconian restrictions that shouldn't be necessary.
+  The current implementation is probably the best I can do without FD becoming a massive battery hog.
 
-- Add a mute option to the menu.
+- Add a mute option to the menu. If enabled, no vocab audio is played at all, under any circumstances.
+
+- FD now requests audio focus when playing vocab audio. This means that if another app (such as a music player) is playing audio at the same
+  time, then FD will request that the other app temporarily gives up its audio focus and that it pauses or lowers its volume. And when the
+  audio is finished playing, the temporary audio focus is given back. If FD can't get audio focus for some reason, the vocab audio is not played.
+  If you don't play music or other media while using FD, this should make no difference. Audio focus can be disabled in settings.
 
 ### Version 2.0.0, 2020-07-20:
 

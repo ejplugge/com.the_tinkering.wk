@@ -345,6 +345,13 @@
             app:defaultValue="RANDOM"
             app:useSimpleSummaryProvider="true"/>
 
+        <SwitchPreferenceCompat
+            app:key="use_audio_focus"
+            app:title="Request audio focus when playing vocab audio"
+            app:singleLineTitle="false"
+            app:defaultValue="true"
+            app:summary="Asks other player apps to pause or lower their volume when playing vocab audio"/>
+
     </PreferenceScreen>
 
     <PreferenceScreen

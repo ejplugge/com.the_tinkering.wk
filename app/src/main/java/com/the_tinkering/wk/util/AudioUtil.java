@@ -17,7 +17,9 @@
 package com.the_tinkering.wk.util;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -50,13 +52,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.AUDIO_DIRECTORY_NAME;
-import static com.the_tinkering.wk.Constants.PLAYBACK_DELAY;
 import static com.the_tinkering.wk.enums.VoicePreference.ALTERNATE;
 import static com.the_tinkering.wk.enums.VoicePreference.FEMALE;
 import static com.the_tinkering.wk.enums.VoicePreference.MALE;
@@ -617,9 +616,155 @@ public final class AudioUtil {
         }
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
-    private static void setAudioStreamTypePre21(final MediaPlayer player) {
+    @TargetApi(26)
+    private static void playAudioPost26(final AudioManager audioManager, final MediaPlayer player, final GenderedFile audioFile,
+                                        final boolean useAudioFocus) throws Exception {
+        final AudioAttributes attributes = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build();
+        player.setAudioAttributes(attributes);
+        player.setDataSource(WkApplication.getInstance(), Uri.fromFile(audioFile));
+        player.prepare();
+        final AudioManager.OnAudioFocusChangeListener listener = focusChange -> {
+            try {
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS
+                        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+                        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                    player.stop();
+                }
+            }
+            catch (final Exception e) {
+                //
+            }
+        };
+        final AudioFocusRequest request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+                .setAudioAttributes(attributes)
+                .setOnAudioFocusChangeListener(listener)
+                .build();
+        if (useAudioFocus) {
+            final int result = audioManager.requestAudioFocus(request);
+            if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                return;
+            }
+        }
+        player.setOnCompletionListener(mp -> {
+            try {
+                mp.reset();
+            }
+            catch (final Exception e) {
+                //
+            }
+            try {
+                mp.release();
+            }
+            catch (final Exception e) {
+                //
+            }
+            try {
+                if (useAudioFocus) {
+                    audioManager.abandonAudioFocusRequest(request);
+                }
+            }
+            catch (final Exception e) {
+                //
+            }
+        });
+        player.start();
+    }
+
+    @TargetApi(21)
+    private static void playAudioPost21(final AudioManager audioManager, final MediaPlayer player, final GenderedFile audioFile,
+                                        final boolean useAudioFocus) throws Exception {
+        player.setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build());
+        player.setDataSource(WkApplication.getInstance(), Uri.fromFile(audioFile));
+        player.prepare();
+        final AudioManager.OnAudioFocusChangeListener listener = focusChange -> {
+            try {
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS
+                        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+                        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                    player.stop();
+                }
+            }
+            catch (final Exception e) {
+                //
+            }
+        };
+        if (useAudioFocus) {
+            final int result = audioManager.requestAudioFocus(listener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+            if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                return;
+            }
+        }
+        player.setOnCompletionListener(mp -> {
+            try {
+                mp.reset();
+            }
+            catch (final Exception e) {
+                //
+            }
+            try {
+                mp.release();
+            }
+            catch (final Exception e) {
+                //
+            }
+            try {
+                if (useAudioFocus) {
+                    audioManager.abandonAudioFocus(listener);
+                }
+            }
+            catch (final Exception e) {
+                //
+            }
+        });
+        player.start();
+    }
+
+    private static void playAudioPre21(final AudioManager audioManager, final MediaPlayer player, final GenderedFile audioFile,
+                                       final boolean useAudioFocus) throws Exception {
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        player.setDataSource(WkApplication.getInstance(), Uri.fromFile(audioFile));
+        player.prepare();
+        final AudioManager.OnAudioFocusChangeListener listener = focusChange -> {
+            try {
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS
+                        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+                        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                    player.stop();
+                }
+            }
+            catch (final Exception e) {
+                //
+            }
+        };
+        if (useAudioFocus) {
+            final int result = audioManager.requestAudioFocus(listener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+            if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                return;
+            }
+        }
+        player.setOnCompletionListener(mp -> {
+            try {
+                mp.reset();
+            }
+            catch (final Exception e) {
+                //
+            }
+            try {
+                mp.release();
+            }
+            catch (final Exception e) {
+                //
+            }
+            try {
+                if (useAudioFocus) {
+                    audioManager.abandonAudioFocus(listener);
+                }
+            }
+            catch (final Exception e) {
+                //
+            }
+        });
+        player.start();
     }
 
     /**
@@ -638,35 +783,25 @@ public final class AudioUtil {
         if (audioFile != null) {
             lastWasMale = audioFile.isMale();
             safe(() -> {
+                final @Nullable AudioManager audioManager = (AudioManager) WkApplication.getInstance().getSystemService(Context.AUDIO_SERVICE);
+                if (audioManager == null) {
+                    return;
+                }
+
                 final MediaPlayer player = new MediaPlayer();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    player.setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build());
+                savedMediaPlayer = player;
+
+                final boolean useAudioFocus = GlobalSettings.Audio.getUseAudioFocus();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    playAudioPost26(audioManager, player, audioFile, useAudioFocus);
+                }
+                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    playAudioPost21(audioManager, player, audioFile, useAudioFocus);
                 }
                 else {
-                    setAudioStreamTypePre21(player);
+                    playAudioPre21(audioManager, player, audioFile, useAudioFocus);
                 }
-                player.setDataSource(WkApplication.getInstance(), Uri.fromFile(audioFile));
-                player.prepare();
-                savedMediaPlayer = player;
-                player.setOnCompletionListener(mp -> new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            mp.reset();
-                        }
-                        catch (final Exception e) {
-                            //
-                        }
-                        try {
-                            mp.release();
-                        }
-                        catch (final Exception e) {
-                            //
-                        }
-                        mp.release();
-                    }
-                }, PLAYBACK_DELAY));
-                player.start();
             });
         }
     }
