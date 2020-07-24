@@ -97,7 +97,7 @@ public final class GetPatchedAssignmentsTask extends ApiTask {
             LiveCriticalCondition.getInstance().update();
             LiveBurnedItems.getInstance().update();
             LiveLevelDuration.getInstance().forceUpdate();
-            BackgroundAlarmReceiver.processAlarm(null);
+            BackgroundAlarmReceiver.processAlarm(null, true);
         }
     }
 }

@@ -72,7 +72,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
                     wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "wk:wk");
                     wl.acquire(Constants.MINUTE);
                 }
-                processAlarm(wl);
+                processAlarm(wl, false);
             }
         });
         safe(BackgroundAlarmReceiver::scheduleOrCancelAlarm);
@@ -136,8 +136,9 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
      *
      * @param wakeLock the wakeLock, if applicable. If not null, this method will release the lock after all actions for
      *                 the alarm have been processed. This may happen after this method call returns.
+     * @param skipBackgroundSync true if this update should skip attempting a background sync
      */
-    public static void processAlarm(final @Nullable PowerManager.WakeLock wakeLock) {
+    public static void processAlarm(final @Nullable PowerManager.WakeLock wakeLock, final boolean skipBackgroundSync) {
         runAsync(null, publisher -> {
             LOGGER.debug("Processing background alarm");
             if (isAlarmRequired()) {
@@ -150,8 +151,10 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
                 final Semaphore semaphore = new Semaphore(0);
                 safe(() -> NotificationWorker.processAlarm(ctx, semaphore));
                 safe(() -> SessionWidgetProvider.processAlarm(ctx, semaphore));
-                safe(() -> BackgroundSyncWorker.processAlarm(semaphore));
-                safe(semaphore::acquire);
+                if (!skipBackgroundSync) {
+                    safe(() -> BackgroundSyncWorker.processAlarm(semaphore));
+                    safe(semaphore::acquire);
+                }
                 safe(semaphore::acquire);
                 safe(semaphore::acquire);
             }

@@ -398,7 +398,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         LiveLevelProgress.getInstance().update();
         LiveCriticalCondition.getInstance().update();
         LiveBurnedItems.getInstance().update();
-        BackgroundAlarmReceiver.processAlarm(null);
+        BackgroundAlarmReceiver.processAlarm(null, true);
 
         return null;
     }

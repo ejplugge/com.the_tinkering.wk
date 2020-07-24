@@ -187,7 +187,7 @@ public final class MainActivity extends AbstractActivity {
             LiveTimeLine.getInstance().forceUpdate();
             LiveJoyoProgress.getInstance().forceUpdate();
             LiveJlptProgress.getInstance().forceUpdate();
-            BackgroundAlarmReceiver.processAlarm(null);
+            BackgroundAlarmReceiver.processAlarm(null, true);
             return null;
         }, null, null);
 

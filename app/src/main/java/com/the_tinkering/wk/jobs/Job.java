@@ -167,7 +167,7 @@ public abstract class Job {
         }
         if (timeLineNeedsUpdate) {
             LiveTimeLine.getInstance().update();
-            BackgroundAlarmReceiver.processAlarm(null);
+            BackgroundAlarmReceiver.processAlarm(null, true);
             currentHour = nowHour;
             currentMinute = nowMinute;
         }
