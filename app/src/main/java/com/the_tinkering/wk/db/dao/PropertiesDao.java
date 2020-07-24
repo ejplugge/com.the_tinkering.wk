@@ -771,6 +771,24 @@ public abstract class PropertiesDao {
     }
 
     /**
+     * Has the audio been muted?.
+     *
+     * @return true if it has
+     */
+    public final boolean getIsMuted() {
+        return getBooleanProperty("is_muted");
+    }
+
+    /**
+     * Has the audio been muted?.
+     *
+     * @param value true if it has
+     */
+    public final void setIsMuted(final boolean value) {
+        setBooleanProperty("is_muted", value);
+    }
+
+    /**
      * Has a specific migration been done already?.
      *
      * @return true if it has

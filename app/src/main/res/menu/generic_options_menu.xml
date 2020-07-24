@@ -29,6 +29,10 @@
         android:title="Dashboard"
         android:icon="@drawable/ic_baseline_home_24px_white"
         app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_mute"
+        android:title="Mute"
+        android:icon="@drawable/ic_baseline_volume_up_24px"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_download_audio"
         android:title="Download audio"
         app:showAsAction="never"/>

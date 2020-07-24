@@ -630,6 +630,10 @@ public final class AudioUtil {
      * @param lastMatchedAnswer the reading to match if possible
      */
     public static void playAudio(final Subject subject, final @Nullable String lastMatchedAnswer) {
+        if (WkApplication.getDatabase().propertiesDao().getIsMuted()) {
+            return;
+        }
+
         final @Nullable GenderedFile audioFile = getOneAudioFileShouldMatch(subject, lastMatchedAnswer);
         if (audioFile != null) {
             lastWasMale = audioFile.isMale();

@@ -21,6 +21,8 @@
   the past excluded FD from battery optimization, you may want to try re-enabling it for FD. Updates should now happen properly
   even with battery optimization enabled, although it will still depend on the specific modifications made by each device manufacturer.
 
+- Add a mute option to the menu.
+
 ### Version 2.0.0, 2020-07-20:
 
 - Add a hint when answering a reading question incorrectly because of the common niyuu/nyuu にゆう/にゅう mistake.
