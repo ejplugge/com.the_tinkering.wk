@@ -38,7 +38,7 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.services.SessionWidgetProvider;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.util.Logger;
 
 import java.util.Locale;
@@ -155,7 +155,7 @@ public final class ReportSessionItemTask extends ApiTask {
                             LiveCriticalCondition.getInstance().update();
                             LiveBurnedItems.getInstance().update();
                             LiveLevelDuration.getInstance().forceUpdate();
-                            SessionWidgetProvider.checkAndUpdateWidgets();
+                            BackgroundAlarmReceiver.processAlarm(null);
                         }
                     } catch (final Exception e) {
                         LOGGER.error(e, "Error parsing start-assignment response");
@@ -211,7 +211,7 @@ public final class ReportSessionItemTask extends ApiTask {
                 LiveCriticalCondition.getInstance().update();
                 LiveBurnedItems.getInstance().update();
                 LiveLevelDuration.getInstance().forceUpdate();
-                SessionWidgetProvider.checkAndUpdateWidgets();
+                BackgroundAlarmReceiver.processAlarm(null);
             }
         }
 

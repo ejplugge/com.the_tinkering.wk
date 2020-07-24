@@ -16,18 +16,14 @@
 
 package com.the_tinkering.wk.model;
 
-import androidx.room.Ignore;
-
 /**
- * The context of information needed for notifications.
+ * The context of information needed for widget updates and notifications.
  */
-public final class NotificationContext {
+public final class AlertContext {
     private int numLessons = 0;
     private int numReviews = 0;
-    private int numNewReviews = 0;
     private long newestAvailableAt = 0L;
-    @Ignore
-    private long moreReviewsDate = 0L;
+    private long upcomingAvailableAt = 0L;
 
     /**
      * Number of lessons currently available.
@@ -62,22 +58,6 @@ public final class NotificationContext {
     }
 
     /**
-     * Number of reviews that have come up since the last notification.
-     * @return the value
-     */
-    public int getNumNewReviews() {
-        return numNewReviews;
-    }
-
-    /**
-     * Number of reviews that have come up since the last notification.
-     * @param numNewReviews the value
-     */
-    public void setNumNewReviews(final int numNewReviews) {
-        this.numNewReviews = numNewReviews;
-    }
-
-    /**
      * The date when the newest available review became available.
      * @return the value
      */
@@ -94,20 +74,18 @@ public final class NotificationContext {
     }
 
     /**
-     * Extra field for widgets.
-     *
-     * @return the next date when new reviews will become available
+     * The date when the next new review will become available.
+     * @return the date
      */
-    public long getMoreReviewsDate() {
-        return moreReviewsDate;
+    public long getUpcomingAvailableAt() {
+        return upcomingAvailableAt;
     }
 
     /**
-     * Extra field for widgets.
-     *
-     * @param moreReviewsDate the next date when new reviews will become available
+     * The date when the next new review will become available.
+     * @param upcomingAvailableAt the date
      */
-    public void setMoreReviewsDate(final long moreReviewsDate) {
-        this.moreReviewsDate = moreReviewsDate;
+    public void setUpcomingAvailableAt(final long upcomingAvailableAt) {
+        this.upcomingAvailableAt = upcomingAvailableAt;
     }
 }

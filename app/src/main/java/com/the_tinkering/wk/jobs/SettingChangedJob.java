@@ -27,8 +27,7 @@ import com.the_tinkering.wk.livedata.LiveJoyoProgress;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.services.BackgroundSyncWorker;
-import com.the_tinkering.wk.services.NotificationAlarmReceiver;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 
 /**
  * Job that is triggered every time a setting changes value. This used to
@@ -82,10 +81,8 @@ public final class SettingChangedJob extends Job {
                 LiveFirstTimeSetup.getInstance().update();
                 break;
             case "enable_notifications":
-                NotificationAlarmReceiver.scheduleOrCancelAlarm();
-                break;
             case "enable_background_sync":
-                BackgroundSyncWorker.scheduleOrCancelWork();
+                BackgroundAlarmReceiver.scheduleOrCancelAlarm();
                 break;
             default:
                 break;

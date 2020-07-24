@@ -5,10 +5,21 @@
 
 - A few small layout fixes
 
-- Add an option to star subjects for search filters and self-study
+- Add an option to star subjects for search filters and self-study.
 
 - The SRS breakdown boxes on the dashboard are now clickable and will take you to a search result page for that box's category.
   Same for the level progression chart below that.
+
+- Timestamps on the timeline bar chart and on the widget will now use a 12-hour clock or a 24-hour clock depending on device settings.
+  12-hour clock timestamps are in short form, i.e. "1pm" or "1.30am" rather than the full "1 p.m." or "1.30 a.m.".
+
+- Add an option to adjust notification updates to happen only for new reviews, once per hour, or continuously whenever
+  the data for the notifications changes.
+
+- Improve alarm robustness, making it more likely that notification alarms, widget updates and background syncs happen reliably every hour,
+  hopefully even when the app is subject to aggressive battery optimization. If you're very careful about battery lifetime, and you have in
+  the past excluded FD from battery optimization, you may want to try re-enabling it for FD. Updates should now happen properly
+  even with battery optimization enabled, although it will still depend on the specific modifications made by each device manufacturer.
 
 ### Version 2.0.0, 2020-07-20:
 

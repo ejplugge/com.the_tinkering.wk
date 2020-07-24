@@ -172,7 +172,7 @@
             android:enabled="true"
             android:exported="false"/>
 
-        <receiver android:name=".services.NotificationAlarmReceiver"/>
+        <receiver android:name=".services.BackgroundAlarmReceiver"/>
 
         <receiver android:name=".services.SessionWidgetProvider">
             <intent-filter>

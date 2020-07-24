@@ -36,10 +36,8 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.services.BackgroundSyncWorker;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.services.JobRunnerService;
-import com.the_tinkering.wk.services.NotificationAlarmReceiver;
-import com.the_tinkering.wk.services.SessionWidgetProvider;
 import com.the_tinkering.wk.views.AvailableSessionsView;
 import com.the_tinkering.wk.views.FirstTimeSetupView;
 import com.the_tinkering.wk.views.JlptProgressView;
@@ -177,8 +175,7 @@ public final class MainActivity extends AbstractActivity {
 
     @Override
     protected void onResumeLocal() {
-        NotificationAlarmReceiver.scheduleOrCancelAlarm();
-        BackgroundSyncWorker.scheduleOrCancelWork();
+        BackgroundAlarmReceiver.scheduleOrCancelAlarm();
 
         runAsync(this, publisher -> {
             LiveBurnedItems.getInstance().forceUpdate();
@@ -190,7 +187,7 @@ public final class MainActivity extends AbstractActivity {
             LiveTimeLine.getInstance().forceUpdate();
             LiveJoyoProgress.getInstance().forceUpdate();
             LiveJlptProgress.getInstance().forceUpdate();
-            SessionWidgetProvider.checkAndUpdateWidgets();
+            BackgroundAlarmReceiver.processAlarm(null);
             return null;
         }, null, null);
 

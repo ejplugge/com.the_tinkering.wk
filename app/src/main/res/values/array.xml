@@ -232,6 +232,18 @@
         <item>336</item>
     </string-array>
 
+    <string-array name="notificationUpdateFrequencies">
+        <item>Only for new reviews</item>
+        <item>Once per hour</item>
+        <item>Continuously</item>
+    </string-array>
+
+    <string-array name="notificationUpdateFrequencyValues">
+        <item>ONLY_NEW_REVIEWS</item>
+        <item>ONCE_PER_HOUR</item>
+        <item>CONTINUOUSLY</item>
+    </string-array>
+
     <string-array name="notificationPriorities">
         <item>Minimum</item>
         <item>Low</item>

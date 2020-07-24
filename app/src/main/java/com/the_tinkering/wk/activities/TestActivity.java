@@ -24,11 +24,13 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.SubjectType;
+import com.the_tinkering.wk.model.AlertContext;
 import com.the_tinkering.wk.model.PitchInfo;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.PitchInfoUtil;
 import com.the_tinkering.wk.util.ReferenceDataUtil;
+import com.the_tinkering.wk.util.TextUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -202,7 +204,17 @@ public final class TestActivity extends AbstractActivity {
         safe(() -> {
             LOGGER.info("Test button 2 clicked!");
             document.setText("Click 2!");
-            goToActivity(NoApiKeyHelpActivity.class);
+            runAsync(this, publisher -> {
+                final AppDatabase db = WkApplication.getDatabase();
+                final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
+                final int userLevel = db.propertiesDao().getUserLevel();
+                final AlertContext alertContext = db.subjectAggregatesDao().getAlertContext(maxLevel, userLevel, System.currentTimeMillis());
+                LOGGER.debug("AlertContext: %s %s '%s' '%s'", alertContext.getNumLessons(), alertContext.getNumReviews(),
+                        TextUtil.formatTimestampForApi(alertContext.getNewestAvailableAt()),
+                        TextUtil.formatTimestampForApi(alertContext.getUpcomingAvailableAt()));
+                return null;
+            }, null, null);
+//            goToActivity(NoApiKeyHelpActivity.class);
         });
     }
 }

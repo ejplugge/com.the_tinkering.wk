@@ -29,6 +29,7 @@ import com.the_tinkering.wk.enums.LessonOrder;
 import com.the_tinkering.wk.enums.NetworkRule;
 import com.the_tinkering.wk.enums.NotificationCategory;
 import com.the_tinkering.wk.enums.NotificationPriority;
+import com.the_tinkering.wk.enums.NotificationUpdateFrequency;
 import com.the_tinkering.wk.enums.QuestionType;
 import com.the_tinkering.wk.enums.ReviewOrder;
 import com.the_tinkering.wk.enums.SessionPriority;
@@ -1505,6 +1506,24 @@ public final class GlobalSettings {
          */
         public static boolean getEnableNotifications() {
             return prefs().getBoolean("enable_notifications", true);
+        }
+
+        /**
+         * Notification update frequency.
+         *
+         * @return the value
+         */
+        public static NotificationUpdateFrequency getNotificationUpdateFrequency() {
+            final @Nullable String value = prefs().getString("notification_update_frequency", null);
+            if (value != null) {
+                try {
+                    return NotificationUpdateFrequency.valueOf(value);
+                }
+                catch (final Exception e) {
+                    //
+                }
+            }
+            return NotificationUpdateFrequency.ONLY_NEW_REVIEWS;
         }
 
         /**

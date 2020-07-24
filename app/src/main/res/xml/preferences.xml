@@ -650,6 +650,15 @@
             app:defaultValue="true"/>
 
         <ListPreference
+            app:key="notification_update_frequency"
+            app:title="Notification update frequency"
+            app:singleLineTitle="false"
+            app:entries="@array/notificationUpdateFrequencies"
+            app:entryValues="@array/notificationUpdateFrequencyValues"
+            app:defaultValue="ONLY_NEW_REVIEWS"
+            app:useSimpleSummaryProvider="true"/>
+
+        <ListPreference
             app:key="notification_priority"
             app:title="Notification priority"
             app:singleLineTitle="false"

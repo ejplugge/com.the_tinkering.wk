@@ -32,7 +32,7 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.services.SessionWidgetProvider;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.util.TextUtil.formatTimestampForApi;
@@ -91,7 +91,7 @@ public final class GetAssignmentsTask extends ApiTask {
             LiveCriticalCondition.getInstance().update();
             LiveBurnedItems.getInstance().update();
             LiveLevelDuration.getInstance().forceUpdate();
-            SessionWidgetProvider.checkAndUpdateWidgets();
+            BackgroundAlarmReceiver.processAlarm(null);
         }
     }
 }

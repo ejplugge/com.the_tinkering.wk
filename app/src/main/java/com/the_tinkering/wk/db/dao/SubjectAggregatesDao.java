@@ -19,9 +19,9 @@ package com.the_tinkering.wk.db.dao;
 import androidx.room.Dao;
 import androidx.room.Query;
 
+import com.the_tinkering.wk.model.AlertContext;
 import com.the_tinkering.wk.model.JlptProgressItem;
 import com.the_tinkering.wk.model.JoyoProgressItem;
-import com.the_tinkering.wk.model.NotificationContext;
 
 import java.util.List;
 
@@ -60,32 +60,31 @@ public abstract class SubjectAggregatesDao {
     public abstract int getNextLongTermReviewCount(final int maxLevel, final int userLevel, final long targetDate);
 
     /**
-     * Room-generated method: get statistics for notifications.
+     * Room-generated method: get statistics for widgets and notifications.
      *
      * <ul>
      *     <li>Number of available lessons</li>
      *     <li>Number of available reviews</li>
-     *     <li>Number of new reviews that became available after lastDate</li>
      *     <li>Timestamp of the newest available review</li>
+     *     <li>Timestamp of next upcoming review</li>
      * </ul>
      *
      * @param maxLevel the maximum level available on the user's subscription
      * @param userLevel the user's level
-     * @param lastDate the last availableAt date for a review reported as a notification
      * @param cutoff the current date
      * @return a POJO containing the results
      */
-    @Query("SELECT numLessons, numReviews, numNewReviews, newestAvailableAt FROM "
+    @Query("SELECT numLessons, numReviews, newestAvailableAt, upcomingAvailableAt FROM "
             + "(SELECT COUNT(*) AS numLessons FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
             + "AND level <= :maxLevel AND level <= :userLevel AND unlockedAt!=0 AND startedAt=0 AND (resurrectedAt!=0 OR burnedAt=0)), "
             + "(SELECT COUNT(*) AS numReviews FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
             + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt < :cutoff), "
-            + "(SELECT COUNT(*) AS numNewReviews FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
-            + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt < :cutoff AND availableAt > :lastDate), "
             + "(SELECT MAX(availableAt) AS newestAvailableAt FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
-            + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt < :cutoff)"
+            + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt < :cutoff), "
+            + "(SELECT MIN(availableAt) AS upcomingAvailableAt FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
+            + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt > :cutoff)"
             + ";")
-    public abstract NotificationContext getNotificationContext(int maxLevel, int userLevel, long lastDate, long cutoff);
+    public abstract AlertContext getAlertContext(int maxLevel, int userLevel, long cutoff);
 
     /**
      * Room-generated method: get the date the user reached a level by looking at the earliest unlockedAt date

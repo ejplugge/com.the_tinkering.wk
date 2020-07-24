@@ -26,7 +26,7 @@ import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.services.ApiTaskService;
-import com.the_tinkering.wk.services.SessionWidgetProvider;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.util.DbLogger;
 import com.the_tinkering.wk.util.Logger;
 
@@ -167,7 +167,7 @@ public abstract class Job {
         }
         if (timeLineNeedsUpdate) {
             LiveTimeLine.getInstance().update();
-            SessionWidgetProvider.checkAndUpdateWidgets();
+            BackgroundAlarmReceiver.processAlarm(null);
             currentHour = nowHour;
             currentMinute = nowMinute;
         }

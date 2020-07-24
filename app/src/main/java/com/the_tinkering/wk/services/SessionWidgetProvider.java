@@ -25,6 +25,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
@@ -33,24 +35,28 @@ import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.activities.MainActivity;
-import com.the_tinkering.wk.db.AppDatabase;
-import com.the_tinkering.wk.model.NotificationContext;
+import com.the_tinkering.wk.model.AlertContext;
+import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.TextUtil;
 
 import java.util.Locale;
+import java.util.concurrent.Semaphore;
 
 import javax.annotation.Nullable;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.the_tinkering.wk.Constants.DAY;
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Implementation of the app widget.
  */
 public final class SessionWidgetProvider extends AppWidgetProvider {
+    private static final Logger LOGGER = Logger.get(SessionWidgetProvider.class);
+
+    private static boolean widgetUpdatedThisProcess = false;
+
     @SuppressLint("NewApi")
     private static @Nullable String getUpcomingMessage(final long upcoming) {
         if (upcoming == 0) {
@@ -70,7 +76,7 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
      *
      * @param ctx notification context for the lesson/review counts
      */
-    private static void updateWidgets(final NotificationContext ctx) {
+    private static void updateWidgets(final AlertContext ctx) {
         final Context context = WkApplication.getInstance();
         if (!context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_APP_WIDGETS)) {
             return;
@@ -80,7 +86,7 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
         final Intent intent = new Intent(context, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-        final long upcoming = ctx.getMoreReviewsDate();
+        final long upcoming = ctx.getUpcomingAvailableAt();
 
         final int lessonCount = ctx.getNumLessons();
         final int reviewCount = ctx.getNumReviews();
@@ -184,50 +190,21 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    /**
-     * Update all instances of the widget. This method retrieves the relevant data from the database,
-     * and then uses the method above to actually perform the update.
-     *
-     * @param context Android context
-     */
-    private static void updateWidgets(final Context context) {
-        if (!context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_APP_WIDGETS)) {
-            return;
-        }
-
+    private static void processAlarmWithWakeLock() {
         @Nullable PowerManager.WakeLock wl = null;
-        final @Nullable PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        final @Nullable PowerManager pm = (PowerManager) WkApplication.getInstance().getSystemService(Context.POWER_SERVICE);
         if (pm != null) {
             wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "wk:wkw");
             wl.acquire(Constants.MINUTE);
         }
 
-        final @Nullable PowerManager.WakeLock heldWakeLock = wl;
-
-        runAsync(null, publisher -> {
-            final AppDatabase db = WkApplication.getDatabase();
-            final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
-            final int userLevel = db.propertiesDao().getUserLevel();
-            final long now = System.currentTimeMillis();
-            final NotificationContext ctx = db.subjectAggregatesDao().getNotificationContext(maxLevel, userLevel, now, now);
-            ctx.setMoreReviewsDate(db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, now));
-
-            if (heldWakeLock != null) {
-                heldWakeLock.release();
-            }
-
-            return ctx;
-        }, null, result -> {
-            if (result != null) {
-                updateWidgets(result);
-            }
-        });
+        BackgroundAlarmReceiver.processAlarm(wl);
     }
 
     /**
-     * Does the current app installation have any deployed widgets?.
+     * Does this device have any instances of the widget deployed?.
      *
-     * @return true if it has
+     * @return true if it does
      */
     public static boolean hasWidgets() {
         return safe(false, () -> {
@@ -242,58 +219,62 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
     }
 
     /**
-     * Same as updateWidgets(), but will first check to see if there are any widgets to update, and
-     * skip the process if there are none.
-     */
-    public static void checkAndUpdateWidgets() {
-        safe(() -> {
-            if (hasWidgets()) {
-                updateWidgets(WkApplication.getInstance());
-            }
-        });
-    }
-
-    /**
-     * Same as updateWidgets(), but will first check to see if there are any widgets to update, and
-     * skip the process if there are none.
+     * Process a background alarm event, whether triggered by an actual system alarm, or a database update that can affect
+     * widgets and/or notifications. Always runs on a background thread.
      *
-     * @param ctx notification context for the lesson/review counts
+     * @param ctx the details for the widgets
+     * @param semaphore the method will call release() on this semaphone when the work is done
      */
-    public static void checkAndUpdateWidgets(final NotificationContext ctx) {
-        safe(() -> {
-            if (hasWidgets()) {
-                updateWidgets(ctx);
-            }
-        });
+    public static void processAlarm(final AlertContext ctx, final Semaphore semaphore) {
+        LOGGER.debug("SessionWidgetProvider.processAlarm");
+        safe(() -> new Handler(Looper.getMainLooper()).post(() -> {
+            safe(() -> {
+                if (hasWidgets()) {
+                    final AlertContext lastCtx = WkApplication.getDatabase().propertiesDao().getLastWidgetAlertContext();
+                    if (lastCtx.getNumLessons() != ctx.getNumLessons()
+                            || lastCtx.getNumReviews() != ctx.getNumReviews()
+                            || lastCtx.getUpcomingAvailableAt() != ctx.getUpcomingAvailableAt()
+                            || !widgetUpdatedThisProcess) {
+                        LOGGER.info("Widget update starts: %s %s '%s'", ctx.getNumLessons(), ctx.getNumReviews(),
+                                TextUtil.formatTimestampForApi(ctx.getUpcomingAvailableAt()));
+                        widgetUpdatedThisProcess = true;
+                        WkApplication.getDatabase().propertiesDao().setLastWidgetAlertContext(ctx);
+                        updateWidgets(ctx);
+                        LOGGER.info("Widget update ends");
+                    }
+                }
+            });
+            semaphore.release();
+        }));
     }
 
     @Override
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-        safe(() -> updateWidgets(context.getApplicationContext()));
+        safe(SessionWidgetProvider::processAlarmWithWakeLock);
     }
 
     @Override
     public void onAppWidgetOptionsChanged(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId, final Bundle newOptions) {
-        safe(() -> updateWidgets(context.getApplicationContext()));
+        safe(SessionWidgetProvider::processAlarmWithWakeLock);
     }
 
     @Override
     public void onDeleted(final Context context, final int[] appWidgetIds) {
-        safe(() -> updateWidgets(context.getApplicationContext()));
+        safe(SessionWidgetProvider::processAlarmWithWakeLock);
     }
 
     @Override
     public void onEnabled(final Context context) {
-        safe(() -> updateWidgets(context.getApplicationContext()));
+        safe(SessionWidgetProvider::processAlarmWithWakeLock);
     }
 
     @Override
     public void onDisabled(final Context context) {
-        safe(() -> updateWidgets(context.getApplicationContext()));
+        safe(SessionWidgetProvider::processAlarmWithWakeLock);
     }
 
     @Override
     public void onRestored(final Context context, final int[] oldWidgetIds, final int[] newWidgetIds) {
-        safe(() -> updateWidgets(context.getApplicationContext()));
+        safe(SessionWidgetProvider::processAlarmWithWakeLock);
     }
 }

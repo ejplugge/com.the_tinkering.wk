@@ -23,7 +23,7 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.model.TimeLine;
-import com.the_tinkering.wk.services.NotificationAlarmReceiver;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.util.AudioUtil;
 import com.the_tinkering.wk.util.PitchInfoUtil;
 
@@ -98,7 +98,7 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
         instance.postValue(timeLine);
 
         if (db.propertiesDao().getNotificationSet() && !timeLine.hasAvailableLessons() && !timeLine.hasAvailableReviews()) {
-            NotificationAlarmReceiver.cancelNotification();
+            BackgroundAlarmReceiver.processAlarm(null);
         }
 
         if (GlobalSettings.Api.getAutoDownloadAudio()) {

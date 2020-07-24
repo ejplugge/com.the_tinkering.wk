@@ -40,8 +40,8 @@ import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.services.JobRunnerService;
-import com.the_tinkering.wk.services.SessionWidgetProvider;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.Comparator;
@@ -398,7 +398,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         LiveLevelProgress.getInstance().update();
         LiveCriticalCondition.getInstance().update();
         LiveBurnedItems.getInstance().update();
-        SessionWidgetProvider.checkAndUpdateWidgets();
+        BackgroundAlarmReceiver.processAlarm(null);
 
         return null;
     }

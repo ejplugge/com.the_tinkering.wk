@@ -21,9 +21,11 @@ import android.annotation.SuppressLint;
 import androidx.room.Dao;
 import androidx.room.Query;
 
+import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.Property;
 import com.the_tinkering.wk.enums.QuestionType;
 import com.the_tinkering.wk.enums.SessionType;
+import com.the_tinkering.wk.model.AlertContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -413,21 +415,39 @@ public abstract class PropertiesDao {
     }
 
     /**
-     * When was the last availableAt for which a notification was issued?.
+     * When was the last time a notification was posted? This is the top of the hour of the last update.
      *
      * @return the timestamp, or 0 if not known
      */
-    public final long getLastNotifiedReviewDate() {
-        return getLongProperty("last_notified_review_date", 0);
+    public final long getLastNotificationUpdate() {
+        return getLongProperty("last_notification_update", 0);
     }
 
     /**
-     * When was the last availableAt for which a notification was issued?.
+     * When was the last time a notification was posted? This is the top of the hour of the last update.
      *
      * @param value the timestamp, or 0 if not known
      */
-    public final void setLastNotifiedReviewDate(final long value) {
-        setLongProperty("last_notified_review_date", value);
+    public final void setLastNotificationUpdate(final long value) {
+        setLongProperty("last_notification_update", value);
+    }
+
+    /**
+     * When was the last time a background sync was run? This is the top of the hour of the last update.
+     *
+     * @return the timestamp, or 0 if not known
+     */
+    public final long getLastBackgroundSync() {
+        return getLongProperty("last_background_sync", 0);
+    }
+
+    /**
+     * When was the last time a background sync was run? This is the top of the hour of the last update.
+     *
+     * @param value the timestamp, or 0 if not known
+     */
+    public final void setLastBackgroundSync(final long value) {
+        setLongProperty("last_background_sync", value);
     }
 
     /**
@@ -684,6 +704,70 @@ public abstract class PropertiesDao {
      */
     public final void setCurrentQuestionType(final QuestionType currentQuestionType) {
         setProperty("current_question_type", currentQuestionType.toString());
+    }
+
+    /**
+     * The last used AlertContext for notifications.
+     *
+     * @return the context, or a dummy instance if not present
+     */
+    public final AlertContext getLastNotificationAlertContext() {
+        return safe(() -> {
+            final AlertContext ctx = new AlertContext();
+            ctx.setNumLessons(-1);
+            ctx.setNumReviews(-1);
+            return ctx;
+        }, () -> {
+            final @Nullable String s = getProperty("last_notification_alertcontext");
+            if (s == null) {
+                final AlertContext ctx = new AlertContext();
+                ctx.setNumLessons(-1);
+                ctx.setNumReviews(-1);
+                return ctx;
+            }
+            return Converters.getObjectMapper().readValue(s, AlertContext.class);
+        });
+    }
+
+    /**
+     * The last used AlertContext for notifications.
+     *
+     * @param value the context
+     */
+    public final void setLastNotificationAlertContext(final AlertContext value) {
+        safe(() -> setProperty("last_notification_alertcontext", Converters.getObjectMapper().writeValueAsString(value)));
+    }
+
+    /**
+     * The last used AlertContext for widgets.
+     *
+     * @return the context, or a dummy instance if not present
+     */
+    public final AlertContext getLastWidgetAlertContext() {
+        return safe(() -> {
+            final AlertContext ctx = new AlertContext();
+            ctx.setNumLessons(-1);
+            ctx.setNumReviews(-1);
+            return ctx;
+        }, () -> {
+            final @Nullable String s = getProperty("last_widget_alertcontext");
+            if (s == null) {
+                final AlertContext ctx = new AlertContext();
+                ctx.setNumLessons(-1);
+                ctx.setNumReviews(-1);
+                return ctx;
+            }
+            return Converters.getObjectMapper().readValue(s, AlertContext.class);
+        });
+    }
+
+    /**
+     * The last used AlertContext for widgets.
+     *
+     * @param value the context
+     */
+    public final void setLastWidgetAlertContext(final AlertContext value) {
+        safe(() -> setProperty("last_widget_alertcontext", Converters.getObjectMapper().writeValueAsString(value)));
     }
 
     /**

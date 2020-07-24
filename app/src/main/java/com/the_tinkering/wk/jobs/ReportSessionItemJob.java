@@ -27,7 +27,7 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.SrsSystem;
-import com.the_tinkering.wk.services.SessionWidgetProvider;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 
 import javax.annotation.Nullable;
 
@@ -222,7 +222,7 @@ public final class ReportSessionItemJob extends Job {
                 LiveTimeLine.getInstance().update();
                 LiveSrsBreakDown.getInstance().update();
                 LiveLevelProgress.getInstance().update();
-                SessionWidgetProvider.checkAndUpdateWidgets();
+                BackgroundAlarmReceiver.processAlarm(null);
             }
         }
 
@@ -235,7 +235,7 @@ public final class ReportSessionItemJob extends Job {
                 LiveLevelProgress.getInstance().update();
                 LiveCriticalCondition.getInstance().update();
                 LiveBurnedItems.getInstance().update();
-                SessionWidgetProvider.checkAndUpdateWidgets();
+                BackgroundAlarmReceiver.processAlarm(null);
             }
         }
 

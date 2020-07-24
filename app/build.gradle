@@ -59,7 +59,7 @@ dependencies {
     implementation "androidx.preference:preference:1.1.1"
     implementation "androidx.security:security-crypto:1.1.0-alpha01"
     implementation 'com.airbnb.android:lottie:3.4.1'
-    implementation "androidx.work:work-runtime:2.3.4"
+    implementation "androidx.work:work-runtime:2.4.0"
     implementation "org.jsoup:jsoup:1.13.1"
     implementation "com.squareup.okhttp3:okhttp:4.8.0"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:4.8.0"
