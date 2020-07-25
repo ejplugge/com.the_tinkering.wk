@@ -671,6 +671,7 @@ public final class AudioUtil {
     }
 
     @TargetApi(21)
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private static void playAudioPost21(final AudioManager audioManager, final MediaPlayer player, final GenderedFile audioFile,
                                         final boolean useAudioFocus) throws Exception {
         player.setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build());
@@ -719,6 +720,7 @@ public final class AudioUtil {
         player.start();
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private static void playAudioPre21(final AudioManager audioManager, final MediaPlayer player, final GenderedFile audioFile,
                                        final boolean useAudioFocus) throws Exception {
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
