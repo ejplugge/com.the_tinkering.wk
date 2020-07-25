@@ -37,6 +37,7 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.activities.AboutActivity;
 import com.the_tinkering.wk.activities.AbstractActivity;
+import com.the_tinkering.wk.activities.DataImportExportActivity;
 import com.the_tinkering.wk.activities.FontImportActivity;
 import com.the_tinkering.wk.activities.FontSelectionActivity;
 import com.the_tinkering.wk.activities.KeyboardHelpActivity;
@@ -197,6 +198,7 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
         setOnClickGoToActivity("font_selection", FontSelectionActivity.class);
         setOnClickGoToActivity("font_import", FontImportActivity.class);
         setOnClickGoToActivity("keyboard_help", KeyboardHelpActivity.class);
+        setOnClickGoToActivity("data_import_export", DataImportExportActivity.class);
     }
 
     @Override

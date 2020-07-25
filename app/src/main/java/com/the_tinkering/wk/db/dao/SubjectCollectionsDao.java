@@ -327,4 +327,13 @@ public abstract class SubjectCollectionsDao {
         }
         return result;
     }
+
+    /**
+     * Get the subject IDs for the subjects that have a specific number of stars.
+     *
+     * @param numStars the number of stars
+     * @return the list of IDs
+     */
+    @Query("SELECT id FROM subject WHERE typeCode = :numStars ORDER BY id")
+    public abstract List<Long> getStarredSubjectIds(final int numStars);
 }

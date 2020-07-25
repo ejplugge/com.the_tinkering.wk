@@ -28,11 +28,11 @@ import androidx.appcompat.app.AlertDialog;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
+import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.jobs.ReportSessionItemJob;
-import com.the_tinkering.wk.jobs.UpdateSubjectStarsJob;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
@@ -41,7 +41,6 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
-import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.Comparator;
@@ -500,11 +499,11 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                 .setTitle("Set star ratings?")
                 .setMessage(message)
                 .setNegativeButton("No", (dialog, which) -> {})
-                .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                    subjects.forEach(subject -> JobRunnerService.schedule(UpdateSubjectStarsJob.class,
-                            String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars)));
-                    Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show();
-                }))
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), publisher -> {
+                    final AppDatabase db = WkApplication.getDatabase();
+                    subjects.forEach(subject -> db.subjectDao().updateStars(subject.getId(), newNumStars));
+                    return null;
+                }, null, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
                 .create().show();
     }
 
@@ -523,11 +522,11 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                 .setTitle("Set star ratings?")
                 .setMessage(message)
                 .setNegativeButton("No", (dialog, which) -> {})
-                .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                    subjects.forEach(subject -> JobRunnerService.schedule(UpdateSubjectStarsJob.class,
-                            String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars)));
-                    Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show();
-                }))
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), publisher -> {
+                    final AppDatabase db = WkApplication.getDatabase();
+                    subjects.forEach(subject -> db.subjectDao().updateStars(subject.getId(), newNumStars));
+                    return null;
+                }, null, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
                 .create().show();
     }
 }

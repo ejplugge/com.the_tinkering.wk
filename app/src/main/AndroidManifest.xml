@@ -150,6 +150,11 @@
             android:parentActivityName=".activities.MainActivity">
             <meta-data android:name="android.app.default_searchable" android:value=".activities.BrowseActivity"/>
         </activity>
+        <activity android:name=".activities.DataImportExportActivity"
+            android:label="Data import/export"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data android:name="android.app.default_searchable" android:value=".activities.BrowseActivity"/>
+        </activity>
         <activity android:name=".activities.ResurrectActivity"
             android:label="Resurrect subjects"
             android:parentActivityName=".activities.MainActivity">
@@ -171,6 +176,14 @@
             android:authorities="com.the_tinkering.wk.db.SubjectContentProvider"
             android:enabled="true"
             android:exported="false"/>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.the_tinkering.wk.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths"/>
+        </provider>
 
         <receiver android:name=".services.BackgroundAlarmReceiver"/>
 

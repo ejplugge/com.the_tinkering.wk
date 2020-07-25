@@ -25,6 +25,7 @@ import com.the_tinkering.wk.jobs.Job;
 
 import javax.annotation.Nonnull;
 
+import static com.the_tinkering.wk.StableIds.JOB_RUNNER_SERVICE_JOB_ID;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
@@ -41,11 +42,6 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JobRunnerService extends JobIntentService {
     /**
-     * The ID for jobs running in this service. This is a single constant ID that is reused.
-     */
-    private static final int JOB_ID = 1;
-
-    /**
      * Schedule a job for this service. It goes into a queue of pending jobs,
      * and will be executed as soon as the service has time for it.
      *
@@ -57,7 +53,7 @@ public final class JobRunnerService extends JobIntentService {
             final Intent intent = new Intent(WkApplication.getInstance(), JobRunnerService.class);
             intent.putExtra("com.the_tinkering.wk.JOB_CLASS", jobClass.getCanonicalName());
             intent.putExtra("com.the_tinkering.wk.JOB_DATA", jobData);
-            enqueueWork(WkApplication.getInstance(), JobRunnerService.class, JOB_ID, intent);
+            enqueueWork(WkApplication.getInstance(), JobRunnerService.class, JOB_RUNNER_SERVICE_JOB_ID, intent);
         });
     }
 

@@ -21,19 +21,18 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 import com.the_tinkering.wk.R;
+import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.model.Subject;
-import com.the_tinkering.wk.jobs.UpdateSubjectStarsJob;
 import com.the_tinkering.wk.livedata.SubjectChangeListener;
 import com.the_tinkering.wk.livedata.SubjectChangeWatcher;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.services.JobRunnerService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -91,8 +90,10 @@ public final class StarRatingView extends LinearLayout implements SubjectChangeL
                 if (currentSubject != null && tag instanceof Integer) {
                     final int tagInt = (int) tag;
                     final int newNumStars = subject.getNumStars() == tagInt ? 0 : tagInt;
-                    final String jobData = String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars);
-                    JobRunnerService.schedule(UpdateSubjectStarsJob.class, jobData);
+                    runAsync(null, publisher -> {
+                        WkApplication.getDatabase().subjectDao().updateStars(subject.getId(), newNumStars);
+                        return null;
+                    }, null, null);
                 }
             });
         }

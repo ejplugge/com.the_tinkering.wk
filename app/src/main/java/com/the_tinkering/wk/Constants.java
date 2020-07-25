@@ -87,11 +87,6 @@ public final class Constants {
     public static final long MONTH = 30 * DAY;
 
     /**
-     * Time units in milliseconds: linger delay after playing vocab audio.
-     */
-    public static final long PLAYBACK_DELAY = 3 * SECOND;
-
-    /**
      * Cap for number of search results.
      */
     public static final int MAX_SEARCH_HITS = 250;

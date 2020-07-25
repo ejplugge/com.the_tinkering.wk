@@ -1075,7 +1075,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:key="about" app:title="About">
+    <PreferenceCategory app:key="about" app:title="Other actions">
 
         <Preference
             app:title="About this app"
@@ -1086,6 +1086,10 @@
             app:title="Support and feedback"
             app:key="support_and_feedback"
             app:summary=""/>
+
+        <Preference
+            app:title="Data import / export"
+            app:key="data_import_export"/>
 
         <Preference
             app:title="Reset UI confirmations and tutorials"

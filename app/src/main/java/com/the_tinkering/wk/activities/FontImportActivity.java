@@ -43,6 +43,7 @@ import java.io.InputStream;
 import javax.annotation.Nullable;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.the_tinkering.wk.StableIds.FONT_IMPORT_RESULT_CODE;
 import static com.the_tinkering.wk.util.FontStorageUtil.flushCache;
 import static com.the_tinkering.wk.util.FontStorageUtil.getNames;
 import static com.the_tinkering.wk.util.FontStorageUtil.getTypefaceConfiguration;
@@ -56,18 +57,8 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * An activity for importing fonts for quiz questions.
- *
- * <p>
- *     Fonts can be imported either via the GET_CONTENT action or the Storage Access Framework.
- *     Mostly they are equivalent, but it seems that under some circumstances a storage app is
- *     only available by one of these methods and not the other. I should be able to just drop
- *     the GET_CONTENT method if the Android version is >= KitKat, but I'm not cutting that cord
- *     yet since I just don't know enough about how this content retrieval works in various
- *     different versions of Android.
- * </p>
  */
 public final class FontImportActivity extends AbstractActivity {
-    private final ViewProxy importWithSaf = new ViewProxy();
     private final ViewProxy fontTable = new ViewProxy();
 
     /**
@@ -79,13 +70,11 @@ public final class FontImportActivity extends AbstractActivity {
 
     @Override
     protected void onCreateLocal(final @Nullable Bundle savedInstanceState) {
-        importWithSaf.setDelegate(this, R.id.importWithSaf);
         fontTable.setDelegate(this, R.id.fontTable);
     }
 
     @Override
     protected void onResumeLocal() {
-        importWithSaf.setVisibility(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
         updateFileList();
     }
 
@@ -172,7 +161,7 @@ public final class FontImportActivity extends AbstractActivity {
         safe(() -> {
             super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == 3 && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            if (requestCode == FONT_IMPORT_RESULT_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
                 final Uri uri = data.getData();
                 final @Nullable String fileName = resolveFileName(uri);
                 if (fileName == null) {
@@ -193,18 +182,19 @@ public final class FontImportActivity extends AbstractActivity {
         });
     }
 
-    /**
-     * Handler for the import button. Pop up the chooser.
-     *
-     * @param view the button.
-     */
-    public void importWithActionGetContent(@SuppressWarnings("unused") final View view) {
-        safe(() -> {
-            final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(Intent.createChooser(intent, "Select a TTF font file to import"), 3);
-        });
+    @TargetApi(19)
+    private void importFontPost19() {
+        final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, FONT_IMPORT_RESULT_CODE);
+    }
+
+    private void importFontPre19() {
+        final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Select a TTF font file to import"), FONT_IMPORT_RESULT_CODE);
     }
 
     /**
@@ -212,13 +202,14 @@ public final class FontImportActivity extends AbstractActivity {
      *
      * @param view the button.
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public void importWithSaf(@SuppressWarnings("unused") final View view) {
+    public void importFont(@SuppressWarnings("unused") final View view) {
         safe(() -> {
-            final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.setType("*/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(intent, 3);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                importFontPost19();
+            }
+            else {
+                importFontPre19();
+            }
         });
     }
 

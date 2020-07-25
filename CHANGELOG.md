@@ -30,6 +30,8 @@
   audio is finished playing, the temporary audio focus is given back. If FD can't get audio focus for some reason, the vocab audio is not played.
   If you don't play music or other media while using FD, this should make no difference. Audio focus can be disabled in settings.
 
+- Star ratings and search presets can be imported and exported with a new action in the settings menu.
+
 ### Version 2.0.0, 2020-07-20:
 
 - Add a hint when answering a reading question incorrectly because of the common niyuu/nyuu にゆう/にゅう mistake.

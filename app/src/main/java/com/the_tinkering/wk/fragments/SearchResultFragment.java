@@ -37,16 +37,15 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.activities.AbstractActivity;
 import com.the_tinkering.wk.activities.SessionActivity;
 import com.the_tinkering.wk.adapter.search.SearchResultAdapter;
+import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.SearchPreset;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.SearchSortOrder;
-import com.the_tinkering.wk.jobs.UpdateSubjectStarsJob;
 import com.the_tinkering.wk.livedata.LiveSearchPresets;
 import com.the_tinkering.wk.model.AdvancedSearchParameters;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.SearchUtil;
 import com.the_tinkering.wk.util.ThemeUtil;
 
@@ -290,11 +289,11 @@ public final class SearchResultFragment extends AbstractFragment {
                 .setTitle("Set star ratings?")
                 .setMessage(message)
                 .setNegativeButton("No", (dialog, which) -> {})
-                .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                    subjects.forEach(subject -> JobRunnerService.schedule(UpdateSubjectStarsJob.class,
-                            String.format(Locale.ROOT, "%d %d", subject.getId(), newNumStars)));
-                    Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show();
-                }))
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), publisher -> {
+                    final AppDatabase db = WkApplication.getDatabase();
+                    subjects.forEach(subject -> db.subjectDao().updateStars(subject.getId(), newNumStars));
+                    return null;
+                }, null, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
                 .create().show();
     }
 

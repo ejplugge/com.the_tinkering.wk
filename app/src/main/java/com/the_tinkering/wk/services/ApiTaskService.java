@@ -34,6 +34,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.StableIds.API_TASK_SERVICE_JOB_ID;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -50,11 +51,6 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
  */
 public final class ApiTaskService extends JobIntentService {
     /**
-     * The ID for jobs running in this service. This is a single constant ID that is reused.
-     */
-    private static final int JOB_ID = 2;
-
-    /**
      * A single dummy object to synchronize on, to make sure the background sync doesn't
      * overlap with this.
      */
@@ -66,7 +62,7 @@ public final class ApiTaskService extends JobIntentService {
      */
     public static void schedule() {
         final Intent intent = new Intent(WkApplication.getInstance(), ApiTaskService.class);
-        enqueueWork(WkApplication.getInstance(), ApiTaskService.class, JOB_ID, intent);
+        enqueueWork(WkApplication.getInstance(), ApiTaskService.class, API_TASK_SERVICE_JOB_ID, intent);
     }
 
     private static void runTasksImpl() throws Exception {

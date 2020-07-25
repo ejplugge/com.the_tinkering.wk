@@ -23,7 +23,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/colorBackground"
-    tools:context=".activities.FontImportActivity">
+    tools:context=".activities.DataImportExportActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -49,22 +49,44 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Click import to select a TTF font file to import."
+                android:text="Here you can import or export some data that is not stored on the WK servers."
+                style="@style/WK.TextView.Large"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Note that imports will add to or overwrite existing data, but won't remove existing data."
                 style="@style/WK.TextView.Normal"/>
 
             <Button
+                android:id="@+id/exportSearchPresets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Import"
-                android:onClick="importFont"
+                android:layout_marginTop="8dp"
+                android:text="Export search presets"
                 style="@style/WK.Button.Normal"/>
 
-            <TableLayout
-                android:id="@+id/fontTable"
+            <Button
+                android:id="@+id/importSearchPresets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:shrinkColumns="0"/>
+                android:text="Import search presets"
+                style="@style/WK.Button.Normal"/>
+
+            <Button
+                android:id="@+id/exportStarRatings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export star ratings"
+                style="@style/WK.Button.Normal"/>
+
+            <Button
+                android:id="@+id/importStarRatings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Import star ratings"
+                style="@style/WK.Button.Normal"/>
 
         </LinearLayout>
 

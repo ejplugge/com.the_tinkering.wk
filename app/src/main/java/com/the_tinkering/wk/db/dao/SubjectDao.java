@@ -21,6 +21,7 @@ import androidx.room.Query;
 
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.db.model.SubjectEntity;
+import com.the_tinkering.wk.livedata.SubjectChangeWatcher;
 
 import java.util.Collection;
 
@@ -108,7 +109,18 @@ public abstract class SubjectDao {
      * @param numStars the new rating
      */
     @Query("UPDATE subject SET typeCode = :numStars WHERE id = :id")
-    public abstract void updateStars(final long id, final int numStars);
+    protected abstract void updateStarsHelper(final long id, final int numStars);
+
+    /**
+     * Update the star rating.
+     *
+     * @param id the subject ID
+     * @param numStars the new rating
+     */
+    public final void updateStars(final long id, final int numStars) {
+        updateStarsHelper(id, numStars);
+        SubjectChangeWatcher.getInstance().reportChange(id);
+    }
 
     /**
      * Room-generated method: clear the statisticPatched flag from a collection of subjects.
