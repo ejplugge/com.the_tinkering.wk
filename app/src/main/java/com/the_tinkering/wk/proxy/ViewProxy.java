@@ -649,7 +649,7 @@ public final class ViewProxy {
         }
     }
 
-    public void setOnClickListener(final View.OnClickListener listener) {
+    public void setOnClickListener(final @Nullable View.OnClickListener listener) {
         final @Nullable View delegate = getDelegate();
         if (delegate != null) {
             delegate.setOnClickListener(listener);
