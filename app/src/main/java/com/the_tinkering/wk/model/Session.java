@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
+import com.the_tinkering.wk.adapter.sessionlog.SessionLogAdapter;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
@@ -82,6 +83,8 @@ import static java.util.Objects.requireNonNull;
 public final class Session implements SubjectChangeListener {
     private static final Logger LOGGER = Logger.get(Session.class);
     private static final Session instance = new Session();
+
+    private SessionLogAdapter adapter = new SessionLogAdapter();
     private boolean loaded = false;
     private SessionType type = NONE;
     private boolean onkun = false;
@@ -293,8 +296,8 @@ s     *
      * @return the number
      */
     @SuppressLint("NewApi")
-    public long getNumActiveItems() {
-        return items.stream().filter(SessionItem::isActive).count();
+    public int getNumActiveItems() {
+        return (int) items.stream().filter(SessionItem::isActive).count();
     }
 
     /**
@@ -303,8 +306,8 @@ s     *
      * @return the number
      */
     @SuppressLint("NewApi")
-    public long getNumPendingItems() {
-        return items.stream().filter(SessionItem::isPending).count();
+    public int getNumPendingItems() {
+        return (int) items.stream().filter(SessionItem::isPending).count();
     }
 
     /**
@@ -313,8 +316,8 @@ s     *
      * @return the number
      */
     @SuppressLint("NewApi")
-    private long getNumFinishedItems() {
-        return items.stream().filter(item -> item.isReported() || item.isPending()).count();
+    private int getNumFinishedItems() {
+        return (int) items.stream().filter(item -> item.isReported() || item.isPending()).count();
     }
 
     /**
@@ -323,8 +326,8 @@ s     *
      * @return the number
      */
     @SuppressLint("NewApi")
-    private long getNumLiveItems() {
-        return items.stream().filter(item -> !item.isAbandoned()).count();
+    private int getNumLiveItems() {
+        return (int) items.stream().filter(item -> !item.isAbandoned()).count();
     }
 
     /**
@@ -333,8 +336,8 @@ s     *
      * @return the number
      */
     @SuppressLint("NewApi")
-    public long getNumStartedItems() {
-        return items.stream().filter(SessionItem::isStarted).count();
+    public int getNumStartedItems() {
+        return (int) items.stream().filter(SessionItem::isStarted).count();
     }
 
     /**
@@ -343,8 +346,8 @@ s     *
      * @return the number
      */
     @SuppressLint("NewApi")
-    public long getNumReportedItems() {
-        return items.stream().filter(SessionItem::isReported).count();
+    public int getNumReportedItems() {
+        return (int) items.stream().filter(SessionItem::isReported).count();
     }
 
     /**

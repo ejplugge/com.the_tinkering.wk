@@ -45,7 +45,7 @@ public final class LevelHeaderItem extends HeaderItem {
 
     @Override
     public int getViewType() {
-        return R.id.viewTypeLevelHeader;
+        return R.id.viewTypeResultLevelHeader;
     }
 
     @Override

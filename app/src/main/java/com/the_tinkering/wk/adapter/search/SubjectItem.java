@@ -50,12 +50,12 @@ public final class SubjectItem extends ResultItem {
     @Override
     public int getViewType() {
         if (subject.getType().isRadical()) {
-            return R.id.viewTypeRadical;
+            return R.id.viewTypeResultRadical;
         }
         if (subject.getType().isKanji()) {
-            return R.id.viewTypeKanji;
+            return R.id.viewTypeResultKanji;
         }
-        return R.id.viewTypeVocabulary;
+        return R.id.viewTypeResultVocabulary;
     }
 
     @Override

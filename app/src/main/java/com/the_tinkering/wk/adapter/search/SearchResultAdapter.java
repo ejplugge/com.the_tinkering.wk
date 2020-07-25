@@ -159,40 +159,40 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<ResultItemVi
     public ResultItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         return safe(() -> new DummyViewHolder(this, new AppCompatTextView(parent.getContext())), () -> {
             switch (viewType) {
-                case R.id.viewTypeRadical: {
+                case R.id.viewTypeResultRadical: {
                     final View view = binder.createView(SubjectType.WANIKANI_RADICAL, parent);
                     return new SubjectItemViewHolder(this, view, binder, fragmentRef.get());
                 }
-                case R.id.viewTypeKanji: {
+                case R.id.viewTypeResultKanji: {
                     final View view = binder.createView(SubjectType.WANIKANI_KANJI, parent);
                     return new SubjectItemViewHolder(this, view, binder, fragmentRef.get());
                 }
-                case R.id.viewTypeVocabulary: {
+                case R.id.viewTypeResultVocabulary: {
                     final View view = binder.createView(SubjectType.WANIKANI_VOCAB, parent);
                     return new SubjectItemViewHolder(this, view, binder, fragmentRef.get());
                 }
-                case R.id.viewTypeSearchForm: {
+                case R.id.viewTypeResultSearchForm: {
                     final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.search_result_form, parent, false);
                     return new SearchFormItemViewHolder(this, view, requireNonNull(parameters), fragmentRef.get());
                 }
-                case R.id.viewTypeItemTypeHeader: {
+                case R.id.viewTypeResultItemTypeHeader: {
                     final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final int id = sortOrder.isSingleLevel() ? R.layout.search_result_top_header : R.layout.search_result_sub_header;
                     final View view = inflater.inflate(id, parent, false);
                     return new ItemTypeHeaderItemViewHolder(this, view);
                 }
-                case R.id.viewTypeLevelHeader: {
+                case R.id.viewTypeResultLevelHeader: {
                     final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.search_result_top_header, parent, false);
                     return new LevelHeaderItemViewHolder(this, view);
                 }
-                case R.id.viewTypeAvailableAtHeader: {
+                case R.id.viewTypeResultAvailableAtHeader: {
                     final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.search_result_top_header, parent, false);
                     return new AvailableAtHeaderItemViewHolder(this, view, searchTime);
                 }
-                case R.id.viewTypeSrsStageHeader: {
+                case R.id.viewTypeResultSrsStageHeader: {
                     final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.search_result_top_header, parent, false);
                     return new SrsStageHeaderItemViewHolder(this, view);

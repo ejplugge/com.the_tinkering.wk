@@ -49,7 +49,7 @@ public final class ItemTypeHeaderItem extends HeaderItem {
 
     @Override
     public int getViewType() {
-        return R.id.viewTypeItemTypeHeader;
+        return R.id.viewTypeResultItemTypeHeader;
     }
 
     @Override

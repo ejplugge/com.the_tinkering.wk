@@ -42,7 +42,7 @@ public final class SearchFormItem extends ResultItem {
 
     @Override
     public int getViewType() {
-        return R.id.viewTypeSearchForm;
+        return R.id.viewTypeResultSearchForm;
     }
 
     @Override

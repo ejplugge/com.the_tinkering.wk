@@ -616,8 +616,8 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the number
      */
     @SuppressLint("NewApi")
-    private long getNumAcceptedMeanings() {
-        return getMeanings().stream()
+    private int getNumAcceptedMeanings() {
+        return (int) getMeanings().stream()
                 .filter(Meaning::isAcceptedAnswer)
                 .count();
     }
@@ -681,8 +681,8 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the number
      */
     @SuppressLint("NewApi")
-    private long getNumAcceptedReadings() {
-        return getReadings().stream()
+    private int getNumAcceptedReadings() {
+        return (int) getReadings().stream()
                 .filter(Reading::isAcceptedAnswer)
                 .count();
     }

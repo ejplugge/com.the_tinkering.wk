@@ -19,13 +19,16 @@
     <item type="id" name="textWatcherAdded"/>
     <item type="id" name="themeCustomizationIndex"/>
     <item type="id" name="advancedSearchSwitchTag"/>
-    <item type="id" name="viewTypeRadical"/>
-    <item type="id" name="viewTypeKanji"/>
-    <item type="id" name="viewTypeVocabulary"/>
-    <item type="id" name="viewTypeSearchForm"/>
-    <item type="id" name="viewTypeItemTypeHeader"/>
-    <item type="id" name="viewTypeLevelHeader"/>
-    <item type="id" name="viewTypeAvailableAtHeader"/>
-    <item type="id" name="viewTypeSrsStageHeader"/>
+    <item type="id" name="viewTypeResultRadical"/>
+    <item type="id" name="viewTypeResultKanji"/>
+    <item type="id" name="viewTypeResultVocabulary"/>
+    <item type="id" name="viewTypeResultSearchForm"/>
+    <item type="id" name="viewTypeResultItemTypeHeader"/>
+    <item type="id" name="viewTypeResultLevelHeader"/>
+    <item type="id" name="viewTypeResultAvailableAtHeader"/>
+    <item type="id" name="viewTypeResultSrsStageHeader"/>
+    <item type="id" name="viewTypeLogHeader"/>
+    <item type="id" name="viewTypeLogItem"/>
+    <item type="id" name="viewTypeLogEvent"/>
     <item type="id" name="subjectId"/>
 </resources>

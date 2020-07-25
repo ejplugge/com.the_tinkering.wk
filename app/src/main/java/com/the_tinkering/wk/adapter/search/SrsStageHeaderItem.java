@@ -46,7 +46,7 @@ public final class SrsStageHeaderItem extends HeaderItem {
 
     @Override
     public int getViewType() {
-        return R.id.viewTypeSrsStageHeader;
+        return R.id.viewTypeResultSrsStageHeader;
     }
 
     @Override

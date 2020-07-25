@@ -36,7 +36,7 @@ public final class AvailableAtHeaderItem extends HeaderItem {
 
     @Override
     public int getViewType() {
-        return R.id.viewTypeAvailableAtHeader;
+        return R.id.viewTypeResultAvailableAtHeader;
     }
 
     @Override
