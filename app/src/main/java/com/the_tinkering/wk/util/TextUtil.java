@@ -48,6 +48,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.FONT_SIZE_NORMAL;
+import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.Constants.MINUTE;
+import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.isTrue;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
@@ -392,5 +395,22 @@ public final class TextUtil {
             n--;
         }
         return sb.toString();
+    }
+
+    /**
+     * Format an amount of elapsed time in short form.
+     *
+     * @param elapsed the amount of time in ms that has elapsed
+     * @return the formatted elapsed time
+     */
+    public static String formatElapsedTime(final long elapsed) {
+        if (elapsed < MINUTE) {
+            //noinspection StringConcatenationMissingWhitespace
+            return (elapsed / SECOND) + "s";
+        }
+        if (elapsed < HOUR) {
+            return String.format(Locale.ROOT, "%d:%02d", elapsed / MINUTE, (elapsed % MINUTE) / SECOND);
+        }
+        return String.format(Locale.ROOT, "%d:%02d:%02d", elapsed / HOUR, (elapsed % HOUR) / MINUTE, (elapsed % MINUTE) / SECOND);
     }
 }

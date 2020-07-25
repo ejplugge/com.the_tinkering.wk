@@ -23,25 +23,26 @@ public enum SessionType {
     /**
      * None, the session isn't active.
      */
-    NONE(false, false),
+    NONE(false, false, "None"),
 
     /**
      * A lesson session.
      */
-    LESSON(false, true),
+    LESSON(false, true, "Lesson"),
 
     /**
      * A review session.
      */
-    REVIEW(true, true),
+    REVIEW(true, true, "Review"),
 
     /**
      * A self-study session which is not reported back to the mothership.
      */
-    SELF_STUDY(false, false);
+    SELF_STUDY(false, false, "Self-study");
 
     private final boolean srsRelevant;
     private final boolean reportingTaskNeeded;
+    private final String description;
 
     /**
      * The constructor.
@@ -49,9 +50,10 @@ public enum SessionType {
      * @param srsRelevant Are SRS stage changes relevant for this session type?.
      * @param reportingTaskNeeded When a session item's result is reported, does this session type also require a reporting task?.
      */
-    SessionType(final boolean srsRelevant, final boolean reportingTaskNeeded) {
+    SessionType(final boolean srsRelevant, final boolean reportingTaskNeeded, final String description) {
         this.srsRelevant = srsRelevant;
         this.reportingTaskNeeded = reportingTaskNeeded;
+        this.description = description;
     }
 
     /**
@@ -68,5 +70,14 @@ public enum SessionType {
      */
     public boolean isReportingTaskNeeded() {
         return reportingTaskNeeded;
+    }
+
+    /**
+     * The human readable description for this session type.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
     }
 }

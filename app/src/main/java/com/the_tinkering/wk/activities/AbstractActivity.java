@@ -149,6 +149,33 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
         }
     }
 
+    private void liveSessionStateOnChangeHelper() {
+        final @Nullable Menu menu = getMenu();
+        final Session session = Session.getInstance();
+
+        if (menu != null) {
+            final @Nullable MenuItem sessionLogItem = menu.findItem(R.id.action_session_log);
+            if (sessionLogItem != null) {
+                sessionLogItem.setVisible(!session.isInactive());
+            }
+
+            final @Nullable MenuItem abandonSessionItem = menu.findItem(R.id.action_abandon_session);
+            if (abandonSessionItem != null) {
+                abandonSessionItem.setVisible(session.canBeAbandoned());
+            }
+
+            final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
+            if (wrapupSessionItem != null) {
+                wrapupSessionItem.setVisible(session.canBeWrappedUp());
+            }
+
+            final @Nullable MenuItem selfStudyItem = menu.findItem(R.id.action_self_study);
+            if (selfStudyItem != null) {
+                selfStudyItem.setVisible(session.isInactive());
+            }
+        }
+    }
+
     private void onCreateBase() {
         creationTheme = ActiveTheme.getCurrentTheme();
         setContentView(layoutId);
@@ -167,27 +194,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
             }
         }
 
-        LiveSessionState.getInstance().observe(this, t -> safe(() -> {
-            final @Nullable Menu menu = getMenu();
-            final Session session = Session.getInstance();
-
-            if (menu != null) {
-                final @Nullable MenuItem abandonSessionItem = menu.findItem(R.id.action_abandon_session);
-                if (abandonSessionItem != null) {
-                    abandonSessionItem.setVisible(session.canBeAbandoned());
-                }
-
-                final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
-                if (wrapupSessionItem != null) {
-                    wrapupSessionItem.setVisible(session.canBeWrappedUp());
-                }
-
-                final @Nullable MenuItem selfStudyItem = menu.findItem(R.id.action_self_study);
-                if (selfStudyItem != null) {
-                    selfStudyItem.setVisible(session.isInactive());
-                }
-            }
-        }));
+        LiveSessionState.getInstance().observe(this, t -> safe(this::liveSessionStateOnChangeHelper));
 
         LiveSessionProgress.getInstance().observe(this, t -> safe(() -> {
             final @Nullable Menu menu = getMenu();
@@ -282,69 +289,77 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
         });
     }
 
+    private boolean onCreateOptionsMenuHelper(final Menu menu) {
+        getMenuInflater().inflate(optionsMenuId, menu);
+
+        final @Nullable MenuItem sessionLogItem = menu.findItem(R.id.action_session_log);
+        if (sessionLogItem != null) {
+            final Session session = Session.getInstance();
+            sessionLogItem.setVisible(!session.isInactive());
+        }
+
+        final @Nullable MenuItem abandonSessionItem = menu.findItem(R.id.action_abandon_session);
+        if (abandonSessionItem != null) {
+            final Session session = Session.getInstance();
+            abandonSessionItem.setVisible(session.canBeAbandoned());
+        }
+
+        final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
+        if (wrapupSessionItem != null) {
+            final Session session = Session.getInstance();
+            wrapupSessionItem.setVisible(session.canBeWrappedUp());
+        }
+
+        final @Nullable MenuItem viewLastFinishedItem = menu.findItem(R.id.action_view_last_finished);
+        if (viewLastFinishedItem != null) {
+            final Session session = Session.getInstance();
+            viewLastFinishedItem.setVisible(session.getLastFinishedSubjectId() != -1);
+        }
+
+        final @Nullable MenuItem studyMaterialsItem = menu.findItem(R.id.action_study_materials);
+        if (studyMaterialsItem != null) {
+            studyMaterialsItem.setVisible(getCurrentSubject() != null && getCurrentSubject().getType().canHaveStudyMaterials());
+        }
+
+        final @Nullable MenuItem selfStudyItem = menu.findItem(R.id.action_self_study);
+        if (selfStudyItem != null) {
+            final Session session = Session.getInstance();
+            selfStudyItem.setVisible(session.isInactive());
+        }
+
+        final @Nullable MenuItem flushTasksItem = menu.findItem(R.id.action_flush_tasks);
+        if (flushTasksItem != null) {
+            flushTasksItem.setVisible(!LiveTaskCounts.getInstance().get().isEmpty());
+        }
+
+        final @Nullable SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final @Nullable MenuItem searchItem = menu.findItem(R.id.action_search);
+        if (searchItem != null && searchManager != null) {
+            final SearchView searchView = (SearchView) searchItem.getActionView();
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this, BrowseActivity.class)));
+        }
+
+        final @Nullable MenuItem testItem = menu.findItem(R.id.action_test);
+        if (testItem != null) {
+            final @Nullable String username = LiveLevelDuration.getInstance().get().getUsername();
+            testItem.setVisible(!isEmpty(username) && username.equals(Identification.AUTHOR_USERNAME));
+        }
+
+        final @Nullable MenuItem muteItem = menu.findItem(R.id.action_mute);
+        if (muteItem != null) {
+            final boolean muted = WkApplication.getDatabase().propertiesDao().getIsMuted();
+            final int imageId = muted ? R.drawable.ic_volume_off_24dp : R.drawable.ic_volume_up_24dp;
+            final String title = muted ? "Unmute" : "Mute";
+            muteItem.setIcon(ContextCompat.getDrawable(this, imageId));
+            muteItem.setTitle(title);
+        }
+
+        return true;
+    }
+
     @Override
     public final boolean onCreateOptionsMenu(final Menu menu) {
-        return safe(true, () -> {
-            getMenuInflater().inflate(optionsMenuId, menu);
-
-            final @Nullable MenuItem abandonSessionItem = menu.findItem(R.id.action_abandon_session);
-            if (abandonSessionItem != null) {
-                final Session session = Session.getInstance();
-                abandonSessionItem.setVisible(session.canBeAbandoned());
-            }
-
-            final @Nullable MenuItem wrapupSessionItem = menu.findItem(R.id.action_wrapup_session);
-            if (wrapupSessionItem != null) {
-                final Session session = Session.getInstance();
-                wrapupSessionItem.setVisible(session.canBeWrappedUp());
-            }
-
-            final @Nullable MenuItem viewLastFinishedItem = menu.findItem(R.id.action_view_last_finished);
-            if (viewLastFinishedItem != null) {
-                final Session session = Session.getInstance();
-                viewLastFinishedItem.setVisible(session.getLastFinishedSubjectId() != -1);
-            }
-
-            final @Nullable MenuItem studyMaterialsItem = menu.findItem(R.id.action_study_materials);
-            if (studyMaterialsItem != null) {
-                studyMaterialsItem.setVisible(getCurrentSubject() != null && getCurrentSubject().getType().canHaveStudyMaterials());
-            }
-
-            final @Nullable MenuItem selfStudyItem = menu.findItem(R.id.action_self_study);
-            if (selfStudyItem != null) {
-                final Session session = Session.getInstance();
-                selfStudyItem.setVisible(session.isInactive());
-            }
-
-            final @Nullable MenuItem flushTasksItem = menu.findItem(R.id.action_flush_tasks);
-            if (flushTasksItem != null) {
-                flushTasksItem.setVisible(!LiveTaskCounts.getInstance().get().isEmpty());
-            }
-
-            final @Nullable SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            final @Nullable MenuItem searchItem = menu.findItem(R.id.action_search);
-            if (searchItem != null && searchManager != null) {
-                final SearchView searchView = (SearchView) searchItem.getActionView();
-                searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this, BrowseActivity.class)));
-            }
-
-            final @Nullable MenuItem testItem = menu.findItem(R.id.action_test);
-            if (testItem != null) {
-                final @Nullable String username = LiveLevelDuration.getInstance().get().getUsername();
-                testItem.setVisible(!isEmpty(username) && username.equals(Identification.AUTHOR_USERNAME));
-            }
-
-            final @Nullable MenuItem muteItem = menu.findItem(R.id.action_mute);
-            if (muteItem != null) {
-                final boolean muted = WkApplication.getDatabase().propertiesDao().getIsMuted();
-                final int imageId = muted ? R.drawable.ic_volume_off_24dp : R.drawable.ic_volume_up_24dp;
-                final String title = muted ? "Unmute" : "Mute";
-                muteItem.setIcon(ContextCompat.getDrawable(this, imageId));
-                muteItem.setTitle(title);
-            }
-
-            return true;
-        });
+        return safe(true, () -> onCreateOptionsMenuHelper(menu));
     }
 
     private boolean onOptionsItemSelectedHelper(final MenuItem item) {
@@ -385,6 +400,10 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                 if (subjectId != -1) {
                     goToSubjectInfo(subjectId, Collections.emptyList(), FragmentTransitionAnimation.RTL);
                 }
+                return true;
+            }
+            case R.id.action_session_log: {
+                goToSessionLog();
                 return true;
             }
             case R.id.action_abandon_session: {
@@ -632,6 +651,21 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
             final Intent intent = new Intent(this, BrowseActivity.class);
             intent.putExtra("id", id);
             intent.putExtra("ids", ids);
+            startActivity(intent);
+        });
+    }
+
+    /**
+     * Go to the session log fragment.
+     */
+    private void goToSessionLog() {
+        safe(() -> {
+            if (this instanceof BrowseActivity) {
+                ((BrowseActivity) this).loadSessionLogFragment();
+                return;
+            }
+            final Intent intent = new Intent(this, BrowseActivity.class);
+            intent.putExtra("sessionLog", true);
             startActivity(intent);
         });
     }

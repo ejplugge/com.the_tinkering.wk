@@ -35,6 +35,9 @@
     <item android:id="@+id/action_browse"
         android:title="Browse/search..."
         app:showAsAction="never"/>
+    <item android:id="@+id/action_session_log"
+        android:title="Session log..."
+        app:showAsAction="never"/>
     <item android:id="@+id/action_view_last_finished"
         android:title="Last completed item..."
         app:showAsAction="never"/>

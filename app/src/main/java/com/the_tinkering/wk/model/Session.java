@@ -84,7 +84,7 @@ public final class Session implements SubjectChangeListener {
     private static final Logger LOGGER = Logger.get(Session.class);
     private static final Session instance = new Session();
 
-    private SessionLogAdapter adapter = new SessionLogAdapter();
+    private final SessionLogAdapter adapter = new SessionLogAdapter();
     private boolean loaded = false;
     private SessionType type = NONE;
     private boolean onkun = false;
@@ -129,6 +129,15 @@ public final class Session implements SubjectChangeListener {
      */
     public List<SessionItem> getItems() {
         return Collections.unmodifiableList(items);
+    }
+
+    /**
+     * Get the recycler view adapter for the session.
+     *
+     * @return the adapter
+     */
+    public SessionLogAdapter getAdapter() {
+        return adapter;
     }
 
     /**
@@ -1071,6 +1080,8 @@ s     *
             if (!items.isEmpty()) {
                 createQuestions();
                 state = type == LESSON && getNumStartedItems() == 0 ? IN_LESSON_PRESENTATION : ACTIVE;
+                adapter.clear();
+                adapter.addEventLoadSession(type);
                 LiveSessionState.getInstance().post(state);
                 checkQuestions();
                 lastFinishedSubjectId = -1;
@@ -1119,6 +1130,7 @@ s     *
         items.clear();
         questions.clear();
         history.clear();
+        adapter.clear();
         state = INACTIVE;
         FloatingUiState.setCurrentAnswer("");
         setCurrentQuestion(null, QuestionChoiceReason.FINISHED);
@@ -1135,6 +1147,7 @@ s     *
         items.clear();
         questions.clear();
         history.clear();
+        adapter.clear();
         state = INACTIVE;
         LiveSessionState.getInstance().post(state);
         LiveSessionProgress.getInstance().ping();
@@ -1285,6 +1298,8 @@ s     *
         populateItems(subjects, maxSize, GlobalSettings.AdvancedLesson.getOrder().isShuffle());
         createQuestions();
         state = IN_LESSON_PRESENTATION;
+        adapter.clear();
+        adapter.addEventStartSession(type);
         currentItem = null;
         setCurrentQuestion(null, QuestionChoiceReason.STARTING_LESSON_SESSION);
         lastFinishedSubjectId = -1;
@@ -1334,6 +1349,8 @@ s     *
         populateItems(subjects, maxSize, true);
         createQuestions();
         state = ACTIVE;
+        adapter.clear();
+        adapter.addEventStartSession(type);
         currentItem = null;
         setCurrentQuestion(null, QuestionChoiceReason.STARTING_REVIEW_SESSION);
         lastFinishedSubjectId = -1;
@@ -1383,6 +1400,8 @@ s     *
         populateItems(subjects, maxSize, true);
         createQuestions();
         state = ACTIVE;
+        adapter.clear();
+        adapter.addEventStartSession(type);
         currentItem = null;
         setCurrentQuestion(null, QuestionChoiceReason.STARTING_SELF_STUDY_SESSION);
         lastFinishedSubjectId = -1;

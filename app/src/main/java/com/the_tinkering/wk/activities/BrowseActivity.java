@@ -32,6 +32,7 @@ import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.fragments.BrowseOverviewFragment;
 import com.the_tinkering.wk.fragments.SearchResultFragment;
+import com.the_tinkering.wk.fragments.SessionLogFragment;
 import com.the_tinkering.wk.fragments.SubjectInfoFragment;
 
 import javax.annotation.Nullable;
@@ -78,6 +79,12 @@ public final class BrowseActivity extends AbstractActivity {
                     loadSearchResultFragment(presetName, searchType, searchParameters);
                     return;
                 }
+            }
+
+            final boolean sessionLog = getIntent().getBooleanExtra("sessionLog", false);
+            if (sessionLog) {
+                loadSessionLogFragment();
+                return;
             }
 
             final @Nullable Uri uri = getIntent().getData();
@@ -165,6 +172,20 @@ public final class BrowseActivity extends AbstractActivity {
         if (getCurrentFragment() != null) {
             transaction.addToBackStack(null);
             animation.apply(transaction);
+        }
+        transaction.replace(R.id.fragment, fragment);
+        transaction.commit();
+    }
+
+    /**
+     * Show a log of the current session.
+     */
+    public void loadSessionLogFragment() {
+        final Fragment fragment = SessionLogFragment.newInstance();
+        final FragmentManager manager = getSupportFragmentManager();
+        final FragmentTransaction transaction = manager.beginTransaction();
+        if (getCurrentFragment() != null) {
+            transaction.addToBackStack(null);
         }
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();
