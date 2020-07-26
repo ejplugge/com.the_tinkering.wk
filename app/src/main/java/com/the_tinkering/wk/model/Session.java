@@ -651,17 +651,10 @@ s     *
         setCurrentQuestion(null, QuestionChoiceReason.STARTING_QUIZ);
         lastFinishedSubjectId = -1;
         LiveSessionProgress.getInstance().ping();
+        adapter.addEventStartQuiz();
     }
 
-    /**
-     * Submit the current answer as answer for the current question. The session doesn't advance yet,
-     * it just records the status for the current question, and processes the result in the database
-     * and, if needed, the API.
-     *
-     * @param matchingKanji if this subject is a vocab item that consists of only one kanji character, this is that kanji.
-     * @return the verdict indicating if the answer was correct and if a retry is permitted.
-     */
-    public AnswerVerdict submit(final @Nullable Subject matchingKanji) {
+    private AnswerVerdict submitHelper(final @Nullable Subject matchingKanji) {
         final @Nullable Subject subject = currentQuestion == null ? null : currentQuestion.getItem().getSubject();
         String currentAnswer = FloatingUiState.getCurrentAnswer();
 
@@ -734,6 +727,20 @@ s     *
     }
 
     /**
+     * Submit the current answer as answer for the current question. The session doesn't advance yet,
+     * it just records the status for the current question, and processes the result in the database
+     * and, if needed, the API.
+     *
+     * @param matchingKanji if this subject is a vocab item that consists of only one kanji character, this is that kanji.
+     * @return the verdict indicating if the answer was correct and if a retry is permitted.
+     */
+    public AnswerVerdict submit(final @Nullable Subject matchingKanji) {
+        final AnswerVerdict verdict = submitHelper(matchingKanji);
+        adapter.addEventSubmitTypedAnswer(currentQuestion, FloatingUiState.getCurrentAnswer(), verdict);
+        return verdict;
+    }
+
+    /**
      * Process a correct answer for Anki mode.
      */
     public void submitAnkiCorrect() {
@@ -754,6 +761,7 @@ s     *
         FloatingUiState.showCloseToast = false;
         LOGGER.info("Submit Anki correct: %s processed", currentQuestion);
         LiveSessionProgress.getInstance().ping();
+        adapter.addEventSubmitAnkiCorrect(currentQuestion);
     }
 
     /**
@@ -772,6 +780,7 @@ s     *
         FloatingUiState.showCloseToast = false;
         LOGGER.info("Submit Anki incorrect: %s processed", currentQuestion);
         LiveSessionProgress.getInstance().ping();
+        adapter.addEventSubmitAnkiIncorrect(currentQuestion);
     }
 
     /**
@@ -792,6 +801,7 @@ s     *
         FloatingUiState.toastPlayed = false;
         LOGGER.info("Submit Don't Know: %s processed", currentQuestion);
         LiveSessionProgress.getInstance().ping();
+        adapter.addEventSubmitDontKnow(currentQuestion);
     }
 
     /**
@@ -846,6 +856,7 @@ s     *
             LiveSessionState.getInstance().post(state);
         }
         LiveSessionProgress.getInstance().ping();
+        adapter.addEventUndoAndRetry(currentQuestion);
     }
 
     /**
@@ -862,12 +873,14 @@ s     *
             currentQuestion.undo();
             putBack(currentQuestion);
             LOGGER.info("Undo and put back: %s undid current question in-place", currentQuestion);
+            adapter.addEventUndoAndPutBack(currentQuestion);
         }
         else {
             final Question question = history.pop();
             question.undo();
             putBack(question);
             LOGGER.info("Undo and put back: %s popped question from history stack", question);
+            adapter.addEventUndoAndPutBack(question);
         }
         answered = false;
         correct = false;
@@ -896,12 +909,61 @@ s     *
             currentItem.setChoiceDelay(3);
         }
 
+        adapter.addEventSkip(currentQuestion);
+
         forceNewFragment = true;
         setCurrentQuestion(null, QuestionChoiceReason.SKIP);
         currentItem = null;
         FloatingUiState.setCurrentAnswer("");
 
         LiveSessionProgress.getInstance().ping();
+    }
+
+    /**
+     * Ignore an incorrect answer and mark as correct instead.
+     */
+    public void ignore() {
+        if (!canUndo()) {
+            LOGGER.info("Ignore: can't undo now");
+            return;
+        }
+
+        forceNewFragment = true;
+        if (currentQuestion != null && answered && currentQuestion.canUndo()) {
+            LOGGER.info("Ignore: %s undid current question in-place", currentQuestion);
+            setCurrentQuestion(currentQuestion, QuestionChoiceReason.UNDO_AND_RETRY);
+            currentQuestion.undo();
+        }
+        else {
+            setCurrentQuestion(history.pop(), QuestionChoiceReason.UNDO_AND_RETRY);
+            currentQuestion.undo();
+            currentItem = currentQuestion.getItem();
+            WkApplication.getDatabase().propertiesDao().setCurrentItemId(currentItem.getId());
+            WkApplication.getDatabase().propertiesDao().setCurrentQuestionType(currentQuestion.getType());
+            putBack(currentQuestion);
+            LOGGER.info("Ignore: %s popped question from history stack", currentQuestion);
+        }
+        FloatingUiState.showDumpStage = null;
+        FloatingUiState.setCurrentAnswer("");
+
+        if (state == FINISHING) {
+            state = ACTIVE;
+            LiveSessionState.getInstance().post(state);
+        }
+
+        currentQuestion.markCorrect();
+        if (currentQuestion.getItem().isFinished()) {
+            FloatingUiState.toastOldSrsStage = currentQuestion.getItem().getSrsStage();
+            FloatingUiState.toastNewSrsStage = currentQuestion.getItem().getNewSrsStage();
+            FloatingUiState.showSrsStageChangedToast = true;
+        }
+        answered = true;
+        correct = true;
+        FloatingUiState.lastVerdict = null;
+        FloatingUiState.showCloseToast = false;
+        LOGGER.info("Ignore: %s processed", currentQuestion);
+        LiveSessionProgress.getInstance().ping();
+        adapter.addEventIgnore(currentQuestion);
     }
 
     /**

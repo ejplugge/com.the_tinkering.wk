@@ -50,8 +50,7 @@ public enum SpecialButtonBehavior {
         public void perform() {
             if (canShow()) {
                 final Session session = Session.getInstance();
-                session.undoAndRetry();
-                session.submitAnkiCorrect();
+                session.ignore();
             }
         }
     },

@@ -28,6 +28,8 @@ import com.the_tinkering.wk.Actment;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.enums.SessionType;
+import com.the_tinkering.wk.model.AnswerVerdict;
+import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.util.WeakLcoRef;
 
@@ -217,5 +219,67 @@ public final class SessionLogAdapter extends RecyclerView.Adapter<LogItemViewHol
     public void addEventLoadSession(final SessionType type) {
         final String text = String.format(Locale.ROOT, "%s session re-loaded on app startup", type.getDescription());
         events.add(0, new EventItem(null, text));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventStartQuiz() {
+        events.add(0, new EventItem(null, "Started lesson quiz"));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventSubmitTypedAnswer(final @Nullable Question question, final String answer, final AnswerVerdict verdict) {
+        if (question == null || verdict.isRetry()) {
+            return;
+        }
+        final String text = String.format(Locale.ROOT, "Submit %s: %s\n%s",
+                question.getType().getShortTitle(),
+                answer,
+                verdict.isOk() ? "Correct" : "Incorrect");
+        events.add(0, new EventItem(question.getItem(), text));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventSubmitAnkiCorrect(final Question question) {
+        final String text = String.format(Locale.ROOT, "Submit: %s\nAnki correct", question.getType().getShortTitle());
+        events.add(0, new EventItem(question.getItem(), text));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventSubmitAnkiIncorrect(final Question question) {
+        final String text = String.format(Locale.ROOT, "Submit: %s\nAnki incorrect", question.getType().getShortTitle());
+        events.add(0, new EventItem(question.getItem(), text));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventSubmitDontKnow(final Question question) {
+        final String text = String.format(Locale.ROOT, "Submit: %s\n'\"Don't know\" incorrect", question.getType().getShortTitle());
+        events.add(0, new EventItem(question.getItem(), text));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventUndoAndRetry(final Question question) {
+        final String text = String.format(Locale.ROOT, "Undo and retry immediately: %s", question.getType().getShortTitle());
+        events.add(0, new EventItem(question.getItem(), text));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventUndoAndPutBack(final Question question) {
+        final String text = String.format(Locale.ROOT, "Undo and put back: %s", question.getType().getShortTitle());
+        events.add(0, new EventItem(question.getItem(), text));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventSkip(final @Nullable Question question) {
+        if (question == null) {
+            return;
+        }
+        final String text = String.format(Locale.ROOT, "Skip: %s", question.getType().getShortTitle());
+        events.add(0, new EventItem(question.getItem(), text));
+    }
+
+    @SuppressWarnings("JavaDoc")
+    public void addEventIgnore(final Question question) {
+        final String text = String.format(Locale.ROOT, "Ignore and mark correct: %s", question.getType().getShortTitle());
+        events.add(0, new EventItem(question.getItem(), text));
     }
 }

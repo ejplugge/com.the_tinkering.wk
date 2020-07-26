@@ -304,6 +304,18 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
             subjectInfo.setContainerType(SubjectInfoView.ContainerType.ANSWERED_QUESTION);
             subjectInfo.setSubject(this, subject);
         }
+
+        // Show the special button 1 if allowed and relevant
+        specialButton1.setVisibility(GlobalSettings.AdvancedOther.getSpecialButton1Behavior().canShow());
+        specialButton1.setText(GlobalSettings.AdvancedOther.getSpecialButton1Behavior().getLabel());
+
+        // Show the special button 2 if allowed and relevant
+        specialButton2.setVisibility(GlobalSettings.AdvancedOther.getSpecialButton2Behavior().canShow());
+        specialButton2.setText(GlobalSettings.AdvancedOther.getSpecialButton2Behavior().getLabel());
+
+        // Show the special button 3 if allowed and relevant
+        specialButton3.setVisibility(GlobalSettings.AdvancedOther.getSpecialButton3Behavior().canShow());
+        specialButton3.setText(GlobalSettings.AdvancedOther.getSpecialButton3Behavior().getLabel());
     }
 
     @Override
