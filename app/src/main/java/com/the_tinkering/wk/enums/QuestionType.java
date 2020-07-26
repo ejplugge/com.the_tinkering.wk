@@ -40,7 +40,7 @@ public enum QuestionType {
     /**
      * Ask for the name of the radical.
      */
-    WANIKANI_RADICAL_NAME(true, false, false, true, 1) {
+    WANIKANI_RADICAL_NAME(true, false, false, true, 1, "Name") {
         @Override
         public int getHintColor() {
             return ThemeUtil.getColor(R.attr.meaningHintColor);
@@ -106,7 +106,7 @@ public enum QuestionType {
     /**
      * Ask for the meaning of the kanji.
      */
-    WANIKANI_KANJI_MEANING(true, false, false, true, 1) {
+    WANIKANI_KANJI_MEANING(true, false, false, true, 1, "Meaning") {
         @Override
         public int getHintColor() {
             return ThemeUtil.getColor(R.attr.meaningHintColor);
@@ -172,7 +172,7 @@ public enum QuestionType {
     /**
      * Ask for the meaning of the vocabulary.
      */
-    WANIKANI_VOCAB_MEANING(true, false, false, true, 1) {
+    WANIKANI_VOCAB_MEANING(true, false, false, true, 1, "Meaning") {
         @Override
         public int getHintColor() {
             return ThemeUtil.getColor(R.attr.meaningHintColor);
@@ -238,7 +238,7 @@ public enum QuestionType {
     /**
      * Ask for the reading of the kanji.
      */
-    WANIKANI_KANJI_READING(false, true, true, false, 2) {
+    WANIKANI_KANJI_READING(false, true, true, false, 2, "Reading") {
         @Override
         public int getHintColor() {
             return ThemeUtil.getColor(R.attr.readingHintColor);
@@ -300,7 +300,7 @@ public enum QuestionType {
     /**
      * Ask for the reading of the vocabulary.
      */
-    WANIKANI_VOCAB_READING(false, true, true, false, 2) {
+    WANIKANI_VOCAB_READING(false, true, true, false, 2, "Reading") {
         @Override
         public int getHintColor() {
             return ThemeUtil.getColor(R.attr.readingHintColor);
@@ -364,7 +364,7 @@ public enum QuestionType {
     /**
      * Ask for an on'yomi reading of the kanji.
      */
-    WANIKANI_KANJI_ONYOMI(false, true, true, false, 3) {
+    WANIKANI_KANJI_ONYOMI(false, true, true, false, 3, "On'yomi") {
         @Override
         public int getHintColor() {
             return ThemeUtil.getColor(R.attr.readingHintColor);
@@ -432,7 +432,7 @@ public enum QuestionType {
     /**
      * Ask for a kun'yomi reading of the kanji.
      */
-    WANIKANI_KANJI_KUNYOMI(false, true, true, false, 4) {
+    WANIKANI_KANJI_KUNYOMI(false, true, true, false, 4, "Kun'yomi") {
         @Override
         public int getHintColor() {
             return ThemeUtil.getColor(R.attr.readingHintColor);
@@ -502,13 +502,16 @@ public enum QuestionType {
     private final boolean kana;
     private final boolean ascii;
     private final int slot;
+    private final String shortTitle;
 
-    QuestionType(final boolean meaning, final boolean reading, final boolean kana, final boolean ascii, final int slot) {
+    QuestionType(final boolean meaning, final boolean reading, final boolean kana, final boolean ascii, final int slot,
+                 final String shortTitle) {
         this.meaning = meaning;
         this.reading = reading;
         this.kana = kana;
         this.ascii = ascii;
         this.slot = slot;
+        this.shortTitle = shortTitle;
     }
 
     /**
@@ -553,6 +556,15 @@ public enum QuestionType {
      */
     public int getSlot() {
         return slot;
+    }
+
+    /**
+     * Get the short title for a question of this type.
+     *
+     * @return the title
+     */
+    public String getShortTitle() {
+        return shortTitle;
     }
 
     /**

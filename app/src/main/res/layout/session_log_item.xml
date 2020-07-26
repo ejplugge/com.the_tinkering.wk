@@ -65,6 +65,8 @@
         android:layout_marginStart="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginEnd="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:orientation="vertical">
 
         <TextView

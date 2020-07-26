@@ -289,6 +289,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
         });
     }
 
+    @SuppressWarnings("SameReturnValue")
     private boolean onCreateOptionsMenuHelper(final Menu menu) {
         getMenuInflater().inflate(optionsMenuId, menu);
 

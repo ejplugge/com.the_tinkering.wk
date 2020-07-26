@@ -18,6 +18,7 @@ package com.the_tinkering.wk.adapter.sessionlog;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Abstract base class for items that can contain other items.
@@ -27,6 +28,15 @@ public abstract class ContainerItem extends LogItem {
      * The sub-items.
      */
     protected final Collection<LogItem> items = new ArrayList<>();
+
+    /**
+     * The contained items. This is filled even if this item is collapsed.
+     *
+     * @return the items
+     */
+    public final Collection<LogItem> getItems() {
+        return Collections.unmodifiableCollection(items);
+    }
 
     /**
      * Add an item to the list of direct sub-items of this one.

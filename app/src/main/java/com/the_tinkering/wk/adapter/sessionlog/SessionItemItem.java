@@ -26,14 +26,17 @@ import javax.annotation.Nullable;
  */
 public final class SessionItemItem extends LogItem {
     private final SessionItem sessionItem;
+    private final HeaderItem parent;
 
     /**
      * The constructor.
      *
      * @param sessionItem the session item for this item
+     * @param parent the parent this item is contained in
      */
-    public SessionItemItem(final SessionItem sessionItem) {
+    public SessionItemItem(final SessionItem sessionItem, final HeaderItem parent) {
         this.sessionItem = sessionItem;
+        this.parent = parent;
     }
 
     /**
@@ -43,6 +46,15 @@ public final class SessionItemItem extends LogItem {
      */
     public SessionItem getSessionItem() {
         return sessionItem;
+    }
+
+    /**
+     * The parent this item is contained in.
+     *
+     * @return the parent
+     */
+    public HeaderItem getParent() {
+        return parent;
     }
 
     @Override

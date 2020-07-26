@@ -253,6 +253,15 @@ public final class Session implements SubjectChangeListener {
     }
 
     /**
+     * Are on and kun quizzed separately for this session?.
+     *
+     * @return true if they are
+     */
+    public boolean isOnkun() {
+        return onkun;
+    }
+
+    /**
      * Get the subject ID for the last item in the session that has been finished.
      *
      * @return the ID, or -1 if unavailable

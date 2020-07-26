@@ -755,4 +755,19 @@ public final class SessionItem {
         }
         return null;
     }
+
+    /**
+     * Get a question for this item by its slot if it exists.
+     *
+     * @param slot the slot the question belongs in
+     * @return the question
+     */
+    public @Nullable Question getQuestionBySlot(final int slot) {
+        for (final Question question: questions) {
+            if (question.getType().getSlot() == slot) {
+                return question;
+            }
+        }
+        return null;
+    }
 }
