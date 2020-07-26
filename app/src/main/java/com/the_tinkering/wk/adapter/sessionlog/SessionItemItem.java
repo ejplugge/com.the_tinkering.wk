@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 /**
  * Item for subject type headers.
  */
-public final class ItemItem extends LogItem {
+public final class SessionItemItem extends LogItem {
     private final SessionItem sessionItem;
 
     /**
@@ -32,7 +32,7 @@ public final class ItemItem extends LogItem {
      *
      * @param sessionItem the session item for this item
      */
-    public ItemItem(final SessionItem sessionItem) {
+    public SessionItemItem(final SessionItem sessionItem) {
         this.sessionItem = sessionItem;
     }
 

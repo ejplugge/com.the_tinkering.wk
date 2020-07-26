@@ -38,7 +38,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * View holder class for subject items.
  */
-public final class ItemItemViewHolder extends LogItemViewHolder implements View.OnClickListener {
+public final class SessionItemItemViewHolder extends LogItemViewHolder implements View.OnClickListener {
     private @Nullable SessionItem sessionItem = null;
     private final WeakLcoRef<Actment> actmentRef;
     private final ViewProxy button = new ViewProxy();
@@ -55,7 +55,7 @@ public final class ItemItemViewHolder extends LogItemViewHolder implements View.
      * @param view the view
      * @param actment the actment this view belongs to
      */
-    public ItemItemViewHolder(final SessionLogAdapter adapter, final View view, final Actment actment) {
+    public SessionItemItemViewHolder(final SessionLogAdapter adapter, final View view, final Actment actment) {
         super(adapter, view);
         actmentRef = new WeakLcoRef<>(actment);
         button.setDelegate(view, R.id.button);
@@ -89,10 +89,10 @@ public final class ItemItemViewHolder extends LogItemViewHolder implements View.
     @Override
     public void bind(final LogItem newItem) {
         safe(() -> {
-            if (!(newItem instanceof ItemItem)) {
+            if (!(newItem instanceof SessionItemItem)) {
                 return;
             }
-            sessionItem = ((ItemItem) newItem).getSessionItem();
+            sessionItem = ((SessionItemItem) newItem).getSessionItem();
             bindHelper();
         });
     }

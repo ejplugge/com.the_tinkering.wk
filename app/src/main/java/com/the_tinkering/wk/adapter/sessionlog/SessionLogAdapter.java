@@ -84,7 +84,7 @@ public final class SessionLogAdapter extends RecyclerView.Adapter<LogItemViewHol
                 case R.id.viewTypeLogItem: {
                     final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                     final View view = inflater.inflate(R.layout.session_log_item, parent, false);
-                    return new ItemItemViewHolder(this, view, requireNonNull(actmentRef).get());
+                    return new SessionItemItemViewHolder(this, view, requireNonNull(actmentRef).get());
                 }
                 case R.id.viewTypeLogEvent: {
                     final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -159,25 +159,25 @@ public final class SessionLogAdapter extends RecyclerView.Adapter<LogItemViewHol
         final List<SessionItem> items = Session.getInstance().getItems();
 
         final ItemHeaderItem abandonedHeader = new ItemHeaderItem("abandoned", collapsedTags.contains("abandoned"), "Abandoned items");
-        items.stream().filter(SessionItem::isAbandoned).forEach(item -> abandonedHeader.addItem(new ItemItem(item)));
+        items.stream().filter(SessionItem::isAbandoned).forEach(item -> abandonedHeader.addItem(new SessionItemItem(item)));
         if (!abandonedHeader.isEmpty()) {
             rootItem.addItem(abandonedHeader);
         }
 
         final ItemHeaderItem completedHeader = new ItemHeaderItem("completed", collapsedTags.contains("completed"), "Completed items");
-        items.stream().filter(item -> item.isPending() || item.isReported()).forEach(item -> completedHeader.addItem(new ItemItem(item)));
+        items.stream().filter(item -> item.isPending() || item.isReported()).forEach(item -> completedHeader.addItem(new SessionItemItem(item)));
         if (!completedHeader.isEmpty()) {
             rootItem.addItem(completedHeader);
         }
 
         final ItemHeaderItem startedHeader = new ItemHeaderItem("started", collapsedTags.contains("started"), "Started items");
-        items.stream().filter(SessionItem::isStarted).forEach(item -> startedHeader.addItem(new ItemItem(item)));
+        items.stream().filter(SessionItem::isStarted).forEach(item -> startedHeader.addItem(new SessionItemItem(item)));
         if (!startedHeader.isEmpty()) {
             rootItem.addItem(startedHeader);
         }
 
         final ItemHeaderItem notStartedHeader = new ItemHeaderItem("notstarted", collapsedTags.contains("notstarted"), "Not-started items");
-        items.stream().filter(item -> item.isActive() && !item.isStarted()).forEach(item -> notStartedHeader.addItem(new ItemItem(item)));
+        items.stream().filter(item -> item.isActive() && !item.isStarted()).forEach(item -> notStartedHeader.addItem(new SessionItemItem(item)));
         if (!notStartedHeader.isEmpty()) {
             rootItem.addItem(notStartedHeader);
         }
