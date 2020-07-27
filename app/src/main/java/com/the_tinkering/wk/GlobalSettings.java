@@ -329,6 +329,7 @@ public final class GlobalSettings {
         Tutorials.setBrowseOverviewDismissed(false);
         Tutorials.setSearchResultDismissed(false);
         Tutorials.setStartSelfStudyDismissed(false);
+        Tutorials.setSessionLogDismissed(false);
     }
 
     /**
@@ -2403,6 +2404,18 @@ public final class GlobalSettings {
         }
 
         /**
+         * Show the full, unlimited session log, which may contain inappropriate hints or answers.
+         *
+         * @return the value
+         */
+        public static boolean getFullSessionLog() {
+            if (!getAdvancedEnabled()) {
+                return false;
+            }
+            return prefs().getBoolean("full_session_log", false);
+        }
+
+        /**
          * For a kanji reading question, indicate if the question requires an on'yomi or kun'yomi answer.
          *
          * @return the value
@@ -2549,6 +2562,26 @@ public final class GlobalSettings {
         public static void setStartSelfStudyDismissed(final boolean value) {
             final SharedPreferences.Editor editor = prefs().edit();
             editor.putBoolean("start_self_study_dismissed", value);
+            editor.apply();
+        }
+
+        /**
+         * Dismiss the tutorial on the browse overview screen.
+         *
+         * @return the value
+         */
+        public static boolean getSessionLogDismissed() {
+            return prefs().getBoolean("session_log_dismissed", false);
+        }
+
+        /**
+         * Dismiss the dashboard keyboard help popup.
+         *
+         * @param value the value
+         */
+        public static void setSessionLogDismissed(final boolean value) {
+            final SharedPreferences.Editor editor = prefs().edit();
+            editor.putBoolean("session_log_dismissed", value);
             editor.apply();
         }
     }

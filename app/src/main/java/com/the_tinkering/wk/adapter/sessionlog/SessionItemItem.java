@@ -27,16 +27,23 @@ import javax.annotation.Nullable;
 public final class SessionItemItem extends LogItem {
     private final SessionItem sessionItem;
     private final HeaderItem parent;
+    private final boolean showButtonInRestrictedMode;
+    private final boolean clickableInRestrictedMode;
 
     /**
      * The constructor.
      *
      * @param sessionItem the session item for this item
      * @param parent the parent this item is contained in
+     * @param showButtonInRestrictedMode If the full session log is not shown, should this item show the subject title button?
+     * @param clickableInRestrictedMode If the full session log is not shown, should this item be clickable?
      */
-    public SessionItemItem(final SessionItem sessionItem, final HeaderItem parent) {
+    public SessionItemItem(final SessionItem sessionItem, final HeaderItem parent,
+                           final boolean showButtonInRestrictedMode, final boolean clickableInRestrictedMode) {
         this.sessionItem = sessionItem;
         this.parent = parent;
+        this.showButtonInRestrictedMode = showButtonInRestrictedMode;
+        this.clickableInRestrictedMode = clickableInRestrictedMode;
     }
 
     /**
@@ -55,6 +62,24 @@ public final class SessionItemItem extends LogItem {
      */
     public HeaderItem getParent() {
         return parent;
+    }
+
+    /**
+     * If the full session log is not shown, should this item show the subject title button?.
+     *
+     * @return true if it should
+     */
+    public boolean isShowButtonInRestrictedMode() {
+        return showButtonInRestrictedMode;
+    }
+
+    /**
+     * If the full session log is not shown, should this item be clickable?.
+     *
+     * @return true if it should
+     */
+    public boolean isClickableInRestrictedMode() {
+        return clickableInRestrictedMode;
     }
 
     @Override

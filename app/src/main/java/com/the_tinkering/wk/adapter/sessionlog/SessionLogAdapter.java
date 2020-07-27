@@ -25,6 +25,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.the_tinkering.wk.Actment;
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.enums.SessionType;
@@ -162,35 +163,37 @@ public final class SessionLogAdapter extends RecyclerView.Adapter<LogItemViewHol
 
         final ItemHeaderItem abandonedHeader = new ItemHeaderItem("abandoned", collapsedTags.contains("abandoned"), "Abandoned items");
         items.stream().filter(SessionItem::isAbandoned)
-                .forEach(item -> abandonedHeader.addItem(new SessionItemItem(item, abandonedHeader)));
+                .forEach(item -> abandonedHeader.addItem(new SessionItemItem(item, abandonedHeader, true, true)));
         if (!abandonedHeader.isEmpty()) {
             rootItem.addItem(abandonedHeader);
         }
 
         final ItemHeaderItem completedHeader = new ItemHeaderItem("completed", collapsedTags.contains("completed"), "Completed items");
         items.stream().filter(item -> item.isPending() || item.isReported())
-                .forEach(item -> completedHeader.addItem(new SessionItemItem(item, completedHeader)));
+                .forEach(item -> completedHeader.addItem(new SessionItemItem(item, completedHeader, true, true)));
         if (!completedHeader.isEmpty()) {
             rootItem.addItem(completedHeader);
         }
 
         final ItemHeaderItem startedHeader = new ItemHeaderItem("started", collapsedTags.contains("started"), "Started items");
         items.stream().filter(SessionItem::isStarted)
-                .forEach(item -> startedHeader.addItem(new SessionItemItem(item, startedHeader)));
+                .forEach(item -> startedHeader.addItem(new SessionItemItem(item, startedHeader, true, false)));
         if (!startedHeader.isEmpty()) {
             rootItem.addItem(startedHeader);
         }
 
         final ItemHeaderItem notStartedHeader = new ItemHeaderItem("notstarted", collapsedTags.contains("notstarted"), "Items not started");
         items.stream().filter(item -> item.isActive() && !item.isStarted())
-                .forEach(item -> notStartedHeader.addItem(new SessionItemItem(item, notStartedHeader)));
+                .forEach(item -> notStartedHeader.addItem(new SessionItemItem(item, notStartedHeader, false, false)));
         if (!notStartedHeader.isEmpty()) {
             rootItem.addItem(notStartedHeader);
         }
 
-        final EventHeaderItem eventHeader = new EventHeaderItem("events", collapsedTags.contains("events"), "Events", events);
-        if (!eventHeader.isEmpty()) {
-            rootItem.addItem(eventHeader);
+        if (GlobalSettings.AdvancedOther.getFullSessionLog()) {
+            final EventHeaderItem eventHeader = new EventHeaderItem("events", collapsedTags.contains("events"), "Events", events);
+            if (!eventHeader.isEmpty()) {
+                rootItem.addItem(eventHeader);
+            }
         }
 
         notifyDataSetChanged();

@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.SimpleColorFilter;
 import com.the_tinkering.wk.Actment;
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
@@ -108,17 +109,33 @@ public final class SessionItemItemViewHolder extends LogItemViewHolder implement
     }
 
     private void bindHelper() {
+        requireNonNull(item);
         requireNonNull(sessionItem);
         final Subject subject = requireNonNull(sessionItem.getSubject());
 
         itemView.setBackgroundColor(subject.getButtonBackgroundColor());
 
-        button.setSubject(subject);
-        button.setSizeSp(24);
-        button.setTransparent(true);
+        if (item.isShowButtonInRestrictedMode() || GlobalSettings.AdvancedOther.getFullSessionLog()) {
+            button.setSubject(subject);
+            button.setSizeSp(24);
+            button.setTransparent(true);
+            button.setVisibility(true);
+            questionMark.setVisibility(false);
+        }
+        else {
+            button.setVisibility(false);
+            questionMark.setText("?");
+            questionMark.setVisibility(true);
+        }
 
-        itemView.setOnClickListener(this);
-        button.setOnClickListener(this);
+        if (item.isClickableInRestrictedMode() || GlobalSettings.AdvancedOther.getFullSessionLog()) {
+            itemView.setOnClickListener(this);
+            button.setOnClickListener(this);
+        }
+        else {
+            itemView.setOnClickListener(null);
+            button.setOnClickListener(null);
+        }
 
         final boolean onkun = Session.getInstance().isOnkun();
 

@@ -1065,6 +1065,13 @@
                 app:defaultValue="false"/>
 
             <SwitchPreferenceCompat
+                app:key="full_session_log"
+                app:title="Show full session log"
+                app:singleLineTitle="false"
+                app:summary="This may reveal inappropriate hints and answers"
+                app:defaultValue="false"/>
+
+            <SwitchPreferenceCompat
                 app:key="indicate_kanji_reading_type"
                 app:title="Indicate type of reading for kanji quiz"
                 app:singleLineTitle="false"

@@ -23,6 +23,7 @@ import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.adapter.sessionlog.SessionLogAdapter;
 import com.the_tinkering.wk.db.model.Subject;
@@ -40,6 +41,8 @@ public final class SessionLogFragment extends AbstractFragment {
     private final SessionLogAdapter adapter = session.getAdapter();
 
     private final ViewProxy resultView = new ViewProxy();
+    private final ViewProxy tutorialText = new ViewProxy();
+    private final ViewProxy tutorialDismiss = new ViewProxy();
 
     /**
      * The constructor.
@@ -64,13 +67,28 @@ public final class SessionLogFragment extends AbstractFragment {
 
     @Override
     protected void onResumeLocal() {
-        //
+        if (GlobalSettings.Tutorials.getSessionLogDismissed() || GlobalSettings.AdvancedOther.getFullSessionLog()) {
+            tutorialText.setParentVisibility(false);
+        }
+        else {
+            tutorialText.setText("By default, this session log shows only limited information to avoid giving away"
+                    + " answers or showing inappropriate hints, and some items are deliberately not clickable."
+                    + " If you want to see the full session log, you can"
+                    + " enable it in Settings -> Advanced -> Other.");
+            tutorialText.setParentVisibility(true);
+            tutorialDismiss.setOnClickListener(v -> {
+                GlobalSettings.Tutorials.setSessionLogDismissed(true);
+                tutorialText.setParentVisibility(false);
+            });
+        }
     }
 
     @SuppressLint("NewApi")
     @Override
     public void onViewCreatedLocal(final View view, final @Nullable Bundle savedInstanceState) {
         resultView.setDelegate(view, R.id.resultView);
+        tutorialText.setDelegate(view, R.id.tutorialText);
+        tutorialDismiss.setDelegate(view, R.id.tutorialDismiss);
 
         final DisplayMetrics metrics = view.getContext().getResources().getDisplayMetrics();
         int spans = (int) ((metrics.widthPixels / metrics.density + 10) / 90);

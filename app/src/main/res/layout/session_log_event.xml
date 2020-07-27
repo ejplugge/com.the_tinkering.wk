@@ -42,20 +42,6 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"/>
 
-    <TextView
-        android:id="@+id/questionMark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|center_vertical"
-        android:layout_marginLeft="4dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:text=""
-        android:textStyle="bold"
-        android:visibility="gone"
-        style="@style/WK.TextView.XLarge"/>
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
