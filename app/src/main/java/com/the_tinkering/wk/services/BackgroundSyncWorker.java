@@ -29,6 +29,7 @@ import com.the_tinkering.wk.util.Logger;
 
 import java.util.concurrent.Semaphore;
 
+import static com.the_tinkering.wk.Constants.MINUTE;
 import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
@@ -72,7 +73,7 @@ public final class BackgroundSyncWorker {
                         db.propertiesDao().setApiInError(false);
                         LiveApiState.getInstance().forceUpdate();
                     }
-                    Job.assertDueTasks();
+                    Job.assertDueTasks(5 * MINUTE);
                     ApiTaskService.runTasks();
                     LOGGER.info("Background sync ends");
                 }

@@ -33,6 +33,7 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.activities.MainActivity;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.enums.NotificationUpdateFrequency;
+import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.AlertContext;
 import com.the_tinkering.wk.util.Logger;
 
@@ -98,6 +99,8 @@ public final class NotificationWorker {
 
         final AppDatabase db = WkApplication.getDatabase();
         db.propertiesDao().setNotificationSet(true);
+
+        LiveTimeLine.getInstance().update();
     }
 
     private static void cancelNotification() {

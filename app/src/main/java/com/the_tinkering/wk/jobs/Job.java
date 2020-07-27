@@ -66,7 +66,7 @@ public abstract class Job {
     /**
      * Make sure that any tasks that need to be executed are scheduled in the database.
      */
-    public static void assertDueTasks() {
+    public static void assertDueTasks(final long hourlySkew) {
         final AppDatabase db = WkApplication.getDatabase();
 
         final OnlineStatus onlineStatus = WkApplication.getInstance().getOnlineStatus();
@@ -109,25 +109,25 @@ public abstract class Job {
 
         final long lastGetAssignmentsSuccess = db.propertiesDao().getLastAssignmentSyncSuccessDate(0);
         if (lastGetAssignmentsSuccess == 0
-                || System.currentTimeMillis() - lastGetAssignmentsSuccess > HOUR - MINUTE * 5) {
+                || System.currentTimeMillis() - lastGetAssignmentsSuccess > HOUR - hourlySkew) {
             db.assertGetAssignmentsTask();
         }
 
         final long lastGetReviewStatisticsSuccess = db.propertiesDao().getLastReviewStatisticSyncSuccessDate(0);
         if (lastGetReviewStatisticsSuccess == 0
-                || System.currentTimeMillis() - lastGetReviewStatisticsSuccess > HOUR - MINUTE * 5) {
+                || System.currentTimeMillis() - lastGetReviewStatisticsSuccess > HOUR - hourlySkew) {
             db.assertGetReviewStatisticsTask();
         }
 
         final long lastGetStudyMaterialsSuccess = db.propertiesDao().getLastStudyMaterialSyncSuccessDate(0);
         if (lastGetStudyMaterialsSuccess == 0
-                || System.currentTimeMillis() - lastGetStudyMaterialsSuccess > HOUR - MINUTE * 5) {
+                || System.currentTimeMillis() - lastGetStudyMaterialsSuccess > HOUR - hourlySkew) {
             db.assertGetStudyMaterialsTask();
         }
 
         final long lastGetSummarySuccess = db.propertiesDao().getLastSummarySyncSuccessDate();
         if (lastGetSummarySuccess == 0
-                || System.currentTimeMillis() - lastGetSummarySuccess > HOUR - MINUTE * 5) {
+                || System.currentTimeMillis() - lastGetSummarySuccess > HOUR - hourlySkew) {
             db.assertGetSummaryTask();
         }
 
@@ -148,7 +148,7 @@ public abstract class Job {
     protected static void houseKeeping() {
         final AppDatabase db = WkApplication.getDatabase();
 
-        assertDueTasks();
+        assertDueTasks(0);
 
         if (GlobalSettings.getFirstTimeSetup() == 0 && db.taskDefinitionDao().getApiCount() == 0) {
             GlobalSettings.setFirstTimeSetup(1);
