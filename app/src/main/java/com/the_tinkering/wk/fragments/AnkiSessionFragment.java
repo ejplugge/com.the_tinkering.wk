@@ -27,6 +27,7 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
+import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.enums.QuestionType;
 import com.the_tinkering.wk.model.FloatingUiState;
@@ -282,9 +283,20 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
         ankiCorrectButton.setVisibility(!session.isAnswered() && showingAnswer);
         ankiIncorrectButton.setVisibility(!session.isAnswered() && showingAnswer);
 
+        ankiShowAnswerButton.setTextColor(ActiveTheme.getAnkiColors()[4]);
+        ankiShowAnswerButton.setBackgroundColor(ActiveTheme.getAnkiColors()[0]);
+        ankiNextButton.setTextColor(ActiveTheme.getAnkiColors()[4]);
+        ankiNextButton.setBackgroundColor(ActiveTheme.getAnkiColors()[1]);
+        ankiCorrectButton.setTextColor(ActiveTheme.getAnkiColors()[4]);
+        ankiCorrectButton.setBackgroundColor(ActiveTheme.getAnkiColors()[2]);
+        ankiIncorrectButton.setTextColor(ActiveTheme.getAnkiColors()[4]);
+        ankiIncorrectButton.setBackgroundColor(ActiveTheme.getAnkiColors()[3]);
+
         answer.setVisibility(showingAnswer);
         answer.setText(question.getAnkiAnswerRichText(subject));
         answer.setTextSize(GlobalSettings.Font.getFontSizeAnkiAnswer());
+        answer.setTextColor(ActiveTheme.getAnkiColors()[4]);
+        answer.setBackgroundColor(ActiveTheme.getAnkiColors()[5]);
         if (question.getType().isAscii()) {
             answer.setRootLocale();
         }
@@ -295,6 +307,8 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
         synonyms.setVisibility(!session.isAnswered() && showingAnswer && question.getType().isMeaning() && subject.hasMeaningSynonyms());
         synonyms.setText(subject.getMeaningSynonymsRichText());
         synonyms.setTextSize(GlobalSettings.Font.getFontSizeAnkiAnswer());
+        synonyms.setTextColor(ActiveTheme.getAnkiColors()[4]);
+        synonyms.setBackgroundColor(ActiveTheme.getAnkiColors()[5]);
 
         // Show or hide the subject info dump
         subjectInfo.setVisibility(session.isAnswered());

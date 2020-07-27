@@ -36,12 +36,6 @@
         <item name="readingHintColor">@color/wkLightReadingHintColor</item>
         <item name="editTextHintColor">@color/wkLightEditTextHintColor</item>
         <item name="editTextHintColorInverse">@color/wkLightEditTextHintColorInverse</item>
-        <item name="ankiShowAnswerColor">@color/wkLightAnkiShowAnswerColor</item>
-        <item name="ankiNextColor">@color/wkLightAnkiNextColor</item>
-        <item name="ankiCorrectColor">@color/wkLightAnkiCorrectColor</item>
-        <item name="ankiIncorrectColor">@color/wkLightAnkiIncorrectColor</item>
-        <item name="ankiButtonTextColor">@color/wkLightAnkiButtonTextColor</item>
-        <item name="ankiAnswerColorBackground">@color/wkLightAnkiAnswerColorBackground</item>
         <item name="pitchInfoHeibanColor">@color/wkLightPitchInfoHeibanColor</item>
         <item name="pitchInfoOdakaColor">@color/wkLightPitchInfoOdakaColor</item>
         <item name="pitchInfoNakadakaColor">@color/wkLightPitchInfoNakadakaColor</item>
@@ -78,12 +72,6 @@
         <item name="readingHintColor">@color/wkDarkReadingHintColor</item>
         <item name="editTextHintColor">@color/wkDarkEditTextHintColor</item>
         <item name="editTextHintColorInverse">@color/wkDarkEditTextHintColorInverse</item>
-        <item name="ankiShowAnswerColor">@color/wkDarkAnkiShowAnswerColor</item>
-        <item name="ankiNextColor">@color/wkDarkAnkiNextColor</item>
-        <item name="ankiCorrectColor">@color/wkDarkAnkiCorrectColor</item>
-        <item name="ankiIncorrectColor">@color/wkDarkAnkiIncorrectColor</item>
-        <item name="ankiButtonTextColor">@color/wkDarkAnkiButtonTextColor</item>
-        <item name="ankiAnswerColorBackground">@color/wkDarkAnkiAnswerColorBackground</item>
         <item name="pitchInfoHeibanColor">@color/wkDarkPitchInfoHeibanColor</item>
         <item name="pitchInfoOdakaColor">@color/wkDarkPitchInfoOdakaColor</item>
         <item name="pitchInfoNakadakaColor">@color/wkDarkPitchInfoNakadakaColor</item>
@@ -120,12 +108,6 @@
         <item name="readingHintColor">@color/wkDarkReadingHintColor</item>
         <item name="editTextHintColor">@color/wkDarkEditTextHintColor</item>
         <item name="editTextHintColorInverse">@color/wkDarkEditTextHintColorInverse</item>
-        <item name="ankiShowAnswerColor">@color/wkDarkAnkiShowAnswerColor</item>
-        <item name="ankiNextColor">@color/wkDarkAnkiNextColor</item>
-        <item name="ankiCorrectColor">@color/wkDarkAnkiCorrectColor</item>
-        <item name="ankiIncorrectColor">@color/wkDarkAnkiIncorrectColor</item>
-        <item name="ankiButtonTextColor">@color/wkDarkAnkiButtonTextColor</item>
-        <item name="ankiAnswerColorBackground">@color/wkDarkAnkiAnswerColorBackground</item>
         <item name="pitchInfoHeibanColor">@color/wkDarkPitchInfoHeibanColor</item>
         <item name="pitchInfoOdakaColor">@color/wkDarkPitchInfoOdakaColor</item>
         <item name="pitchInfoNakadakaColor">@color/wkDarkPitchInfoNakadakaColor</item>
@@ -186,31 +168,6 @@
 
     <style name="WK.TextView.Large.Bold" parent="WK.TextView.Large">
         <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="WK.TextView.AnkiAnswer" parent="WK.TextView.Large">
-        <item name="android:background">?attr/ankiAnswerColorBackground</item>
-        <item name="android:textColor">?attr/ankiButtonTextColor</item>
-    </style>
-
-    <style name="WK.TextView.Large.AnkiShowAnswer" parent="WK.TextView.Large">
-        <item name="android:background">?attr/ankiShowAnswerColor</item>
-        <item name="android:textColor">?attr/ankiButtonTextColor</item>
-    </style>
-
-    <style name="WK.TextView.Large.AnkiNext" parent="WK.TextView.Large">
-        <item name="android:background">?attr/ankiNextColor</item>
-        <item name="android:textColor">?attr/ankiButtonTextColor</item>
-    </style>
-
-    <style name="WK.TextView.Large.AnkiCorrect" parent="WK.TextView.Large">
-        <item name="android:background">?attr/ankiCorrectColor</item>
-        <item name="android:textColor">?attr/ankiButtonTextColor</item>
-    </style>
-
-    <style name="WK.TextView.Large.AnkiIncorrect" parent="WK.TextView.Large">
-        <item name="android:background">?attr/ankiIncorrectColor</item>
-        <item name="android:textColor">?attr/ankiButtonTextColor</item>
     </style>
 
     <style name="WK.TextView.XLarge" parent="WK.TextView.Normal">

@@ -37,7 +37,8 @@ public enum ActiveTheme {
             new int[] {0xFFEEEEEE, 0xFFC1C0C1, 0xFFD80088, 0xFF7D2893, 0xFF2344D6, 0xFF0094EB, 0xFF444444},
             new int[] {0xFFD6AFCA, 0xFFCB8FB3, 0xFFD660AB, 0xFFD80088},
             new int[] {0xFF9D30A3, 0xFF7D2893},
-            new int[] {0xFF621899, 0xFFD80088, 0xFFD73099, 0xFFD660AB, 0xFFD077AF, 0xFFCB8FB3, 0xFFD09FBE, 0xFFD6AFCA, 0xFFC1C0C1, 0xFFEEEEEE}) {
+            new int[] {0xFF621899, 0xFFD80088, 0xFFD73099, 0xFFD660AB, 0xFFD077AF, 0xFFCB8FB3, 0xFFD09FBE, 0xFFD6AFCA, 0xFFC1C0C1, 0xFFEEEEEE},
+            new int[] {0xFF909000, 0xFF909000, 0xFF00A000, 0xFFA00000, 0xFFFFFFFF, 0xFF909000}) {
         @Override
         protected void loadCustomizations() {
             final List<Integer> custom = GlobalSettings.Display.getThemeCustomizations(this);
@@ -65,6 +66,10 @@ public enum ActiveTheme {
             for (int i=0; i<10; i++) {
                 final int color = custom.get(i+16);
                 levelProgressionBucketColors[i] = (color == 0) ? baseLevelProgressionBucketColors[i] : color;
+            }
+            for (int i=0; i<6; i++) {
+                final int color = custom.get(i+26);
+                ankiColors[i] = (color == 0) ? baseAnkiColors[i] : color;
             }
             stageBucketColors4[0] = stageBucketColors7[2];
             stageBucketColors4[1] = stageBucketColors7[3];
@@ -102,7 +107,8 @@ public enum ActiveTheme {
             new int[] {0xFF1D2023, 0xFFC1C0C1, 0xFF1D99F3, 0xFF1CDC9A, 0xFFC9CE3B, 0xFFF67400, 0xFFD53B49},
             new int[] {0xFF7DC9FC, 0xFF5DB9F9, 0xFF3DA9F6, 0xFF0D89E3},
             new int[] {0xFF20FCAA, 0xFF1CDC9A},
-            new int[] {0xFF1A3A45, 0xFF0D89E3, 0xFF2599EC, 0xFF3DA9F6, 0xFF4DB1F7, 0xFF5DB9F9, 0xFF6DC1FA, 0xFF7DC9FC, 0xFFC1C0C1, 0xFF1D2023}) {
+            new int[] {0xFF1A3A45, 0xFF0D89E3, 0xFF2599EC, 0xFF3DA9F6, 0xFF4DB1F7, 0xFF5DB9F9, 0xFF6DC1FA, 0xFF7DC9FC, 0xFFC1C0C1, 0xFF1D2023},
+            new int[] {0xFF606000, 0xFF606000, 0xFF006000, 0xFF600000, 0xFFE8E8E8, 0xFF606000}) {
         @Override
         protected void loadCustomizations() {
             final List<Integer> custom = GlobalSettings.Display.getThemeCustomizations(this);
@@ -130,6 +136,10 @@ public enum ActiveTheme {
             for (int i=0; i<10; i++) {
                 final int color = custom.get(i+16);
                 levelProgressionBucketColors[i] = (color == 0) ? baseLevelProgressionBucketColors[i] : color;
+            }
+            for (int i=0; i<6; i++) {
+                final int color = custom.get(i+26);
+                ankiColors[i] = (color == 0) ? baseAnkiColors[i] : color;
             }
             stageBucketColors4[0] = stageBucketColors7[2];
             stageBucketColors4[1] = stageBucketColors7[3];
@@ -167,7 +177,8 @@ public enum ActiveTheme {
             new int[] {0xFF1D2023, 0xFFC1C0C1, 0xFF1D99F3, 0xFF1CDC9A, 0xFFC9CE3B, 0xFFF67400, 0xFFD53B49},
             new int[] {0xFF7DC9FC, 0xFF5DB9F9, 0xFF3DA9F6, 0xFF0D89E3},
             new int[] {0xFF20FCAA, 0xFF1CDC9A},
-            new int[] {0xFF1A3A45, 0xFF0D89E3, 0xFF2599EC, 0xFF3DA9F6, 0xFF4DB1F7, 0xFF5DB9F9, 0xFF6DC1FA, 0xFF7DC9FC, 0xFFC1C0C1, 0xFF1D2023}) {
+            new int[] {0xFF1A3A45, 0xFF0D89E3, 0xFF2599EC, 0xFF3DA9F6, 0xFF4DB1F7, 0xFF5DB9F9, 0xFF6DC1FA, 0xFF7DC9FC, 0xFFC1C0C1, 0xFF1D2023},
+            new int[] {0xFF606000, 0xFF606000, 0xFF006000, 0xFF600000, 0xFFE8E8E8, 0xFF606000}) {
         @Override
         protected void loadCustomizations() {
             final List<Integer> custom = GlobalSettings.Display.getThemeCustomizations(this);
@@ -195,6 +206,10 @@ public enum ActiveTheme {
             for (int i=0; i<10; i++) {
                 final int color = custom.get(i+16);
                 levelProgressionBucketColors[i] = (color == 0) ? baseLevelProgressionBucketColors[i] : color;
+            }
+            for (int i=0; i<6; i++) {
+                final int color = custom.get(i+26);
+                ankiColors[i] = (color == 0) ? baseAnkiColors[i] : color;
             }
             stageBucketColors4[0] = stageBucketColors7[2];
             stageBucketColors4[1] = stageBucketColors7[3];
@@ -240,6 +255,8 @@ public enum ActiveTheme {
     protected final int[] stageDeepBucketColors;
     protected final int[] baseLevelProgressionBucketColors;
     protected final int[] levelProgressionBucketColors;
+    protected final int[] baseAnkiColors;
+    protected final int[] ankiColors;
 
     @SuppressWarnings("NonFinalFieldInEnum")
     protected boolean dirty = true;
@@ -247,7 +264,8 @@ public enum ActiveTheme {
     ActiveTheme(final boolean identBackground, final int styleId, final int levelUpArrowDrawableId,
                 final int[] subjectTypeTextColors, final int[] subjectTypeBackgroundColors, final int[] subjectTypeButtonBackgroundColors,
                 final int[] subjectTypeBucketColors, final int[] stageBucketColors,
-                final int[] stagePrePassedBucketColors, final int[] stagePassedBucketColors, final int[] levelProgressionBucketColors) {
+                final int[] stagePrePassedBucketColors, final int[] stagePassedBucketColors, final int[] levelProgressionBucketColors,
+                final int[] ankiColors) {
         this.identBackground = identBackground;
         this.styleId = styleId;
         this.levelUpArrowDrawableId = levelUpArrowDrawableId;
@@ -268,6 +286,8 @@ public enum ActiveTheme {
         stageDeepBucketColors = new int[11];
         baseLevelProgressionBucketColors = levelProgressionBucketColors;
         this.levelProgressionBucketColors = new int[10];
+        baseAnkiColors = ankiColors;
+        this.ankiColors = ankiColors.clone();
     }
 
     /**
@@ -426,6 +446,20 @@ public enum ActiveTheme {
         }
         //noinspection AssignmentOrReturnOfFieldWithMutableType
         return theme.levelProgressionBucketColors;
+    }
+
+    public static int[] getAnkiColors() {
+        final ActiveTheme theme = getCurrentTheme();
+        if (theme.dirty) {
+            theme.loadCustomizations();
+        }
+        //noinspection AssignmentOrReturnOfFieldWithMutableType
+        return theme.ankiColors;
+    }
+
+    public static int[] getBaseAnkiColors() {
+        //noinspection AssignmentOrReturnOfFieldWithMutableType
+        return getCurrentTheme().baseAnkiColors;
     }
 
     /**

@@ -46,12 +46,6 @@
     <attr name="readingHintColor" format="reference"/>
     <attr name="editTextHintColor" format="reference"/>
     <attr name="editTextHintColorInverse" format="reference"/>
-    <attr name="ankiShowAnswerColor" format="reference"/>
-    <attr name="ankiNextColor" format="reference"/>
-    <attr name="ankiCorrectColor" format="reference"/>
-    <attr name="ankiIncorrectColor" format="reference"/>
-    <attr name="ankiButtonTextColor" format="reference"/>
-    <attr name="ankiAnswerColorBackground" format="reference"/>
     <attr name="pitchInfoHeibanColor" format="reference"/>
     <attr name="pitchInfoOdakaColor" format="reference"/>
     <attr name="pitchInfoNakadakaColor" format="reference"/>

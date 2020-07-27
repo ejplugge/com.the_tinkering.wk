@@ -40,12 +40,6 @@
     <color name="wkLightReadingHintColor">#000000</color>
     <color name="wkLightEditTextHintColor">#202020</color>
     <color name="wkLightEditTextHintColorInverse">#E8E8E8</color>
-    <color name="wkLightAnkiShowAnswerColor">#909000</color>
-    <color name="wkLightAnkiNextColor">#909000</color>
-    <color name="wkLightAnkiCorrectColor">#00A000</color>
-    <color name="wkLightAnkiIncorrectColor">#A00000</color>
-    <color name="wkLightAnkiButtonTextColor">#FFFFFF</color>
-    <color name="wkLightAnkiAnswerColorBackground">#909000</color>
     <color name="wkLightWindowBackground">#FFFFFF</color>
     <color name="wkLightPitchInfoHeibanColor">#D20CA3</color>
     <color name="wkLightPitchInfoOdakaColor">#0CD24D</color>
@@ -74,12 +68,6 @@
     <color name="wkDarkReadingHintColor">#000000</color>
     <color name="wkDarkEditTextHintColor">#202020</color>
     <color name="wkDarkEditTextHintColorInverse">#E8E8E8</color>
-    <color name="wkDarkAnkiShowAnswerColor">#606000</color>
-    <color name="wkDarkAnkiNextColor">#606000</color>
-    <color name="wkDarkAnkiCorrectColor">#006000</color>
-    <color name="wkDarkAnkiIncorrectColor">#600000</color>
-    <color name="wkDarkAnkiButtonTextColor">#E8E8E8</color>
-    <color name="wkDarkAnkiAnswerColorBackground">#606000</color>
     <color name="wkDarkWindowBackground">#232629</color>
     <color name="wkDarkPitchInfoHeibanColor">#D20CA3</color>
     <color name="wkDarkPitchInfoOdakaColor">#0CD24D</color>

@@ -196,13 +196,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:padding="8dp"
-                android:background="?attr/ankiAnswerColorBackground"
                 android:text=""
                 android:textIsSelectable="true"
                 android:focusable="false"
-                android:visibility="gone"
-                android:layout_weight="0"
-                style="@style/WK.TextView.AnkiAnswer"/>
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/synonyms"
@@ -211,12 +208,9 @@
                 android:layout_marginTop="8dp"
                 android:padding="8dp"
                 android:text=""
-                android:background="?attr/ankiAnswerColorBackground"
                 android:textIsSelectable="true"
                 android:focusable="false"
-                android:visibility="gone"
-                android:layout_weight="0"
-                style="@style/WK.TextView.AnkiAnswer"/>
+                android:visibility="gone"/>
 
             <com.the_tinkering.wk.views.SubjectInfoView
                 android:id="@+id/subjectInfo"
@@ -245,8 +239,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            style="@style/WK.TextView.Large.AnkiShowAnswer"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/ankiNextButton"
@@ -258,8 +251,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            style="@style/WK.TextView.Large.AnkiNext"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/ankiIncorrectButton"
@@ -271,8 +263,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ankiCorrectButton"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            style="@style/WK.TextView.Large.AnkiIncorrect"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/ankiCorrectButton"
@@ -284,8 +275,7 @@
             app:layout_constraintStart_toEndOf="@id/ankiIncorrectButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            style="@style/WK.TextView.Large.AnkiCorrect"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

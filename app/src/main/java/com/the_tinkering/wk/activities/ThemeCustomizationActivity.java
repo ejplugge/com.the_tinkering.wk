@@ -89,6 +89,12 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
         selectionViews[23] = new ViewProxy(this, R.id.levelProgression8Sample);
         selectionViews[24] = new ViewProxy(this, R.id.levelProgression9Sample);
         selectionViews[25] = new ViewProxy(this, R.id.levelProgression10Sample);
+        selectionViews[26] = new ViewProxy(this, R.id.ankiShowAnswerSample);
+        selectionViews[27] = new ViewProxy(this, R.id.ankiNextSample);
+        selectionViews[28] = new ViewProxy(this, R.id.ankiCorrectSample);
+        selectionViews[29] = new ViewProxy(this, R.id.ankiIncorrectSample);
+        selectionViews[30] = new ViewProxy(this, R.id.ankiTextSample);
+        selectionViews[31] = new ViewProxy(this, R.id.ankiAnswerSample);
 
         selectionHighlights[0] = new ViewProxy(this, R.id.radicalSampleHighlight);
         selectionHighlights[1] = new ViewProxy(this, R.id.kanjiSampleHighlight);
@@ -116,6 +122,12 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
         selectionHighlights[23] = new ViewProxy(this, R.id.levelProgression8SampleHighlight);
         selectionHighlights[24] = new ViewProxy(this, R.id.levelProgression9SampleHighlight);
         selectionHighlights[25] = new ViewProxy(this, R.id.levelProgression10SampleHighlight);
+        selectionHighlights[26] = new ViewProxy(this, R.id.ankiShowAnswerSampleHighlight);
+        selectionHighlights[27] = new ViewProxy(this, R.id.ankiNextSampleHighlight);
+        selectionHighlights[28] = new ViewProxy(this, R.id.ankiCorrectSampleHighlight);
+        selectionHighlights[29] = new ViewProxy(this, R.id.ankiIncorrectSampleHighlight);
+        selectionHighlights[30] = new ViewProxy(this, R.id.ankiTextSampleHighlight);
+        selectionHighlights[31] = new ViewProxy(this, R.id.ankiAnswerSampleHighlight);
 
         selectionDescriptions[0] = "The identifying colour for Radical subjects";
         selectionDescriptions[1] = "The identifying colour for Kanji subjects";
@@ -143,6 +155,12 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
         selectionDescriptions[23] = "The segment colour for stage 1 (Apprentice I)" + EXTRA3;
         selectionDescriptions[24] = "The segment colour for Initiate items" + EXTRA3;
         selectionDescriptions[25] = "The segment colour for Locked items" + EXTRA3;
+        selectionDescriptions[26] = "The background colour for the Anki mode \"Show Answer\" button";
+        selectionDescriptions[27] = "The background colour for the Anki mode \"Next\" button";
+        selectionDescriptions[28] = "The background colour for the Anki mode \"Correct\" button";
+        selectionDescriptions[29] = "The background colour for the Anki mode \"Incorrect\" button";
+        selectionDescriptions[30] = "The text colour for the Anki mode buttons and answer text";
+        selectionDescriptions[31] = "The background colour for the Anki mode answer text";
 
         selectionDescription.setDelegate(this, R.id.selectionDescription);
         rgbValues.setDelegate(this, R.id.rgbValues);
@@ -238,6 +256,9 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
         if (index < 26) {
             return ActiveTheme.getBaseLevelProgressionBucketColors()[index-16];
         }
+        if (index < 32) {
+            return ActiveTheme.getBaseAnkiColors()[index-26];
+        }
         return 0;
     }
 
@@ -266,6 +287,10 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
         }
         else if (index < 26) {
             final int backgroundColor = chosenColor == 0 ? ActiveTheme.getBaseLevelProgressionBucketColors()[index-16] : chosenColor;
+            selectionViews[index].setBackgroundColor(backgroundColor);
+        }
+        else if (index < 32) {
+            final int backgroundColor = chosenColor == 0 ? ActiveTheme.getBaseAnkiColors()[index-26] : chosenColor;
             selectionViews[index].setBackgroundColor(backgroundColor);
         }
 

@@ -368,6 +368,79 @@
                 </LinearLayout>
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="Anki mode colours:"
+                    android:textColor="#D0D0D0"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginRight="4dp"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
+
+                    <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                        <View android:id="@+id/ankiShowAnswerSampleHighlight" android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:visibility="gone" android:background="@drawable/highlight_border"/>
+                        <View android:id="@+id/ankiShowAnswerSample" android:layout_width="match_parent" android:layout_height="24dp"
+                            android:layout_margin="4dp" android:background="#404040" android:gravity="center"
+                            android:clickable="true" android:focusable="true" android:focusableInTouchMode="false"/>
+                    </FrameLayout>
+
+                    <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                        <View android:id="@+id/ankiNextSampleHighlight" android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:visibility="gone" android:background="@drawable/highlight_border"/>
+                        <View android:id="@+id/ankiNextSample" android:layout_width="match_parent" android:layout_height="24dp"
+                            android:layout_margin="4dp" android:background="#404040" android:gravity="center"
+                            android:clickable="true" android:focusable="true" android:focusableInTouchMode="false"/>
+                    </FrameLayout>
+
+                    <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                        <View android:id="@+id/ankiCorrectSampleHighlight" android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:visibility="gone" android:background="@drawable/highlight_border"/>
+                        <View android:id="@+id/ankiCorrectSample" android:layout_width="match_parent" android:layout_height="24dp"
+                            android:layout_margin="4dp" android:background="#404040" android:gravity="center"
+                            android:clickable="true" android:focusable="true" android:focusableInTouchMode="false"/>
+                    </FrameLayout>
+
+                    <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                        <View android:id="@+id/ankiIncorrectSampleHighlight" android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:visibility="gone" android:background="@drawable/highlight_border"/>
+                        <View android:id="@+id/ankiIncorrectSample" android:layout_width="match_parent" android:layout_height="24dp"
+                            android:layout_margin="4dp" android:background="#404040" android:gravity="center"
+                            android:clickable="true" android:focusable="true" android:focusableInTouchMode="false"/>
+                    </FrameLayout>
+
+                    <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                        <View android:id="@+id/ankiTextSampleHighlight" android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:visibility="gone" android:background="@drawable/highlight_border"/>
+                        <View android:id="@+id/ankiTextSample" android:layout_width="match_parent" android:layout_height="24dp"
+                            android:layout_margin="4dp" android:background="#404040" android:gravity="center"
+                            android:clickable="true" android:focusable="true" android:focusableInTouchMode="false"/>
+                    </FrameLayout>
+
+                    <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                        <View android:id="@+id/ankiAnswerSampleHighlight" android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:visibility="gone" android:background="@drawable/highlight_border"/>
+                        <View android:id="@+id/ankiAnswerSample" android:layout_width="match_parent" android:layout_height="24dp"
+                            android:layout_margin="4dp" android:background="#404040" android:gravity="center"
+                            android:clickable="true" android:focusable="true" android:focusableInTouchMode="false"/>
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <TextView
                     android:id="@+id/selectionDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

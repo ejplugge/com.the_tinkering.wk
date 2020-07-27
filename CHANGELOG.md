@@ -32,6 +32,8 @@
 
 - Star ratings and search presets can be imported and exported with a new action in the settings menu.
 
+- Anki mode colours can now be customized in theme customization as well.
+
 ### Version 2.0.0, 2020-07-20:
 
 - Add a hint when answering a reading question incorrectly because of the common niyuu/nyuu にゆう/にゅう mistake.
