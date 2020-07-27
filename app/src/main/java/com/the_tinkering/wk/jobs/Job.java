@@ -65,6 +65,8 @@ public abstract class Job {
 
     /**
      * Make sure that any tasks that need to be executed are scheduled in the database.
+     *
+     * @param hourlySkew how much earlier than normal can hourly tasks be triggered?
      */
     public static void assertDueTasks(final long hourlySkew) {
         final AppDatabase db = WkApplication.getDatabase();

@@ -275,10 +275,15 @@ public enum QuestionType {
                                          final String answer, final CloseEnoughAction closeEnoughAction) {
             final boolean requireOnInKatakana = GlobalSettings.Other.getRequireOnInKatakana();
 
-            // TODO fix situation where a kanji has On and Kun readings that are identical, but only one is accepted.
             for (final Reading r: subject.getReadings()) {
-                if (r.matches(answer, requireOnInKatakana)) {
-                    return new AnswerVerdict(r.isAcceptedAnswer(), !r.isAcceptedAnswer(), false, answer, r.getReading(), null);
+                if (r.isAcceptedAnswer() && r.matches(answer, requireOnInKatakana)) {
+                    return new AnswerVerdict(true, false, false, answer, r.getReading(), null);
+                }
+            }
+
+            for (final Reading r: subject.getReadings()) {
+                if (!r.isAcceptedAnswer() && r.matches(answer, requireOnInKatakana)) {
+                    return new AnswerVerdict(false, true, false, answer, r.getReading(), null);
                 }
             }
 
@@ -332,10 +337,15 @@ public enum QuestionType {
                                          final String answer, final CloseEnoughAction closeEnoughAction) {
             final boolean requireOnInKatakana = GlobalSettings.Other.getRequireOnInKatakana();
 
-            // TODO fix situation where a kanji has On and Kun readings that are identical, but only one is accepted.
             for (final Reading r: subject.getReadings()) {
-                if (r.matches(answer, requireOnInKatakana)) {
-                    return new AnswerVerdict(r.isAcceptedAnswer(), !r.isAcceptedAnswer(), false, answer, r.getReading(), null);
+                if (r.isAcceptedAnswer() && r.matches(answer, requireOnInKatakana)) {
+                    return new AnswerVerdict(true, false, false, answer, r.getReading(), null);
+                }
+            }
+
+            for (final Reading r: subject.getReadings()) {
+                if (!r.isAcceptedAnswer() && r.matches(answer, requireOnInKatakana)) {
+                    return new AnswerVerdict(false, true, false, answer, r.getReading(), null);
                 }
             }
 

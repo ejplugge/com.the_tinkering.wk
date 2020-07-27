@@ -44,7 +44,6 @@ public final class EventItemViewHolder extends LogItemViewHolder implements View
     private @Nullable EventItem event = null;
     private final WeakLcoRef<Actment> actmentRef;
     private final ViewProxy button = new ViewProxy();
-    private final ViewProxy questionMark = new ViewProxy();
     private final ViewProxy age = new ViewProxy();
     private final ViewProxy details = new ViewProxy();
 
@@ -59,7 +58,6 @@ public final class EventItemViewHolder extends LogItemViewHolder implements View
         super(adapter, view);
         actmentRef = new WeakLcoRef<>(actment);
         button.setDelegate(view, R.id.button);
-        questionMark.setDelegate(view, R.id.questionMark);
         details.setDelegate(view, R.id.details);
         age.setDelegate(view, R.id.age);
     }
@@ -122,7 +120,6 @@ public final class EventItemViewHolder extends LogItemViewHolder implements View
             }
             final Subject subject = event.getSessionItem().getSubject();
             theActment.goToSubjectInfo(subject.getId(), new long[0], FragmentTransitionAnimation.RTL);
-            // TODO subject info context list
         });
     }
 }
