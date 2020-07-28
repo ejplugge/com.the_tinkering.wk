@@ -1,5 +1,5 @@
 
-### Version 2.1.0, 2020-XX-XX:
+### Version 2.1.0, 2020-07-28:
 
 - Android 11 compatibility
 
@@ -33,6 +33,10 @@
 - Star ratings and search presets can be imported and exported with a new action in the settings menu.
 
 - Anki mode colours can now be customized in theme customization as well.
+
+- Added a session log option to the menu. When a session is active, this can be used to get an overview of items in the session,
+  their status, and all events related to the session: submitted answers, undos, etc. By default, much of the information on incomplete
+  items is hidden, but can be unlocked from advanced settings.
 
 ### Version 2.0.0, 2020-07-20:
 
