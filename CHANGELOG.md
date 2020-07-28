@@ -1,4 +1,6 @@
 
+### Version 2.2.0, 2020-XX-XX:
+
 ### Version 2.1.0, 2020-07-28:
 
 - Android 11 compatibility
