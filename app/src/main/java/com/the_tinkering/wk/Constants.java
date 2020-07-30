@@ -99,7 +99,7 @@ public final class Constants {
     /**
      * Version of the static reference data, used to trigger a full reload if needed.
      */
-    public static final int REFERENCE_DATA_VERSION = 8;
+    public static final int REFERENCE_DATA_VERSION = 9;
 
     /**
      * API version.

@@ -1031,11 +1031,20 @@ public final class Subject implements PronunciationAudioOwner {
         return hasFallbackPitchInfo();
     }
 
+    /**
+     * Does this subject have stroke data?.
+     *
+     * @return true if it does
+     */
     public boolean hasStrokeData() {
-        return getType().canHaveStrokeData() && !getStrokeData().isEmpty();
+        return getType().canHaveStrokeData() && !getParsedStrokeData().isEmpty();
     }
 
-    public List<String> getStrokeData() {
+    /**
+     * The stroke data for this radical/kanji, empty for vocab. Lazily parsed from JSON.
+     * @return the value
+     */
+    public List<String> getParsedStrokeData() {
         if (entity.parsedStrokeData == null) {
             if (isEmpty(entity.strokeData)) {
                 entity.parsedStrokeData = Collections.emptyList();
@@ -1054,6 +1063,15 @@ public final class Subject implements PronunciationAudioOwner {
         }
         //noinspection AssignmentOrReturnOfFieldWithMutableType
         return entity.parsedStrokeData;
+    }
+
+    /**
+     * Get the raw stroke data, encoded as a JSON string.
+     *
+     * @return the stroke data or null if none is available
+     */
+    public @Nullable String getStrokeData() {
+        return entity.strokeData;
     }
 
     /*

@@ -589,7 +589,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         strokeOrderDivider.setVisibility(showStrokeOrder);
         strokeOrderDiagram.setSize(dp2px(GlobalSettings.SubjectInfo.getStrokeOrderSize()));
         strokeOrderDiagram.setAnimated(GlobalSettings.SubjectInfo.getStrokeOrderAnimated());
-        strokeOrderDiagram.setStrokeData(subject.getStrokeData());
+        strokeOrderDiagram.setStrokeData(subject.getParsedStrokeData());
         strokeOrderDiagram.setVisibility(showStrokeOrder);
 
         // Context sentences

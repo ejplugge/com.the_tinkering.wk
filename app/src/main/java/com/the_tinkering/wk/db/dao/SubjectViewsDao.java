@@ -134,7 +134,7 @@ public abstract class SubjectViewsDao {
      *
      * @return the list of reference data
      */
-    @Query("SELECT id, object AS type, characters, frequency, joyoGrade, jlptLevel, pitchInfo FROM subject")
+    @Query("SELECT id, object AS type, characters, frequency, joyoGrade, jlptLevel, pitchInfo, strokeData FROM subject")
     public abstract List<SubjectReferenceData> getReferenceData();
 
     /**

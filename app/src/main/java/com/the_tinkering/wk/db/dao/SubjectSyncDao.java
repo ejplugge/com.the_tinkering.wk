@@ -126,6 +126,7 @@ public abstract class SubjectSyncDao {
      * @param joyoGrade subject field
      * @param jlptLevel subject field
      * @param pitchInfo subject field
+     * @param strokeData subject field
      * @param srsSystemId subject field
      * @return true if there was a record to update
      */
@@ -156,6 +157,7 @@ public abstract class SubjectSyncDao {
             + " joyoGrade = :joyoGrade,"
             + " jlptLevel = :jlptLevel,"
             + " pitchInfo = :pitchInfo,"
+            + " strokeData = :strokeData,"
             + " srsSystemId = :srsSystemId"
             + " WHERE id = :subjectId")
     protected abstract int tryUpdateHelper(final long subjectId,
@@ -185,6 +187,7 @@ public abstract class SubjectSyncDao {
                                            final int joyoGrade,
                                            final int jlptLevel,
                                            @androidx.annotation.Nullable final String pitchInfo,
+                                           @androidx.annotation.Nullable final String strokeData,
                                            final long srsSystemId);
 
     /**
@@ -223,6 +226,7 @@ public abstract class SubjectSyncDao {
                 ReferenceDataUtil.getJoyoGrade(type, apiSubject.getCharacters()),
                 ReferenceDataUtil.getJlptLevel(type, apiSubject.getCharacters()),
                 ReferenceDataUtil.getPitchInfo(type, apiSubject.getCharacters()),
+                ReferenceDataUtil.getStrokeData(type, apiSubject.getId(), apiSubject.getCharacters()),
                 apiSubject.getSrsSystemId()
         );
         return count > 0;
@@ -259,13 +263,14 @@ public abstract class SubjectSyncDao {
      * @param joyoGrade subject field
      * @param jlptLevel subject field
      * @param pitchInfo subject field
+     * @param strokeData subject field
      * @param srsSystemId subject field
      */
     @Query("INSERT INTO subject"
             + " (id, object, characters, slug, documentUrl, meaningMnemonic, meaningHint, readingMnemonic, readingHint, searchTarget, smallSearchTarget,"
             + " meanings, auxiliaryMeanings, readings, componentSubjectIds, amalgamationSubjectIds, visuallySimilarSubjectIds,"
             + " partsOfSpeech, contextSentences, pronunciationAudios,"
-            + " typeCode, lessonPosition, level, hiddenAt, frequency, joyoGrade, jlptLevel, pitchInfo, srsSystemId,"
+            + " typeCode, lessonPosition, level, hiddenAt, frequency, joyoGrade, jlptLevel, pitchInfo, strokeData, srsSystemId,"
             + " assignmentId, passed, resurrected, srsStage, assignmentPatched, studyMaterialId, studyMaterialPatched,"
             + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
             + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
@@ -277,7 +282,7 @@ public abstract class SubjectSyncDao {
             + " :meanings, :auxiliaryMeanings, :readings, :componentSubjectIds, :amalgamationSubjectIds, :visuallySimilarSubjectIds,"
             + " :partsOfSpeech, :contextSentences, :pronunciationAudios,"
             + " 0, :lessonPosition, :level, :hiddenAt,"
-            + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :srsSystemId,"
+            + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :strokeData, :srsSystemId,"
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
             + " 0, 0, 0, 0, 0, 0"
             + ")")
@@ -308,6 +313,7 @@ public abstract class SubjectSyncDao {
                                             final int joyoGrade,
                                             final int jlptLevel,
                                             @androidx.annotation.Nullable final String pitchInfo,
+                                            @androidx.annotation.Nullable final String strokeData,
                                             final long srsSystemId);
 
     /**
@@ -347,6 +353,7 @@ public abstract class SubjectSyncDao {
                     ReferenceDataUtil.getJoyoGrade(type, apiSubject.getCharacters()),
                     ReferenceDataUtil.getJlptLevel(type, apiSubject.getCharacters()),
                     ReferenceDataUtil.getPitchInfo(type, apiSubject.getCharacters()),
+                    ReferenceDataUtil.getStrokeData(type, apiSubject.getId(), apiSubject.getCharacters()),
                     apiSubject.getSrsSystemId()
             );
         }

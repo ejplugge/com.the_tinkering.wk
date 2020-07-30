@@ -69,9 +69,10 @@ public final class LoadReferenceDataTask extends ApiTask {
             final int joyoGrade = ReferenceDataUtil.getJoyoGrade(data.getType(), data.getCharacters());
             final int jlptLevel = ReferenceDataUtil.getJlptLevel(data.getType(), data.getCharacters());
             final @Nullable String pitchInfo = ReferenceDataUtil.getPitchInfo(data.getType(), data.getCharacters());
+            final @Nullable String strokeData = ReferenceDataUtil.getStrokeData(data.getType(), data.getId(), data.getCharacters());
             if (frequency != data.getFrequency() || joyoGrade != data.getJoyoGrade() || jlptLevel != data.getJlptLevel()
-                    || !isEqual(pitchInfo, data.getPitchInfo())) {
-                db.subjectDao().updateReferenceData(data.getId(), frequency, joyoGrade, jlptLevel, pitchInfo);
+                    || !isEqual(pitchInfo, data.getPitchInfo())|| !isEqual(strokeData, data.getStrokeData())) {
+                db.subjectDao().updateReferenceData(data.getId(), frequency, joyoGrade, jlptLevel, pitchInfo, strokeData);
             }
             LiveApiProgress.addProcessedEntity();
         }

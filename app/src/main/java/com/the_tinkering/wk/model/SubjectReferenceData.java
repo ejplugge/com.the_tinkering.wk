@@ -32,6 +32,7 @@ public final class SubjectReferenceData {
     private final int joyoGrade;
     private final int jlptLevel;
     private final @Nullable String pitchInfo;
+    private final @Nullable String strokeData;
 
     /**
      * The constructor.
@@ -43,9 +44,11 @@ public final class SubjectReferenceData {
      * @param joyoGrade subject field
      * @param jlptLevel subject field
      * @param pitchInfo subject field
+     * @param strokeData subject field
      */
     public SubjectReferenceData(final long id, final @Nullable SubjectType type, final @Nullable String characters,
-                                final int frequency, final int joyoGrade, final int jlptLevel, final @Nullable String pitchInfo) {
+                                final int frequency, final int joyoGrade, final int jlptLevel,
+                                final @Nullable String pitchInfo, final @Nullable String strokeData) {
         this.id = id;
         this.type = type;
         this.characters = characters;
@@ -53,6 +56,7 @@ public final class SubjectReferenceData {
         this.joyoGrade = joyoGrade;
         this.jlptLevel = jlptLevel;
         this.pitchInfo = pitchInfo;
+        this.strokeData = strokeData;
     }
 
     /**
@@ -112,5 +116,13 @@ public final class SubjectReferenceData {
      */
     public @Nullable String getPitchInfo() {
         return pitchInfo;
+    }
+
+    /**
+     * The stroke data for this subject.
+     * @return the value
+     */
+    public @Nullable String getStrokeData() {
+        return strokeData;
     }
 }

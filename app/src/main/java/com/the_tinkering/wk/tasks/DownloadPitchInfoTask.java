@@ -87,7 +87,7 @@ public final class DownloadPitchInfoTask extends ApiTask {
             }
 
             db.subjectDao().updateReferenceData(subjectId, subject.getFrequency(), subject.getJoyoGrade(),
-                    subject.getJlptLevel(), pitchInfoString);
+                    subject.getJlptLevel(), pitchInfoString, subject.getStrokeData());
         }
 
         db.taskDefinitionDao().deleteTaskDefinition(taskDefinition);

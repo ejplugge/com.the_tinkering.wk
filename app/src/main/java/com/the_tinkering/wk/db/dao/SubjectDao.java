@@ -86,10 +86,12 @@ public abstract class SubjectDao {
      * @param joyoGrade the Joyo grade
      * @param jlptLevel the JLPT level
      * @param pitchInfo the pitch info, encoded as a JSON string
+     * @param strokeData the stroke data, encoded as a JSON string
      */
-    @Query("UPDATE subject SET frequency = :frequency, joyoGrade = :joyoGrade, jlptLevel = :jlptLevel, pitchInfo = :pitchInfo WHERE id = :id")
+    @Query("UPDATE subject SET frequency = :frequency, joyoGrade = :joyoGrade, jlptLevel = :jlptLevel, pitchInfo = :pitchInfo,"
+            + " strokeData = :strokeData WHERE id = :id")
     public abstract void updateReferenceData(final long id, final int frequency, final int joyoGrade, final int jlptLevel,
-                                             @androidx.annotation.Nullable final String pitchInfo);
+                                             @androidx.annotation.Nullable final String pitchInfo, @androidx.annotation.Nullable final String strokeData);
 
     /**
      * Room-generated method: update the last incorrect answer timestamp.

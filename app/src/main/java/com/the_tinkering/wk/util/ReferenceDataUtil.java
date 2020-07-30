@@ -43,11 +43,13 @@ public final class ReferenceDataUtil {
     private static final Map<String, Integer> KANJI_JLPT_LEVEL_MAP = new HashMap<>();
     private static final Map<String, Integer> VOCAB_JLPT_LEVEL_MAP = new HashMap<>();
     private static final Map<String, List<PitchInfo>> PITCH_INFO_MAP = new HashMap<>();
+    private static final Map<String, List<String>> STROKE_DATA_MAP = new HashMap<>();
     private static final InternalizingCache<Integer> INT_INTERNALIZER = new InternalizingCache<>();
     private static boolean frequencyMapLoaded = false;
     private static boolean joyoGradeMapLoaded = false;
     private static boolean jlptLevelMapsLoaded = false;
     private static boolean pitchInfoMapLoaded = false;
+    private static boolean strokeDataMapLoaded = false;
 
     private ReferenceDataUtil() {
         //
@@ -138,6 +140,31 @@ public final class ReferenceDataUtil {
     }
 
     /**
+     * Load the stroke data map if not loaded already.
+     */
+    private static void loadStrokeDataMap() {
+        if (strokeDataMapLoaded || !STROKE_DATA_MAP.isEmpty()) {
+            return;
+        }
+
+        safe(() -> {
+            try (final InputStream is = WkApplication.getInstance().getResources().openRawResource(R.raw.stroke_data)) {
+                final Map<String, List<String>> json = Converters.getObjectMapper()
+                        .readValue(is, new TypeReference<Map<String, List<String>>>() {});
+                for (final Map.Entry<String, List<String>> entry : json.entrySet()) {
+                    final @Nullable String key = entry.getKey();
+                    final @Nullable List<String> value = entry.getValue();
+                    if (key != null && value != null) {
+                        STROKE_DATA_MAP.put(key.intern(), value);
+                    }
+                }
+            }
+        });
+
+        strokeDataMapLoaded = true;
+    }
+
+    /**
      * Get the frequency for a subject with the given type and characters.
      *
      * @param type the subject's type
@@ -221,6 +248,32 @@ public final class ReferenceDataUtil {
         }
         try {
             return Converters.getObjectMapper().writeValueAsString(info);
+        }
+        catch (final Exception e) {
+            // This can't realistically happen
+            return null;
+        }
+    }
+
+    /**
+     * Get the stroke data for a subject with the given type, id and characters.
+     *
+     * @param type the subject's type
+     * @param id the subject's ID
+     * @param characters the subject's characters
+     * @return the stroke data or null if not found
+     */
+    public static @Nullable String getStrokeData(final @Nullable SubjectType type, final long id, final @Nullable String characters) {
+        if (characters == null || type == null || id == -1 || !type.canHaveStrokeData()) {
+            return null;
+        }
+        loadStrokeDataMap();
+        final @Nullable List<String> data = STROKE_DATA_MAP.get(characters);
+        if (data == null) {
+            return null;
+        }
+        try {
+            return Converters.getObjectMapper().writeValueAsString(data);
         }
         catch (final Exception e) {
             // This can't realistically happen
