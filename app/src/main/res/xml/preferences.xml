@@ -346,6 +346,30 @@
             app:defaultValue="ANSWERS_ONLY"
             app:useSimpleSummaryProvider="true"/>
 
+        <SwitchPreferenceCompat
+            app:key="show_stroke_order"
+            app:title="Show stroke order diagrams on radicals and kanji"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="stroke_order_animated"
+            app:title="Animate the stroke order diagrams"
+            app:singleLineTitle="false"
+            app:defaultValue="true"
+            app:summary="Tap the diagram to toggle animation"/>
+
+        <SeekBarPreference
+            app:key="stroke_order_size"
+            app:title="Size of the stroke order diagrams"
+            app:singleLineTitle="false"
+            app:defaultValue="250"
+            app:min="20"
+            android:max="500"
+            app:seekBarIncrement="1"
+            app:showSeekBarValue="true"
+            app:adjustable="true"/>
+
     </PreferenceScreen>
 
     <PreferenceScreen

@@ -931,6 +931,33 @@ public final class GlobalSettings {
                 return correct ? getReadingInfoDump() : getReadingInfoDumpIncorrect();
             }
         }
+
+        /**
+         * Show stroke order diagrams.
+         *
+         * @return the value
+         */
+        public static boolean getShowStrokeOrder() {
+            return prefs().getBoolean("show_stroke_order", false);
+        }
+
+        /**
+         * Animate the stroke order diagrams.
+         *
+         * @return the value
+         */
+        public static boolean getStrokeOrderAnimated() {
+            return prefs().getBoolean("stroke_order_animated", true);
+        }
+
+        /**
+         * Size of the stroke order diagrams.
+         *
+         * @return the value
+         */
+        public static int getStrokeOrderSize() {
+            return prefs().getInt("stroke_order_size", 250);
+        }
     }
 
     /**
