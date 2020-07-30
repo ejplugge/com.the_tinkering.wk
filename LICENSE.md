@@ -30,6 +30,21 @@ itself is completely open source and can be used however you like as long as
 you stick to the modest requirements of the Apache License 2.0.
 
 
+## Stroke order diagrams
+
+For the stroke order diagrams, the data from the KanjiVG project is used:
+https://github.com/KanjiVG/kanjivg
+
+KanjiVG is copyright Ulrich Apel and released under the Creative Commons
+Attribution-Share Alike 3.0 license:
+
+https://creativecommons.org/licenses/by-sa/3.0/
+
+The file app/src/main/res/raw/stroke_data.json is a derived work from the
+KanjiVG data created by Ernst Jan Plugge. That file is covered by the same
+CC-BY-SA-3.0 license.
+
+
 ## Apache License 2.0
 
                                  Apache License

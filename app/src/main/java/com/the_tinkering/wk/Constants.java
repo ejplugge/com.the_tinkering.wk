@@ -169,6 +169,8 @@ public final class Constants {
             + " <li>&nbsp;<a href=\"https://jsoup.org/\">JSoup</a>"
             + " <li>&nbsp;<a href=\"https://square.github.io/okhttp/\">OkHttp</a>"
             + " <li>&nbsp;<a href=\"https://github.com/Madrapps/Pikolo\">Pikolo color picker</a>"
+            + " <li>&nbsp;<a href=\"https://github.com/KanjiVG/kanjivg\">KanjiVG</a>,"
+            + " covered by the <a href=\"https://creativecommons.org/licenses/by-sa/3.0/\">CC-BY-SA-3.0</a> license."
             + "</ul><br/>"
             + " It was also heavily influenced by:<ul>"
             + " <li>&nbsp;<a href=\"https://www.wanikani.com/\">WaniKani</a> itself"
