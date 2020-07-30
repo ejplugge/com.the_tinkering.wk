@@ -110,7 +110,7 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
             }
         }
 
-        if (GlobalSettings.Display.getShowPitchInfo()) {
+        if (GlobalSettings.SubjectInfo.getShowPitchInfo()) {
             final long lastPitchInfoScanDate = db.propertiesDao().getLastPitchInfoScanDate();
             if (lastPitchInfoScanDate == 0 || System.currentTimeMillis() - lastPitchInfoScanDate > DAY/2) {
                 PitchInfoUtil.scheduleDownloadTasks(100);

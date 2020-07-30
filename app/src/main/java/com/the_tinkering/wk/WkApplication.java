@@ -296,10 +296,10 @@ public final class WkApplication extends MultiDexApplication {
             safe(() -> {
                 if (!db.propertiesDao().getMigrationDoneDump()) {
                     db.propertiesDao().setMigrationDoneDump(true);
-                    final SubjectInfoDump dump1 = GlobalSettings.Review.getMeaningInfoDump();
-                    GlobalSettings.Review.setMeaningInfoDumpIncorrect(dump1);
-                    final SubjectInfoDump dump2 = GlobalSettings.Review.getReadingInfoDump();
-                    GlobalSettings.Review.setReadingInfoDumpIncorrect(dump2);
+                    final SubjectInfoDump dump1 = GlobalSettings.SubjectInfo.getMeaningInfoDump();
+                    GlobalSettings.SubjectInfo.setMeaningInfoDumpIncorrect(dump1);
+                    final SubjectInfoDump dump2 = GlobalSettings.SubjectInfo.getReadingInfoDump();
+                    GlobalSettings.SubjectInfo.setReadingInfoDumpIncorrect(dump2);
                 }
             });
 

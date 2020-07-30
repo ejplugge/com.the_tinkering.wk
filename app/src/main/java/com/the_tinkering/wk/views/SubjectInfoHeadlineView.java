@@ -158,7 +158,7 @@ public final class SubjectInfoHeadlineView extends ConstraintLayout {
             toolbar.setBackgroundColor(subject.getBackgroundColor());
         }
 
-        final boolean showPitchInfo = GlobalSettings.Display.getShowPitchInfo() && subject.hasPitchInfo() && showReadingAnswers;
+        final boolean showPitchInfo = GlobalSettings.SubjectInfo.getShowPitchInfo() && subject.hasPitchInfo() && showReadingAnswers;
         boolean wide = false;
 
         if (maxFontSize == 0) {

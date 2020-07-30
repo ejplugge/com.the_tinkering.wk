@@ -508,42 +508,6 @@ public final class GlobalSettings {
         }
 
         /**
-         * Hide readings in lesson presentation until they are tapped in the subject info dump.
-         *
-         * @return the value
-         */
-        public static boolean getHideLessonReadings() {
-            return prefs().getBoolean("hide_lesson_readings", false);
-        }
-
-        /**
-         * Hide context sentence translations until they are tapped in the subject info dump.
-         *
-         * @return the value
-         */
-        public static boolean getHideSentenceTranslations() {
-            return prefs().getBoolean("hide_sentence_translations", false);
-        }
-
-        /**
-         * Show pitch info.
-         *
-         * @return the value
-         */
-        public static boolean getShowPitchInfo() {
-            return prefs().getBoolean("show_pitch_info", false);
-        }
-
-        /**
-         * Swap the 'visually similar' and 'used in' tables in the subject info dump.
-         *
-         * @return the value
-         */
-        public static boolean getSwapSimilarAndAmalgamations() {
-            return prefs().getBoolean("swap_similar_amalgamations", false);
-        }
-
-        /**
          * Center the caret in the quiz answer edit box.
          *
          * @return the value
@@ -580,15 +544,6 @@ public final class GlobalSettings {
         }
 
         /**
-         * Highlight subject type tags in mnemonic texts.
-         *
-         * @return the value
-         */
-        public static boolean getHighlightSubjectTags() {
-            return prefs().getBoolean("highlight_subject_tags", true);
-        }
-
-        /**
          * Use slide animations for fragment transitions.
          *
          * @return the value
@@ -604,15 +559,6 @@ public final class GlobalSettings {
          */
         public static boolean getStretchQuestionView() {
             return prefs().getBoolean("stretch_quiz_question_view", false);
-        }
-
-        /**
-         * Swap the legacy names and mnemonics for old radicals.
-         *
-         * @return the value
-         */
-        public static boolean getShowLegacy() {
-            return prefs().getBoolean("show_legacy", false);
         }
     }
 
@@ -808,6 +754,182 @@ public final class GlobalSettings {
          */
         public static boolean getShowBurnedItems() {
             return prefs().getBoolean("show_burned_items", true);
+        }
+    }
+
+    /**
+     * Subject info settings.
+     */
+    public static final class SubjectInfo {
+        /**
+         * Private constructor.
+         */
+        private SubjectInfo() {
+            //
+        }
+
+        /**
+         * Hide readings in lesson presentation until they are tapped in the subject info dump.
+         *
+         * @return the value
+         */
+        public static boolean getHideLessonReadings() {
+            return prefs().getBoolean("hide_lesson_readings", false);
+        }
+
+        /**
+         * Hide context sentence translations until they are tapped in the subject info dump.
+         *
+         * @return the value
+         */
+        public static boolean getHideSentenceTranslations() {
+            return prefs().getBoolean("hide_sentence_translations", false);
+        }
+
+        /**
+         * Show pitch info.
+         *
+         * @return the value
+         */
+        public static boolean getShowPitchInfo() {
+            return prefs().getBoolean("show_pitch_info", false);
+        }
+
+        /**
+         * Swap the 'visually similar' and 'used in' tables in the subject info dump.
+         *
+         * @return the value
+         */
+        public static boolean getSwapSimilarAndAmalgamations() {
+            return prefs().getBoolean("swap_similar_amalgamations", false);
+        }
+
+        /**
+         * Highlight subject type tags in mnemonic texts.
+         *
+         * @return the value
+         */
+        public static boolean getHighlightSubjectTags() {
+            return prefs().getBoolean("highlight_subject_tags", true);
+        }
+
+        /**
+         * Swap the legacy names and mnemonics for old radicals.
+         *
+         * @return the value
+         */
+        public static boolean getShowLegacy() {
+            return prefs().getBoolean("show_legacy", false);
+        }
+
+        /**
+         * The parts of the subject info to show after a correct answer with lightning mode off (meaning questions).
+         *
+         * @return the value
+         */
+        public static SubjectInfoDump getMeaningInfoDump() {
+            final @Nullable String value = prefs().getString("meaning_info_dump", null);
+            if (value != null) {
+                try {
+                    return SubjectInfoDump.valueOf(value);
+                }
+                catch (final Exception e) {
+                    //
+                }
+            }
+            return SubjectInfoDump.ANSWERS_ONLY;
+        }
+
+        /**
+         * The parts of the subject info to show after a correct answer with lightning mode off (reading questions).
+         *
+         * @return the value
+         */
+        public static SubjectInfoDump getReadingInfoDump() {
+            final @Nullable String value = prefs().getString("reading_info_dump", null);
+            if (value != null) {
+                try {
+                    return SubjectInfoDump.valueOf(value);
+                }
+                catch (final Exception e) {
+                    //
+                }
+            }
+            return SubjectInfoDump.ANSWERS_ONLY;
+        }
+
+        /**
+         * The parts of the subject info to show after an incorrect answer (meaning questions).
+         *
+         * @return the value
+         */
+        private static SubjectInfoDump getMeaningInfoDumpIncorrect() {
+            final @Nullable String value = prefs().getString("meaning_info_dump_incorrect", null);
+            if (value != null) {
+                try {
+                    return SubjectInfoDump.valueOf(value);
+                }
+                catch (final Exception e) {
+                    //
+                }
+            }
+            return SubjectInfoDump.ANSWERS_ONLY;
+        }
+
+        /**
+         * The parts of the subject info to show after an incorrect answer (meaning questions).
+         *
+         * @param value the value
+         */
+        public static void setMeaningInfoDumpIncorrect(final SubjectInfoDump value) {
+            final SharedPreferences.Editor editor = prefs().edit();
+            editor.putString("meaning_info_dump_incorrect", value.name());
+            editor.apply();
+        }
+
+        /**
+         * The parts of the subject info to show after an incorrect answer (reading questions).
+         *
+         * @return the value
+         */
+        private static SubjectInfoDump getReadingInfoDumpIncorrect() {
+            final @Nullable String value = prefs().getString("reading_info_dump_incorrect", null);
+            if (value != null) {
+                try {
+                    return SubjectInfoDump.valueOf(value);
+                }
+                catch (final Exception e) {
+                    //
+                }
+            }
+            return SubjectInfoDump.ANSWERS_ONLY;
+        }
+
+        /**
+         * The parts of the subject info to show after an incorrect answer (reading questions).
+         *
+         * @param value the value
+         */
+        public static void setReadingInfoDumpIncorrect(final SubjectInfoDump value) {
+            final SharedPreferences.Editor editor = prefs().edit();
+            editor.putString("reading_info_dump_incorrect", value.name());
+            editor.apply();
+        }
+
+        /**
+         * The parts of the subject info to show after an answer.
+         *
+         * @param questionType the type of the current question
+         * @param correct was the answer correct?
+         * @return the dump enum instance
+         */
+        public static SubjectInfoDump getInfoDump(final QuestionType questionType, final boolean correct) {
+            if (questionType.isMeaning()) {
+                return correct ? getMeaningInfoDump() : getMeaningInfoDumpIncorrect();
+            }
+            else {
+                return correct ? getReadingInfoDump() : getReadingInfoDumpIncorrect();
+            }
         }
     }
 
@@ -1046,116 +1168,6 @@ public final class GlobalSettings {
                 }
             }
             return CloseEnoughAction.SILENTLY_ACCEPT;
-        }
-
-        /**
-         * The parts of the subject info to show after a correct answer with lightning mode off (meaning questions).
-         *
-         * @return the value
-         */
-        public static SubjectInfoDump getMeaningInfoDump() {
-            final @Nullable String value = prefs().getString("meaning_info_dump", null);
-            if (value != null) {
-                try {
-                    return SubjectInfoDump.valueOf(value);
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
-            return SubjectInfoDump.ANSWERS_ONLY;
-        }
-
-        /**
-         * The parts of the subject info to show after a correct answer with lightning mode off (reading questions).
-         *
-         * @return the value
-         */
-        public static SubjectInfoDump getReadingInfoDump() {
-            final @Nullable String value = prefs().getString("reading_info_dump", null);
-            if (value != null) {
-                try {
-                    return SubjectInfoDump.valueOf(value);
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
-            return SubjectInfoDump.ANSWERS_ONLY;
-        }
-
-        /**
-         * The parts of the subject info to show after an incorrect answer (meaning questions).
-         *
-         * @return the value
-         */
-        private static SubjectInfoDump getMeaningInfoDumpIncorrect() {
-            final @Nullable String value = prefs().getString("meaning_info_dump_incorrect", null);
-            if (value != null) {
-                try {
-                    return SubjectInfoDump.valueOf(value);
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
-            return SubjectInfoDump.ANSWERS_ONLY;
-        }
-
-        /**
-         * The parts of the subject info to show after an incorrect answer (meaning questions).
-         *
-         * @param value the value
-         */
-        public static void setMeaningInfoDumpIncorrect(final SubjectInfoDump value) {
-            final SharedPreferences.Editor editor = prefs().edit();
-            editor.putString("meaning_info_dump_incorrect", value.name());
-            editor.apply();
-        }
-
-        /**
-         * The parts of the subject info to show after an incorrect answer (reading questions).
-         *
-         * @return the value
-         */
-        private static SubjectInfoDump getReadingInfoDumpIncorrect() {
-            final @Nullable String value = prefs().getString("reading_info_dump_incorrect", null);
-            if (value != null) {
-                try {
-                    return SubjectInfoDump.valueOf(value);
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
-            return SubjectInfoDump.ANSWERS_ONLY;
-        }
-
-        /**
-         * The parts of the subject info to show after an incorrect answer (reading questions).
-         *
-         * @param value the value
-         */
-        public static void setReadingInfoDumpIncorrect(final SubjectInfoDump value) {
-            final SharedPreferences.Editor editor = prefs().edit();
-            editor.putString("reading_info_dump_incorrect", value.name());
-            editor.apply();
-        }
-
-        /**
-         * The parts of the subject info to show after an answer.
-         *
-         * @param questionType the type of the current question
-         * @param correct was the answer correct?
-         * @return the dump enum instance
-         */
-        public static SubjectInfoDump getInfoDump(final QuestionType questionType, final boolean correct) {
-            if (questionType.isMeaning()) {
-                return correct ? getMeaningInfoDump() : getMeaningInfoDumpIncorrect();
-            }
-            else {
-                return correct ? getReadingInfoDump() : getReadingInfoDumpIncorrect();
-            }
         }
     }
 
@@ -1687,15 +1699,15 @@ public final class GlobalSettings {
          * @return the value
          */
         public static SubjectCardLayout getSubjectCardLayoutSearch() {
-            final @Nullable String value = prefs().getString("exp_subject_card_layout_search", null);
-            if (value != null) {
-                try {
-                    return SubjectCardLayout.valueOf(value);
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
+//            final @Nullable String value = prefs().getString("exp_subject_card_layout_search", null);
+//            if (value != null) {
+//                try {
+//                    return SubjectCardLayout.valueOf(value);
+//                }
+//                catch (final Exception e) {
+//                    //
+//                }
+//            }
             return SubjectCardLayout.NORMAL;
         }
 
@@ -1705,15 +1717,15 @@ public final class GlobalSettings {
          * @return the value
          */
         public static SubjectCardLayout getSubjectCardLayoutOther() {
-            final @Nullable String value = prefs().getString("exp_subject_card_layout_grid", null);
-            if (value != null) {
-                try {
-                    return SubjectCardLayout.valueOf(value);
-                }
-                catch (final Exception e) {
-                    //
-                }
-            }
+//            final @Nullable String value = prefs().getString("exp_subject_card_layout_grid", null);
+//            if (value != null) {
+//                try {
+//                    return SubjectCardLayout.valueOf(value);
+//                }
+//                catch (final Exception e) {
+//                    //
+//                }
+//            }
             return SubjectCardLayout.NORMAL;
         }
     }

@@ -1285,7 +1285,7 @@ s     *
             AudioUtil.scheduleDownloadTasks(list, 100);
         }
 
-        if (GlobalSettings.Display.getShowPitchInfo()) {
+        if (GlobalSettings.SubjectInfo.getShowPitchInfo()) {
             PitchInfoUtil.scheduleDownloadTasks(list, 100);
         }
 

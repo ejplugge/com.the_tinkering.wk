@@ -97,30 +97,6 @@
             app:summary="Customize some dynamic colors in the current theme"/>
 
         <SwitchPreferenceCompat
-            app:key="hide_lesson_readings"
-            app:title="Hide readings in lessons until tapped"
-            app:singleLineTitle="false"
-            app:defaultValue="false"/>
-
-        <SwitchPreferenceCompat
-            app:key="hide_sentence_translations"
-            app:title="Hide context sentence translations until tapped"
-            app:singleLineTitle="false"
-            app:defaultValue="false"/>
-
-        <SwitchPreferenceCompat
-            app:key="show_pitch_info"
-            app:title="Show pitch information on vocabulary"
-            app:singleLineTitle="false"
-            app:defaultValue="false"/>
-
-        <SwitchPreferenceCompat
-            app:key="swap_similar_amalgamations"
-            app:title="Swap 'visually similar' and 'used in' in subject info dump"
-            app:singleLineTitle="false"
-            app:defaultValue="false"/>
-
-        <SwitchPreferenceCompat
             app:key="center_caret"
             app:title="Center the caret in the quiz answer edit box"
             app:singleLineTitle="false"
@@ -156,13 +132,6 @@
             app:defaultValue="false"/>
 
         <SwitchPreferenceCompat
-            app:key="highlight_subject_tags"
-            app:title="Highlight subject tags in mnemonic texts with colours"
-            app:singleLineTitle="false"
-            app:defaultValue="true"
-            android:summary="This replaces tags such as &lt;kanji&gt; with appropriate colouring instead of just making the text bold"/>
-
-        <SwitchPreferenceCompat
             app:key="slide_animations"
             app:title="Use slide animations to transition between quiz questions"
             app:singleLineTitle="false"
@@ -171,12 +140,6 @@
         <SwitchPreferenceCompat
             app:key="stretch_quiz_question_view"
             app:title="Stretch the question view to fill the screen when keyboard input is active"
-            app:singleLineTitle="false"
-            app:defaultValue="false"/>
-
-        <SwitchPreferenceCompat
-            app:key="show_legacy"
-            app:title="Show old names and mnemonics for radicals from before the December 2018 content update"
             app:singleLineTitle="false"
             app:defaultValue="false"/>
 
@@ -306,6 +269,86 @@
     </PreferenceScreen>
 
     <PreferenceScreen
+        app:key="subject_info_settings"
+        app:title="Subject Info settings"
+        app:summary="Settings related to the presentation of the subject info dump in various places">
+
+        <SwitchPreferenceCompat
+            app:key="hide_lesson_readings"
+            app:title="Hide readings in lessons until tapped"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="hide_sentence_translations"
+            app:title="Hide context sentence translations until tapped"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="show_pitch_info"
+            app:title="Show pitch information on vocabulary"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="swap_similar_amalgamations"
+            app:title="Swap 'visually similar' and 'used in' in subject info dump"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="highlight_subject_tags"
+            app:title="Highlight subject tags in mnemonic texts with colours"
+            app:singleLineTitle="false"
+            app:defaultValue="true"
+            android:summary="This replaces tags such as &lt;kanji&gt; with appropriate colouring instead of just making the text bold"/>
+
+        <SwitchPreferenceCompat
+            app:key="show_legacy"
+            app:title="Show old names and mnemonics for radicals from before the December 2018 content update"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
+        <ListPreference
+            app:key="meaning_info_dump"
+            app:title="Show info dump after a correct meaning answer"
+            app:singleLineTitle="false"
+            app:entries="@array/subjectInfoDumps"
+            app:entryValues="@array/subjectInfoDumpValues"
+            app:defaultValue="ANSWERS_ONLY"
+            app:useSimpleSummaryProvider="true"/>
+
+        <ListPreference
+            app:key="reading_info_dump"
+            app:title="Show info dump after a correct reading answer"
+            app:singleLineTitle="false"
+            app:entries="@array/subjectInfoDumps"
+            app:entryValues="@array/subjectInfoDumpValues"
+            app:defaultValue="ANSWERS_ONLY"
+            app:useSimpleSummaryProvider="true"/>
+
+        <ListPreference
+            app:key="meaning_info_dump_incorrect"
+            app:title="Show info dump after an incorrect meaning answer"
+            app:singleLineTitle="false"
+            app:entries="@array/subjectInfoDumps"
+            app:entryValues="@array/subjectInfoDumpValues"
+            app:defaultValue="ANSWERS_ONLY"
+            app:useSimpleSummaryProvider="true"/>
+
+        <ListPreference
+            app:key="reading_info_dump_incorrect"
+            app:title="Show info dump after an incorrect reading answer"
+            app:singleLineTitle="false"
+            app:entries="@array/subjectInfoDumps"
+            app:entryValues="@array/subjectInfoDumpValues"
+            app:defaultValue="ANSWERS_ONLY"
+            app:useSimpleSummaryProvider="true"/>
+
+    </PreferenceScreen>
+
+    <PreferenceScreen
         app:key="audio_settings"
         app:title="Audio settings">
 
@@ -420,42 +463,6 @@
             app:entries="@array/closeEnoughActions"
             app:entryValues="@array/closeEnoughActionValues"
             app:defaultValue="SILENTLY_ACCEPT"
-            app:useSimpleSummaryProvider="true"/>
-
-        <ListPreference
-            app:key="meaning_info_dump"
-            app:title="Show info dump after a correct meaning answer"
-            app:singleLineTitle="false"
-            app:entries="@array/subjectInfoDumps"
-            app:entryValues="@array/subjectInfoDumpValues"
-            app:defaultValue="ANSWERS_ONLY"
-            app:useSimpleSummaryProvider="true"/>
-
-        <ListPreference
-            app:key="reading_info_dump"
-            app:title="Show info dump after a correct reading answer"
-            app:singleLineTitle="false"
-            app:entries="@array/subjectInfoDumps"
-            app:entryValues="@array/subjectInfoDumpValues"
-            app:defaultValue="ANSWERS_ONLY"
-            app:useSimpleSummaryProvider="true"/>
-
-        <ListPreference
-            app:key="meaning_info_dump_incorrect"
-            app:title="Show info dump after an incorrect meaning answer"
-            app:singleLineTitle="false"
-            app:entries="@array/subjectInfoDumps"
-            app:entryValues="@array/subjectInfoDumpValues"
-            app:defaultValue="ANSWERS_ONLY"
-            app:useSimpleSummaryProvider="true"/>
-
-        <ListPreference
-            app:key="reading_info_dump_incorrect"
-            app:title="Show info dump after an incorrect reading answer"
-            app:singleLineTitle="false"
-            app:entries="@array/subjectInfoDumps"
-            app:entryValues="@array/subjectInfoDumpValues"
-            app:defaultValue="ANSWERS_ONLY"
             app:useSimpleSummaryProvider="true"/>
 
     </PreferenceScreen>
@@ -735,7 +742,8 @@
 
     <PreferenceScreen
         app:key="experimental_settings"
-        app:title="Experimental (temporary) settings">
+        app:title="Experimental (temporary) settings"
+        app:isPreferenceVisible="false">
 
         <com.the_tinkering.wk.components.InfoPreference
             app:title="Caution"

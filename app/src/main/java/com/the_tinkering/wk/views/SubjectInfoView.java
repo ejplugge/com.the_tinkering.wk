@@ -178,7 +178,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
                 if (dump != null) {
                     return dump;
                 }
-                final SubjectInfoDump startingDump = GlobalSettings.Display.getHideLessonReadings()
+                final SubjectInfoDump startingDump = GlobalSettings.SubjectInfo.getHideLessonReadings()
                         ? SubjectInfoDump.HIDE_READING_RELATED
                         : SubjectInfoDump.ALL;
                 FloatingUiState.showDumpStage = startingDump;
@@ -193,7 +193,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
                 if (question == null) {
                     return SubjectInfoDump.ALL;
                 }
-                final SubjectInfoDump startingDump = GlobalSettings.Review.getInfoDump(question.getType(), Session.getInstance().isCorrect());
+                final SubjectInfoDump startingDump = GlobalSettings.SubjectInfo.getInfoDump(question.getType(), Session.getInstance().isCorrect());
                 FloatingUiState.showDumpStage = startingDump;
                 return startingDump;
             }
@@ -308,7 +308,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         componentsDivider.setDelegate(this, R.id.componentsDivider);
         componentsHeader.setDelegate(this, R.id.componentsHeader);
         componentsTable.setDelegate(this, R.id.componentsTable);
-        if (GlobalSettings.Display.getSwapSimilarAndAmalgamations()) {
+        if (GlobalSettings.SubjectInfo.getSwapSimilarAndAmalgamations()) {
             visuallySimilarsDivider.setDelegate(this, R.id.amalgamationsDivider);
             visuallySimilarsHeader.setDelegate(this, R.id.amalgamationsHeader);
             visuallySimilarsTable.setDelegate(this, R.id.amalgamationsTable);
@@ -379,7 +379,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
 
             japanese.setText(sentence.getJapanese());
             japanese.setJapaneseLocale();
-            if (GlobalSettings.Display.getHideSentenceTranslations()) {
+            if (GlobalSettings.SubjectInfo.getHideSentenceTranslations()) {
                 english.setText("-- Tap to reveal translation --");
                 english.setBackgroundColor(ThemeUtil.getColor(R.attr.tileColorBackground));
                 english.setClickableAndNotFocusable(true);
@@ -547,9 +547,9 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         meaningHint.setLinkMovementMethod();
         meaningHint.setVisibility(showMeaningRelated && subject.hasMeaningHint());
         legacyName.setText(subject.getLegacyNameRichText());
-        legacyName.setVisibility(showMeaningRelated && GlobalSettings.Display.getShowLegacy() && subject.hasLegacy());
+        legacyName.setVisibility(showMeaningRelated && GlobalSettings.SubjectInfo.getShowLegacy() && subject.hasLegacy());
         legacyMnemonic.setText(subject.getLegacyMnemonicRichText());
-        legacyMnemonic.setVisibility(showMeaningRelated && GlobalSettings.Display.getShowLegacy() && subject.hasLegacy());
+        legacyMnemonic.setVisibility(showMeaningRelated && GlobalSettings.SubjectInfo.getShowLegacy() && subject.hasLegacy());
         meaningNote.setText(subject.getMeaningNoteRichText());
         meaningNote.setJapaneseLocale();
         meaningNote.setLinkMovementMethod();

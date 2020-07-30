@@ -82,7 +82,7 @@ public final class WaniKaniTagHandler implements Html.TagHandler {
                 start(output, new Kanji());
             }
             else {
-                if (GlobalSettings.Display.getHighlightSubjectTags()) {
+                if (GlobalSettings.SubjectInfo.getHighlightSubjectTags()) {
                     end(output, Kanji.class,
                             new ButtonStyleSpan(ActiveTheme.getSubjectTypeTextColors()[1], ActiveTheme.getSubjectTypeBackgroundColors()[1]));
                 }
@@ -96,7 +96,7 @@ public final class WaniKaniTagHandler implements Html.TagHandler {
                 start(output, new Radical());
             }
             else {
-                if (GlobalSettings.Display.getHighlightSubjectTags()) {
+                if (GlobalSettings.SubjectInfo.getHighlightSubjectTags()) {
                     end(output, Radical.class,
                             new ButtonStyleSpan(ActiveTheme.getSubjectTypeTextColors()[0], ActiveTheme.getSubjectTypeBackgroundColors()[0]));
                 }
@@ -110,7 +110,7 @@ public final class WaniKaniTagHandler implements Html.TagHandler {
                 start(output, new Vocabulary());
             }
             else {
-                if (GlobalSettings.Display.getHighlightSubjectTags()) {
+                if (GlobalSettings.SubjectInfo.getHighlightSubjectTags()) {
                     end(output, Vocabulary.class,
                             new ButtonStyleSpan(ActiveTheme.getSubjectTypeTextColors()[2], ActiveTheme.getSubjectTypeBackgroundColors()[2]));
                 }
@@ -124,7 +124,7 @@ public final class WaniKaniTagHandler implements Html.TagHandler {
                 start(output, new Reading());
             }
             else {
-                if (GlobalSettings.Display.getHighlightSubjectTags()) {
+                if (GlobalSettings.SubjectInfo.getHighlightSubjectTags()) {
                     end(output, Reading.class,
                             new ButtonStyleSpan(ThemeUtil.getColor(R.attr.colorPrimaryLight), ThemeUtil.getColor(R.attr.colorPrimaryDark)));
                 }
