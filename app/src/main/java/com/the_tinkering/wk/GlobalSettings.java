@@ -1725,6 +1725,7 @@ public final class GlobalSettings {
          *
          * @return the value
          */
+        @SuppressWarnings("SameReturnValue")
         public static SubjectCardLayout getSubjectCardLayoutSearch() {
 //            final @Nullable String value = prefs().getString("exp_subject_card_layout_search", null);
 //            if (value != null) {
@@ -1743,6 +1744,7 @@ public final class GlobalSettings {
          *
          * @return the value
          */
+        @SuppressWarnings("SameReturnValue")
         public static SubjectCardLayout getSubjectCardLayoutOther() {
 //            final @Nullable String value = prefs().getString("exp_subject_card_layout_grid", null);
 //            if (value != null) {
