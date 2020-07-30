@@ -217,6 +217,7 @@ public final class TestActivity extends AbstractActivity {
                 strokeData.add("M37,58.25c8.75-1.12,27-3.5,36.25-4T4,40.00,54.50");
                 diagram.setStrokeData(strokeData);
                 diagram.setAnimated(true);
+                diagram.setSize((int) (400 * getResources().getDisplayMetrics().density));
             }
         });
     }

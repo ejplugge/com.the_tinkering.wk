@@ -72,6 +72,7 @@ public final class StrokeDiagramView extends View implements Animator.AnimatorLi
     private List<Float> strokeLengths = Collections.emptyList();
     private int numStrokes = 0;
     private boolean animated = true;
+    private int size = 0;
 
     private int finishedStrokes = 0;
     private int animatingStroke = 0;
@@ -296,6 +297,7 @@ public final class StrokeDiagramView extends View implements Animator.AnimatorLi
         setOnClickListener(this);
         animator.addListener(this);
         animator.addUpdateListener(this);
+        size = dp2px(250);
     }
 
     /**
@@ -328,6 +330,18 @@ public final class StrokeDiagramView extends View implements Animator.AnimatorLi
         lingering = false;
         finishedStrokes = 0;
         invalidate();
+    }
+
+    /**
+     * The size of the diagram in pixels (square).
+     *
+     * @param size the size
+     */
+    public void setSize(final int size) {
+        this.size = size;
+        dirty = true;
+        invalidate();
+        requestLayout();
     }
 
     @SuppressLint("NewApi")
@@ -368,6 +382,11 @@ public final class StrokeDiagramView extends View implements Animator.AnimatorLi
         }
     }
 
+    @Override
+    protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+        setMeasuredDimension(size, size);
+    }
+
     @SuppressLint("NewApi")
     private void onDrawHelper(final Canvas canvas) {
         prepare();
@@ -389,7 +408,7 @@ public final class StrokeDiagramView extends View implements Animator.AnimatorLi
         }
 
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(dp2px(4));
+        paint.setStrokeWidth(size/50.0f);
         paint.setStrokeCap(Paint.Cap.ROUND);
         textPaint.setTextSize(dp2px(10));
 
@@ -416,7 +435,7 @@ public final class StrokeDiagramView extends View implements Animator.AnimatorLi
                     paint.setPathEffect(effect);
                     canvas.drawPath(strokes.get(animatingStroke).path, paint);
                     paint.setStyle(Paint.Style.FILL);
-                    canvas.drawCircle(pos[0], pos[1], dp2px(4), paint);
+                    canvas.drawCircle(pos[0], pos[1], size/50.0f, paint);
                     paint.setPathEffect(null);
                 }
             }
