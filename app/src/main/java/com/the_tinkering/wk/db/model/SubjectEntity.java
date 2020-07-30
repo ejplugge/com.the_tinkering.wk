@@ -366,6 +366,11 @@ public final class SubjectEntity {
     public @Nullable String pitchInfo;
 
     /**
+     * The stroke order data for this subject.
+     */
+    public @Nullable String strokeData;
+
+    /**
      * Parsed version of meanings, inflated on demand.
      */
     @Ignore public @Nullable List<Meaning> parsedMeanings;
@@ -419,4 +424,9 @@ public final class SubjectEntity {
      * Parsed version of meaningSynonyms, inflated on demand.
      */
     @Ignore public @Nullable List<PitchInfo> parsedPitchInfo;
+
+    /**
+     * Parsed version of meaningSynonyms, inflated on demand.
+     */
+    @Ignore public @Nullable List<String> parsedStrokeData;
 }

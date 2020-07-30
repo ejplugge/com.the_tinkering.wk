@@ -94,6 +94,8 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
     private final ViewProxy readingNote = new ViewProxy();
     private final ViewProxy partsOfSpeechDivider = new ViewProxy();
     private final ViewProxy partsOfSpeech = new ViewProxy();
+    private final ViewProxy strokeOrderDivider = new ViewProxy();
+    private final ViewProxy strokeOrderDiagram = new ViewProxy();
     private final ViewProxy contextSentencesDivider = new ViewProxy();
     private final ViewProxy contextSentencesHeader = new ViewProxy();
     private final ViewProxy headline = new ViewProxy();
@@ -284,6 +286,8 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         readingNote.setDelegate(this, R.id.readingNote);
         partsOfSpeechDivider.setDelegate(this, R.id.partsOfSpeechDivider);
         partsOfSpeech.setDelegate(this, R.id.partsOfSpeech);
+        strokeOrderDivider.setDelegate(this, R.id.strokeOrderDivider);
+        strokeOrderDiagram.setDelegate(this, R.id.strokeOrderDiagram);
         contextSentencesDivider.setDelegate(this, R.id.contextSentencesDivider);
         contextSentencesHeader.setDelegate(this, R.id.contextSentencesHeader);
         headline.setDelegate(this, R.id.headline);
@@ -580,6 +584,14 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         partsOfSpeech.setText(subject.getPartsOfSpeechRichText());
         partsOfSpeech.setVisibility(showMeaningRelated && subject.hasPartsOfSpeech());
 
+        // Parts of speech
+        final boolean showStrokeOrder = showMeaningRelated && GlobalSettings.SubjectInfo.getShowStrokeOrder() && subject.hasStrokeData();
+        strokeOrderDivider.setVisibility(showStrokeOrder);
+        strokeOrderDiagram.setSize(dp2px(GlobalSettings.SubjectInfo.getStrokeOrderSize()));
+        strokeOrderDiagram.setAnimated(GlobalSettings.SubjectInfo.getStrokeOrderAnimated());
+        strokeOrderDiagram.setStrokeData(subject.getStrokeData());
+        strokeOrderDiagram.setVisibility(showStrokeOrder);
+
         // Context sentences
         final boolean hasContextSentences = showMeaningRelated && subject.hasContextSentences();
         contextSentencesDivider.setVisibility(hasContextSentences);
@@ -723,6 +735,10 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
             intent.putExtra("ids", new long[] {id});
             getContext().startActivity(intent);
         });
+    }
+
+    private int dp2px(@SuppressWarnings("SameParameterValue") final int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
     /**

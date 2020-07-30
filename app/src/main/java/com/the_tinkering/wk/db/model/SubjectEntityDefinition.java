@@ -96,4 +96,5 @@ public final class SubjectEntityDefinition {
     public int joyoGrade = 0;
     public int jlptLevel = 0;
     public @Nullable String pitchInfo;
+    public @Nullable String strokeData;
 }

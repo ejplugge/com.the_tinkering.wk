@@ -1031,6 +1031,31 @@ public final class Subject implements PronunciationAudioOwner {
         return hasFallbackPitchInfo();
     }
 
+    public boolean hasStrokeData() {
+        return getType().canHaveStrokeData() && !getStrokeData().isEmpty();
+    }
+
+    public List<String> getStrokeData() {
+        if (entity.parsedStrokeData == null) {
+            if (isEmpty(entity.strokeData)) {
+                entity.parsedStrokeData = Collections.emptyList();
+            }
+            else {
+                try {
+                    entity.parsedStrokeData = Converters.getObjectMapper().readValue(
+                            entity.strokeData, new TypeReference<List<String>>() {});
+                } catch (final IOException e) {
+                    entity.parsedStrokeData = Collections.emptyList();
+                }
+            }
+        }
+        if (entity.parsedStrokeData == null) {
+            return Collections.emptyList();
+        }
+        //noinspection AssignmentOrReturnOfFieldWithMutableType
+        return entity.parsedStrokeData;
+    }
+
     /*
      *************************************************************************************************************************************************
      * The user's assignment data for the subject.

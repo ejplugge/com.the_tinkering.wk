@@ -90,7 +90,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.join;
         LogRecordEntityDefinition.class,
         AudioDownloadStatus.class,
         SearchPreset.class
-}, version = 66)
+}, version = 67)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
     /**
@@ -313,6 +313,16 @@ public abstract class AppDatabase extends RoomDatabase {
     };
 
     /**
+     * Migration from 66 to 67: add strokeData column.
+     */
+    public static final Migration MIGRATION_66_67 = new Migration(66, 67) {
+        @Override
+        public void migrate(final SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE subject ADD COLUMN strokeData TEXT");
+        }
+    };
+
+    /**
      * Get the singleton instance.
      *
      * @return the instance
@@ -339,7 +349,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             MIGRATION_62_63,
                             MIGRATION_63_64,
                             MIGRATION_64_65,
-                            MIGRATION_65_66)
+                            MIGRATION_65_66,
+                            MIGRATION_66_67)
                     .fallbackToDestructiveMigration()
                     .build();
         }

@@ -56,6 +56,7 @@ import com.the_tinkering.wk.views.AdvancedSearchFormView;
 import com.the_tinkering.wk.views.LevelProgressBarView;
 import com.the_tinkering.wk.views.Post60ProgressBarView;
 import com.the_tinkering.wk.views.StarRatingView;
+import com.the_tinkering.wk.views.StrokeDiagramView;
 import com.the_tinkering.wk.views.SubjectGridView;
 import com.the_tinkering.wk.views.SubjectInfoButtonView;
 import com.the_tinkering.wk.views.SubjectInfoHeadlineView;
@@ -338,6 +339,27 @@ public final class ViewProxy {
         final @Nullable View delegate = getDelegate();
         if (delegate instanceof SubjectInfoButtonView) {
             ((SubjectInfoButtonView) delegate).setSizeSp(sizeSp);
+        }
+    }
+
+    public void setSize(final int size) {
+        final @Nullable View delegate = getDelegate();
+        if (delegate instanceof StrokeDiagramView) {
+            ((StrokeDiagramView) delegate).setSize(size);
+        }
+    }
+
+    public void setAnimated(final boolean animated) {
+        final @Nullable View delegate = getDelegate();
+        if (delegate instanceof StrokeDiagramView) {
+            ((StrokeDiagramView) delegate).setAnimated(animated);
+        }
+    }
+
+    public void setStrokeData(final Collection<String> strokeData) {
+        final @Nullable View delegate = getDelegate();
+        if (delegate instanceof StrokeDiagramView) {
+            ((StrokeDiagramView) delegate).setStrokeData(strokeData);
         }
     }
 

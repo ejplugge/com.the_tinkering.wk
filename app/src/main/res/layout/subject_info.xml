@@ -214,6 +214,20 @@
         style="@style/WK.TextView.Normal"/>
 
     <com.the_tinkering.wk.views.DividerView
+        android:id="@+id/strokeOrderDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"/>
+
+    <com.the_tinkering.wk.views.StrokeDiagramView
+        android:id="@+id/strokeOrderDiagram"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"/>
+
+    <com.the_tinkering.wk.views.DividerView
         android:id="@+id/contextSentencesDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"

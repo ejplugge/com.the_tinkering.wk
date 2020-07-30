@@ -29,7 +29,7 @@ public enum SubjectType {
      * A WaniKani radical.
      */
     WANIKANI_RADICAL("radical",
-            false, true, 10, true, false, false, false,
+            false, true, true, 10, true, false, false, false,
             "Radical", "Radicals", "Radical", "", "radicals", "radical", 0) {
         @Override
         public int getTextColor() {
@@ -85,7 +85,7 @@ public enum SubjectType {
      * A WaniKani kanji.
      */
     WANIKANI_KANJI("kanji",
-            false, false, 20, false, true, false, true,
+            false, true, false, 20, false, true, false, true,
             "Kanji", "Kanji", "Kanji", "Used radicals:", "kanji", "kanji", 1) {
         @Override
         public int getTextColor() {
@@ -144,7 +144,7 @@ public enum SubjectType {
      * A WaniKani vocab.
      */
     WANIKANI_VOCAB("vocabulary",
-            true, false,30, false, false, true, false,
+            true, false, false,30, false, false, true, false,
             "Vocabulary", "Vocabulary", "Vocab", "Used kanji:", "vocabulary", "vocabulary", 2) {
         @Override
         public int getTextColor() {
@@ -201,6 +201,7 @@ public enum SubjectType {
     private final String dbTypeName;
     private final SubjectSource source;
     private final boolean canHavePitchInfo;
+    private final boolean canHaveStrokeData;
     private final boolean canHaveTitleImage;
     private final int order;
     private final boolean radical;
@@ -247,6 +248,7 @@ public enum SubjectType {
      * The constructor.
      * @param dbTypeName instance field
      * @param canHavePitchInfo instance field
+     * @param canHaveStrokeData instance field
      * @param canHaveTitleImage instance field
      * @param order instance field
      * @param radical instance field
@@ -259,7 +261,7 @@ public enum SubjectType {
      * @param infoTitleLabel instance field
      * @param timeLineBarChartBucket instance field
      */
-    SubjectType(final String dbTypeName, final boolean canHavePitchInfo, final boolean canHaveTitleImage,
+    SubjectType(final String dbTypeName, final boolean canHavePitchInfo, final boolean canHaveStrokeData, final boolean canHaveTitleImage,
                 final int order, final boolean radical, final boolean kanji, final boolean vocabulary, final boolean hasLevelUpTarget,
                 final String description, final String descriptionPlural, final String shortDescription,
                 final String componentsHeaderText, final String levelProgressLabel, final String infoTitleLabel,
@@ -267,6 +269,7 @@ public enum SubjectType {
         this.dbTypeName = dbTypeName;
         source = SubjectSource.WANIKANI;
         this.canHavePitchInfo = canHavePitchInfo;
+        this.canHaveStrokeData = canHaveStrokeData;
         this.canHaveTitleImage = canHaveTitleImage;
         this.order = order;
         this.radical = radical;
@@ -305,6 +308,14 @@ public enum SubjectType {
      */
     public boolean canHavePitchInfo() {
         return canHavePitchInfo;
+    }
+
+    /**
+     * Can a subject of this type have stroke order data?.
+     * @return the value
+     */
+    public boolean canHaveStrokeData() {
+        return canHaveStrokeData;
     }
 
     /**
