@@ -21,6 +21,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -324,7 +325,7 @@ public final class SubjectInfoButtonView extends View {
                 paint.setTextSize(textHeight);
                 paint.setColor(textColor);
                 paint.setTextAlign(Paint.Align.LEFT);
-                paint.setShadowLayer(3, 1, 1, 0xFF000000);
+                paint.setShadowLayer(3, 1, 1, Color.BLACK);
                 final int x = getPaddingLeft() + fontPaddingLeft;
                 final int y = getPaddingTop() + fontPaddingTop + textHeight / 2 - (int) (paint.ascent() + paint.descent()) / 2;
                 canvas.drawText(characters, x, y, paint);
@@ -392,7 +393,7 @@ public final class SubjectInfoButtonView extends View {
             textColor = subject.getTextColor();
             if (image != null) {
                 textColorFilter = new SimpleColorFilter(textColor);
-                shadowColorFilter = new SimpleColorFilter(0xFF000000);
+                shadowColorFilter = new SimpleColorFilter(Color.BLACK);
             }
             backgroundColor = subject.getButtonBackgroundColor();
             setTag(R.id.subjectId, subject.getId());

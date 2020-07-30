@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.model;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -171,7 +172,7 @@ public final class SubjectCardBinder {
             }
 
             if (ThemeUtil.isLightColor(textColor)) {
-                waitTime.setShadowLayer(3, 1, 1, 0xFF000000);
+                waitTime.setShadowLayer(3, 1, 1, Color.BLACK);
             }
             else {
                 waitTime.setShadowLayer(0, 0, 0, 0);
@@ -194,7 +195,7 @@ public final class SubjectCardBinder {
                 textColor = ThemeUtil.getColor(R.attr.colorPrimaryDark);
             }
             else {
-                stageLetter.setShadowLayer(3, 1, 1, 0xFF000000);
+                stageLetter.setShadowLayer(3, 1, 1, Color.BLACK);
                 textColor = ThemeUtil.getColor(R.attr.colorPrimaryLight);
             }
 

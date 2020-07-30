@@ -17,6 +17,7 @@
 package com.the_tinkering.wk.views;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -93,7 +94,7 @@ public final class SrsBreakDownView extends ConstraintLayout {
         for (int i=0; i<5; i++) {
             views.get(i).setBackgroundColor(ActiveTheme.getShallowStageBucketColors5()[i]);
             if (ActiveTheme.getCurrentTheme() == ActiveTheme.LIGHT) {
-                counts.get(i).setShadowLayer(3, 1, 1, 0xFF000000);
+                counts.get(i).setShadowLayer(3, 1, 1, Color.BLACK);
             }
             else {
                 counts.get(i).setShadowLayer(0, 0, 0, 0);

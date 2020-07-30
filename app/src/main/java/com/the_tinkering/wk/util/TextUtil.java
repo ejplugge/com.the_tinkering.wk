@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.text.Html;
@@ -148,7 +149,7 @@ public final class TextUtil {
         final TextPaint textPaint = new TextPaint();
         textPaint.setTypeface(typeface);
         textPaint.setTextSize(FONT_SIZE_NORMAL);
-        textPaint.setColor(0xFF000000);
+        textPaint.setColor(Color.BLACK);
 
         final Bitmap bitmap = Bitmap.createBitmap(FONT_SIZE_NORMAL, FONT_SIZE_NORMAL, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
@@ -167,7 +168,7 @@ public final class TextUtil {
         final TextPaint textPaint = new TextPaint();
         textPaint.setTypeface(typeface);
         textPaint.setTextSize(FONT_SIZE_NORMAL);
-        textPaint.setColor(0xFF000000);
+        textPaint.setColor(Color.BLACK);
 
         final Bitmap bitmap = Bitmap.createBitmap(FONT_SIZE_NORMAL, FONT_SIZE_NORMAL, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);

@@ -51,6 +51,7 @@
     <attr name="pitchInfoNakadakaColor" format="reference"/>
     <attr name="pitchInfoAtamadakaColor" format="reference"/>
     <attr name="buttonHighlightColor" format="reference"/>
+    <attr name="strokeDiagramGhostColor" format="reference"/>
 
     <attr name="WK_TextView_BrowseLevelButton" format="reference"/>
     <attr name="WK_TextView_Normal" format="reference"/>

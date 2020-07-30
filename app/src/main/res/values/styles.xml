@@ -41,6 +41,7 @@
         <item name="pitchInfoNakadakaColor">@color/wkLightPitchInfoNakadakaColor</item>
         <item name="pitchInfoAtamadakaColor">@color/wkLightPitchInfoAtamadakaColor</item>
         <item name="buttonHighlightColor">@color/wkLightButtonHighlightColor</item>
+        <item name="strokeDiagramGhostColor">@color/wkLightStrokeDiagramGhostColor</item>
 
         <item name="android:windowBackground">@color/wkLightWindowBackground</item>
 
@@ -77,6 +78,7 @@
         <item name="pitchInfoNakadakaColor">@color/wkDarkPitchInfoNakadakaColor</item>
         <item name="pitchInfoAtamadakaColor">@color/wkDarkPitchInfoAtamadakaColor</item>
         <item name="buttonHighlightColor">@color/wkDarkButtonHighlightColor</item>
+        <item name="strokeDiagramGhostColor">@color/wkDarkStrokeDiagramGhostColor</item>
 
         <item name="android:windowBackground">@color/wkDarkWindowBackground</item>
 
@@ -113,6 +115,7 @@
         <item name="pitchInfoNakadakaColor">@color/wkDarkPitchInfoNakadakaColor</item>
         <item name="pitchInfoAtamadakaColor">@color/wkDarkPitchInfoAtamadakaColor</item>
         <item name="buttonHighlightColor">@color/wkDarkButtonHighlightColor</item>
+        <item name="strokeDiagramGhostColor">@color/wkDarkStrokeDiagramGhostColor</item>
 
         <item name="android:windowBackground">@color/wkBlackColorBackground</item>
 

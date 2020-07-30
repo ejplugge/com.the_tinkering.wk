@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.activities;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -308,7 +309,7 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
         }
 
         if (!ignorePicker) {
-            colorPicker.setColor(actualColor | 0xFF000000);
+            colorPicker.setColor(actualColor | Color.BLACK);
         }
 
         final @Nullable Drawable background = colorPickerPreview.getBackground();

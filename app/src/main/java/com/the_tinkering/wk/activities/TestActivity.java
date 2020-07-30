@@ -29,8 +29,10 @@ import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.PitchInfoUtil;
 import com.the_tinkering.wk.util.ReferenceDataUtil;
+import com.the_tinkering.wk.views.StrokeDiagramView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -202,7 +204,20 @@ public final class TestActivity extends AbstractActivity {
         safe(() -> {
             LOGGER.info("Test button 2 clicked!");
             document.setText("Click 2!");
-            goToActivity(NoApiKeyHelpActivity.class);
+//            goToActivity(NoApiKeyHelpActivity.class);
+
+            final @Nullable StrokeDiagramView diagram = findViewById(R.id.strokeDiagram);
+            if (diagram != null) {
+                final Collection<String> strokeData = new ArrayList<>();
+                strokeData.add("M34.25,16.25c1,1,1.48,2.38,1.5,4c0.38,33.62,2.38,59.38-11,73.25T1,27.50,23.43");
+                //noinspection StringConcatenationMissingWhitespace
+                strokeData.add("M36.25,19c4.12-0.62,31.49-4.78,33.25-5c4-0.5,5.5,1.12,5.5,4.75c0,2.76-0.5,49.25-0.5,69.5"
+                        + "c0,13-6.25,4-8.75,1.75T2,37.50,15.50");
+                strokeData.add("M37.25,38c10.25-1.5,27.25-3.75,36.25-4.5T3,40.00,33.50");
+                strokeData.add("M37,58.25c8.75-1.12,27-3.5,36.25-4T4,40.00,54.50");
+                diagram.setStrokeData(strokeData);
+                diagram.setAnimated(true);
+            }
         });
     }
 }

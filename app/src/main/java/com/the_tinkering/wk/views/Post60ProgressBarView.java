@@ -18,6 +18,7 @@ package com.the_tinkering.wk.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -136,7 +137,7 @@ public final class Post60ProgressBarView extends View {
                 if (total > 0) {
                     paint.setColor(textColors[i]);
                     if (textShadow[i]) {
-                        paint.setShadowLayer(3, 1, 1, 0xFF000000);
+                        paint.setShadowLayer(3, 1, 1, Color.BLACK);
                     }
                     else {
                         paint.clearShadowLayer();

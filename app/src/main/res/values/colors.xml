@@ -46,6 +46,7 @@
     <color name="wkLightPitchInfoNakadakaColor">#27A2FF</color>
     <color name="wkLightPitchInfoAtamadakaColor">#EA9316</color>
     <color name="wkLightButtonHighlightColor">#9808F3</color>
+    <color name="wkLightStrokeDiagramGhostColor">#404040</color>
 
     <color name="wkDarkColorPrimary">#BCBCBC</color>
     <color name="wkDarkColorPrimaryDark">#000000</color>
@@ -74,6 +75,7 @@
     <color name="wkDarkPitchInfoNakadakaColor">#27A2FF</color>
     <color name="wkDarkPitchInfoAtamadakaColor">#EA9316</color>
     <color name="wkDarkButtonHighlightColor">#9808F3</color>
+    <color name="wkDarkStrokeDiagramGhostColor">#404040</color>
 
     <color name="wkBlackColorBackground">#000000</color>
 </resources>
