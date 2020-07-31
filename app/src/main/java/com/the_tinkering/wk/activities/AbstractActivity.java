@@ -49,6 +49,7 @@ import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.enums.OnlineStatus;
+import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.fragments.AbstractFragment;
 import com.the_tinkering.wk.jobs.ActivityResumedJob;
 import com.the_tinkering.wk.jobs.AutoSyncNowJob;
@@ -317,6 +318,12 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
             viewLastFinishedItem.setVisible(session.getLastFinishedSubjectId() != -1);
         }
 
+        final @Nullable MenuItem backToPresentationItem = menu.findItem(R.id.action_back_to_presentation);
+        if (backToPresentationItem != null) {
+            final Session session = Session.getInstance();
+            backToPresentationItem.setVisible(session.getType() == SessionType.LESSON && session.isActive());
+        }
+
         final @Nullable MenuItem studyMaterialsItem = menu.findItem(R.id.action_study_materials);
         if (studyMaterialsItem != null) {
             studyMaterialsItem.setVisible(getCurrentSubject() != null && getCurrentSubject().getType().canHaveStudyMaterials());
@@ -400,6 +407,13 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
                 final long subjectId = Session.getInstance().getLastFinishedSubjectId();
                 if (subjectId != -1) {
                     goToSubjectInfo(subjectId, Collections.emptyList(), FragmentTransitionAnimation.RTL);
+                }
+                return true;
+            }
+            case R.id.action_back_to_presentation: {
+                Session.getInstance().goBackToPresentation();
+                if (!(this instanceof SessionActivity)) {
+                    goToActivity(SessionActivity.class);
                 }
                 return true;
             }

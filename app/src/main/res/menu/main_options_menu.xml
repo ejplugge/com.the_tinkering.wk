@@ -41,6 +41,9 @@
     <item android:id="@+id/action_view_last_finished"
         android:title="Last completed item..."
         app:showAsAction="never"/>
+    <item android:id="@+id/action_back_to_presentation"
+        android:title="Back to lesson presentation..."
+        app:showAsAction="never"/>
     <item android:id="@+id/action_abandon_session"
         android:title="Abandon session"
         app:showAsAction="never"/>

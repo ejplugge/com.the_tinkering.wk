@@ -39,6 +39,7 @@ import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.CloseEnoughAction;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
+import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.fragments.AbstractFragment;
 import com.the_tinkering.wk.fragments.AbstractSessionFragment;
 import com.the_tinkering.wk.livedata.LiveSessionProgress;
@@ -211,6 +212,11 @@ public final class SessionActivity extends AbstractActivity {
             final @Nullable MenuItem viewLastFinishedItem = menu.findItem(R.id.action_view_last_finished);
             if (viewLastFinishedItem != null) {
                 viewLastFinishedItem.setVisible(session.getLastFinishedSubjectId() != -1);
+            }
+
+            final @Nullable MenuItem backToPresentationItem = menu.findItem(R.id.action_back_to_presentation);
+            if (backToPresentationItem != null) {
+                backToPresentationItem.setVisible(session.getType() == SessionType.LESSON && session.isActive());
             }
         }
 

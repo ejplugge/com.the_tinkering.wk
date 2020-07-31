@@ -61,6 +61,11 @@ public enum QuestionChoiceReason {
     STARTING_QUIZ(RTL),
 
     /**
+     * The quiz part of a lesson session has been started.
+     */
+    BACK_TO_PRESENTATION(LTR),
+
+    /**
      * The user is progressing normally to the next question. Either they answered a question and then clicked Next,
      * or the user has lightning mode enabled and answered a question correctly.
      */

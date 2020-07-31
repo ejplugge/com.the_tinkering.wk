@@ -654,6 +654,23 @@ s     *
         adapter.addEventStartQuiz();
     }
 
+    /**
+     * Go back to lesson presentation.
+     */
+    public void goBackToPresentation() {
+        LOGGER.info("Go back to lesson presentation");
+        if (!isActive() || type != LESSON || items.isEmpty() || questions.isEmpty()) {
+            LOGGER.info("Go back to lesson presentation: not in an active lesson session");
+        }
+
+        state = IN_LESSON_PRESENTATION;
+        adapter.addEventBackToLessonPresentation();
+        currentItem = items.get(items.size()-1);
+        setCurrentQuestion(questions.get(0), QuestionChoiceReason.BACK_TO_PRESENTATION);
+        LiveSessionState.getInstance().post(state);
+        LiveSessionProgress.getInstance().ping();
+    }
+
     private AnswerVerdict submitHelper(final @Nullable Subject matchingKanji) {
         final @Nullable Subject subject = currentQuestion == null ? null : currentQuestion.getItem().getSubject();
         String currentAnswer = FloatingUiState.getCurrentAnswer();

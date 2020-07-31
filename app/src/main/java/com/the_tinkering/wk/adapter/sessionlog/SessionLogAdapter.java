@@ -230,6 +230,11 @@ public final class SessionLogAdapter extends RecyclerView.Adapter<LogItemViewHol
     }
 
     @SuppressWarnings("JavaDoc")
+    public void addEventBackToLessonPresentation() {
+        events.add(0, new EventItem(null, "Jumped back to lesson presentation"));
+    }
+
+    @SuppressWarnings("JavaDoc")
     public void addEventSubmitTypedAnswer(final @Nullable Question question, final String answer, final AnswerVerdict verdict) {
         if (question == null || verdict.isRetry()) {
             return;

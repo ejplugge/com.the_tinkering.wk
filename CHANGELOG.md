@@ -2,11 +2,13 @@
 ### Version 2.2.0, 2020-XX-XX:
 
 - Split the settings related to the presentation of the subject info dump off into their own category,
-  mostly to avoid growing the Display settings too long.
+  mostly to avoid letting the Display settings grow too large.
 
 - Added animated stroke order diagrams to radicals and kanji. Can be enabled under Settings -> Subject Info.
 
-- Reduce the sensitivity of horizontal swipe gestures.
+- Reduce the sensitivity of horizontal swipe gestures, to avoid taps being accidentally interpreted as swipes.
+
+- Added a menu option to go back to the lesson presentation after the lesson quiz has already started.
 
 ### Version 2.1.0, 2020-07-28:
 
