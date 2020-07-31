@@ -218,12 +218,12 @@ public final class StrokeDiagramView extends View implements Animator.AnimatorLi
                     curve = true;
                     int index = 0;
                     while (index + 6 <= coordinates.size()) {
-                        float x1 = coordinates.get(0);
-                        float y1 = coordinates.get(1);
-                        float x2 = coordinates.get(2);
-                        float y2 = coordinates.get(3);
-                        float x = coordinates.get(4);
-                        float y = coordinates.get(5);
+                        float x1 = coordinates.get(index);
+                        float y1 = coordinates.get(index+1);
+                        float x2 = coordinates.get(index+2);
+                        float y2 = coordinates.get(index+3);
+                        float x = coordinates.get(index+4);
+                        float y = coordinates.get(index+5);
                         if (command == 'c') {
                             x1 += lastX;
                             x2 += lastX;
@@ -246,10 +246,10 @@ public final class StrokeDiagramView extends View implements Animator.AnimatorLi
                     curve = true;
                     int index = 0;
                     while (index + 4 <= coordinates.size()) {
-                        float x2 = coordinates.get(0);
-                        float y2 = coordinates.get(1);
-                        float x = coordinates.get(2);
-                        float y = coordinates.get(3);
+                        float x2 = coordinates.get(index);
+                        float y2 = coordinates.get(index+1);
+                        float x = coordinates.get(index+2);
+                        float y = coordinates.get(index+3);
                         if (command == 's') {
                             x2 += lastX;
                             x += lastX;

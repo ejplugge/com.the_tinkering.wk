@@ -23,6 +23,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -383,6 +384,36 @@ public final class ObjectSupport {
                 });
             }
         }.execute();
+    }
+
+    /**
+     * Make a read-only list with one element.
+     *
+     * @param e1 the element
+     * @param <T> the element type
+     * @return the list
+     */
+    public static <T> List<T> listOf(final T e1) {
+        return Collections.singletonList(e1);
+    }
+
+    /**
+     * Make a read-only list with two or more elements.
+     *
+     * @param e1 the first element
+     * @param e2 the second element
+     * @param rest the rest of the elements in order
+     * @param <T> the element type
+     * @return the list
+     */
+    @SuppressWarnings("OverloadedVarargsMethod")
+    @SafeVarargs
+    public static <T> List<T> listOf(final T e1, final T e2, final T... rest) {
+        final List<T> result = new ArrayList<>(rest.length + 2);
+        result.add(e1);
+        result.add(e2);
+        result.addAll(Arrays.asList(rest));
+        return Collections.unmodifiableList(result);
     }
 
     /**
