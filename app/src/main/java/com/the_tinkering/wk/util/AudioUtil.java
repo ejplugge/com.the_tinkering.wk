@@ -25,6 +25,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.arch.core.util.Function;
 import androidx.core.content.ContextCompat;
@@ -645,7 +647,7 @@ public final class AudioUtil {
                 return;
             }
         }
-        player.setOnCompletionListener(mp -> {
+        player.setOnCompletionListener(mp -> new Handler(Looper.getMainLooper()).postDelayed(() -> {
             try {
                 mp.reset();
             }
@@ -666,7 +668,7 @@ public final class AudioUtil {
             catch (final Exception e) {
                 //
             }
-        });
+        }, 1500));
         player.start();
     }
 
@@ -695,7 +697,7 @@ public final class AudioUtil {
                 return;
             }
         }
-        player.setOnCompletionListener(mp -> {
+        player.setOnCompletionListener(mp -> new Handler(Looper.getMainLooper()).postDelayed(() -> {
             try {
                 mp.reset();
             }
@@ -716,7 +718,7 @@ public final class AudioUtil {
             catch (final Exception e) {
                 //
             }
-        });
+        }, 1500));
         player.start();
     }
 
@@ -744,7 +746,7 @@ public final class AudioUtil {
                 return;
             }
         }
-        player.setOnCompletionListener(mp -> {
+        player.setOnCompletionListener(mp -> new Handler(Looper.getMainLooper()).postDelayed(() -> {
             try {
                 mp.reset();
             }
@@ -765,7 +767,7 @@ public final class AudioUtil {
             catch (final Exception e) {
                 //
             }
-        });
+        }, 1500));
         player.start();
     }
 

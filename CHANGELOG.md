@@ -10,6 +10,8 @@
 
 - Added a menu option to go back to the lesson presentation after the lesson quiz has already started.
 
+- Add a little extra delay after playing vocab audio to allow playback to settle before releasing the media player.
+
 ### Version 2.1.0, 2020-07-28:
 
 - Android 11 compatibility
