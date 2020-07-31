@@ -6,6 +6,8 @@
 
 - Added animated stroke order diagrams to radicals and kanji. Can be enabled under Settings -> Subject Info.
 
+- Reduce the sensitivity of horizontal swipe gestures.
+
 ### Version 2.1.0, 2020-07-28:
 
 - Android 11 compatibility
