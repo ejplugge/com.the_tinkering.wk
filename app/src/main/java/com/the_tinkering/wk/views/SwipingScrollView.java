@@ -95,10 +95,10 @@ public final class SwipingScrollView extends ScrollView {
                 final float deltaY = endY - startY;
                 final float density = getContext().getResources().getDisplayMetrics().density;
                 final boolean horizontal = Math.abs(deltaX) > Math.abs(deltaY);
-                if (swipeListener != null && horizontal && deltaX < -50 * density) {
+                if (swipeListener != null && horizontal && deltaX < -100 * density) {
                     swipeListener.onSwipeRight(this);
                 }
-                if (swipeListener != null && horizontal && deltaX > 50 * density) {
+                if (swipeListener != null && horizontal && deltaX > 100 * density) {
                     swipeListener.onSwipeLeft(this);
                 }
             }
