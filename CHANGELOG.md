@@ -4,6 +4,8 @@
 - Split the settings related to the presentation of the subject info dump off into their own category,
   mostly to avoid growing the Display settings too long.
 
+- Added animated stroke order diagrams to radicals and kanji. Can be enabled under Settings -> Subject Info.
+
 ### Version 2.1.0, 2020-07-28:
 
 - Android 11 compatibility
