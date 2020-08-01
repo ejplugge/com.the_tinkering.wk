@@ -135,14 +135,14 @@ public final class FontImportActivity extends AbstractActivity {
     }
 
     private void importFile(final Uri uri, final String fileName) {
-        runAsync(this, publisher -> {
+        runAsync(this, () -> {
             try (final @Nullable InputStream is = WkApplication.getInstance().getContentResolver().openInputStream(uri)) {
                 if (is != null) {
                     importFontFile(is, fileName);
                 }
             }
             return null;
-        }, null, result -> {
+        }, result -> {
             flushCache(fileName);
             updateFileList();
             Toast.makeText(this, "File imported", Toast.LENGTH_LONG).show();

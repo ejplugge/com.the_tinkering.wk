@@ -177,7 +177,7 @@ public final class MainActivity extends AbstractActivity {
     protected void onResumeLocal() {
         BackgroundAlarmReceiver.scheduleOrCancelAlarm();
 
-        runAsync(this, publisher -> {
+        runAsync(() -> {
             LiveBurnedItems.getInstance().forceUpdate();
             LiveCriticalCondition.getInstance().forceUpdate();
             LiveLevelDuration.getInstance().forceUpdate();
@@ -188,8 +188,7 @@ public final class MainActivity extends AbstractActivity {
             LiveJoyoProgress.getInstance().forceUpdate();
             LiveJlptProgress.getInstance().forceUpdate();
             BackgroundAlarmReceiver.processAlarm(null, true);
-            return null;
-        }, null, null);
+        });
 
         keyboardHelpView.setVisibility(!GlobalSettings.Tutorials.getKeyboardHelpDismissed());
 
@@ -270,10 +269,10 @@ public final class MainActivity extends AbstractActivity {
             disableInteraction();
             final TimeLine timeLine = LiveTimeLine.getInstance().get();
             if (timeLine.hasAvailableLessons()) {
-                runAsync(this, publisher -> {
+                runAsync(this, () -> {
                     Session.getInstance().startNewLessonSession(timeLine.getAvailableLessons());
                     return null;
-                }, null, result -> goToActivity(SessionActivity.class));
+                }, result -> goToActivity(SessionActivity.class));
             }
             else {
                 enableInteraction();
@@ -294,10 +293,10 @@ public final class MainActivity extends AbstractActivity {
             disableInteraction();
             final TimeLine timeLine = LiveTimeLine.getInstance().get();
             if (timeLine.hasAvailableReviews()) {
-                runAsync(this, publisher -> {
+                runAsync(this, () -> {
                     Session.getInstance().startNewReviewSession(timeLine.getAvailableReviews());
                     return null;
-                }, null, result -> goToActivity(SessionActivity.class));
+                }, result -> goToActivity(SessionActivity.class));
             }
             else {
                 enableInteraction();

@@ -103,10 +103,7 @@ public abstract class ConservativeLiveData<T> extends LiveData<T> {
         safe(() -> {
             if (pendingUpdate) {
                 pendingUpdate = false;
-                runAsync(null, publisher -> {
-                    forceUpdate();
-                    return null;
-                }, null, null);
+                runAsync(this::forceUpdate);
             }
         });
     }

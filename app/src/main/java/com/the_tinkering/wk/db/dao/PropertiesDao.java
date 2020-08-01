@@ -98,10 +98,7 @@ public abstract class PropertiesDao {
             preload();
         }
         properties.put(name, value);
-        runAsync(null, publisher -> {
-            setPropertyHelper(name, value);
-            return null;
-        }, null, null);
+        runAsync(() -> setPropertyHelper(name, value));
     }
 
     /**
@@ -122,10 +119,7 @@ public abstract class PropertiesDao {
             preload();
         }
         properties.remove(name);
-        runAsync(null, publisher -> {
-            deletePropertyHelper(name);
-            return null;
-        }, null, null);
+        runAsync(() -> deletePropertyHelper(name));
     }
 
     private boolean getBooleanProperty(final String name) {

@@ -94,8 +94,7 @@ public final class StudyMaterialsActivity extends AbstractActivity {
             final long id = Long.parseLong(path[1]);
             runAsync(
                     this,
-                    publisher -> WkApplication.getDatabase().subjectDao().getById(id),
-                    null,
+                    () -> WkApplication.getDatabase().subjectDao().getById(id),
                     result -> {
                         if (result == null || !result.getType().canHaveStudyMaterials()) {
                             finish();

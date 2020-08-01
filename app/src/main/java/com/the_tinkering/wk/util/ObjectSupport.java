@@ -352,7 +352,7 @@ public final class ObjectSupport {
      * @param post run on the UI thread to report the result
      * @param <Result> the type of the result
      */
-    public static <Result> void runAsync(final @Nullable LifecycleOwner lifecycleOwner,
+    public static <Result> void runAsyncWithProgress(final @Nullable LifecycleOwner lifecycleOwner,
                                                            final ThrowingFunction<Consumer<Object[]>, Result> background,
                                                            final @Nullable Consumer<Object[]> progress,
                                                            final @Nullable Consumer<? super Result> post) {
@@ -382,6 +382,67 @@ public final class ObjectSupport {
                         post.accept(result);
                     }
                 });
+            }
+        }.execute();
+    }
+
+    /**
+     * Same as runAsyncWithProgress, but without the progress callback, and without a publisher parameter for the background worker.
+     *
+     * @param lifecycleOwner the lifecycle owner to check for callbacks
+     * @param background run on the background thread, returns a result
+     * @param post run on the UI thread to report the result
+     * @param <Result> the type of the result
+     */
+    public static <Result> void runAsync(final @Nullable LifecycleOwner lifecycleOwner,
+                                         final NullableThrowingSupplier<Result> background,
+                                         final @Nullable Consumer<? super Result> post) {
+        new AsyncTask<Result>() {
+            @Override
+            public @Nullable Result doInBackground() {
+                return safeNullable(background);
+            }
+
+            @SuppressLint("NewApi")
+            @Override
+            public void onProgressUpdate(final Object[] values) {
+                //
+            }
+
+            @SuppressLint("NewApi")
+            @Override
+            public void onPostExecute(final @Nullable Result result) {
+                safe(() -> {
+                    if (post != null
+                            && (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
+                        post.accept(result);
+                    }
+                });
+            }
+        }.execute();
+    }
+
+    /**
+     * Same as runAsyncWithProgress, but without the progress and result callbacks, and without a publisher parameter for the background worker.
+     *
+     * @param background run on the background thread
+     */
+    public static void runAsync(final ThrowingRunnable background) {
+        new AsyncTask<Void>() {
+            @Override
+            public @Nullable Void doInBackground() {
+                safe(background);
+                return null;
+            }
+
+            @Override
+            public void onProgressUpdate(final Object[] values) {
+                //
+            }
+
+            @Override
+            public void onPostExecute(final @Nullable Void result) {
+                //
             }
         }.execute();
     }

@@ -159,8 +159,7 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
                 && GlobalSettings.AdvancedOther.getShakeOnMatchingKanji()) {
             runAsync(
                     this,
-                    publisher -> WkApplication.getDatabase().subjectDao().getKanjiByCharacters(characters),
-                    null,
+                    () -> WkApplication.getDatabase().subjectDao().getKanjiByCharacters(characters),
                     result -> matchingKanji = result);
         }
 

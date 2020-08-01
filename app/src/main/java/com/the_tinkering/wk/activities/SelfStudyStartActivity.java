@@ -182,10 +182,7 @@ public final class SelfStudyStartActivity extends AbstractActivity {
                         .setIcon(R.drawable.ic_baseline_warning_24px)
                         .setNegativeButton("No", (dialog, which) -> {})
                         .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                            runAsync(this, publisher -> {
-                                WkApplication.getDatabase().searchPresetDao().deletePreset(name);
-                                return null;
-                            }, null, null);
+                            runAsync(() -> WkApplication.getDatabase().searchPresetDao().deletePreset(name));
                             Toast.makeText(v.getContext(), "Preset deleted", Toast.LENGTH_SHORT).show();
                         })).create().show();
             }
@@ -246,7 +243,7 @@ public final class SelfStudyStartActivity extends AbstractActivity {
     }
 
     private void startSession(final int searchType, final String searchParameters, final boolean saveSelfStudyPreset) {
-        runAsync(this, publisher -> {
+        runAsync(this, () -> {
             if (saveSelfStudyPreset && searchType == 2) {
                 WkApplication.getDatabase().searchPresetDao().setPreset("\u0000SELF_STUDY_DEFAULT", 2, searchParameters);
             }
@@ -255,7 +252,7 @@ public final class SelfStudyStartActivity extends AbstractActivity {
                 Session.getInstance().startNewSelfStudySession(subjects);
             }
             return subjects;
-        }, null, result -> {
+        }, result -> {
             if (result == null || result.isEmpty() || session.isInactive()) {
                 Toast.makeText(this, "No subjects found for self-study!", Toast.LENGTH_SHORT).show();
                 goToMainActivity();

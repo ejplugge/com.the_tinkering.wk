@@ -26,6 +26,7 @@ import android.os.PowerManager;
 
 import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
+import com.the_tinkering.wk.StableIds;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.model.AlertContext;
@@ -87,17 +88,25 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
         final long nextTrigger = getTopOfHour(System.currentTimeMillis()) + HOUR;
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
-            final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
-                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
+            {
+                final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
+                final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
+                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
             }
-            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
+                final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
+                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
             }
-            else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
+                final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
+                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_3, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
             }
         }
     }
@@ -139,7 +148,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
      * @param skipBackgroundSync true if this update should skip attempting a background sync
      */
     public static void processAlarm(final @Nullable PowerManager.WakeLock wakeLock, final boolean skipBackgroundSync) {
-        runAsync(null, publisher -> {
+        runAsync(() -> {
             if (isAlarmRequired()) {
                 final AppDatabase db = WkApplication.getDatabase();
                 final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
@@ -161,7 +170,6 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
             if (wakeLock != null) {
                 safe(wakeLock::release);
             }
-            return null;
-        }, null, null);
+        });
     }
 }

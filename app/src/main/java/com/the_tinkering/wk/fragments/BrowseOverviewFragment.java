@@ -223,10 +223,7 @@ public final class BrowseOverviewFragment extends AbstractFragment {
                         .setIcon(R.drawable.ic_baseline_warning_24px)
                         .setNegativeButton("No", (dialog, which) -> {})
                         .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                            runAsync(this, publisher -> {
-                                WkApplication.getDatabase().searchPresetDao().deletePreset(name);
-                                return null;
-                            }, null, null);
+                            runAsync(() -> WkApplication.getDatabase().searchPresetDao().deletePreset(name));
                             Toast.makeText(v.getContext(), "Preset deleted", Toast.LENGTH_SHORT).show();
                         })).create().show();
             }
@@ -234,8 +231,7 @@ public final class BrowseOverviewFragment extends AbstractFragment {
 
         runAsync(
                 this,
-                publisher -> WkApplication.getDatabase().subjectAggregatesDao().getMaxLevel(),
-                null,
+                () -> WkApplication.getDatabase().subjectAggregatesDao().getMaxLevel(),
                 result -> render(result == null ? 60 : result)
         );
     }

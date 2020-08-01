@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsyncWithProgress;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -205,7 +205,7 @@ public final class BurnActivity extends AbstractActivity {
             success = 0;
             fail = 0;
             stopped = false;
-            runAsync(
+            runAsyncWithProgress(
                     this,
                     this::doInBackground,
                     this::onPublishProgress,

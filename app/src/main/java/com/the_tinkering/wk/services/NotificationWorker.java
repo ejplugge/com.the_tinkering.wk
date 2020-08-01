@@ -43,6 +43,7 @@ import java.util.concurrent.Semaphore;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
@@ -100,7 +101,7 @@ public final class NotificationWorker {
         final AppDatabase db = WkApplication.getDatabase();
         db.propertiesDao().setNotificationSet(true);
 
-        LiveTimeLine.getInstance().update();
+        runAsync(() -> LiveTimeLine.getInstance().update());
     }
 
     private static void cancelNotification() {

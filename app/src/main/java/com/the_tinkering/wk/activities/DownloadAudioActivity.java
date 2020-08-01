@@ -203,7 +203,7 @@ public final class DownloadAudioActivity extends AbstractActivity {
             LiveAudioMoveStatus.getInstance().setNumDone(0);
             LiveAudioMoveStatus.getInstance().setNumTotal(100);
             LiveAudioMoveStatus.getInstance().forceUpdate();
-            runAsync(this, publisher -> {
+            runAsync(this, () -> {
                 final int numTotal = AudioUtil.getNumMisplacedAudioFiles();
                 if (numTotal <= 0) {
                     return null;
@@ -218,7 +218,7 @@ public final class DownloadAudioActivity extends AbstractActivity {
                     return !LiveAudioMoveStatus.getInstance().isActive();
                 });
                 return null;
-            }, null, result -> {
+            }, result -> {
                 LiveAudioMoveStatus.getInstance().setActive(false);
                 LiveAudioMoveStatus.getInstance().forceUpdate();
                 moveProgressBar.setVisibility(false);

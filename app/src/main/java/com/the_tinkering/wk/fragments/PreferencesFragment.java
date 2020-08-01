@@ -152,16 +152,15 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
                     .setNegativeButton("No", (dialog, which) -> {})
                     .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(
                             this,
-                            publisher -> DbLogger.uploadLog(),
-                            null,
+                            DbLogger::uploadLog,
                             result -> {
-                        if (result != null && result) {
-                            Toast.makeText(requireContext(), "Upload successful, thanks!", Toast.LENGTH_LONG).show();
-                        }
-                        else {
-                            Toast.makeText(requireContext(), "Upload failed", Toast.LENGTH_LONG).show();
-                        }
-                    }))).create().show();
+                                if (result != null && result) {
+                                    Toast.makeText(requireContext(), "Upload successful, thanks!", Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                    Toast.makeText(requireContext(), "Upload failed", Toast.LENGTH_LONG).show();
+                                }
+                            }))).create().show();
             return true;
         }));
 

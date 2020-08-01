@@ -90,10 +90,7 @@ public final class StarRatingView extends LinearLayout implements SubjectChangeL
                 if (currentSubject != null && tag instanceof Integer) {
                     final int tagInt = (int) tag;
                     final int newNumStars = subject.getNumStars() == tagInt ? 0 : tagInt;
-                    runAsync(null, publisher -> {
-                        WkApplication.getDatabase().subjectDao().updateStars(subject.getId(), newNumStars);
-                        return null;
-                    }, null, null);
+                    runAsync(() -> WkApplication.getDatabase().subjectDao().updateStars(subject.getId(), newNumStars));
                 }
             });
         }

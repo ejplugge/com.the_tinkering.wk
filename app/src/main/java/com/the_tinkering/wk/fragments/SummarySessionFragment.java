@@ -53,6 +53,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsyncWithProgress;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
@@ -413,22 +414,22 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         finishProgressBar.setProgress(0);
         finishProgressBar.setVisibility(View.VISIBLE);
 
-        runAsync(
+        runAsyncWithProgress(
                 this,
                 SummarySessionFragment::doInBackground,
                 values -> {
-            int progress = (int) values[0];
-            if (progress < 0) {
-                progress = 0;
-            }
-            if (progress > total) {
-                progress = total;
-            }
-            finishProgressBar.setProgress(progress);
-        }, result -> {
-            finishProgressBar.setVisibility(false);
-            session.finish();
-        });
+                    int progress = (int) values[0];
+                    if (progress < 0) {
+                        progress = 0;
+                    }
+                    if (progress > total) {
+                        progress = total;
+                    }
+                    finishProgressBar.setProgress(progress);
+                }, result -> {
+                    finishProgressBar.setVisibility(false);
+                    session.finish();
+                });
     }
 
     @SuppressLint("NewApi")
@@ -499,11 +500,11 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                 .setTitle("Set star ratings?")
                 .setMessage(message)
                 .setNegativeButton("No", (dialog, which) -> {})
-                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), publisher -> {
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), () -> {
                     final AppDatabase db = WkApplication.getDatabase();
                     subjects.forEach(subject -> db.subjectDao().updateStars(subject.getId(), newNumStars));
                     return null;
-                }, null, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
+                }, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
                 .create().show();
     }
 
@@ -522,11 +523,11 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
                 .setTitle("Set star ratings?")
                 .setMessage(message)
                 .setNegativeButton("No", (dialog, which) -> {})
-                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), publisher -> {
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), () -> {
                     final AppDatabase db = WkApplication.getDatabase();
                     subjects.forEach(subject -> db.subjectDao().updateStars(subject.getId(), newNumStars));
                     return null;
-                }, null, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
+                }, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
                 .create().show();
     }
 }

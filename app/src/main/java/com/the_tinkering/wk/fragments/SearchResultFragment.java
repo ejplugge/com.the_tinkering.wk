@@ -199,7 +199,7 @@ public final class SearchResultFragment extends AbstractFragment {
         resultView.setAdapter(adapter);
         resultView.setHasFixedSize(true);
 
-        runAsync(this, publisher -> {
+        runAsync(this, () -> {
             if (searchType == 0) {
                 final int level = Integer.parseInt(searchParameters, 10);
                 adapter.setSortOrder(SearchSortOrder.TYPE);
@@ -217,7 +217,7 @@ public final class SearchResultFragment extends AbstractFragment {
                 adapter.setParameters(parameters);
             }
             return SearchUtil.searchSubjects(searchType, searchParameters);
-        }, null, result -> {
+        }, result -> {
             if (result != null) {
                 adapter.setResult(result);
                 canResurrect = result.stream().anyMatch(Subject::isResurrectable);
@@ -272,10 +272,10 @@ public final class SearchResultFragment extends AbstractFragment {
         preset.type = searchType;
         preset.data = searchParameters;
 
-        runAsync(this, publisher -> {
+        runAsync(this, () -> {
             WkApplication.getDatabase().searchPresetDao().setPreset(preset.name, preset.type, preset.data);
             return null;
-        }, null, result -> Toast.makeText(requireContext(), "Preset '" + preset.name + "' saved", Toast.LENGTH_SHORT).show());
+        }, result -> Toast.makeText(requireContext(), "Preset '" + preset.name + "' saved", Toast.LENGTH_SHORT).show());
     }
 
     @SuppressLint("NewApi")
@@ -289,11 +289,11 @@ public final class SearchResultFragment extends AbstractFragment {
                 .setTitle("Set star ratings?")
                 .setMessage(message)
                 .setNegativeButton("No", (dialog, which) -> {})
-                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), publisher -> {
+                .setPositiveButton("Yes", (dialog, which) -> safe(() -> runAsync(getActivity(), () -> {
                     final AppDatabase db = WkApplication.getDatabase();
                     subjects.forEach(subject -> db.subjectDao().updateStars(subject.getId(), newNumStars));
                     return null;
-                }, null, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
+                }, result -> Toast.makeText(requireContext(), "Star ratings updated", Toast.LENGTH_SHORT).show())))
                 .create().show();
     }
 
@@ -375,12 +375,12 @@ public final class SearchResultFragment extends AbstractFragment {
             }
             case R.id.action_search_result_self_study: {
                 final List<Subject> subjects = adapter.getSubjects();
-                runAsync(this, publisher -> {
+                runAsync(this, () -> {
                     if (!subjects.isEmpty() && Session.getInstance().isInactive()) {
                         Session.getInstance().startNewSelfStudySession(subjects);
                     }
                     return null;
-                }, null, result -> goToActivity(SessionActivity.class));
+                }, result -> goToActivity(SessionActivity.class));
                 return true;
             }
             case R.id.action_search_result_resurrect: {

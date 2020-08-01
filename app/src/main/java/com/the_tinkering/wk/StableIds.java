@@ -48,4 +48,19 @@ public final class StableIds {
      * Activity result code when importing star ratings.
      */
     public static final int STAR_RATINGS_IMPORT_RESULT_CODE = 5;
+
+    /**
+     * Request code for background alarm - old pre-19 variant.
+     */
+    public static final int BACKGROUND_ALARM_REQUEST_CODE_1 = 6;
+
+    /**
+     * Request code for background alarm - old pre-23 variant.
+     */
+    public static final int BACKGROUND_ALARM_REQUEST_CODE_2 = 7;
+
+    /**
+     * Request code for background alarm - post-23 variant.
+     */
+    public static final int BACKGROUND_ALARM_REQUEST_CODE_3 = 8;
 }

@@ -121,7 +121,7 @@ public final class SubjectGridView extends RigidGridLayout implements SubjectCha
         currentSubjectIds = new ArrayList<>(subjectIds);
 
         runAsync(actment,
-                publisher -> WkApplication.getDatabase().subjectCollectionsDao().getByIds(subjectIds), null,
+                () -> WkApplication.getDatabase().subjectCollectionsDao().getByIds(subjectIds),
                 result -> {
                     if (result != null) {
                         final Collection<Subject> subjects = new ArrayList<>();

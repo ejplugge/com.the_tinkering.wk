@@ -152,7 +152,7 @@ public final class DataImportExportActivity extends AbstractActivity {
 
     @SuppressLint("NewApi")
     private void importSearchPresetsResult(final Uri uri) {
-        runAsync(this, publisher -> {
+        runAsync(this, () -> {
             final AppDatabase db = WkApplication.getDatabase();
             try (final @Nullable InputStream is = WkApplication.getInstance().getContentResolver().openInputStream(uri)) {
                 if (is != null) {
@@ -165,7 +165,7 @@ public final class DataImportExportActivity extends AbstractActivity {
                 }
             }
             return false;
-        }, null, result -> {
+        }, result -> {
             if (result != null && result) {
                 Toast.makeText(this, "Import finished", Toast.LENGTH_SHORT).show();
             }
@@ -208,7 +208,7 @@ public final class DataImportExportActivity extends AbstractActivity {
             }
         }
 
-        runAsync(this, publisher -> {
+        runAsync(this, () -> {
             final AppDatabase db = WkApplication.getDatabase();
             final StarRatingsExport data = new StarRatingsExport();
             data.setStars1(db.subjectCollectionsDao().getStarredSubjectIds(1));
@@ -223,7 +223,7 @@ public final class DataImportExportActivity extends AbstractActivity {
             }
 
             return exportFile;
-        }, null, result -> {
+        }, result -> {
             if (result == null) {
                 return;
             }
@@ -238,7 +238,7 @@ public final class DataImportExportActivity extends AbstractActivity {
 
     @SuppressLint("NewApi")
     private void importStarRatingsResult(final Uri uri) {
-        runAsync(this, publisher -> {
+        runAsync(this, () -> {
             final AppDatabase db = WkApplication.getDatabase();
             try (final @Nullable InputStream is = WkApplication.getInstance().getContentResolver().openInputStream(uri)) {
                 if (is != null) {
@@ -252,7 +252,7 @@ public final class DataImportExportActivity extends AbstractActivity {
                 }
             }
             return false;
-        }, null, result -> {
+        }, result -> {
             if (result != null && result) {
                 Toast.makeText(this, "Import finished", Toast.LENGTH_SHORT).show();
             }
