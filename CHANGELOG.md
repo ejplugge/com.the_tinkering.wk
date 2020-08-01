@@ -12,6 +12,8 @@
 
 - Add a little extra delay after playing vocab audio to allow playback to settle before releasing the media player.
 
+- Fix for the 'incorrect answer less than X hours ago' filter not working properly.
+
 ### Version 2.1.0, 2020-07-28:
 
 - Android 11 compatibility

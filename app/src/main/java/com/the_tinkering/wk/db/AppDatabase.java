@@ -90,7 +90,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.join;
         LogRecordEntityDefinition.class,
         AudioDownloadStatus.class,
         SearchPreset.class
-}, version = 67)
+}, version = 68)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
     /**
@@ -323,6 +323,17 @@ public abstract class AppDatabase extends RoomDatabase {
     };
 
     /**
+     * Migration from 65 to 66: Clear out null values in date columns, prepare for starred items.
+     */
+    public static final Migration MIGRATION_67_68 = new Migration(67, 68) {
+        @Override
+        public void migrate(final SupportSQLiteDatabase database) {
+            database.execSQL("UPDATE subject SET hiddenAt = 0 WHERE hiddenAt IS NULL");
+            database.execSQL("UPDATE subject SET lastIncorrectAnswer = 0 WHERE lastIncorrectAnswer IS NULL");
+        }
+    };
+
+    /**
      * Get the singleton instance.
      *
      * @return the instance
@@ -350,7 +361,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             MIGRATION_63_64,
                             MIGRATION_64_65,
                             MIGRATION_65_66,
-                            MIGRATION_66_67)
+                            MIGRATION_66_67,
+                            MIGRATION_67_68)
                     .fallbackToDestructiveMigration()
                     .build();
         }

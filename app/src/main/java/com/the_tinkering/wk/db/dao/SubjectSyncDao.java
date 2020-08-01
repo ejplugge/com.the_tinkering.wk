@@ -275,7 +275,7 @@ public abstract class SubjectSyncDao {
             + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
             + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
             + " statisticPatched, leechScore, levelProgressScore, audioDownloadStatus,"
-            + " resurrectedAt, burnedAt, unlockedAt, startedAt, passedAt, availableAt"
+            + " resurrectedAt, burnedAt, unlockedAt, startedAt, passedAt, availableAt, lastIncorrectAnswer"
             + " )"
             + " VALUES (:subjectId, :object, :characters, :slug, :documentUrl, :meaningMnemonic, :meaningHint, :readingMnemonic, :readingHint,"
             + " :searchTarget, :smallSearchTarget,"
@@ -284,7 +284,7 @@ public abstract class SubjectSyncDao {
             + " 0, :lessonPosition, :level, :hiddenAt,"
             + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :strokeData, :srsSystemId,"
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
-            + " 0, 0, 0, 0, 0, 0"
+            + " 0, 0, 0, 0, 0, 0, 0"
             + ")")
     protected abstract void tryInsertHelper(final long subjectId,
                                             final String object,
@@ -375,10 +375,10 @@ public abstract class SubjectSyncDao {
             + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
             + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
             + " statisticPatched, frequency, joyoGrade, jlptLevel, levelProgressScore, leechScore, srsSystemId,"
-            + " resurrectedAt, burnedAt, unlockedAt, startedAt, passedAt, availableAt"
+            + " resurrectedAt, burnedAt, unlockedAt, startedAt, passedAt, availableAt, hiddenAt, lastIncorrectAnswer"
             + ") VALUES (:id,"
             + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
-            + " 0, 0, 0, 0, 0, 0"
+            + " 0, 0, 0, 0, 0, 0, 0, 0"
             + ")")
     protected abstract void tryInsertHelperIdOnly(final long id);
 
