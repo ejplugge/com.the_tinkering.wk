@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -353,10 +354,11 @@ public final class ObjectSupport {
      * @param <Result> the type of the result
      */
     public static <Result> void runAsyncWithProgress(final @Nullable LifecycleOwner lifecycleOwner,
-                                                           final ThrowingFunction<Consumer<Object[]>, Result> background,
+                                                           final Function<Consumer<Object[]>, Result> background,
                                                            final @Nullable Consumer<Object[]> progress,
                                                            final @Nullable Consumer<? super Result> post) {
         new AsyncTask<Result>() {
+            @SuppressLint("NewApi")
             @Override
             public @Nullable Result doInBackground() {
                 return safeNullable(() -> background.apply(this::publishProgress));
@@ -523,23 +525,5 @@ public final class ObjectSupport {
          */
         @SuppressWarnings({"RedundantThrows", "RedundantSuppression"})
         void run() throws Exception;
-    }
-
-    /**
-     * A Function variant that can throw an exception.
-     *
-     * @param <T> the type of the argument
-     * @param <R> the type of the result
-     */
-    @FunctionalInterface
-    public interface ThrowingFunction<T, R> {
-        /**
-         * Apply the function.
-         *
-         * @param arg the function argument
-         * @return the result
-         * @throws Exception if anything went wrong
-         */
-        @Nullable R apply(T arg) throws Exception;
     }
 }
