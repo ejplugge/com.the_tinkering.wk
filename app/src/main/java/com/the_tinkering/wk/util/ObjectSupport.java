@@ -355,8 +355,8 @@ public final class ObjectSupport {
      */
     public static <Result> void runAsyncWithProgress(final @Nullable LifecycleOwner lifecycleOwner,
                                                            final Function<Consumer<Object[]>, Result> background,
-                                                           final @Nullable Consumer<Object[]> progress,
-                                                           final @Nullable Consumer<? super Result> post) {
+                                                           final Consumer<Object[]> progress,
+                                                           final Consumer<? super Result> post) {
         new AsyncTask<Result>() {
             @SuppressLint("NewApi")
             @Override
@@ -368,8 +368,7 @@ public final class ObjectSupport {
             @Override
             public void onProgressUpdate(final Object[] values) {
                 safe(() -> {
-                    if (progress != null
-                            && (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
+                    if (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
                         progress.accept(values);
                     }
                 });
@@ -379,8 +378,7 @@ public final class ObjectSupport {
             @Override
             public void onPostExecute(final @Nullable Result result) {
                 safe(() -> {
-                    if (post != null
-                            && (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
+                    if (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
                         post.accept(result);
                     }
                 });
@@ -398,7 +396,7 @@ public final class ObjectSupport {
      */
     public static <Result> void runAsync(final @Nullable LifecycleOwner lifecycleOwner,
                                          final NullableThrowingSupplier<Result> background,
-                                         final @Nullable Consumer<? super Result> post) {
+                                         final Consumer<? super Result> post) {
         new AsyncTask<Result>() {
             @Override
             public @Nullable Result doInBackground() {
@@ -415,8 +413,7 @@ public final class ObjectSupport {
             @Override
             public void onPostExecute(final @Nullable Result result) {
                 safe(() -> {
-                    if (post != null
-                            && (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))) {
+                    if (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
                         post.accept(result);
                     }
                 });
