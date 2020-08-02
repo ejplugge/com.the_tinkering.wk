@@ -1,4 +1,6 @@
 
+### Version 2.3.0, 2020-XX-XX:
+
 ### Version 2.2.0, 2020-08-02:
 
 - Split the settings related to the presentation of the subject info dump off into their own category,
