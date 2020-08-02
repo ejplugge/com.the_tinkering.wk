@@ -44,6 +44,8 @@ import com.the_tinkering.wk.activities.KeyboardHelpActivity;
 import com.the_tinkering.wk.activities.SupportActivity;
 import com.the_tinkering.wk.activities.ThemeCustomizationActivity;
 import com.the_tinkering.wk.api.ApiState;
+import com.the_tinkering.wk.components.NumberRangePreference;
+import com.the_tinkering.wk.components.NumberRangePreferenceDialogFragment;
 import com.the_tinkering.wk.components.TaggedUrlPreference;
 import com.the_tinkering.wk.components.TaggedUrlPreferenceDialogFragment;
 import com.the_tinkering.wk.jobs.ResetDatabaseJob;
@@ -62,6 +64,7 @@ import static com.the_tinkering.wk.Constants.ENABLE_ADVANCED_WARNING;
 import static com.the_tinkering.wk.Constants.EXPERIMENTAL_PREFERENCE_STATUS_NOTICE;
 import static com.the_tinkering.wk.Constants.RESET_DATABASE_WARNING;
 import static com.the_tinkering.wk.Constants.RESET_TUTORIALS_WARNING;
+import static com.the_tinkering.wk.Constants.SUBJECT_SELECTION_NOTICE;
 import static com.the_tinkering.wk.Constants.UPLOAD_DEBUG_LOG_WARNING;
 import static com.the_tinkering.wk.util.ObjectSupport.isTrue;
 import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
@@ -184,6 +187,9 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
 
         setSummaryHtml("api_key_help", API_KEY_PERMISSION_NOTICE);
         setSummaryHtml("experimental_status", EXPERIMENTAL_PREFERENCE_STATUS_NOTICE);
+        setSummaryHtml("lesson_subject_selection", SUBJECT_SELECTION_NOTICE);
+        setSummaryHtml("review_subject_selection", SUBJECT_SELECTION_NOTICE);
+        setSummaryHtml("self_study_subject_selection", SUBJECT_SELECTION_NOTICE);
 
         setNumberInputType("overdue_threshold");
         setNumberInputType("max_lesson_session_size");
@@ -243,6 +249,15 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
                 final DialogFragment f = TaggedUrlPreferenceDialogFragment.newInstance(preference.getKey());
                 f.setTargetFragment(this, 0);
                 f.show(getParentFragmentManager(), "TaggedUrlPreference");
+                return;
+            }
+            if (preference instanceof NumberRangePreference) {
+                if (getParentFragmentManager().findFragmentByTag("NumberRangePreference") != null) {
+                    return;
+                }
+                final DialogFragment f = NumberRangePreferenceDialogFragment.newInstance(preference.getKey());
+                f.setTargetFragment(this, 0);
+                f.show(getParentFragmentManager(), "NumberRangePreference");
                 return;
             }
 

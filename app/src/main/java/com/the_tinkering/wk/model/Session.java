@@ -1266,6 +1266,36 @@ s     *
         LiveSessionProgress.getInstance().ping();
     }
 
+    private List<Subject> trimSelection(final List<Subject> candidates, final int maxSize) {
+        final SubjectSelectionRules rules = GlobalSettings.getSubjectSelectionRules(type);
+        if (rules.isEmpty()) {
+            return new ArrayList<>(candidates.subList(0, maxSize));
+        }
+
+        final List<Subject> result = new ArrayList<>();
+
+        for (int stage=0; stage<5; stage++) {
+            int i = 0;
+            while (i < candidates.size()) {
+                if (result.size() >= maxSize) {
+                    break;
+                }
+                final Subject subject = candidates.get(i);
+                if (rules.isWantedForStage(subject, stage)) {
+                    result.add(subject);
+                    candidates.remove(i);
+                    rules.notifySelected(subject);
+                }
+                else {
+                    i++;
+                }
+            }
+        }
+
+        Collections.sort(result, comparator);
+        return result;
+    }
+
     /**
      * Given a list of subjects, populate the session with items for all subjects.
      *
@@ -1273,6 +1303,7 @@ s     *
      * @param maxSize the maximum size of the session
      * @param shuffle should the subject list be shuffled before applying the ordering rules
      */
+    @SuppressLint("NewApi")
     private void populateItems(final List<Subject> subjects, final int maxSize, final boolean shuffle) {
         LOGGER.info("Starting %s session", type);
 
@@ -1284,15 +1315,10 @@ s     *
         Collections.sort(list, comparator);
 
         if (list.size() > maxSize) {
-            list = new ArrayList<>(list.subList(0, maxSize));
+            list = trimSelection(list, maxSize);
         }
 
-        final StringBuilder sb = new StringBuilder();
-        for (final Subject subject: list) {
-            sb.append(subject.getId());
-            sb.append(',');
-        }
-        LOGGER.info("Subject IDs for session: %s", sb.toString());
+        LOGGER.info("Subject IDs for session: %s", list.stream().map(Subject::getId).map(Object::toString).collect(Collectors.joining(",")));
 
         if (GlobalSettings.getShuffleAfterSelection(type)) {
             comparator = LessonOrder.SHUFFLE.getComparator();

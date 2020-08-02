@@ -254,6 +254,12 @@ public final class Constants {
             + " <b>Don't get attached to them. They will go away.</b>";
 
     /**
+     * A note about subject selection settings.
+     */
+    public static final String SUBJECT_SELECTION_NOTICE = "If there are more candidates for your session than will fit,"
+            + " the settings below will let you influence how the subjects for the session are selected.";
+
+    /**
      * Confirmation warning for uploading the debug log.
      */
     public static final String UPLOAD_DEBUG_LOG_WARNING = "Do you want to upload the debug log file to the developer?<br/><br/>"

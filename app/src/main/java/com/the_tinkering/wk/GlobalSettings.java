@@ -40,6 +40,7 @@ import com.the_tinkering.wk.enums.SubjectInfoDump;
 import com.the_tinkering.wk.enums.TimeLineBarChartGridStyle;
 import com.the_tinkering.wk.enums.TimeLineBarChartStyle;
 import com.the_tinkering.wk.enums.VoicePreference;
+import com.the_tinkering.wk.model.SubjectSelectionRules;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -317,6 +318,209 @@ public final class GlobalSettings {
             default:
                 return AdvancedSelfStudy.getOrderPriority();
         }
+    }
+
+    /**
+     * Subject selection: min of current-level subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsCurrentMin(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsCurrentMin();
+            case REVIEW:
+                return AdvancedReview.getSubjectsCurrentMin();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsCurrentMin();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: max of current-level subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsCurrentMax(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsCurrentMax();
+            case REVIEW:
+                return AdvancedReview.getSubjectsCurrentMax();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsCurrentMax();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: min of earlier-level subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsEarlierMin(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsEarlierMin();
+            case REVIEW:
+                return AdvancedReview.getSubjectsEarlierMin();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsEarlierMin();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: max of earlier-level subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsEarlierMax(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsEarlierMax();
+            case REVIEW:
+                return AdvancedReview.getSubjectsEarlierMax();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsEarlierMax();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: min of radical subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsRadicalMin(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsRadicalMin();
+            case REVIEW:
+                return AdvancedReview.getSubjectsRadicalMin();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsRadicalMin();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: max of radical subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsRadicalMax(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsRadicalMax();
+            case REVIEW:
+                return AdvancedReview.getSubjectsRadicalMax();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsRadicalMax();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: min of kanji subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsKanjiMin(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsKanjiMin();
+            case REVIEW:
+                return AdvancedReview.getSubjectsKanjiMin();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsKanjiMin();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: max of kanji subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsKanjiMax(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsKanjiMax();
+            case REVIEW:
+                return AdvancedReview.getSubjectsKanjiMax();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsKanjiMax();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: min of vocabulary subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsVocabularyMin(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsVocabularyMin();
+            case REVIEW:
+                return AdvancedReview.getSubjectsVocabularyMin();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsVocabularyMin();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Subject selection: max of vocabulary subjects, for a specific session type.
+     *
+     * @param type the type of the current session
+     * @return the value
+     */
+    private static int getSubjectsVocabularyMax(final SessionType type) {
+        switch (type) {
+            case LESSON:
+                return AdvancedLesson.getSubjectsVocabularyMax();
+            case REVIEW:
+                return AdvancedReview.getSubjectsVocabularyMax();
+            case SELF_STUDY:
+                return AdvancedSelfStudy.getSubjectsVocabularyMax();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Get the combined subject selection settings for a specific session type.
+     *
+     * @param type the session type
+     * @return the combined rules
+     */
+    public static SubjectSelectionRules getSubjectSelectionRules(final SessionType type) {
+        return new SubjectSelectionRules(
+                getSubjectsCurrentMin(type), getSubjectsCurrentMax(type), getSubjectsEarlierMin(type), getSubjectsEarlierMax(type),
+                getSubjectsRadicalMin(type), getSubjectsRadicalMax(type), getSubjectsKanjiMin(type), getSubjectsKanjiMax(type),
+                getSubjectsVocabularyMin(type), getSubjectsVocabularyMax(type));
     }
 
     /**
@@ -1929,6 +2133,126 @@ public final class GlobalSettings {
             editor.putBoolean("anki_mode_lesson_reading", value);
             editor.apply();
         }
+
+        /**
+         * Subject selection: min of current-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsCurrentMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_current_min", -1);
+        }
+
+        /**
+         * Subject selection: max of current-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsCurrentMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_current_max", -1);
+        }
+
+        /**
+         * Subject selection: min of earlier-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsEarlierMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_earlier_min", -1);
+        }
+
+        /**
+         * Subject selection: max of earlier-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsEarlierMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_earlier_max", -1);
+        }
+
+        /**
+         * Subject selection: min of radical subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsRadicalMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_radical_min", -1);
+        }
+
+        /**
+         * Subject selection: max of radical subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsRadicalMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_radical_max", -1);
+        }
+
+        /**
+         * Subject selection: min of kanji subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsKanjiMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_kanji_min", -1);
+        }
+
+        /**
+         * Subject selection: max of kanji subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsKanjiMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_kanji_max", -1);
+        }
+
+        /**
+         * Subject selection: min of vocabulary subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsVocabularyMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_vocabulary_min", -1);
+        }
+
+        /**
+         * Subject selection: max of vocabulary subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsVocabularyMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("lesson_subjects_vocabulary_max", -1);
+        }
     }
 
     /**
@@ -2113,6 +2437,126 @@ public final class GlobalSettings {
             editor.putBoolean("anki_mode_review_reading", value);
             editor.apply();
         }
+
+        /**
+         * Subject selection: min of current-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsCurrentMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_current_min", -1);
+        }
+
+        /**
+         * Subject selection: max of current-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsCurrentMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_current_max", -1);
+        }
+
+        /**
+         * Subject selection: min of earlier-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsEarlierMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_earlier_min", -1);
+        }
+
+        /**
+         * Subject selection: max of earlier-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsEarlierMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_earlier_max", -1);
+        }
+
+        /**
+         * Subject selection: min of radical subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsRadicalMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_radical_min", -1);
+        }
+
+        /**
+         * Subject selection: max of radical subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsRadicalMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_radical_max", -1);
+        }
+
+        /**
+         * Subject selection: min of kanji subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsKanjiMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_kanji_min", -1);
+        }
+
+        /**
+         * Subject selection: max of kanji subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsKanjiMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_kanji_max", -1);
+        }
+
+        /**
+         * Subject selection: min of vocabulary subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsVocabularyMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_vocabulary_min", -1);
+        }
+
+        /**
+         * Subject selection: max of vocabulary subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsVocabularyMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("review_subjects_vocabulary_max", -1);
+        }
     }
 
     /**
@@ -2296,6 +2740,126 @@ public final class GlobalSettings {
             final SharedPreferences.Editor editor = prefs().edit();
             editor.putBoolean("anki_mode_self_study_reading", value);
             editor.apply();
+        }
+
+        /**
+         * Subject selection: min of current-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsCurrentMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_current_min", -1);
+        }
+
+        /**
+         * Subject selection: max of current-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsCurrentMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_current_max", -1);
+        }
+
+        /**
+         * Subject selection: min of earlier-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsEarlierMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_earlier_min", -1);
+        }
+
+        /**
+         * Subject selection: max of earlier-level subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsEarlierMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_earlier_max", -1);
+        }
+
+        /**
+         * Subject selection: min of radical subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsRadicalMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_radical_min", -1);
+        }
+
+        /**
+         * Subject selection: max of radical subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsRadicalMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_radical_max", -1);
+        }
+
+        /**
+         * Subject selection: min of kanji subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsKanjiMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_kanji_min", -1);
+        }
+
+        /**
+         * Subject selection: max of kanji subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsKanjiMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_kanji_max", -1);
+        }
+
+        /**
+         * Subject selection: min of vocabulary subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsVocabularyMin() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_vocabulary_min", -1);
+        }
+
+        /**
+         * Subject selection: max of vocabulary subjects.
+         *
+         * @return the value
+         */
+        private static int getSubjectsVocabularyMax() {
+            if (!getAdvancedEnabled()) {
+                return -1;
+            }
+            return prefs().getInt("self_study_subjects_vocabulary_max", -1);
         }
     }
 

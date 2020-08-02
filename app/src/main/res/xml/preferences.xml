@@ -716,31 +716,31 @@
 
         <com.the_tinkering.wk.components.TaggedUrlPreference
             app:title="Search engine 1"
-            app:singleLineTitle="true"
+            app:singleLineTitle="false"
             app:key="search_engine_1"
             android:defaultValue="https://ja.wiktionary.org/w/index.php?search=%s"
             app:defaultTag="Wiktionary"/>
 
         <com.the_tinkering.wk.components.TaggedUrlPreference
             app:title="Search engine 2"
-            app:singleLineTitle="true"
+            app:singleLineTitle="false"
             app:key="search_engine_2"
             android:defaultValue="https://jisho.org/search/%s"
             app:defaultTag="Jisho"/>
 
         <com.the_tinkering.wk.components.TaggedUrlPreference
             app:title="Search engine 3"
-            app:singleLineTitle="true"
+            app:singleLineTitle="false"
             app:key="search_engine_3"/>
 
         <com.the_tinkering.wk.components.TaggedUrlPreference
             app:title="Search engine 4"
-            app:singleLineTitle="true"
+            app:singleLineTitle="false"
             app:key="search_engine_4"/>
 
         <com.the_tinkering.wk.components.TaggedUrlPreference
             app:title="Search engine 5"
-            app:singleLineTitle="true"
+            app:singleLineTitle="false"
             app:key="search_engine_5"/>
 
         <SwitchPreferenceCompat
@@ -873,6 +873,19 @@
                 app:useSimpleSummaryProvider="true"
                 app:defaultValue="false"/>
 
+            <com.the_tinkering.wk.components.InfoPreference
+                app:title="" app:key="lesson_subject_selection"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Current-level items" app:singleLineTitle="false" app:key="lesson_subjects_current"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Earlier-level items" app:singleLineTitle="false" app:key="lesson_subjects_earlier"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Radicals" app:singleLineTitle="false" app:key="lesson_subjects_radical"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Kanji" app:singleLineTitle="false" app:key="lesson_subjects_kanji"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Vocabulary" app:singleLineTitle="false" app:key="lesson_subjects_vocabulary"/>
+
         </PreferenceScreen>
 
         <PreferenceScreen
@@ -953,6 +966,19 @@
                 app:useSimpleSummaryProvider="true"
                 app:defaultValue="false"/>
 
+            <com.the_tinkering.wk.components.InfoPreference
+                app:title="" app:key="review_subject_selection"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Current-level items" app:singleLineTitle="false" app:key="review_subjects_current"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Earlier-level items" app:singleLineTitle="false" app:key="review_subjects_earlier"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Radicals" app:singleLineTitle="false" app:key="review_subjects_radical"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Kanji" app:singleLineTitle="false" app:key="review_subjects_kanji"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Vocabulary" app:singleLineTitle="false" app:key="review_subjects_vocabulary"/>
+
         </PreferenceScreen>
 
         <PreferenceScreen
@@ -1032,6 +1058,19 @@
                 app:singleLineTitle="false"
                 app:useSimpleSummaryProvider="true"
                 app:defaultValue="false"/>
+
+            <com.the_tinkering.wk.components.InfoPreference
+                app:title="" app:key="self_study_subject_selection"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Current-level items" app:singleLineTitle="false" app:key="self_study_subjects_current"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Earlier-level items" app:singleLineTitle="false" app:key="self_study_subjects_earlier"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Radicals" app:singleLineTitle="false" app:key="self_study_subjects_radical"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Kanji" app:singleLineTitle="false" app:key="self_study_subjects_kanji"/>
+            <com.the_tinkering.wk.components.NumberRangePreference
+                app:title="Vocabulary" app:singleLineTitle="false" app:key="self_study_subjects_vocabulary"/>
 
         </PreferenceScreen>
 

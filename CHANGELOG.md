@@ -14,6 +14,11 @@
 
 - Fix for the 'incorrect answer less than X hours ago' filter not working properly.
 
+- Added subject selection rules to advanced settings. If you're starting a session and there are more candidate items for the session
+  than will fit based on your settings, normally the excess is simply chopped off the end after ordering. With these settings you can add rules for
+  that selection process to say things like 'at least 10 current-level items' or 'no more than 5 radicals'. This will never reduce the
+  session size, it only prioritizes what to pick if there are too many candidates for the session.
+
 ### Version 2.1.0, 2020-07-28:
 
 - Android 11 compatibility
