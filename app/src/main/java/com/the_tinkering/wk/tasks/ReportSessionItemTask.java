@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.tasks;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiAssignment;
@@ -45,6 +44,9 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.Constants.API_RETRY_DELAY;
+import static com.the_tinkering.wk.Constants.MINUTE;
+import static com.the_tinkering.wk.Constants.NUM_API_TRIES;
 import static com.the_tinkering.wk.enums.SessionType.LESSON;
 import static com.the_tinkering.wk.enums.SessionType.REVIEW;
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
@@ -132,11 +134,11 @@ public final class ReportSessionItemTask extends ApiTask {
 
             if (assignmentId > 0) {
                 final ApiStartAssignment requestBody = new ApiStartAssignment();
-                if (timestamp > 0 && System.currentTimeMillis() - timestamp > Constants.MINUTE * 5) {
+                if (timestamp > 0 && System.currentTimeMillis() - timestamp > MINUTE * 5) {
                     requestBody.setStartedAt(timestamp);
                 }
                 final String url = String.format(Locale.ROOT, "/v2/assignments/%d/start", assignmentId);
-                final @Nullable JsonNode responseBody = postApiCall(url, "PUT", requestBody);
+                final @Nullable JsonNode responseBody = postApiCallWithRetry(url, "PUT", requestBody, NUM_API_TRIES, API_RETRY_DELAY);
                 if (responseBody == null) {
                     keepTask = true;
                 }
@@ -169,11 +171,11 @@ public final class ReportSessionItemTask extends ApiTask {
             requestBody.getReview().setSubjectId(subjectId);
             requestBody.getReview().setIncorrectMeaningAnswers(meaningIncorrect);
             requestBody.getReview().setIncorrectReadingAnswers(readingIncorrect);
-            if (timestamp > 0 && System.currentTimeMillis() - timestamp > Constants.MINUTE * 5) {
+            if (timestamp > 0 && System.currentTimeMillis() - timestamp > MINUTE * 5) {
                 requestBody.getReview().setCreatedAt(timestamp);
             }
             final String url = "/v2/reviews";
-            final @Nullable JsonNode responseBody = postApiCall(url, "POST", requestBody);
+            final @Nullable JsonNode responseBody = postApiCallWithRetry(url, "POST", requestBody, NUM_API_TRIES, API_RETRY_DELAY);
             if (responseBody == null) {
                 keepTask = true;
             }

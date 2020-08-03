@@ -117,6 +117,16 @@ public final class Constants {
     public static final int HTTP_UNPROCESSABLE_ENTITY = 422;
 
     /**
+     * Number of tries on an API call before giving up.
+     */
+    public static final int NUM_API_TRIES = 3;
+
+    /**
+     * Delay between API call retries.
+     */
+    public static final long API_RETRY_DELAY = 5 * SECOND;
+
+    /**
      * The default threshold for when to consider an item to be overdue (i.e. it's been too long since the item's next review became available).
      */
     public static final float DEFAULT_OVERDUE_THRESHOLD = 0.20f;

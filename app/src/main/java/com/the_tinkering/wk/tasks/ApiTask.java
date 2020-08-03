@@ -48,11 +48,14 @@ import java.net.URL;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.the_tinkering.wk.Constants.API_RETRY_DELAY;
 import static com.the_tinkering.wk.Constants.HTTP_TOO_MANY_REQUESTS;
 import static com.the_tinkering.wk.Constants.HTTP_UNPROCESSABLE_ENTITY;
 import static com.the_tinkering.wk.Constants.MINUTE;
+import static com.the_tinkering.wk.Constants.NUM_API_TRIES;
 import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 /**
@@ -152,6 +155,51 @@ public abstract class ApiTask {
     }
 
     /**
+     * Same as getApiCall, but implement a retry schedule to compensate for short-term connectivity
+     * hiccups. The API error status will only be set if the last attempt fails, as long as the error
+     * condition is not that the user's API token is rejected.
+     *
+     * @param uri the request URI, which is either absolute (https://...) or site-relative (starts with '/')
+     * @param numTries the maximum number of attempts to make, counting the first attempt as well
+     * @param delay the delay between retries
+     * @return the response body, parsed as a JSON document
+     */
+    @SuppressWarnings("SameParameterValue")
+    private static @Nullable JsonNode getApiCallWithRetry(final String uri, final int numTries, final long delay) {
+        final AppDatabase db = WkApplication.getDatabase();
+        // First try, just do the call and bail out if it succeeds.
+        {
+            final @Nullable JsonNode result = safeNullable(() -> getApiCall(uri));
+            if (result != null) {
+                return result;
+            }
+        }
+        // First attempt failed, go into the retry loop
+        for (int i=1; i<numTries; i++) {
+            // If the reason for the previous attempt failing is a rejected token, bail out immediately.
+            // This will not recover without user intervention.
+            if (db.propertiesDao().isApiKeyRejected()) {
+                return null;
+            }
+            // If the previous attempt resulted in the API client going into the error state, clear it.
+            if (db.propertiesDao().isApiInError()) {
+                db.propertiesDao().setApiInError(false);
+                LiveApiState.getInstance().forceUpdate();
+            }
+            // Wait a bit, and then try again.
+            final @Nullable JsonNode result = safeNullable(() -> {
+                //noinspection BusyWait
+                Thread.sleep(delay);
+                return getApiCall(uri);
+            });
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Helper method to do a POST or PUT WaniKani API call and return the JSON response. This is mostly
      * identical to getApiCall(), but the HTTP method is a parameter, as is the request body. The body
      * is sent as a JSON document, created from the requestBody object using the JSON object mapper.
@@ -161,7 +209,7 @@ public abstract class ApiTask {
      * @param requestBody the request body to sent to the server
      * @return the response body, parsed as a JSON document
      */
-    protected static @Nullable JsonNode postApiCall(final String uri, final String method, final Object requestBody) {
+    private static @Nullable JsonNode postApiCall(final String uri, final String method, final Object requestBody) {
         RateLimiter.getInstance().prepare();
         final ObjectMapper mapper = Converters.getObjectMapper();
         final AppDatabase db = WkApplication.getDatabase();
@@ -237,6 +285,54 @@ public abstract class ApiTask {
     }
 
     /**
+     * Same as postApiCall, but implement a retry schedule to compensate for short-term connectivity
+     * hiccups. The API error status will only be set if the last attempt fails, as long as the error
+     * condition is not that the user's API token is rejected.
+     *
+     * @param uri the request URI, which is either absolute (https://...) or site-relative (starts with '/')
+     * @param method the HTTP method, could be any valid method but should be either POST or PUT
+     * @param requestBody the request body to sent to the server
+     * @param numTries the maximum number of attempts to make, counting the first attempt as well
+     * @param delay the delay between retries
+     * @return the response body, parsed as a JSON document
+     */
+    @SuppressWarnings("SameParameterValue")
+    protected static @Nullable JsonNode postApiCallWithRetry(final String uri, final String method, final Object requestBody,
+                                                           final int numTries, final long delay) {
+        final AppDatabase db = WkApplication.getDatabase();
+        // First try, just do the call and bail out if it succeeds.
+        {
+            final @Nullable JsonNode result = safeNullable(() -> postApiCall(uri, method, requestBody));
+            if (result != null) {
+                return result;
+            }
+        }
+        // First attempt failed, go into the retry loop
+        for (int i=1; i<numTries; i++) {
+            // If the reason for the previous attempt failing is a rejected token, bail out immediately.
+            // This will not recover without user intervention.
+            if (db.propertiesDao().isApiKeyRejected()) {
+                return null;
+            }
+            // If the previous attempt resulted in the API client going into the error state, clear it.
+            if (db.propertiesDao().isApiInError()) {
+                db.propertiesDao().setApiInError(false);
+                LiveApiState.getInstance().forceUpdate();
+            }
+            // Wait a bit, and then try again.
+            final @Nullable JsonNode result = safeNullable(() -> {
+                //noinspection BusyWait
+                Thread.sleep(delay);
+                return postApiCall(uri, method, requestBody);
+            });
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Make a GET API call that will return a single entity in the
      * response (rather than a collection or a report). The "data" attribute of the
      * response body is deserialized to an object of the requested type.
@@ -250,7 +346,7 @@ public abstract class ApiTask {
         final AppDatabase db = WkApplication.getDatabase();
         final ObjectMapper mapper = Converters.getObjectMapper();
         try {
-            final @Nullable JsonNode body = getApiCall(uri);
+            final @Nullable JsonNode body = getApiCallWithRetry(uri, NUM_API_TRIES, API_RETRY_DELAY);
             if (body == null) {
                 return null;
             }
@@ -329,7 +425,7 @@ public abstract class ApiTask {
         try {
             @Nullable String nextUrl = uri;
             while (nextUrl != null) {
-                final @Nullable JsonNode body = getApiCall(nextUrl);
+                final @Nullable JsonNode body = getApiCallWithRetry(nextUrl, NUM_API_TRIES, API_RETRY_DELAY);
                 if (body == null) {
                     return false;
                 }

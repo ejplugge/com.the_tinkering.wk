@@ -34,6 +34,8 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import static com.the_tinkering.wk.Constants.API_RETRY_DELAY;
+import static com.the_tinkering.wk.Constants.NUM_API_TRIES;
 import static com.the_tinkering.wk.util.ObjectSupport.orElse;
 import static com.the_tinkering.wk.util.ObjectSupport.removeEmpty;
 
@@ -96,7 +98,7 @@ public final class SubmitStudyMaterialTask extends ApiTask {
             requestBody.getStudyMaterial().setSubjectId(subjectId);
 
             final String url = "/v2/study_materials";
-            final @Nullable JsonNode responseBody = postApiCall(url, "POST", requestBody);
+            final @Nullable JsonNode responseBody = postApiCallWithRetry(url, "POST", requestBody, NUM_API_TRIES, API_RETRY_DELAY);
             if (responseBody != null && responseBody.has("id")) {
                 try {
                     final @Nullable ApiStudyMaterial studyMaterial = parseEntity(responseBody, ApiStudyMaterial.class);
@@ -116,7 +118,7 @@ public final class SubmitStudyMaterialTask extends ApiTask {
             requestBody.getStudyMaterial().setSubjectId(subjectId);
 
             final String url = String.format(Locale.ROOT, "/v2/study_materials/%d", subject.getStudyMaterialId());
-            final @Nullable JsonNode responseBody = postApiCall(url, "PUT", requestBody);
+            final @Nullable JsonNode responseBody = postApiCallWithRetry(url, "PUT", requestBody, NUM_API_TRIES, API_RETRY_DELAY);
             if (responseBody != null && responseBody.has("id")) {
                 try {
                     final @Nullable ApiStudyMaterial studyMaterial = parseEntity(responseBody, ApiStudyMaterial.class);

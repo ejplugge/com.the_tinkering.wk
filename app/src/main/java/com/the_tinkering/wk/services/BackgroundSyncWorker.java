@@ -18,6 +18,7 @@ package com.the_tinkering.wk.services;
 
 import androidx.work.WorkManager;
 
+import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
@@ -30,7 +31,6 @@ import com.the_tinkering.wk.util.Logger;
 import java.util.concurrent.Semaphore;
 
 import static com.the_tinkering.wk.Constants.MINUTE;
-import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
@@ -66,7 +66,7 @@ public final class BackgroundSyncWorker {
                     WkApplication.getDatabase().propertiesDao().setLastBackgroundSync(topOfHour1);
                     if (WkApplication.getInstance().getOnlineStatus() == OnlineStatus.NO_CONNECTION) {
                         LOGGER.info("Online status is NO_CONNECTION - wait for the network status callback to settle");
-                        Thread.sleep(2 * SECOND);
+                        Thread.sleep(Constants.API_RETRY_DELAY);
                     }
                     if (LiveApiState.getInstance().get() == ApiState.ERROR) {
                         final AppDatabase db = WkApplication.getDatabase();
