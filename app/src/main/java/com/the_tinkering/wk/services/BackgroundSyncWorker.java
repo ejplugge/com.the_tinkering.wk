@@ -16,9 +16,12 @@
 
 package com.the_tinkering.wk.services;
 
+import android.content.Context;
+import android.os.Build;
+import android.os.PowerManager;
+
 import androidx.work.WorkManager;
 
-import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
@@ -30,7 +33,10 @@ import com.the_tinkering.wk.util.Logger;
 
 import java.util.concurrent.Semaphore;
 
+import javax.annotation.Nullable;
+
 import static com.the_tinkering.wk.Constants.MINUTE;
+import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
@@ -50,6 +56,49 @@ public final class BackgroundSyncWorker {
      */
     private static final String JOB_TAG = "bgsync";
 
+    private static void processAlarmHelper() throws InterruptedException {
+        if (GlobalSettings.Api.getEnableBackgroundSync()) {
+            boolean idle = false;
+            final @Nullable PowerManager pm = (PowerManager) WkApplication.getInstance().getSystemService(Context.POWER_SERVICE);
+            if (pm != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (pm.isPowerSaveMode()) {
+                        LOGGER.info("Device is in power save mode - background sync cancelled");
+                        return;
+                    }
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    idle = pm.isDeviceIdleMode();
+                }
+            }
+
+            final long topOfHour1 = getTopOfHour(System.currentTimeMillis());
+            final long topOfHour2 = WkApplication.getDatabase().propertiesDao().getLastBackgroundSync();
+            if (topOfHour1 != topOfHour2) {
+                LOGGER.info("Background sync starts: %s %s", ApiState.getCurrentApiState(), WkApplication.getInstance().getOnlineStatus());
+                final AppDatabase db = WkApplication.getDatabase();
+                WkApplication.getDatabase().propertiesDao().setLastBackgroundSync(topOfHour1);
+                if (WkApplication.getInstance().getOnlineStatus() == OnlineStatus.NO_CONNECTION) {
+                    LOGGER.info("Online status is NO_CONNECTION - wait for the network status callback to settle");
+                    Thread.sleep(2 * SECOND);
+                }
+                if (LiveApiState.getInstance().get() == ApiState.ERROR) {
+                    db.propertiesDao().setApiInError(false);
+                    LiveApiState.getInstance().forceUpdate();
+                }
+                Job.assertDueTasks(5 * MINUTE);
+                if (idle && db.hasPendingApiTasks()) {
+                    LOGGER.info("Idle mode is active and there are background tasks to run - schedule another alarm and bail out");
+                    BackgroundAlarmReceiver.scheduleAlarmClock();
+                    return;
+                }
+                ApiTaskService.runTasks();
+                LOGGER.info("Background sync ends");
+            }
+        }
+    }
+
     /**
      * Process a background alarm event, whether triggered by an actual system alarm, or a database update that can affect
      * widgets and/or notifications. Always runs on a background thread.
@@ -57,28 +106,7 @@ public final class BackgroundSyncWorker {
      * @param semaphore the method will call release() on this semaphone when the work is done
      */
     public static void processAlarm(final Semaphore semaphore) {
-        safe(() -> {
-            if (GlobalSettings.Api.getEnableBackgroundSync()) {
-                final long topOfHour1 = getTopOfHour(System.currentTimeMillis());
-                final long topOfHour2 = WkApplication.getDatabase().propertiesDao().getLastBackgroundSync();
-                if (topOfHour1 != topOfHour2) {
-                    LOGGER.info("Background sync starts: %s %s", ApiState.getCurrentApiState(), WkApplication.getInstance().getOnlineStatus());
-                    WkApplication.getDatabase().propertiesDao().setLastBackgroundSync(topOfHour1);
-                    if (WkApplication.getInstance().getOnlineStatus() == OnlineStatus.NO_CONNECTION) {
-                        LOGGER.info("Online status is NO_CONNECTION - wait for the network status callback to settle");
-                        Thread.sleep(Constants.API_RETRY_DELAY);
-                    }
-                    if (LiveApiState.getInstance().get() == ApiState.ERROR) {
-                        final AppDatabase db = WkApplication.getDatabase();
-                        db.propertiesDao().setApiInError(false);
-                        LiveApiState.getInstance().forceUpdate();
-                    }
-                    Job.assertDueTasks(5 * MINUTE);
-                    ApiTaskService.runTasks();
-                    LOGGER.info("Background sync ends");
-                }
-            }
-        });
+        safe(BackgroundSyncWorker::processAlarmHelper);
         semaphore.release();
     }
 

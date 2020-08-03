@@ -61,7 +61,8 @@
             app:key="enable_background_sync"
             app:title="Allow background sync"
             app:singleLineTitle="false"
-            app:defaultValue="false"/>
+            app:defaultValue="false"
+            app:summary="Caution - this may drain your battery faster than normal"/>
 
         <SwitchPreferenceCompat
             app:key="sync_on_open"

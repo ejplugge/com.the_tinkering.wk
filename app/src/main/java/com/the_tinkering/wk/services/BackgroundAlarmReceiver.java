@@ -37,6 +37,7 @@ import java.util.concurrent.Semaphore;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
@@ -65,13 +66,13 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         safe(() -> {
-            LOGGER.info("Background alarm received");
+            LOGGER.info("Background alarm received: %s", intent.getAction());
             if (isAlarmRequired()) {
                 @Nullable PowerManager.WakeLock wl = null;
                 final @Nullable PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                 if (pm != null) {
                     wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "wk:wk");
-                    wl.acquire(Constants.MINUTE);
+                    wl.acquire(3 * Constants.MINUTE);
                 }
                 processAlarm(wl, false);
             }
@@ -90,6 +91,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
         if (alarmManager != null) {
             {
                 final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
+                intent.setAction(Integer.toString(StableIds.BACKGROUND_ALARM_REQUEST_CODE_1));
                 final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
                         StableIds.BACKGROUND_ALARM_REQUEST_CODE_1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
@@ -97,6 +99,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
+                intent.setAction(Integer.toString(StableIds.BACKGROUND_ALARM_REQUEST_CODE_2));
                 final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
                         StableIds.BACKGROUND_ALARM_REQUEST_CODE_2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
@@ -104,9 +107,28 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
+                intent.setAction(Integer.toString(StableIds.BACKGROUND_ALARM_REQUEST_CODE_3));
                 final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
                         StableIds.BACKGROUND_ALARM_REQUEST_CODE_3, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
+            }
+        }
+    }
+
+    /**
+     * Schedule an alarm clock for a second from now. This will force a full device wakeup so
+     * background sync can run.
+     */
+    public static void scheduleAlarmClock() {
+        final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
+                intent.setAction(Integer.toString(StableIds.BACKGROUND_ALARM_REQUEST_CODE_4));
+                final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
+                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_4, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                final AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(System.currentTimeMillis() + SECOND, pendingIntent);
+                alarmManager.setAlarmClock(info, pendingIntent);
             }
         }
     }
