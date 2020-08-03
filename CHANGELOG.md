@@ -1,6 +1,9 @@
 
 ### Version 2.3.0, 2020-XX-XX:
 
+- Implemented a retry schedule on API calls, to help overcome intermittent connectivity hiccups without
+  letting the API client go into an error state every time.
+
 ### Version 2.2.0, 2020-08-02:
 
 - Split the settings related to the presentation of the subject info dump off into their own category,
