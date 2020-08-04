@@ -186,6 +186,8 @@
         </provider>
 
         <receiver android:name=".services.BackgroundAlarmReceiver"/>
+        <receiver android:name=".services.BackgroundAlarmReceiverPost19"/>
+        <receiver android:name=".services.BackgroundAlarmReceiverPost23"/>
 
         <receiver android:name=".services.SessionWidgetProvider">
             <intent-filter>

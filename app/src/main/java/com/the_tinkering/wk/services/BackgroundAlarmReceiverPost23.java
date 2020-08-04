@@ -21,43 +21,28 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.PowerManager;
 
 import com.the_tinkering.wk.Constants;
-import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.StableIds;
 import com.the_tinkering.wk.WkApplication;
-import com.the_tinkering.wk.db.AppDatabase;
-import com.the_tinkering.wk.model.AlertContext;
 import com.the_tinkering.wk.util.Logger;
-
-import java.util.concurrent.Semaphore;
 
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.services.BackgroundAlarmReceiver.isAlarmRequired;
+import static com.the_tinkering.wk.services.BackgroundAlarmReceiver.processAlarm;
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * The alarm receiver that gets triggered once per hour, and is responsible for
  * notifications, widgets and background sync.
  */
-public final class BackgroundAlarmReceiver extends BroadcastReceiver {
-    private static final Logger LOGGER = Logger.get(BackgroundAlarmReceiver.class);
-
-    /**
-     * Based on user settings, is an hourly background alarm required?.
-     *
-     * @return true if it is
-     */
-    public static boolean isAlarmRequired() {
-        if (GlobalSettings.Other.getEnableNotifications()) {
-            return true;
-        }
-        return SessionWidgetProvider.hasWidgets();
-    }
+public final class BackgroundAlarmReceiverPost23 extends BroadcastReceiver {
+    private static final Logger LOGGER = Logger.get(BackgroundAlarmReceiverPost23.class);
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -73,7 +58,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
                 processAlarm(wl);
             }
         });
-        safe(BackgroundAlarmReceiver::scheduleOrCancelAlarm);
+        safe(BackgroundAlarmReceiverPost23::scheduleOrCancelAlarm);
     }
 
     /**
@@ -85,10 +70,12 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
         final long nextTrigger = getTopOfHour(System.currentTimeMillis()) + HOUR;
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
-            final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
-                    StableIds.BACKGROUND_ALARM_REQUEST_CODE_1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiverPost23.class);
+                final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
+                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_3, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
+            }
         }
     }
 
@@ -98,9 +85,9 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
     private static void cancelAlarm() {
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
+            final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiverPost23.class);
             final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
-                    StableIds.BACKGROUND_ALARM_REQUEST_CODE_1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    StableIds.BACKGROUND_ALARM_REQUEST_CODE_3, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManager.cancel(pendingIntent);
         }
     }
@@ -115,35 +102,6 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
             }
             else {
                 cancelAlarm();
-            }
-        });
-    }
-
-    /**
-     * Process a background alarm event, whether triggered by an actual system alarm, or a database update that can affect
-     * widgets and/or notifications.
-     *
-     * @param wakeLock the wakeLock, if applicable. If not null, this method will release the lock after all actions for
-     *                 the alarm have been processed. This may happen after this method call returns.
-     */
-    public static void processAlarm(final @Nullable PowerManager.WakeLock wakeLock) {
-        runAsync(() -> {
-            if (isAlarmRequired()) {
-                final AppDatabase db = WkApplication.getDatabase();
-                final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
-                final int userLevel = db.propertiesDao().getUserLevel();
-                final long now = System.currentTimeMillis();
-                final AlertContext ctx = db.subjectAggregatesDao().getAlertContext(maxLevel, userLevel, now);
-
-                final Semaphore semaphore = new Semaphore(0);
-                safe(() -> NotificationWorker.processAlarm(ctx, semaphore));
-                safe(() -> SessionWidgetProvider.processAlarm(ctx, semaphore));
-                safe(semaphore::acquire);
-                safe(semaphore::acquire);
-            }
-
-            if (wakeLock != null) {
-                safe(wakeLock::release);
             }
         });
     }
