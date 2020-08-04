@@ -33,14 +33,14 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="@string/label"
+        android:label="@string/applabel"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:supportsRtl="false"
         android:name=".WkApplication"
         tools:ignore="AllowBackup">
 
         <activity android:name=".activities.MainActivity"
-            android:label="@string/label">
+            android:label="@string/applabel">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

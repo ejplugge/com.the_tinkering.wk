@@ -28,12 +28,14 @@ android {
             minifyEnabled false
             resValue "string", "fileprovider_authority", "com.the_tinkering.wk.fileprovider"
             resValue "string", "searchprovider_authority", "com.the_tinkering.wk.db.SubjectContentProvider"
+            resValue "string", "applabel", "@string/label"
             buildConfigField "String", "FILEPROVIDER_AUTHORITY", "com.the_tinkering.wk.fileprovider"
         }
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "fileprovider_authority", "com.the_tinkering.wk.debug.fileprovider"
             resValue "string", "searchprovider_authority", "com.the_tinkering.wk.debug.db.SubjectContentProvider"
+            resValue "string", "applabel", "@string/labelDebug"
             buildConfigField "String", "FILEPROVIDER_AUTHORITY", "\"com.the_tinkering.wk.debug.fileprovider\""
         }
     }

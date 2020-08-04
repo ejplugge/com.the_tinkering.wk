@@ -1,6 +1,7 @@
 <resources>
     <string name="about_label">About App Namew</string>
     <string name="label">App Name</string>
+    <string name="labelDebug">DEBUG: App Name</string>
     <string name="uri_scheme">app-name</string>
     <string name="subject_info_uri">app-name://subject-info</string>
 </resources>
