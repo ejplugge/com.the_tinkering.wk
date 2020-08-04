@@ -151,7 +151,7 @@ public final class BackgroundSyncWorker extends Worker {
      * to make sure what is scheduled matches what the user wants.
      */
     public static void scheduleOrCancelWork() {
-        try {
+        safe(() -> {
             if (LiveWorkInfos.getInstance().hasNullValue()) {
                 return;
             }
@@ -161,17 +161,15 @@ public final class BackgroundSyncWorker extends Worker {
                 if (infos.isEmpty()) {
                     scheduleWork();
                 }
-                else if (LiveWorkInfos.getInstance().get().size() > 1) {
+                else if (infos.size() > 1) {
                     cancelWork(infos.get(0).getId());
                 }
             }
             else {
-                if (!LiveWorkInfos.getInstance().get().isEmpty()) {
+                if (!infos.isEmpty()) {
                     cancelWork();
                 }
             }
-        } catch (final Exception e) {
-            LOGGER.uerr(e);
-        }
+        });
     }
 }
