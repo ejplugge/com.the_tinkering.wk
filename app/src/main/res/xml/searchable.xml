@@ -16,7 +16,7 @@
   -->
 
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
-    android:label="@string/label"
+    android:label="@string/applabel"
     android:hint="Search all radicals, kanji and vocabulary"
     android:searchSuggestAuthority="@string/searchprovider_authority"
     android:searchSuggestIntentAction="android.intent.action.VIEW"

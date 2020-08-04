@@ -127,12 +127,6 @@
         <activity android:name=".activities.StudyMaterialsActivity"
             android:label="My notes"
             android:parentActivityName=".activities.MainActivity">
-            <intent-filter>
-                <data android:host="study-materials" android:scheme="@string/uri_scheme"/>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-            </intent-filter>
             <meta-data android:name="android.app.default_searchable" android:value=".activities.BrowseActivity"/>
         </activity>
         <activity android:name=".activities.SelfStudyStartActivity"

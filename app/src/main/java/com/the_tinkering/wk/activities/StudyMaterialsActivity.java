@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -40,7 +38,6 @@ import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Activity to show/edit the study materials for the current subject.
@@ -88,22 +85,18 @@ public final class StudyMaterialsActivity extends AbstractActivity {
             stateSaved = true;
         }
 
-        if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
-            final Uri uri = requireNonNull(getIntent().getData());
-            final String[] path = requireNonNull(uri.getPath()).split("/");
-            final long id = Long.parseLong(path[1]);
-            runAsync(
-                    this,
-                    () -> WkApplication.getDatabase().subjectDao().getById(id),
-                    result -> {
-                        if (result == null || !result.getType().canHaveStudyMaterials()) {
-                            finish();
-                            return;
-                        }
-                        currentSubject = result;
-                        populateForm(result);
-                    });
-        }
+        final long id = getIntent().getLongExtra("id", -1);
+        runAsync(
+                this,
+                () -> WkApplication.getDatabase().subjectDao().getById(id),
+                result -> {
+                    if (result == null || !result.getType().canHaveStudyMaterials()) {
+                        finish();
+                        return;
+                    }
+                    currentSubject = result;
+                    populateForm(result);
+                });
     }
 
     @Override

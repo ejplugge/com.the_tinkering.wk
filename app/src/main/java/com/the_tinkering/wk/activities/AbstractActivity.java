@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -730,12 +729,8 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
 
     private void goToStudyMaterialsActivity(final long id) {
         safe(() -> {
-            final Uri uri = new Uri.Builder()
-                    .scheme(Identification.APP_URI_SCHEME)
-                    .authority("study-materials")
-                    .appendPath(Long.toString(id))
-                    .build();
-            final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            final Intent intent = new Intent(this, StudyMaterialsActivity.class);
+            intent.putExtra("id", id);
             startActivity(intent);
         });
     }
