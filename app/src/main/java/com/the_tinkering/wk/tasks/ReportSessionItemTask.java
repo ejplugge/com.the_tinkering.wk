@@ -157,7 +157,7 @@ public final class ReportSessionItemTask extends ApiTask {
                             LiveCriticalCondition.getInstance().update();
                             LiveBurnedItems.getInstance().update();
                             LiveLevelDuration.getInstance().forceUpdate();
-                            BackgroundAlarmReceiver.processAlarm(null, true);
+                            BackgroundAlarmReceiver.processAlarm(null);
                         }
                     } catch (final Exception e) {
                         LOGGER.error(e, "Error parsing start-assignment response");
@@ -213,7 +213,7 @@ public final class ReportSessionItemTask extends ApiTask {
                 LiveCriticalCondition.getInstance().update();
                 LiveBurnedItems.getInstance().update();
                 LiveLevelDuration.getInstance().forceUpdate();
-                BackgroundAlarmReceiver.processAlarm(null, true);
+                BackgroundAlarmReceiver.processAlarm(null);
             }
         }
 

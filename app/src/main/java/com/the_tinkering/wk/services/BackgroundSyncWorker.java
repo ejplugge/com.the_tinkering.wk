@@ -17,10 +17,14 @@
 package com.the_tinkering.wk.services;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.PowerManager;
 
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.WkApplication;
@@ -29,11 +33,13 @@ import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.enums.OnlineStatus;
 import com.the_tinkering.wk.jobs.Job;
 import com.the_tinkering.wk.livedata.LiveApiState;
+import com.the_tinkering.wk.livedata.LiveWorkInfos;
 import com.the_tinkering.wk.util.Logger;
+import com.the_tinkering.wk.util.ObjectSupport;
 
-import java.util.concurrent.Semaphore;
-
-import javax.annotation.Nullable;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static com.the_tinkering.wk.Constants.MINUTE;
 import static com.the_tinkering.wk.Constants.SECOND;
@@ -41,79 +47,131 @@ import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
- * Background sync worker. This used to be a Worker for WorkManager, but now it's just
- * a utility class used by the BackgroundAlarmReceiver.
+ * The background worker that implements background sync.
  */
-public final class BackgroundSyncWorker {
+public final class BackgroundSyncWorker extends Worker {
     private static final Logger LOGGER = Logger.get(BackgroundSyncWorker.class);
-
-    private BackgroundSyncWorker() {
-        //
-    }
 
     /**
      * A tag used to identify work in the work manager.
      */
-    private static final String JOB_TAG = "bgsync";
+    private static final String JOB_TAG_OLD = "bgsync";
 
-    private static void processAlarmHelper() throws InterruptedException {
-        if (GlobalSettings.Api.getEnableBackgroundSync()) {
-            boolean idle = false;
-            final @Nullable PowerManager pm = (PowerManager) WkApplication.getInstance().getSystemService(Context.POWER_SERVICE);
-            if (pm != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    if (pm.isPowerSaveMode()) {
-                        LOGGER.info("Device is in power save mode - background sync cancelled");
-                        return;
-                    }
-                }
+    /**
+     * A tag used to identify work in the work manager.
+     */
+    public static final String JOB_TAG_NEW = "bgsync2";
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    idle = pm.isDeviceIdleMode();
-                }
-            }
-
-            final long topOfHour1 = getTopOfHour(System.currentTimeMillis());
-            final long topOfHour2 = WkApplication.getDatabase().propertiesDao().getLastBackgroundSync();
-            if (topOfHour1 != topOfHour2) {
-                LOGGER.info("Background sync starts: %s %s", ApiState.getCurrentApiState(), WkApplication.getInstance().getOnlineStatus());
-                final AppDatabase db = WkApplication.getDatabase();
-                WkApplication.getDatabase().propertiesDao().setLastBackgroundSync(topOfHour1);
-                if (WkApplication.getInstance().getOnlineStatus() == OnlineStatus.NO_CONNECTION) {
-                    LOGGER.info("Online status is NO_CONNECTION - wait for the network status callback to settle");
-                    Thread.sleep(2 * SECOND);
-                }
-                if (LiveApiState.getInstance().get() == ApiState.ERROR) {
-                    db.propertiesDao().setApiInError(false);
-                    LiveApiState.getInstance().forceUpdate();
-                }
-                Job.assertDueTasks(5 * MINUTE);
-                if (idle && db.hasPendingApiTasks()) {
-                    LOGGER.info("Idle mode is active and there are background tasks to run - schedule another alarm and bail out");
-                    BackgroundAlarmReceiver.scheduleAlarmClock();
-                    return;
-                }
-                ApiTaskService.runTasks();
-                LOGGER.info("Background sync ends");
-            }
-        }
+    /**
+     * The constructor.
+     *
+     * @param context Android context
+     * @param workerParams parameters for this instance, managed by the work manager
+     */
+    @SuppressWarnings({"WeakerAccess", "RedundantSuppression"})
+    public BackgroundSyncWorker(final Context context, final WorkerParameters workerParams) {
+        super(context, workerParams);
     }
 
     /**
-     * Process a background alarm event, whether triggered by an actual system alarm, or a database update that can affect
-     * widgets and/or notifications. Always runs on a background thread.
+     * Do the work. If background sync is eanbled, clear any pending API error state,
+     * check for tasks that need to run, and do a run of all tasks that can run.
      *
-     * @param semaphore the method will call release() on this semaphone when the work is done
+     * @return the result of the work, always Success for this work.
      */
-    public static void processAlarm(final Semaphore semaphore) {
-        safe(BackgroundSyncWorker::processAlarmHelper);
-        semaphore.release();
+    @Override
+    public Result doWork() {
+        safe(() -> {
+            if (GlobalSettings.Api.getEnableBackgroundSync()) {
+                final long topOfHour1 = getTopOfHour(System.currentTimeMillis());
+                final long topOfHour2 = WkApplication.getDatabase().propertiesDao().getLastBackgroundSync();
+                if (topOfHour1 != topOfHour2) {
+                    LOGGER.info("Background sync starts: %s %s", ApiState.getCurrentApiState(), WkApplication.getInstance().getOnlineStatus());
+                    final AppDatabase db = WkApplication.getDatabase();
+                    WkApplication.getDatabase().propertiesDao().setLastBackgroundSync(topOfHour1);
+                    if (WkApplication.getInstance().getOnlineStatus() == OnlineStatus.NO_CONNECTION) {
+                        LOGGER.info("Online status is NO_CONNECTION - wait for the network status callback to settle");
+                        Thread.sleep(5 * SECOND);
+                    }
+                    if (LiveApiState.getInstance().get() == ApiState.ERROR) {
+                        db.propertiesDao().setApiInError(false);
+                        LiveApiState.getInstance().forceUpdate();
+                    }
+                    Job.assertDueTasks(5 * MINUTE);
+                    ApiTaskService.runTasks();
+                    LOGGER.info("Background sync ends");
+                }
+            }
+            else {
+                cancelWork();
+            }
+        });
+
+        return Result.success();
+    }
+
+    /**
+     * Prepare the work request for the background sync, and schedule it with the work manager.
+     */
+    private static void scheduleWork() {
+        final Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
+                .build();
+
+        final PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(BackgroundSyncWorker.class, 1, TimeUnit.HOURS, 5, TimeUnit.MINUTES)
+                .setConstraints(constraints)
+                .addTag(JOB_TAG_NEW)
+                .setInitialDelay(ObjectSupport.nextRandomInt(3600), TimeUnit.SECONDS)
+                .build();
+
+        WorkManager.getInstance(WkApplication.getInstance()).enqueue(request);
+        WorkManager.getInstance(WkApplication.getInstance()).cancelAllWorkByTag(JOB_TAG_OLD);
     }
 
     /**
      * Cancel all work for the background sync.
      */
-    public static void cancelWork() {
-        WorkManager.getInstance(WkApplication.getInstance()).cancelAllWorkByTag(JOB_TAG);
+    private static void cancelWork() {
+        WorkManager.getInstance(WkApplication.getInstance()).cancelAllWorkByTag(JOB_TAG_OLD);
+        WorkManager.getInstance(WkApplication.getInstance()).cancelAllWorkByTag(JOB_TAG_NEW);
+    }
+
+    /**
+     * Cancel one specific job for the background sync.
+     *
+     * @param id the ID for the work to cancel
+     */
+    private static void cancelWork(final UUID id) {
+        WorkManager.getInstance(WkApplication.getInstance()).cancelWorkById(id);
+    }
+
+    /**
+     * Depending on user settings, either schedule or abandon work requests,
+     * to make sure what is scheduled matches what the user wants.
+     */
+    public static void scheduleOrCancelWork() {
+        try {
+            if (LiveWorkInfos.getInstance().hasNullValue()) {
+                return;
+            }
+            final List<WorkInfo> infos = LiveWorkInfos.getInstance().get();
+
+            if (GlobalSettings.Api.getEnableBackgroundSync()) {
+                if (infos.isEmpty()) {
+                    scheduleWork();
+                }
+                else if (LiveWorkInfos.getInstance().get().size() > 1) {
+                    cancelWork(infos.get(0).getId());
+                }
+            }
+            else {
+                if (!LiveWorkInfos.getInstance().get().isEmpty()) {
+                    cancelWork();
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.uerr(e);
+        }
     }
 }

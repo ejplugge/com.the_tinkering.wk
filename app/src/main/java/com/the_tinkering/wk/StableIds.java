@@ -63,9 +63,4 @@ public final class StableIds {
      * Request code for background alarm - post-23 variant.
      */
     public static final int BACKGROUND_ALARM_REQUEST_CODE_3 = 8;
-
-    /**
-     * Request code for background alarm clock - post-23 variant to break out of idle mode.
-     */
-    public static final int BACKGROUND_ALARM_REQUEST_CODE_4 = 9;
 }

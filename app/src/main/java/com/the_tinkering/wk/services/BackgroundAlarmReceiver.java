@@ -37,7 +37,6 @@ import java.util.concurrent.Semaphore;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.HOUR;
-import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
@@ -53,14 +52,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
         if (GlobalSettings.Other.getEnableNotifications()) {
             return true;
         }
-        if (SessionWidgetProvider.hasWidgets()) {
-            return true;
-        }
-        //noinspection RedundantIfStatement
-        if (GlobalSettings.Api.getEnableBackgroundSync()) {
-            return true;
-        }
-        return false;
+        return SessionWidgetProvider.hasWidgets();
     }
 
     @Override
@@ -74,7 +66,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
                     wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "wk:wk");
                     wl.acquire(3 * Constants.MINUTE);
                 }
-                processAlarm(wl, false);
+                processAlarm(wl);
             }
         });
         safe(BackgroundAlarmReceiver::scheduleOrCancelAlarm);
@@ -116,24 +108,6 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Schedule an alarm clock for a second from now. This will force a full device wakeup so
-     * background sync can run.
-     */
-    public static void scheduleAlarmClock() {
-        final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
-                intent.setAction(Integer.toString(StableIds.BACKGROUND_ALARM_REQUEST_CODE_4));
-                final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
-                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_4, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                final AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(System.currentTimeMillis() + SECOND, pendingIntent);
-                alarmManager.setAlarmClock(info, pendingIntent);
-            }
-        }
-    }
-
-    /**
      * Cancel the notification alarm.
      */
     private static void cancelAlarm() {
@@ -157,7 +131,6 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
             else {
                 cancelAlarm();
             }
-            BackgroundSyncWorker.cancelWork();
         });
     }
 
@@ -167,9 +140,8 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
      *
      * @param wakeLock the wakeLock, if applicable. If not null, this method will release the lock after all actions for
      *                 the alarm have been processed. This may happen after this method call returns.
-     * @param skipBackgroundSync true if this update should skip attempting a background sync
      */
-    public static void processAlarm(final @Nullable PowerManager.WakeLock wakeLock, final boolean skipBackgroundSync) {
+    public static void processAlarm(final @Nullable PowerManager.WakeLock wakeLock) {
         runAsync(() -> {
             if (isAlarmRequired()) {
                 final AppDatabase db = WkApplication.getDatabase();
@@ -181,10 +153,6 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
                 final Semaphore semaphore = new Semaphore(0);
                 safe(() -> NotificationWorker.processAlarm(ctx, semaphore));
                 safe(() -> SessionWidgetProvider.processAlarm(ctx, semaphore));
-                if (!skipBackgroundSync) {
-                    safe(() -> BackgroundSyncWorker.processAlarm(semaphore));
-                    safe(semaphore::acquire);
-                }
                 safe(semaphore::acquire);
                 safe(semaphore::acquire);
             }

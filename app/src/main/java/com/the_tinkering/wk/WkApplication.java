@@ -54,6 +54,7 @@ import com.the_tinkering.wk.livedata.LiveSrsSystems;
 import com.the_tinkering.wk.livedata.LiveTaskCounts;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.livedata.LiveVacationMode;
+import com.the_tinkering.wk.livedata.LiveWorkInfos;
 import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.AsyncTask;
@@ -117,6 +118,7 @@ public final class WkApplication extends MultiDexApplication {
 
         safe(() -> LiveTaskCounts.getInstance().initialize());
         safe(() -> LiveSearchPresets.getInstance().initialize());
+        safe(() -> LiveWorkInfos.getInstance().initialize());
 
         LiveFirstTimeSetup.getInstance().observeForever(t -> safe(() -> {
             LiveTimeLine.getInstance().ping();

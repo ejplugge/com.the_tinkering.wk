@@ -37,6 +37,7 @@ import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
+import com.the_tinkering.wk.services.BackgroundSyncWorker;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.views.AvailableSessionsView;
 import com.the_tinkering.wk.views.FirstTimeSetupView;
@@ -176,6 +177,7 @@ public final class MainActivity extends AbstractActivity {
     @Override
     protected void onResumeLocal() {
         BackgroundAlarmReceiver.scheduleOrCancelAlarm();
+        BackgroundSyncWorker.scheduleOrCancelWork();
 
         runAsync(() -> {
             LiveBurnedItems.getInstance().forceUpdate();
@@ -187,7 +189,7 @@ public final class MainActivity extends AbstractActivity {
             LiveTimeLine.getInstance().forceUpdate();
             LiveJoyoProgress.getInstance().forceUpdate();
             LiveJlptProgress.getInstance().forceUpdate();
-            BackgroundAlarmReceiver.processAlarm(null, true);
+            BackgroundAlarmReceiver.processAlarm(null);
         });
 
         keyboardHelpView.setVisibility(!GlobalSettings.Tutorials.getKeyboardHelpDismissed());

@@ -222,7 +222,7 @@ public final class ReportSessionItemJob extends Job {
                 LiveTimeLine.getInstance().update();
                 LiveSrsBreakDown.getInstance().update();
                 LiveLevelProgress.getInstance().update();
-                BackgroundAlarmReceiver.processAlarm(null, true);
+                BackgroundAlarmReceiver.processAlarm(null);
             }
         }
 
@@ -235,7 +235,7 @@ public final class ReportSessionItemJob extends Job {
                 LiveLevelProgress.getInstance().update();
                 LiveCriticalCondition.getInstance().update();
                 LiveBurnedItems.getInstance().update();
-                BackgroundAlarmReceiver.processAlarm(null, true);
+                BackgroundAlarmReceiver.processAlarm(null);
             }
         }
 

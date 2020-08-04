@@ -198,7 +198,7 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
             wl.acquire(Constants.MINUTE);
         }
 
-        BackgroundAlarmReceiver.processAlarm(wl, true);
+        BackgroundAlarmReceiver.processAlarm(wl);
     }
 
     /**

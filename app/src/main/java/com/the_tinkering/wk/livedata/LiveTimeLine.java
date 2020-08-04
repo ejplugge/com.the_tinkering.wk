@@ -98,7 +98,7 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
         instance.postValue(timeLine);
 
         if (db.propertiesDao().getNotificationSet() && !timeLine.hasAvailableLessons() && !timeLine.hasAvailableReviews()) {
-            BackgroundAlarmReceiver.processAlarm(null, true);
+            BackgroundAlarmReceiver.processAlarm(null);
         }
 
         if (GlobalSettings.Api.getAutoDownloadAudio()) {
