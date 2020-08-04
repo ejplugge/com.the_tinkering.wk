@@ -7,6 +7,9 @@ Use Android Studio or the Gradle command line to build it.
 
 ## Preparing to build the code
 
+NOTE: The required fields in Identification.java and strings.xml have changed!
+Please refer to the sample files to see what has changed.
+
 Before you can build this code, you will have to provide two files containing identification
 information for the app. This is because the open source license covering this app's code
 does not cover the name I gave the app, and it also doesn't cover my name. See the file
