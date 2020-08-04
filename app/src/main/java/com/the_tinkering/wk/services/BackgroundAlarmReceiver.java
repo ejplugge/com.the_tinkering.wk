@@ -62,7 +62,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         safe(() -> {
-            LOGGER.info("Background alarm received: %s", intent.getAction());
+            LOGGER.info("Background alarm pre19 received");
             if (isAlarmRequired()) {
                 @Nullable PowerManager.WakeLock wl = null;
                 final @Nullable PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
