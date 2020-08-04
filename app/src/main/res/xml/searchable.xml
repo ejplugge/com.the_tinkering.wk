@@ -18,7 +18,7 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/label"
     android:hint="Search all radicals, kanji and vocabulary"
-    android:searchSuggestAuthority="com.the_tinkering.wk.db.SubjectContentProvider"
+    android:searchSuggestAuthority="@string/searchprovider_authority"
     android:searchSuggestIntentAction="android.intent.action.VIEW"
     android:searchSuggestIntentData="@string/subject_info_uri"
     android:searchSuggestSelection="subject MATCH ?"

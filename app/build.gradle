@@ -26,6 +26,15 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            resValue "string", "fileprovider_authority", "com.the_tinkering.wk.fileprovider"
+            resValue "string", "searchprovider_authority", "com.the_tinkering.wk.db.SubjectContentProvider"
+            buildConfigField "String", "FILEPROVIDER_AUTHORITY", "com.the_tinkering.wk.fileprovider"
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            resValue "string", "fileprovider_authority", "com.the_tinkering.wk.debug.fileprovider"
+            resValue "string", "searchprovider_authority", "com.the_tinkering.wk.debug.db.SubjectContentProvider"
+            buildConfigField "String", "FILEPROVIDER_AUTHORITY", "\"com.the_tinkering.wk.debug.fileprovider\""
         }
     }
     sourceSets {

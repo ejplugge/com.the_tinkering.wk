@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
+import com.the_tinkering.wk.BuildConfig;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
@@ -143,7 +144,7 @@ public final class DataImportExportActivity extends AbstractActivity {
         }
 
         final Intent intent = new Intent(Intent.ACTION_SEND);
-        final Uri uri = FileProvider.getUriForFile(this, "com.the_tinkering.wk.fileprovider", exportFile);
+        final Uri uri = FileProvider.getUriForFile(this, BuildConfig.FILEPROVIDER_AUTHORITY, exportFile);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.setType("application/json");
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -228,7 +229,7 @@ public final class DataImportExportActivity extends AbstractActivity {
                 return;
             }
             final Intent intent = new Intent(Intent.ACTION_SEND);
-            final Uri uri = FileProvider.getUriForFile(this, "com.the_tinkering.wk.fileprovider", result);
+            final Uri uri = FileProvider.getUriForFile(this, BuildConfig.FILEPROVIDER_AUTHORITY, result);
             intent.putExtra(Intent.EXTRA_STREAM, uri);
             intent.setType("application/json");
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
