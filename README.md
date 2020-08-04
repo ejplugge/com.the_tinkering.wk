@@ -7,8 +7,8 @@ Use Android Studio or the Gradle command line to build it.
 
 ## Preparing to build the code
 
-NOTE: The required fields in Identification.java and strings.xml have changed!
-Please refer to the sample files to see what has changed.
+NOTE: The required fields in strings.xml have changed! To allow for separate labeling of release
+and debug versions, an additional string resource "labelDebug" is now required.
 
 Before you can build this code, you will have to provide two files containing identification
 information for the app. This is because the open source license covering this app's code
