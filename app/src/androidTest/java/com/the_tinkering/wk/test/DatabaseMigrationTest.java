@@ -417,15 +417,27 @@ public final class DatabaseMigrationTest {
     private static void checkMigration_68_properties(final SupportSQLiteDatabase migratedDb) {
         final Cursor cursor = migratedDb.query("SELECT name, value FROM properties ORDER BY name");
         assertEquals(2, cursor.getColumnCount());
-        assertEquals(2, cursor.getCount());
-
-        cursor.moveToNext();
-        assertEquals("bar", cursor.getString(0));
-        assertEquals("baz", cursor.getString(1));
+        assertEquals(1, cursor.getCount());
 
         cursor.moveToNext();
         assertEquals("foo", cursor.getString(0));
         assertEquals("bar", cursor.getString(1));
+
+        cursor.moveToNext();
+        assertTrue(cursor.isAfterLast());
+
+        cursor.close();
+    }
+
+    private static void checkMigration_68_searchPreset(final SupportSQLiteDatabase migratedDb) {
+        final Cursor cursor = migratedDb.query("SELECT name, type, data FROM search_preset ORDER BY name");
+        assertEquals(3, cursor.getColumnCount());
+        assertEquals(1, cursor.getCount());
+
+        cursor.moveToNext();
+        assertEquals("foo", cursor.getString(0));
+        assertEquals(1, cursor.getInt(1));
+        assertEquals("bar", cursor.getString(2));
 
         cursor.moveToNext();
         assertTrue(cursor.isAfterLast());
@@ -446,7 +458,7 @@ public final class DatabaseMigrationTest {
         db.execSQL("INSERT INTO log_record (id, timestamp, tag, length, message) VALUES (1, 2, 'tag', 3, 'message')");
         db.execSQL("INSERT INTO log_record (id, timestamp, tag, length, message) VALUES (2, null, null, 3, null)");
         db.execSQL("INSERT INTO properties (name, value) VALUES ('foo', 'bar')");
-        db.execSQL("INSERT INTO properties (name, value) VALUES ('bar', 'baz')");
+        db.execSQL("INSERT INTO search_preset (name, type, data) VALUES ('foo', 1, 'bar')");
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_68_69);
@@ -457,5 +469,6 @@ public final class DatabaseMigrationTest {
         checkMigration_68_levelProgression(migratedDb);
         checkMigration_68_logRecord(migratedDb);
         checkMigration_68_properties(migratedDb);
+        checkMigration_68_searchPreset(migratedDb);
     }
 }
