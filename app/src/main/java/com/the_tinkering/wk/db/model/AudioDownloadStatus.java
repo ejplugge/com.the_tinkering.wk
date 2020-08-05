@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.db.model;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -25,106 +26,39 @@ import androidx.room.PrimaryKey;
  */
 @Entity(tableName = "audio_download_status")
 public final class AudioDownloadStatus {
-    @PrimaryKey private int level = 0;
-    private int numTotal = 0;
-    private int numNoAudio = 0;
-    private int numMissingAudio = 0;
-    private int numPartialAudio = 0;
-    private int numFullAudio = 0;
-
     /**
      * The level for this summary, also primary key.
-     * @return the value
      */
-    public int getLevel() {
-        return level;
-    }
-
-    /**
-     * The level for this summary, also primary key.
-     * @param level the value
-     */
-    public void setLevel(final int level) {
-        this.level = level;
-    }
+    @PrimaryKey
+    public int level = 0;
 
     /**
      * The total number of subjects in this level.
-     * @return the value
      */
-    public int getNumTotal() {
-        return numTotal;
-    }
-
-    /**
-     * The total number of subjects in this level.
-     * @param numTotal the value
-     */
-    public void setNumTotal(final int numTotal) {
-        this.numTotal = numTotal;
-    }
+    @ColumnInfo(defaultValue = "0")
+    public int numTotal = 0;
 
     /**
      * The number of subjects that have no audio.
-     * @return the value
      */
-    public int getNumNoAudio() {
-        return numNoAudio;
-    }
-
-    /**
-     * The number of subjects that have no audio.
-     * @param numNoAudio the value
-     */
-    public void setNumNoAudio(final int numNoAudio) {
-        this.numNoAudio = numNoAudio;
-    }
+    @ColumnInfo(defaultValue = "0")
+    public int numNoAudio = 0;
 
     /**
      * The number of subjects that have audio but none are available.
-     * @return the value
      */
-    public int getNumMissingAudio() {
-        return numMissingAudio;
-    }
-
-    /**
-     * The number of subjects that have audio but none are available.
-     * @param numMissingAudio the value
-     */
-    public void setNumMissingAudio(final int numMissingAudio) {
-        this.numMissingAudio = numMissingAudio;
-    }
+    @ColumnInfo(defaultValue = "0")
+    public int numMissingAudio = 0;
 
     /**
      * The number of subjects that have audio and some are available, but not all.
-     * @return the value
      */
-    public int getNumPartialAudio() {
-        return numPartialAudio;
-    }
-
-    /**
-     * The number of subjects that have audio and some are available, but not all.
-     * @param numPartialAudio the value
-     */
-    public void setNumPartialAudio(final int numPartialAudio) {
-        this.numPartialAudio = numPartialAudio;
-    }
+    @ColumnInfo(defaultValue = "0")
+    public int numPartialAudio = 0;
 
     /**
      * The number of subjects that have audio and all are available.
-     * @return the value
      */
-    public int getNumFullAudio() {
-        return numFullAudio;
-    }
-
-    /**
-     * The number of subjects that have audio and all are available.
-     * @param numFullAudio the value
-     */
-    public void setNumFullAudio(final int numFullAudio) {
-        this.numFullAudio = numFullAudio;
-    }
+    @ColumnInfo(defaultValue = "0")
+    public int numFullAudio = 0;
 }

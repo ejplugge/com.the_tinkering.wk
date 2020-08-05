@@ -17,7 +17,9 @@
 package com.the_tinkering.wk.db.dao;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.the_tinkering.wk.api.model.ApiLevelProgression;
 import com.the_tinkering.wk.db.model.LevelProgression;
@@ -86,17 +88,17 @@ public abstract class LevelProgressionDao {
         @Nullable LevelProgression lp = getById(apiLevelProgression.getId());
         if (lp == null) {
             lp = new LevelProgression();
-            lp.setId(apiLevelProgression.getId());
+            lp.id = apiLevelProgression.getId();
             exists = false;
         }
 
-        lp.setAbandonedAt(apiLevelProgression.getAbandonedAt());
-        lp.setCompletedAt(apiLevelProgression.getCompletedAt());
-        lp.setCreatedAt(apiLevelProgression.getCreatedAt());
-        lp.setPassedAt(apiLevelProgression.getPassedAt());
-        lp.setStartedAt(apiLevelProgression.getStartedAt());
-        lp.setUnlockedAt(apiLevelProgression.getUnlockedAt());
-        lp.setLevel(apiLevelProgression.getLevel());
+        lp.abandonedAt = apiLevelProgression.getAbandonedAt();
+        lp.completedAt = apiLevelProgression.getCompletedAt();
+        lp.createdAt = apiLevelProgression.getCreatedAt();
+        lp.passedAt = apiLevelProgression.getPassedAt();
+        lp.startedAt = apiLevelProgression.getStartedAt();
+        lp.unlockedAt = apiLevelProgression.getUnlockedAt();
+        lp.level = apiLevelProgression.getLevel();
 
         if (exists) {
             update(lp);
@@ -109,46 +111,16 @@ public abstract class LevelProgressionDao {
     /**
      * Room-generated method: insert a row.
      *
-     * @param id entity field
-     * @param abandonedAt entity field
-     * @param completedAt entity field
-     * @param createdAt entity field
-     * @param passedAt entity field
-     * @param startedAt entity field
-     * @param unlockedAt entity field
-     * @param level entity field
+     * @param levelProgression the record to insert
      */
-    @Query("INSERT INTO level_progression (id, abandonedAt, completedAt, createdAt, passedAt, startedAt, unlockedAt, level) VALUES"
-            + " (:id, :abandonedAt, :completedAt, :createdAt, :passedAt, :startedAt, :unlockedAt, :level)")
-    protected abstract void insertHelper(final long id, final long abandonedAt, final long completedAt, final long createdAt,
-                                         final long passedAt, final long startedAt, final long unlockedAt, final int level);
-
-    private void insert(final LevelProgression levelProgression) {
-        insertHelper(levelProgression.getId(), levelProgression.getAbandonedAt(), levelProgression.getCompletedAt(),
-                levelProgression.getCreatedAt(), levelProgression.getPassedAt(), levelProgression.getStartedAt(),
-                levelProgression.getUnlockedAt(), levelProgression.getLevel());
-    }
+    @Insert
+    protected abstract void insert(final LevelProgression levelProgression);
 
     /**
      * Room-generated method: update a row.
      *
-     * @param id ID of the row to update
-     * @param abandonedAt entity field
-     * @param completedAt entity field
-     * @param createdAt entity field
-     * @param passedAt entity field
-     * @param startedAt entity field
-     * @param unlockedAt entity field
-     * @param level entity field
+     * @param levelProgression the record to update
      */
-    @Query("UPDATE level_progression SET abandonedAt=:abandonedAt, completedAt=:completedAt, createdAt=:createdAt, passedAt=:passedAt, "
-            + "startedAt=:startedAt, unlockedAt=:unlockedAt, level=:level WHERE id = :id")
-    protected abstract void updateHelper(final long id, final long abandonedAt, final long completedAt, final long createdAt,
-                                         final long passedAt, final long startedAt, final long unlockedAt, final int level);
-
-    private void update(final LevelProgression levelProgression) {
-        updateHelper(levelProgression.getId(), levelProgression.getAbandonedAt(), levelProgression.getCompletedAt(),
-                levelProgression.getCreatedAt(), levelProgression.getPassedAt(), levelProgression.getStartedAt(),
-                levelProgression.getUnlockedAt(), levelProgression.getLevel());
-    }
+    @Update
+    protected abstract void update(final LevelProgression levelProgression);
 }
