@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 69,
-    "identityHash": "da9526f90c4baaee2b6762b7ccd20457",
+    "identityHash": "9f79f22b507a61545db577af074bf6d3",
     "entities": [
       {
         "tableName": "task_definition",
@@ -772,7 +772,7 @@
       },
       {
         "tableName": "log_record",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER, `tag` TEXT, `length` INTEGER NOT NULL, `message` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL DEFAULT 0, `tag` TEXT NOT NULL DEFAULT '', `length` INTEGER NOT NULL DEFAULT 0, `message` TEXT NOT NULL DEFAULT '')",
         "fields": [
           {
             "fieldPath": "id",
@@ -784,25 +784,29 @@
             "fieldPath": "timestamp",
             "columnName": "timestamp",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "tag",
             "columnName": "tag",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "length",
             "columnName": "length",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "message",
             "columnName": "message",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true,
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -905,7 +909,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'da9526f90c4baaee2b6762b7ccd20457')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9f79f22b507a61545db577af074bf6d3')"
     ]
   }
 }

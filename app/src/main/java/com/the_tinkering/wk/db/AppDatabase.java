@@ -40,7 +40,7 @@ import com.the_tinkering.wk.db.dao.SubjectViewsDao;
 import com.the_tinkering.wk.db.dao.TaskDefinitionDao;
 import com.the_tinkering.wk.db.model.AudioDownloadStatus;
 import com.the_tinkering.wk.db.model.LevelProgression;
-import com.the_tinkering.wk.db.model.LogRecordEntityDefinition;
+import com.the_tinkering.wk.db.model.LogRecord;
 import com.the_tinkering.wk.db.model.PronunciationAudioOwner;
 import com.the_tinkering.wk.db.model.Property;
 import com.the_tinkering.wk.db.model.SearchPreset;
@@ -87,7 +87,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.join;
         SrsSystemDefinition.class,
         LevelProgression.class,
         SessionItem.class,
-        LogRecordEntityDefinition.class,
+        LogRecord.class,
         AudioDownloadStatus.class,
         SearchPreset.class
 }, version = 69)
@@ -348,6 +348,13 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("DROP TABLE audio_download_status");
             database.execSQL("ALTER TABLE migrate_temp RENAME TO audio_download_status");
 
+            database.execSQL("UPDATE level_progression SET abandonedAt = 0 WHERE abandonedAt IS NULL");
+            database.execSQL("UPDATE level_progression SET completedAt = 0 WHERE completedAt IS NULL");
+            database.execSQL("UPDATE level_progression SET createdAt = 0 WHERE createdAt IS NULL");
+            database.execSQL("UPDATE level_progression SET passedAt = 0 WHERE passedAt IS NULL");
+            database.execSQL("UPDATE level_progression SET startedAt = 0 WHERE startedAt IS NULL");
+            database.execSQL("UPDATE level_progression SET unlockedAt = 0 WHERE unlockedAt IS NULL");
+
             database.execSQL("DROP TABLE IF EXISTS migrate_temp");
             database.execSQL("CREATE TABLE IF NOT EXISTS `migrate_temp` (`id` INTEGER NOT NULL,"
                     + " `abandonedAt` INTEGER NOT NULL DEFAULT 0, `completedAt` INTEGER NOT NULL DEFAULT 0,"
@@ -357,6 +364,18 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("INSERT INTO migrate_temp SELECT * FROM level_progression");
             database.execSQL("DROP TABLE level_progression");
             database.execSQL("ALTER TABLE migrate_temp RENAME TO level_progression");
+
+            database.execSQL("UPDATE log_record SET timestamp = 0 WHERE timestamp IS NULL");
+            database.execSQL("UPDATE log_record SET tag = '' WHERE tag IS NULL");
+            database.execSQL("UPDATE log_record SET message = '' WHERE message IS NULL");
+
+            database.execSQL("DROP TABLE IF EXISTS migrate_temp");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `migrate_temp` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                    + " `timestamp` INTEGER NOT NULL DEFAULT 0, `tag` TEXT NOT NULL DEFAULT '',"
+                    + " `length` INTEGER NOT NULL DEFAULT 0, `message` TEXT NOT NULL DEFAULT '')");
+            database.execSQL("INSERT INTO migrate_temp SELECT * FROM log_record");
+            database.execSQL("DROP TABLE log_record");
+            database.execSQL("ALTER TABLE migrate_temp RENAME TO log_record");
         }
     };
 
