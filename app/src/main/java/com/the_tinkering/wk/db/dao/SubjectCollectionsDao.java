@@ -100,7 +100,7 @@ public abstract class SubjectCollectionsDao {
      */
     public final List<Subject> getCriticalCondition(final String filter) {
         final String sql = String.format(Locale.ROOT, "SELECT * FROM subject"
-                + " WHERE hiddenAt = 0 AND object IS NOT NULL AND %s"
+                + " WHERE hiddenAt = 0 AND type != 'UNKNOWN' AND %s"
                 + " AND percentageCorrect < 75 AND unlockedAt != 0 AND reviewStatisticId != 0"
                 + " ORDER BY percentageCorrect, lessonPosition DESC, id DESC LIMIT 10", filter);
 
@@ -116,7 +116,7 @@ public abstract class SubjectCollectionsDao {
      */
     public final List<Subject> getBurnedItems(final String filter, final long cutoff) {
         final String sql = String.format(Locale.ROOT, "SELECT * FROM subject"
-                + " WHERE hiddenAt = 0 AND %s AND object IS NOT NULL"
+                + " WHERE hiddenAt = 0 AND %s AND type != 'UNKNOWN'"
                 + " AND burnedAt != 0 AND burnedAt >= ?"
                 + " ORDER BY burnedAt DESC, level DESC, lessonPosition DESC, id DESC LIMIT 10", filter);
 

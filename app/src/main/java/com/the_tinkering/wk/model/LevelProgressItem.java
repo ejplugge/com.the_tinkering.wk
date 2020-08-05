@@ -23,7 +23,7 @@ import com.the_tinkering.wk.enums.SubjectType;
  */
 public final class LevelProgressItem {
     private int level = 0;
-    private SubjectType type = SubjectType.WANIKANI_RADICAL;
+    private SubjectType type = SubjectType.UNKNOWN;
     private int count = 0;
 
     /**

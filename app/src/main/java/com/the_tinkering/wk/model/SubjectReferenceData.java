@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  */
 public final class SubjectReferenceData {
     private final long id;
-    private final @Nullable SubjectType type;
+    private final SubjectType type;
     private final @Nullable String characters;
     private final int frequency;
     private final int joyoGrade;
@@ -46,7 +46,7 @@ public final class SubjectReferenceData {
      * @param pitchInfo subject field
      * @param strokeData subject field
      */
-    public SubjectReferenceData(final long id, final @Nullable SubjectType type, final @Nullable String characters,
+    public SubjectReferenceData(final long id, final SubjectType type, final @Nullable String characters,
                                 final int frequency, final int joyoGrade, final int jlptLevel,
                                 final @Nullable String pitchInfo, final @Nullable String strokeData) {
         this.id = id;
@@ -72,7 +72,7 @@ public final class SubjectReferenceData {
      * @return the value
      */
     public SubjectType getType() {
-        return type == null ? SubjectType.WANIKANI_RADICAL : type;
+        return type;
     }
 
     /**

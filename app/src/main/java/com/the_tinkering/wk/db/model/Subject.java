@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.enums.SubjectSource.WANIKANI;
 import static com.the_tinkering.wk.util.ObjectSupport.getShortWaitTimeAsInformalString;
 import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.isEqual;
@@ -116,9 +115,8 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the source
      */
-    @SuppressWarnings({"SameReturnValue", "MethodMayBeStatic", "unused"})
     public SubjectSource getSource() {
-        return WANIKANI;
+        return entity.source;
     }
 
     /**
