@@ -54,7 +54,9 @@ public final class LevelProgress {
     public LevelProgress(final int userLevel) {
         for (int i=1; i<=userLevel; i++) {
             for (final SubjectType type: SubjectType.values()) {
-                entries.add(new BarEntry(i, type));
+                if (type != SubjectType.UNKNOWN) {
+                    entries.add(new BarEntry(i, type));
+                }
             }
         }
     }

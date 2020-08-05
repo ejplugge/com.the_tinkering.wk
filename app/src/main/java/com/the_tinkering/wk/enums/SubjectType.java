@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Locale;
 
+import javax.annotation.Nullable;
+
 /**
  * Enum for types of subjects, encapsulating as much knowledge as possible about the subjects of this type.
  */
@@ -28,7 +30,7 @@ public enum SubjectType {
     /**
      * A WaniKani radical.
      */
-    WANIKANI_RADICAL("radical",
+    WANIKANI_RADICAL("radical", 1, SubjectSource.WANIKANI,
             false, true, true, 10, true, false, false, false,
             "Radical", "Radicals", "Radical", "", "radicals", "radical", 0) {
         @Override
@@ -84,7 +86,7 @@ public enum SubjectType {
     /**
      * A WaniKani kanji.
      */
-    WANIKANI_KANJI("kanji",
+    WANIKANI_KANJI("kanji", 2, SubjectSource.WANIKANI,
             false, true, false, 20, false, true, false, true,
             "Kanji", "Kanji", "Kanji", "Used radicals:", "kanji", "kanji", 1) {
         @Override
@@ -143,8 +145,8 @@ public enum SubjectType {
     /**
      * A WaniKani vocab.
      */
-    WANIKANI_VOCAB("vocabulary",
-            true, false, false,30, false, false, true, false,
+    WANIKANI_VOCAB("vocabulary", 3, SubjectSource.WANIKANI,
+            true, false, false, 30, false, false, true, false,
             "Vocabulary", "Vocabulary", "Vocab", "Used kanji:", "vocabulary", "vocabulary", 2) {
         @Override
         public int getTextColor() {
@@ -196,9 +198,63 @@ public enum SubjectType {
         public boolean supportsQuestion4(final boolean onkun) {
             return false;
         }
+    },
+
+    /**
+     * Subject's type is unknown. This can only realistically happen for subjects that haven't been properly
+     * loaded into the database yet.
+     */
+    UNKNOWN("unknown", 0, SubjectSource.UNKNOWN,
+             false, false, false, 0, false, false, false, false,
+             "Unknown", "Unknowns", "Unknown", "", "unknowns", "unknown", 0) {
+        @Override
+        public int getTextColor() {
+            return ActiveTheme.getSubjectTypeTextColors()[0];
+        }
+
+        @Override
+        public int getBackgroundColor() {
+            return ActiveTheme.getSubjectTypeBackgroundColors()[0];
+        }
+
+        @Override
+        public int getButtonBackgroundColor() {
+            return ActiveTheme.getSubjectTypeButtonBackgroundColors()[0];
+        }
+
+        @Override
+        public String getSimpleInfoTitle(final int level) {
+            return String.format(Locale.ROOT, "Level %d unknown", level);
+        }
+
+        @Override
+        public Collection<QuestionType> getPossibleQuestionTypes(final boolean onkun) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public boolean supportsQuestion1() {
+            return false;
+        }
+
+        @Override
+        public boolean supportsQuestion2(final boolean onkun) {
+            return false;
+        }
+
+        @Override
+        public boolean supportsQuestion3(final boolean onkun) {
+            return false;
+        }
+
+        @Override
+        public boolean supportsQuestion4(final boolean onkun) {
+            return false;
+        }
     };
 
-    private final String dbTypeName;
+    private final String apiTypeName;
+    private final int dbTypeId;
     private final SubjectSource source;
     private final boolean canHavePitchInfo;
     private final boolean canHaveStrokeData;
@@ -230,23 +286,26 @@ public enum SubjectType {
     protected final Collection<QuestionType> possibleQuestionTypesOnKun = EnumSet.noneOf(QuestionType.class);
 
     /**
-     * Find a SubjectType instance based on type code as stored in the database.
+     * Find a SubjectType instance based on type code as used in the API.
      *
-     * @param dbTypeName the name of the type in the database, i.e. the object column.
+     * @param apiTypeName the name of the type in the API, i.e. the object field.
      * @return the SubjectType instance that corresponds to this.
      */
-    public static SubjectType from(final String dbTypeName) {
+    public static SubjectType fromApiTypeName(final @Nullable String apiTypeName) {
+        if (apiTypeName == null) {
+            return UNKNOWN;
+        }
         for (final SubjectType type: values()) {
-            if (type.dbTypeName.equals(dbTypeName)) {
+            if (type.apiTypeName.equals(apiTypeName)) {
                 return type;
             }
         }
-        return WANIKANI_RADICAL;
+        return UNKNOWN;
     }
 
     /**
      * The constructor.
-     * @param dbTypeName instance field
+     * @param apiTypeName instance field
      * @param canHavePitchInfo instance field
      * @param canHaveStrokeData instance field
      * @param canHaveTitleImage instance field
@@ -261,13 +320,15 @@ public enum SubjectType {
      * @param infoTitleLabel instance field
      * @param timeLineBarChartBucket instance field
      */
-    SubjectType(final String dbTypeName, final boolean canHavePitchInfo, final boolean canHaveStrokeData, final boolean canHaveTitleImage,
+    SubjectType(final String apiTypeName, final int dbTypeId, final SubjectSource source,
+                final boolean canHavePitchInfo, final boolean canHaveStrokeData, final boolean canHaveTitleImage,
                 final int order, final boolean radical, final boolean kanji, final boolean vocabulary, final boolean hasLevelUpTarget,
                 final String description, final String descriptionPlural, final String shortDescription,
                 final String componentsHeaderText, final String levelProgressLabel, final String infoTitleLabel,
                 final int timeLineBarChartBucket) {
-        this.dbTypeName = dbTypeName;
-        source = SubjectSource.WANIKANI;
+        this.apiTypeName = apiTypeName;
+        this.dbTypeId = dbTypeId;
+        this.source = source;
         this.canHavePitchInfo = canHavePitchInfo;
         this.canHaveStrokeData = canHaveStrokeData;
         this.canHaveTitleImage = canHaveTitleImage;
@@ -286,11 +347,19 @@ public enum SubjectType {
     }
 
     /**
-     * The type code for this type, for database mapping.
+     * The type code for this type, for API mapping.
      * @return the value
      */
-    public String getDbTypeName() {
-        return dbTypeName;
+    public String getApiTypeName() {
+        return apiTypeName;
+    }
+
+    /**
+     * The type ID for this type, for database mapping.
+     * @return the value
+     */
+    public int getDbTypeId() {
+        return dbTypeId;
     }
 
     /**

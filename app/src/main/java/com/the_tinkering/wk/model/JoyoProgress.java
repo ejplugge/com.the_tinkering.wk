@@ -32,7 +32,7 @@ public final class JoyoProgress {
      */
     public void addItem(final JoyoProgressItem item) {
         final SrsSystem system = SrsSystemRepository.getSrsSystem(item.srsSystemId);
-        final SrsSystem.Stage stage = system.getStage(item.srsStage);
+        final SrsSystem.Stage stage = system.getStage(item.srsStageId);
 
         if (stage.isLocked()) {
             lockedCount[item.joyoGrade-1] += item.count;

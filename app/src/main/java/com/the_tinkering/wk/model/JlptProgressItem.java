@@ -22,7 +22,7 @@ package com.the_tinkering.wk.model;
 @SuppressWarnings("JavaDoc")
 public final class JlptProgressItem {
     public long srsSystemId = 0;
-    public long srsStage = 0;
+    public long srsStageId = 0;
     public int jlptLevel = 0;
     public int count = 0;
 }

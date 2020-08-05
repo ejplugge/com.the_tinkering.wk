@@ -46,7 +46,7 @@ import com.the_tinkering.wk.db.model.Property;
 import com.the_tinkering.wk.db.model.SearchPreset;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.SrsSystemDefinition;
-import com.the_tinkering.wk.db.model.SubjectEntityDefinition;
+import com.the_tinkering.wk.db.model.SubjectEntity;
 import com.the_tinkering.wk.db.model.TaskDefinition;
 import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.jobs.TickJob;
@@ -83,7 +83,7 @@ import static com.the_tinkering.wk.util.ObjectSupport.join;
 @Database(entities = {
         TaskDefinition.class,
         Property.class,
-        SubjectEntityDefinition.class,
+        SubjectEntity.class,
         SrsSystemDefinition.class,
         LevelProgression.class,
         SessionItem.class,

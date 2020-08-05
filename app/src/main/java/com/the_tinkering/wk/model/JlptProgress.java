@@ -32,7 +32,7 @@ public final class JlptProgress {
      */
     public void addItem(final JlptProgressItem item) {
         final SrsSystem system = SrsSystemRepository.getSrsSystem(item.srsSystemId);
-        final SrsSystem.Stage stage = system.getStage(item.srsStage);
+        final SrsSystem.Stage stage = system.getStage(item.srsStageId);
 
         if (stage.isLocked()) {
             lockedCount[item.jlptLevel-1] += item.count;

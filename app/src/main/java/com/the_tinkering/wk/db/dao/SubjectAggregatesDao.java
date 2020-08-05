@@ -39,7 +39,7 @@ public abstract class SubjectAggregatesDao {
      * @return the available timestamp or null if there are no long-term upcoming reviews
      */
     @Query("SELECT availableAt FROM subject"
-            + " WHERE hiddenAt = 0 AND object IS NOT NULL"
+            + " WHERE hiddenAt = 0 AND type != 'UNKNOWN'"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND availableAt != 0 AND availableAt >= :cutoff"
             + " ORDER BY availableAt LIMIT 1")
@@ -54,7 +54,7 @@ public abstract class SubjectAggregatesDao {
      * @return the count
      */
     @Query("SELECT COUNT(id) FROM subject"
-            + " WHERE hiddenAt = 0 AND object IS NOT NULL"
+            + " WHERE hiddenAt = 0 AND type != 'UNKNOWN'"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND availableAt = :targetDate")
     public abstract int getNextLongTermReviewCount(final int maxLevel, final int userLevel, final long targetDate);
@@ -75,13 +75,13 @@ public abstract class SubjectAggregatesDao {
      * @return a POJO containing the results
      */
     @Query("SELECT numLessons, numReviews, newestAvailableAt, upcomingAvailableAt FROM "
-            + "(SELECT COUNT(*) AS numLessons FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
+            + "(SELECT COUNT(*) AS numLessons FROM subject WHERE hiddenAt=0 AND type != 'UNKNOWN' "
             + "AND level <= :maxLevel AND level <= :userLevel AND unlockedAt!=0 AND startedAt=0 AND (resurrectedAt!=0 OR burnedAt=0)), "
-            + "(SELECT COUNT(*) AS numReviews FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
+            + "(SELECT COUNT(*) AS numReviews FROM subject WHERE hiddenAt=0 AND type != 'UNKNOWN' "
             + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt < :cutoff), "
-            + "(SELECT MAX(availableAt) AS newestAvailableAt FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
+            + "(SELECT MAX(availableAt) AS newestAvailableAt FROM subject WHERE hiddenAt=0 AND type != 'UNKNOWN' "
             + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt < :cutoff), "
-            + "(SELECT MIN(availableAt) AS upcomingAvailableAt FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
+            + "(SELECT MIN(availableAt) AS upcomingAvailableAt FROM subject WHERE hiddenAt=0 AND type != 'UNKNOWN' "
             + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt > :cutoff)"
             + ";")
     public abstract AlertContext getAlertContext(int maxLevel, int userLevel, long cutoff);
@@ -93,7 +93,7 @@ public abstract class SubjectAggregatesDao {
      * @param level the level
      * @return the date or null if not reached yet
      */
-    @Query("SELECT MIN(unlockedAt) FROM subject WHERE hiddenAt = 0 AND object IS NOT NULL AND unlockedAt != 0 AND level = :level")
+    @Query("SELECT MIN(unlockedAt) FROM subject WHERE hiddenAt = 0 AND type != 'UNKNOWN' AND unlockedAt != 0 AND level = :level")
     public abstract long getLevelReachedDate(final int level);
 
     /**
@@ -101,7 +101,7 @@ public abstract class SubjectAggregatesDao {
      *
      * @return the highest level
      */
-    @Query("SELECT MAX(level) FROM subject WHERE hiddenAt = 0 AND object IS NOT NULL")
+    @Query("SELECT MAX(level) FROM subject WHERE hiddenAt = 0 AND type != 'UNKNOWN'")
     public abstract int getMaxLevel();
 
     /**
@@ -109,8 +109,8 @@ public abstract class SubjectAggregatesDao {
      *
      * @return the list of items
      */
-    @Query("SELECT srsSystemId, srsStage, jlptLevel, COUNT(id) AS count FROM subject WHERE (object = 'kanji') "
-            + "AND jlptLevel > 0 GROUP BY srsSystemId, srsStage, jlptLevel")
+    @Query("SELECT srsSystemId, srsStageId, jlptLevel, COUNT(id) AS count FROM subject WHERE type = 'WANIKANI_KANJI' "
+            + "AND jlptLevel > 0 GROUP BY srsSystemId, srsStageId, jlptLevel")
     public abstract List<JlptProgressItem> getJlptProgress();
 
     /**
@@ -118,7 +118,7 @@ public abstract class SubjectAggregatesDao {
      *
      * @return the list of items
      */
-    @Query("SELECT srsSystemId, srsStage, joyoGrade, COUNT(id) AS count FROM subject WHERE (object = 'kanji') "
-            + "AND joyoGrade > 0 GROUP BY srsSystemId, srsStage, joyoGrade")
+    @Query("SELECT srsSystemId, srsStageId, joyoGrade, COUNT(id) AS count FROM subject WHERE type = 'WANIKANI_KANJI' "
+            + "AND joyoGrade > 0 GROUP BY srsSystemId, srsStageId, joyoGrade")
     public abstract List<JoyoProgressItem> getJoyoProgress();
 }

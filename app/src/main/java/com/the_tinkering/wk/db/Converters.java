@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.the_tinkering.wk.enums.KanjiAcceptedReadingType;
 import com.the_tinkering.wk.enums.SessionItemState;
 import com.the_tinkering.wk.enums.SessionType;
+import com.the_tinkering.wk.enums.SubjectSource;
 import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.tasks.ApiTask;
 
@@ -190,11 +191,11 @@ public final class Converters {
      * @return the enum instance or a default if value is null
      */
     @TypeConverter
-    public static @Nullable SubjectType stringToSubjectType(final @Nullable String value) {
+    public static SubjectType stringToSubjectType(final @Nullable String value) {
         if (value == null) {
-            return null;
+            return SubjectType.UNKNOWN;
         }
-        return SubjectType.from(value);
+        return SubjectType.valueOf(value);
     }
 
     /**
@@ -204,10 +205,38 @@ public final class Converters {
      * @return the name or a default if value is null
      */
     @TypeConverter
-    public static @Nullable String subjectTypeToString(final @Nullable SubjectType value) {
+    public static String subjectTypeToString(final @Nullable SubjectType value) {
         if (value == null) {
-            return null;
+            return "UNKNOWN";
         }
-        return value.getDbTypeName();
+        return value.name();
+    }
+
+    /**
+     * Convert a String (may be null) to an enum value of type SubjectSource.
+     *
+     * @param value the String value or null
+     * @return the enum instance or a default if value is null
+     */
+    @TypeConverter
+    public static SubjectSource stringToSubjectSource(final @Nullable String value) {
+        if (value == null) {
+            return SubjectSource.UNKNOWN;
+        }
+        return SubjectSource.valueOf(value);
+    }
+
+    /**
+     * Convert an enum value of type SubjectSource (may be null) to String.
+     *
+     * @param value the enum value or null
+     * @return the name or a default if value is null
+     */
+    @TypeConverter
+    public static String subjectSourceToString(final @Nullable SubjectSource value) {
+        if (value == null) {
+            return "UNKNOWN";
+        }
+        return value.name();
     }
 }

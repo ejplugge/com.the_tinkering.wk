@@ -69,9 +69,9 @@ public abstract class SubjectViewsDao {
      * @param userLevel the user's level
      * @return the list of overview items
      */
-    @Query("SELECT srsSystemId AS systemId, srsStage AS stageId, COUNT(id) AS count FROM subject WHERE "
-            + "hiddenAt = 0 AND object IS NOT NULL AND level <= :userLevel "
-            + "GROUP BY srsSystemId, srsStage")
+    @Query("SELECT srsSystemId AS systemId, srsStageId AS stageId, COUNT(id) AS count FROM subject WHERE "
+            + "hiddenAt = 0 AND type != 'UNKNOWN' AND level <= :userLevel "
+            + "GROUP BY srsSystemId, srsStageId")
     public abstract List<SrsBreakDownItem> getSrsBreakDownItems(int userLevel);
 
     /**
@@ -84,7 +84,7 @@ public abstract class SubjectViewsDao {
      * @return the number
      */
     @Query("SELECT COUNT(id) AS count FROM subject WHERE "
-            + "hiddenAt = 0 AND object IS NOT NULL "
+            + "hiddenAt = 0 AND type != 'UNKNOWN' "
             + "AND level > :userLevel")
     public abstract int getSrsBreakDownOverLevel(int userLevel);
 
@@ -94,10 +94,10 @@ public abstract class SubjectViewsDao {
      * @param userLevel the user's level
      * @return the list of overview items
      */
-    @Query("SELECT level, object AS type, COUNT(id) AS count FROM subject"
-            + " WHERE subject.hiddenAt = 0 AND object IS NOT NULL"
+    @Query("SELECT level, type, COUNT(id) AS count FROM subject"
+            + " WHERE subject.hiddenAt = 0 AND type != 'UNKNOWN'"
             + " AND level <= :userLevel"
-            + " GROUP BY level, object")
+            + " GROUP BY level, type")
     public abstract List<LevelProgressItem> getLevelProgressTotalItems(int userLevel);
 
     /**
@@ -106,10 +106,10 @@ public abstract class SubjectViewsDao {
      * @param userLevel the user's level
      * @return the list of overview items
      */
-    @Query("SELECT level, object AS type, COUNT(id) AS count FROM subject"
-            + " WHERE subject.hiddenAt = 0 AND object IS NOT NULL"
+    @Query("SELECT level, type, COUNT(id) AS count FROM subject"
+            + " WHERE subject.hiddenAt = 0 AND type != 'UNKNOWN'"
             + " AND level <= :userLevel AND passedAt != 0"
-            + " GROUP BY level, object")
+            + " GROUP BY level, type")
     public abstract List<LevelProgressItem> getLevelProgressPassedItems(int userLevel);
 
     /**
@@ -134,7 +134,7 @@ public abstract class SubjectViewsDao {
      *
      * @return the list of reference data
      */
-    @Query("SELECT id, object AS type, characters, frequency, joyoGrade, jlptLevel, pitchInfo, strokeData FROM subject")
+    @Query("SELECT id, type, characters, frequency, joyoGrade, jlptLevel, pitchInfo, strokeData FROM subject")
     public abstract List<SubjectReferenceData> getReferenceData();
 
     /**
