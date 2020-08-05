@@ -1,0 +1,7 @@
+<resources>
+    <string name="about_label">About Test</string>
+    <string name="label">Test</string>
+    <string name="labelDebug">DEBUG: Test</string>
+    <string name="uri_scheme">test-scheme</string>
+    <string name="subject_info_uri">test-scheme://subject-info</string>
+</resources>
