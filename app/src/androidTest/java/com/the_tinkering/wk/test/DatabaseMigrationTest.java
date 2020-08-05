@@ -445,6 +445,41 @@ public final class DatabaseMigrationTest {
         cursor.close();
     }
 
+    private static void checkMigration_68_sessionItem(final SupportSQLiteDatabase migratedDb) {
+        final Cursor cursor = migratedDb.query("SELECT id, assignmentId, state, srsSystemId, srsStageId, level, bucket, `order`,"
+                + " question1Done, question1Incorrect, question2Done, question2Incorrect,"
+                + " question3Done, question3Incorrect, question4Done, question4Incorrect, numAnswers, lastAnswer, kanjiAcceptedReadingType"
+                + " FROM session_item ORDER BY id");
+        assertEquals(19, cursor.getColumnCount());
+        assertEquals(1, cursor.getCount());
+
+        cursor.moveToNext();
+        assertEquals(1, cursor.getLong(0));
+        assertEquals(2, cursor.getLong(1));
+        assertEquals("PENDING", cursor.getString(2));
+        assertEquals(3, cursor.getLong(3));
+        assertEquals(4, cursor.getLong(4));
+        assertEquals(5, cursor.getInt(5));
+        assertEquals(7, cursor.getInt(6));
+        assertEquals(8, cursor.getInt(7));
+        assertEquals(0, cursor.getInt(8));
+        assertEquals(9, cursor.getInt(9));
+        assertEquals(1, cursor.getInt(10));
+        assertEquals(10, cursor.getInt(11));
+        assertEquals(0, cursor.getInt(12));
+        assertEquals(11, cursor.getInt(13));
+        assertEquals(1, cursor.getInt(14));
+        assertEquals(12, cursor.getInt(15));
+        assertEquals(13, cursor.getInt(16));
+        assertEquals(14, cursor.getInt(17));
+        assertEquals("ONYOMI", cursor.getString(18));
+
+        cursor.moveToNext();
+        assertTrue(cursor.isAfterLast());
+
+        cursor.close();
+    }
+
     @Test
     public void testMigration_68() throws IOException {
         final SupportSQLiteDatabase db = testHelper.createDatabase(DATABASE_NAME_TEST, 68);
@@ -459,6 +494,10 @@ public final class DatabaseMigrationTest {
         db.execSQL("INSERT INTO log_record (id, timestamp, tag, length, message) VALUES (2, null, null, 3, null)");
         db.execSQL("INSERT INTO properties (name, value) VALUES ('foo', 'bar')");
         db.execSQL("INSERT INTO search_preset (name, type, data) VALUES ('foo', 1, 'bar')");
+        db.execSQL("INSERT INTO session_item (id, assignmentId, state, srsSystemId, srsStage, level, typeCode, bucket, `order`,"
+                + " meaningDone, meaningIncorrect, readingDone, readingIncorrect, onyomiDone, onyomiIncorrect, kunyomiDone, kunyomiIncorrect,"
+                + " numAnswers, lastAnswer, kanjiAcceptedReadingType)"
+                + " VALUES (1, 2, 'PENDING', 3, 4, 5, 6, 7, 8, 0, 9, 1, 10, 0, 11, 1, 12, 13, 14, 'ONYOMI')");
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_68_69);
@@ -470,5 +509,6 @@ public final class DatabaseMigrationTest {
         checkMigration_68_logRecord(migratedDb);
         checkMigration_68_properties(migratedDb);
         checkMigration_68_searchPreset(migratedDb);
+        checkMigration_68_sessionItem(migratedDb);
     }
 }

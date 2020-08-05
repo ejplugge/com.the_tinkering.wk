@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 69,
-    "identityHash": "c28e967f62a59926c0bab2ddf0f8ff89",
+    "identityHash": "970e5a9131e4724b4ea7d5f73f4b3666",
     "entities": [
       {
         "tableName": "task_definition",
@@ -639,7 +639,7 @@
       },
       {
         "tableName": "session_item",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `assignmentId` INTEGER NOT NULL, `state` TEXT, `srsSystemId` INTEGER NOT NULL, `srsStage` INTEGER NOT NULL, `level` INTEGER NOT NULL, `typeCode` INTEGER NOT NULL, `bucket` INTEGER NOT NULL, `order` INTEGER NOT NULL, `meaningDone` INTEGER NOT NULL, `meaningIncorrect` INTEGER NOT NULL, `readingDone` INTEGER NOT NULL, `readingIncorrect` INTEGER NOT NULL, `onyomiDone` INTEGER NOT NULL, `onyomiIncorrect` INTEGER NOT NULL, `kunyomiDone` INTEGER NOT NULL, `kunyomiIncorrect` INTEGER NOT NULL, `numAnswers` INTEGER NOT NULL, `lastAnswer` INTEGER NOT NULL, `kanjiAcceptedReadingType` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `assignmentId` INTEGER NOT NULL DEFAULT 0, `state` TEXT NOT NULL DEFAULT 'ACTIVE', `srsSystemId` INTEGER NOT NULL DEFAULT 0, `srsStageId` INTEGER NOT NULL DEFAULT 0, `level` INTEGER NOT NULL DEFAULT 0, `bucket` INTEGER NOT NULL DEFAULT 0, `order` INTEGER NOT NULL DEFAULT 0, `question1Done` INTEGER NOT NULL DEFAULT 0, `question1Incorrect` INTEGER NOT NULL DEFAULT 0, `question2Done` INTEGER NOT NULL DEFAULT 0, `question2Incorrect` INTEGER NOT NULL DEFAULT 0, `question3Done` INTEGER NOT NULL DEFAULT 0, `question3Incorrect` INTEGER NOT NULL DEFAULT 0, `question4Done` INTEGER NOT NULL DEFAULT 0, `question4Incorrect` INTEGER NOT NULL DEFAULT 0, `numAnswers` INTEGER NOT NULL DEFAULT 0, `lastAnswer` INTEGER NOT NULL DEFAULT 0, `kanjiAcceptedReadingType` TEXT NOT NULL DEFAULT 'NEITHER', PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -651,115 +651,127 @@
             "fieldPath": "assignmentId",
             "columnName": "assignmentId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "state",
             "columnName": "state",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true,
+            "defaultValue": "'ACTIVE'"
           },
           {
             "fieldPath": "srsSystemId",
             "columnName": "srsSystemId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "srsStageId",
-            "columnName": "srsStage",
+            "columnName": "srsStageId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "level",
             "columnName": "level",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "unused",
-            "columnName": "typeCode",
-            "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "bucket",
             "columnName": "bucket",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "order",
             "columnName": "order",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "question1Done",
-            "columnName": "meaningDone",
+            "columnName": "question1Done",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "question1Incorrect",
-            "columnName": "meaningIncorrect",
+            "columnName": "question1Incorrect",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "question2Done",
-            "columnName": "readingDone",
+            "columnName": "question2Done",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "question2Incorrect",
-            "columnName": "readingIncorrect",
+            "columnName": "question2Incorrect",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "question3Done",
-            "columnName": "onyomiDone",
+            "columnName": "question3Done",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "question3Incorrect",
-            "columnName": "onyomiIncorrect",
+            "columnName": "question3Incorrect",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "question4Done",
-            "columnName": "kunyomiDone",
+            "columnName": "question4Done",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "question4Incorrect",
-            "columnName": "kunyomiIncorrect",
+            "columnName": "question4Incorrect",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "numAnswers",
             "columnName": "numAnswers",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "lastAnswer",
             "columnName": "lastAnswer",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "0"
           },
           {
             "fieldPath": "kanjiAcceptedReadingType",
             "columnName": "kanjiAcceptedReadingType",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true,
+            "defaultValue": "'NEITHER'"
           }
         ],
         "primaryKey": {
@@ -912,7 +924,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c28e967f62a59926c0bab2ddf0f8ff89')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '970e5a9131e4724b4ea7d5f73f4b3666')"
     ]
   }
 }

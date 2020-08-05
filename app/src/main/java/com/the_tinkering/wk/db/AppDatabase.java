@@ -389,6 +389,28 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("INSERT INTO migrate_temp SELECT * FROM search_preset");
             database.execSQL("DROP TABLE search_preset");
             database.execSQL("ALTER TABLE migrate_temp RENAME TO search_preset");
+
+            database.execSQL("UPDATE session_item SET lastAnswer = 0 WHERE lastAnswer IS NULL");
+
+            database.execSQL("DROP TABLE IF EXISTS migrate_temp");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `migrate_temp` (`id` INTEGER NOT NULL, `assignmentId` INTEGER NOT NULL DEFAULT 0,"
+                    + " `state` TEXT NOT NULL DEFAULT 'ACTIVE', `srsSystemId` INTEGER NOT NULL DEFAULT 0, `srsStageId` INTEGER NOT NULL DEFAULT 0,"
+                    + " `level` INTEGER NOT NULL DEFAULT 0, `bucket` INTEGER NOT NULL DEFAULT 0, `order` INTEGER NOT NULL DEFAULT 0,"
+                    + " `question1Done` INTEGER NOT NULL DEFAULT 0, `question1Incorrect` INTEGER NOT NULL DEFAULT 0,"
+                    + " `question2Done` INTEGER NOT NULL DEFAULT 0, `question2Incorrect` INTEGER NOT NULL DEFAULT 0,"
+                    + " `question3Done` INTEGER NOT NULL DEFAULT 0, `question3Incorrect` INTEGER NOT NULL DEFAULT 0,"
+                    + " `question4Done` INTEGER NOT NULL DEFAULT 0, `question4Incorrect` INTEGER NOT NULL DEFAULT 0,"
+                    + " `numAnswers` INTEGER NOT NULL DEFAULT 0, `lastAnswer` INTEGER NOT NULL DEFAULT 0,"
+                    + " `kanjiAcceptedReadingType` TEXT NOT NULL DEFAULT 'NEITHER', PRIMARY KEY(`id`))");
+            database.execSQL("INSERT INTO migrate_temp (id, assignmentId, state, srsSystemId, srsStageId, level, bucket, `order`,"
+                    + " question1Done, question1Incorrect, question2Done, question2Incorrect,"
+                    + " question3Done, question3Incorrect, question4Done, question4Incorrect, numAnswers, lastAnswer, kanjiAcceptedReadingType)"
+                    + " SELECT id, assignmentId, state, srsSystemId, srsStage, level, bucket, `order`,"
+                    + " meaningDone, meaningIncorrect, readingDone, readingIncorrect,"
+                    + " onyomiDone, onyomiIncorrect, kunyomiDone, kunyomiIncorrect, numAnswers, lastAnswer, kanjiAcceptedReadingType"
+                    + " FROM session_item");
+            database.execSQL("DROP TABLE session_item");
+            database.execSQL("ALTER TABLE migrate_temp RENAME TO session_item");
         }
     };
 
