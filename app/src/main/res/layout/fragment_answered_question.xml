@@ -249,14 +249,31 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <Button
-        android:id="@+id/nextButton2"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:text="Next"
-        android:paddingHorizontal="8dp"
-        style="@style/WK.Button.Borderless"/>
-
+        android:orientation="horizontal"
+        android:layout_weight="0"
+        android:background="@color/transparent">
+        <Button
+            android:id="@+id/specialButton2B"
+            style="@style/WK.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Special button 2 bottom"
+            android:paddingHorizontal="8dp"
+            />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <Button
+            android:id="@+id/nextButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Next"
+            android:paddingHorizontal="8dp"
+            style="@style/WK.Button.Borderless"/>
+    </LinearLayout>
 </LinearLayout>

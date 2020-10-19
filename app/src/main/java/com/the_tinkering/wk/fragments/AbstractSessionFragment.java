@@ -46,6 +46,7 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
     private final ViewProxy srsIndicator = new ViewProxy();
     private final ViewProxy specialButton1 = new ViewProxy();
     private final ViewProxy specialButton2 = new ViewProxy();
+    private final ViewProxy specialButton2B = new ViewProxy();
     private final ViewProxy specialButton3 = new ViewProxy();
     private final ViewProxy questionType = new ViewProxy();
     private final ViewProxy questionText = new ViewProxy();
@@ -94,6 +95,7 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
         srsIndicator.setDelegate(view, R.id.srsIndicator);
         specialButton1.setDelegate(view, R.id.specialButton1);
         specialButton2.setDelegate(view, R.id.specialButton2);
+        specialButton2B.setDelegate(view, R.id.specialButton2B);
         specialButton3.setDelegate(view, R.id.specialButton3);
         questionType.setDelegate(view, R.id.questionType);
         questionText.setDelegate(view, R.id.questionText);
@@ -120,7 +122,9 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
 
         // Show the special button 2 if allowed and relevant
         specialButton2.setVisibility(GlobalSettings.AdvancedOther.getSpecialButton2Behavior().canShow());
+        specialButton2B.setVisibility(GlobalSettings.AdvancedOther.getSpecialButton2Behavior().canShow());
         specialButton2.setText(GlobalSettings.AdvancedOther.getSpecialButton2Behavior().getLabel());
+        specialButton2B.setText(GlobalSettings.AdvancedOther.getSpecialButton2Behavior().getLabel());
 
         // Show the special button 3 if allowed and relevant
         specialButton3.setVisibility(GlobalSettings.AdvancedOther.getSpecialButton3Behavior().canShow());
@@ -154,13 +158,16 @@ public abstract class AbstractSessionFragment extends AbstractFragment implement
             GlobalSettings.AdvancedOther.getSpecialButton1Behavior().perform();
         }));
 
-        specialButton2.setOnClickListener(v -> safe(() -> {
+        final View.OnClickListener specialButton2Listener = v -> safe(() -> {
             if (!interactionEnabled) {
                 return;
             }
             disableInteraction();
             GlobalSettings.AdvancedOther.getSpecialButton2Behavior().perform();
-        }));
+        });
+
+        specialButton2.setOnClickListener(specialButton2Listener);
+        specialButton2B.setOnClickListener(specialButton2Listener);
 
         specialButton3.setOnClickListener(v -> safe(() -> {
             if (!interactionEnabled) {
