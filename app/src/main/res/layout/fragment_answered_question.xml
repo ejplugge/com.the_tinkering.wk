@@ -164,6 +164,27 @@
                     app:layout_constraintTop_toBottomOf="@id/levelUpToastText"
                     style="@style/WK.TextView.CustomToast"/>
 
+                <TextView
+                    android:id="@+id/alternativesToastText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:paddingLeft="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="4dp"
+                    android:text=""
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/closeToastText"
+                    style="@style/WK.TextView.CustomToast"/>
+
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/toastAnimation"
                     android:layout_width="64dp"
