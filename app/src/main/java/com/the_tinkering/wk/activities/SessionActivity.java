@@ -74,6 +74,7 @@ public final class SessionActivity extends AbstractActivity {
     private final ViewProxy levelUpToastText = new ViewProxy();
     private final ViewProxy closeToastText = new ViewProxy();
     private final ViewProxy closeMessageText = new ViewProxy();
+    private final ViewProxy alternativesToastText = new ViewProxy();
 
     /**
      * The constructor.
@@ -206,6 +207,8 @@ public final class SessionActivity extends AbstractActivity {
 
         levelUpToastText.setDelegate(this, R.id.levelUpToastText);
         showSrsStageChangeToast(levelUpToastText);
+        alternativesToastText.setDelegate(this, R.id.alternativesToastText);
+        showAlternativesToast(alternativesToastText);
 
         final @Nullable Menu menu = getMenu();
         if (menu != null) {
@@ -357,5 +360,55 @@ public final class SessionActivity extends AbstractActivity {
 
         view.setAnimation(animationSet);
         view.setVisibility(View.VISIBLE);
+    }
+
+    private static void showAlternativesToast(final ViewProxy view) {
+        if (FloatingUiState.lastVerdict == null
+                || FloatingUiState.alternativesForLastCorrectAnswer == null
+                || !FloatingUiState.showAlternativesToast
+                || !GlobalSettings.Review.getEnableAlternativesToast()) {
+            FloatingUiState.showAlternativesToast = false;
+            return;
+        }
+
+        final String message = "Alternatives: " + FloatingUiState.alternativesForLastCorrectAnswer;
+        view.setText(message);
+
+        final Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setDuration(500);
+
+        final Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartOffset(3000);
+        fadeOut.setDuration(1500);
+
+        final AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(fadeIn);
+        animationSet.addAnimation(fadeOut);
+        animationSet.setRepeatCount(0);
+
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(final Animation animation) {
+                //
+            }
+
+            @Override
+            public void onAnimationEnd(final Animation animation) {
+                view.setVisibility(View.GONE);
+                view.clearAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(final Animation animation) {
+                view.setVisibility(View.GONE);
+                view.clearAnimation();
+            }
+        });
+
+        view.setAnimation(animationSet);
+        view.setVisibility(View.VISIBLE);
+        FloatingUiState.showAlternativesToast = false;
     }
 }

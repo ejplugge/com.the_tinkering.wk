@@ -1384,6 +1384,15 @@ public final class GlobalSettings {
         }
 
         /**
+         * Show a toast when an item has alternative answers
+         *
+         * @return the value
+         */
+        public static boolean getEnableAlternativesToast() {
+            return prefs().getBoolean("enable_alternatives_toast", false);
+        }
+
+        /**
          * Action to perform when a meaning answer is not quite correct but acceptable within the typo lenience margin.
          *
          * @return the value

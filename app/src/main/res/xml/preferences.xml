@@ -481,6 +481,13 @@
             app:singleLineTitle="false"
             app:defaultValue="true"/>
 
+        <SwitchPreferenceCompat
+            app:key="enable_alternatives_toast"
+            app:title="Enable alternative readings/meanings toast"
+            app:summary="Show a toast with alternative readings or meanings upon correct answer"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
         <ListPreference
             app:key="close_enough_action"
             app:title="Action for &quot;close enough&quot; answer"
