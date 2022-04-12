@@ -115,7 +115,6 @@ public final class Subject implements PronunciationAudioOwner {
      *
      * @return the source
      */
-    @SuppressWarnings("unused")
     public SubjectSource getSource() {
         return entity.source;
     }
