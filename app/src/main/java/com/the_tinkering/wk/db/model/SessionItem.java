@@ -16,7 +16,6 @@
 
 package com.the_tinkering.wk.db.model;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -60,47 +59,26 @@ public final class SessionItem {
     private static final Logger LOGGER = Logger.get(SessionItem.class);
     private static final Pattern TILDE_PATTERN = Pattern.compile("〜");
 
-    @PrimaryKey
-    private long id = 0L;
-    @ColumnInfo(defaultValue = "0")
+    @PrimaryKey private long id = 0L;
     private long assignmentId = 0L;
-    @ColumnInfo(defaultValue = "ACTIVE")
-    @NonNull
     private SessionItemState state = ACTIVE;
-    @ColumnInfo(defaultValue = "0")
     private long srsSystemId = 0L;
-    @ColumnInfo(defaultValue = "0")
-    private long srsStageId = 0L;
-    @ColumnInfo(defaultValue = "0")
+    @ColumnInfo(name = "srsStage") private long srsStageId = 0L;
     private int level = 0;
-    @ColumnInfo(defaultValue = "0")
+    @ColumnInfo(name = "typeCode") private int unused = 0;
     private int bucket = 0;
-    @ColumnInfo(defaultValue = "0")
     private int order = 0;
-    @ColumnInfo(defaultValue = "0")
-    private boolean question1Done = false;
-    @ColumnInfo(defaultValue = "0")
-    private int question1Incorrect = 0;
-    @ColumnInfo(defaultValue = "0")
-    private boolean question2Done = false;
-    @ColumnInfo(defaultValue = "0")
-    private int question2Incorrect = 0;
-    @ColumnInfo(defaultValue = "0")
-    private boolean question3Done = false;
-    @ColumnInfo(defaultValue = "0")
-    private int question3Incorrect = 0;
-    @ColumnInfo(defaultValue = "0")
-    private boolean question4Done = false;
-    @ColumnInfo(defaultValue = "0")
-    private int question4Incorrect = 0;
-    @ColumnInfo(defaultValue = "0")
+    @ColumnInfo(name = "meaningDone") private boolean question1Done = false;
+    @ColumnInfo(name = "meaningIncorrect") private int question1Incorrect = 0;
+    @ColumnInfo(name = "readingDone") private boolean question2Done = false;
+    @ColumnInfo(name = "readingIncorrect") private int question2Incorrect = 0;
+    @ColumnInfo(name = "onyomiDone") private boolean question3Done = false;
+    @ColumnInfo(name = "onyomiIncorrect") private int question3Incorrect = 0;
+    @ColumnInfo(name = "kunyomiDone") private boolean question4Done = false;
+    @ColumnInfo(name = "kunyomiIncorrect") private int question4Incorrect = 0;
     private int numAnswers = 0;
-    @ColumnInfo(defaultValue = "0")
     private long lastAnswer = 0L;
-    @ColumnInfo(defaultValue = "NEITHER")
-    @NonNull
     private KanjiAcceptedReadingType kanjiAcceptedReadingType = KanjiAcceptedReadingType.NEITHER;
-
     @Ignore private @Nullable TypefaceConfiguration typefaceConfiguration = null;
     @Ignore private @Nullable Subject subject = null;
     @Ignore private int choiceDelay = 0;
@@ -257,6 +235,22 @@ public final class SessionItem {
      */
     public void setLevel(final int level) {
         this.level = level;
+    }
+
+    /**
+     * The type of this item's subject.
+     * @return the value
+     */
+    public int getUnused() {
+        return unused;
+    }
+
+    /**
+     * The type of this item's subject.
+     * @param unused the value
+     */
+    public void setUnused(final int unused) {
+        this.unused = unused;
     }
 
     /**
