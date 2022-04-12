@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 69,
-    "identityHash": "c28e967f62a59926c0bab2ddf0f8ff89",
+    "identityHash": "72abb4507302d09fa31fd377b347fffc",
     "entities": [
       {
         "tableName": "task_definition",
@@ -876,7 +876,7 @@
       },
       {
         "tableName": "search_preset",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `type` INTEGER NOT NULL DEFAULT 0, `data` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `type` INTEGER NOT NULL, `data` TEXT NOT NULL, PRIMARY KEY(`name`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -888,15 +888,13 @@
             "fieldPath": "type",
             "columnName": "type",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "data",
             "columnName": "data",
             "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "''"
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -912,7 +910,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c28e967f62a59926c0bab2ddf0f8ff89')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '72abb4507302d09fa31fd377b347fffc')"
     ]
   }
 }

@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.db.model;
 
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -36,13 +35,11 @@ public final class SearchPreset {
     /**
      * Type of this preset. 0 = level browse, 1 = simple keyword search, 2 = advanced search
      */
-    @ColumnInfo(defaultValue = "0")
     public int type = 0;
 
     /**
      * Type-specific string that encodes the parameters for the search preset.
      */
     @NonNull
-    @ColumnInfo(defaultValue = "")
     public String data = "";
 }
