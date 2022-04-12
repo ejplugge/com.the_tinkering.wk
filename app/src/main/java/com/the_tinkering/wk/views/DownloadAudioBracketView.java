@@ -106,14 +106,14 @@ public final class DownloadAudioBracketView extends LinearLayout {
             int numFullAudio = 0;
 
             for (final AudioDownloadStatus status: overview) {
-                if (status.level < minLevel || status.level > maxLevel) {
+                if (status.getLevel() < minLevel || status.getLevel() > maxLevel) {
                     continue;
                 }
-                numTotal += status.numTotal;
-                numNoAudio += status.numNoAudio;
-                numMissingAudio += status.numMissingAudio;
-                numPartialAudio += status.numPartialAudio;
-                numFullAudio += status.numFullAudio;
+                numTotal += status.getNumTotal();
+                numNoAudio += status.getNumNoAudio();
+                numMissingAudio += status.getNumMissingAudio();
+                numPartialAudio += status.getNumPartialAudio();
+                numFullAudio += status.getNumFullAudio();
             }
 
             if (audioCount > 0 || numMissingAudio == 0 && numPartialAudio == 0) {

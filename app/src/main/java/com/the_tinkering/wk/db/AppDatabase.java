@@ -39,7 +39,7 @@ import com.the_tinkering.wk.db.dao.SubjectSyncDao;
 import com.the_tinkering.wk.db.dao.SubjectViewsDao;
 import com.the_tinkering.wk.db.dao.TaskDefinitionDao;
 import com.the_tinkering.wk.db.model.AudioDownloadStatus;
-import com.the_tinkering.wk.db.model.LevelProgression;
+import com.the_tinkering.wk.db.model.LevelProgressionEntityDefinition;
 import com.the_tinkering.wk.db.model.LogRecordEntityDefinition;
 import com.the_tinkering.wk.db.model.PronunciationAudioOwner;
 import com.the_tinkering.wk.db.model.Property;
@@ -85,12 +85,12 @@ import static com.the_tinkering.wk.util.ObjectSupport.join;
         Property.class,
         SubjectEntityDefinition.class,
         SrsSystemDefinition.class,
-        LevelProgression.class,
+        LevelProgressionEntityDefinition.class,
         SessionItem.class,
         LogRecordEntityDefinition.class,
         AudioDownloadStatus.class,
         SearchPreset.class
-}, version = 69)
+}, version = 68)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
     /**
@@ -323,40 +323,13 @@ public abstract class AppDatabase extends RoomDatabase {
     };
 
     /**
-     * Migration from 67 to 68: Clear out null values in date columns, prepare for starred items.
+     * Migration from 65 to 66: Clear out null values in date columns, prepare for starred items.
      */
     public static final Migration MIGRATION_67_68 = new Migration(67, 68) {
         @Override
         public void migrate(final SupportSQLiteDatabase database) {
             database.execSQL("UPDATE subject SET hiddenAt = 0 WHERE hiddenAt IS NULL");
             database.execSQL("UPDATE subject SET lastIncorrectAnswer = 0 WHERE lastIncorrectAnswer IS NULL");
-        }
-    };
-
-    /**
-     * Migration from 68 to 69: Recreate a few tables with updated stucture, removing obsolete columns.
-     */
-    public static final Migration MIGRATION_68_69 = new Migration(68, 69) {
-        @Override
-        public void migrate(final SupportSQLiteDatabase database) {
-            database.execSQL("DROP TABLE IF EXISTS migrate_temp");
-            database.execSQL("CREATE TABLE IF NOT EXISTS `migrate_temp` (`level` INTEGER NOT NULL,"
-                    + " `numTotal` INTEGER NOT NULL DEFAULT 0, `numNoAudio` INTEGER NOT NULL DEFAULT 0,"
-                    + " `numMissingAudio` INTEGER NOT NULL DEFAULT 0, `numPartialAudio` INTEGER NOT NULL DEFAULT 0,"
-                    + " `numFullAudio` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`level`))");
-            database.execSQL("INSERT INTO migrate_temp SELECT * FROM audio_download_status");
-            database.execSQL("DROP TABLE audio_download_status");
-            database.execSQL("ALTER TABLE migrate_temp RENAME TO audio_download_status");
-
-            database.execSQL("DROP TABLE IF EXISTS migrate_temp");
-            database.execSQL("CREATE TABLE IF NOT EXISTS `migrate_temp` (`id` INTEGER NOT NULL,"
-                    + " `abandonedAt` INTEGER NOT NULL DEFAULT 0, `completedAt` INTEGER NOT NULL DEFAULT 0,"
-                    + " `createdAt` INTEGER NOT NULL DEFAULT 0, `passedAt` INTEGER NOT NULL DEFAULT 0,"
-                    + " `startedAt` INTEGER NOT NULL DEFAULT 0, `unlockedAt` INTEGER NOT NULL DEFAULT 0,"
-                    + " `level` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))");
-            database.execSQL("INSERT INTO migrate_temp SELECT * FROM level_progression");
-            database.execSQL("DROP TABLE level_progression");
-            database.execSQL("ALTER TABLE migrate_temp RENAME TO level_progression");
         }
     };
 
@@ -389,8 +362,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             MIGRATION_64_65,
                             MIGRATION_65_66,
                             MIGRATION_66_67,
-                            MIGRATION_67_68,
-                            MIGRATION_68_69)
+                            MIGRATION_67_68)
                     .fallbackToDestructiveMigration()
                     .build();
         }

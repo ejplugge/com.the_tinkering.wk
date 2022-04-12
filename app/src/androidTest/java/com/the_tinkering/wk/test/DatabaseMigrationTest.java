@@ -51,7 +51,6 @@ import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_64_65;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_65_66;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_66_67;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_67_68;
-import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_68_69;
 import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 
@@ -61,7 +60,7 @@ import static org.junit.Assert.assertEquals;
 @SuppressWarnings({"JavaDoc", "resource"})
 @SmallTest
 public final class DatabaseMigrationTest {
-    private static final int LATEST_VERSION = 69;
+    private static final int LATEST_VERSION = 68;
     private static final String DATABASE_NAME_TEST = "wanikani-test";
 
     @Rule
@@ -94,8 +93,7 @@ public final class DatabaseMigrationTest {
                         MIGRATION_64_65,
                         MIGRATION_65_66,
                         MIGRATION_66_67,
-                        MIGRATION_67_68,
-                        MIGRATION_68_69)
+                        MIGRATION_67_68)
                 .build();
         testHelper.closeWhenFinished(database);
         return database;
@@ -110,7 +108,7 @@ public final class DatabaseMigrationTest {
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_48_49, MIGRATION_49_50, MIGRATION_50_51,
                 MIGRATION_51_52, MIGRATION_52_53, MIGRATION_53_54, MIGRATION_54_55, MIGRATION_55_56, MIGRATION_56_57, MIGRATION_57_58,
                 MIGRATION_58_59, MIGRATION_59_60, MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65,
-                MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -123,7 +121,7 @@ public final class DatabaseMigrationTest {
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_49_50, MIGRATION_50_51, MIGRATION_51_52,
                 MIGRATION_52_53, MIGRATION_53_54, MIGRATION_54_55, MIGRATION_55_56, MIGRATION_56_57, MIGRATION_57_58, MIGRATION_58_59,
                 MIGRATION_59_60, MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66,
-                MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -136,7 +134,7 @@ public final class DatabaseMigrationTest {
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_50_51, MIGRATION_51_52, MIGRATION_52_53,
                 MIGRATION_53_54, MIGRATION_54_55, MIGRATION_55_56, MIGRATION_56_57, MIGRATION_57_58, MIGRATION_58_59, MIGRATION_59_60,
                 MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67,
-                MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -148,8 +146,7 @@ public final class DatabaseMigrationTest {
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_51_52, MIGRATION_52_53, MIGRATION_53_54,
                 MIGRATION_54_55, MIGRATION_55_56, MIGRATION_56_57, MIGRATION_57_58, MIGRATION_58_59, MIGRATION_59_60, MIGRATION_60_61,
-                MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68,
-                MIGRATION_68_69);
+                MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -161,7 +158,7 @@ public final class DatabaseMigrationTest {
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_52_53, MIGRATION_53_54, MIGRATION_54_55,
                 MIGRATION_55_56, MIGRATION_56_57, MIGRATION_57_58, MIGRATION_58_59, MIGRATION_59_60, MIGRATION_60_61, MIGRATION_61_62,
-                MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -173,7 +170,7 @@ public final class DatabaseMigrationTest {
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_53_54, MIGRATION_54_55, MIGRATION_55_56,
                 MIGRATION_56_57, MIGRATION_57_58, MIGRATION_58_59, MIGRATION_59_60, MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63,
-                MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -185,7 +182,7 @@ public final class DatabaseMigrationTest {
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_54_55, MIGRATION_55_56, MIGRATION_56_57,
                 MIGRATION_57_58, MIGRATION_58_59, MIGRATION_59_60, MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64,
-                MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -197,7 +194,7 @@ public final class DatabaseMigrationTest {
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_55_56, MIGRATION_56_57, MIGRATION_57_58,
                 MIGRATION_58_59, MIGRATION_59_60, MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65,
-                MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -209,7 +206,7 @@ public final class DatabaseMigrationTest {
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_56_57, MIGRATION_57_58, MIGRATION_58_59,
                 MIGRATION_59_60, MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66,
-                MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -221,7 +218,7 @@ public final class DatabaseMigrationTest {
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_57_58, MIGRATION_58_59, MIGRATION_59_60,
                 MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67,
-                MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -232,8 +229,7 @@ public final class DatabaseMigrationTest {
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_58_59, MIGRATION_59_60, MIGRATION_60_61,
-                MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68,
-                MIGRATION_68_69);
+                MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -244,7 +240,7 @@ public final class DatabaseMigrationTest {
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_59_60, MIGRATION_60_61, MIGRATION_61_62,
-                MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -255,7 +251,7 @@ public final class DatabaseMigrationTest {
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_60_61, MIGRATION_61_62, MIGRATION_62_63,
-                MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -266,7 +262,7 @@ public final class DatabaseMigrationTest {
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_61_62, MIGRATION_62_63, MIGRATION_63_64,
-                MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -277,7 +273,7 @@ public final class DatabaseMigrationTest {
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_62_63, MIGRATION_63_64, MIGRATION_64_65,
-                MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -288,7 +284,7 @@ public final class DatabaseMigrationTest {
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_63_64, MIGRATION_64_65, MIGRATION_65_66,
-                MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -299,7 +295,7 @@ public final class DatabaseMigrationTest {
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_64_65, MIGRATION_65_66, MIGRATION_66_67,
-                MIGRATION_67_68, MIGRATION_68_69);
+                MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -309,8 +305,7 @@ public final class DatabaseMigrationTest {
         assertEquals(65, db.getVersion());
         db.close();
 
-        testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68,
-                MIGRATION_68_69);
+        testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_65_66, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -320,7 +315,7 @@ public final class DatabaseMigrationTest {
         assertEquals(66, db.getVersion());
         db.close();
 
-        testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_66_67, MIGRATION_67_68, MIGRATION_68_69);
+        testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_66_67, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
@@ -330,17 +325,7 @@ public final class DatabaseMigrationTest {
         assertEquals(67, db.getVersion());
         db.close();
 
-        testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_67_68, MIGRATION_68_69);
-        assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
-    }
-
-    @Test
-    public void testMigration_68() throws IOException {
-        final SupportSQLiteDatabase db = testHelper.createDatabase(DATABASE_NAME_TEST, 68);
-        assertEquals(68, db.getVersion());
-        db.close();
-
-        testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_68_69);
+        testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_67_68);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 }

@@ -16,62 +16,146 @@
 
 package com.the_tinkering.wk.db.model;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-
 /**
  * Room entity for the level_progression table. This records the coarse-grained progression in levels.
  */
-@Entity(tableName = "level_progression")
 public final class LevelProgression {
+    private long id = 0L;
+    private long abandonedAt = 0L;
+    private long completedAt = 0L;
+    private long createdAt = 0L;
+    private long passedAt = 0L;
+    private long startedAt = 0L;
+    private long unlockedAt = 0L;
+    private int level = 0;
+
     /**
      * The unique ID.
+     * @return the value
      */
-    @PrimaryKey public long id = 0L;
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * The unique ID.
+     * @param id the value
+     */
+    public void setId(final long id) {
+        this.id = id;
+    }
 
     /**
      * Timestamp when this level was abandoned (because of a reset), or null if not abandoned.
+     * @return the value
      */
-    @ColumnInfo(defaultValue = "0")
-    public long abandonedAt = 0L;
+    public long getAbandonedAt() {
+        return abandonedAt;
+    }
+
+    /**
+     * Timestamp when this level was abandoned (because of a reset), or null if not abandoned.
+     * @param abandonedAt the value
+     */
+    public void setAbandonedAt(final long abandonedAt) {
+        this.abandonedAt = abandonedAt;
+    }
 
     /**
      * Timestamp when this level was completed (all subjects burned), or null if not completed.
+     * @return the value
      */
-    @ColumnInfo(defaultValue = "0")
-    public long completedAt = 0L;
+    public long getCompletedAt() {
+        return completedAt;
+    }
+
+    /**
+     * Timestamp when this level was completed (all subjects burned), or null if not completed.
+     * @param completedAt the value
+     */
+    public void setCompletedAt(final long completedAt) {
+        this.completedAt = completedAt;
+    }
 
     /**
      * Timestamp when this record was created.
+     * @return the value
      */
-    @ColumnInfo(defaultValue = "0")
-    public long createdAt = 0L;
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    /**
+     * Timestamp when this record was created.
+     * @param createdAt the value
+     */
+    public void setCreatedAt(final long createdAt) {
+        this.createdAt = createdAt;
+    }
 
     /**
      * Timestamp when this level was passed (all subjects passed), or null if not passed.
+     * @return the value
      */
-    @ColumnInfo(defaultValue = "0")
-    public long passedAt = 0L;
+    public long getPassedAt() {
+        return passedAt;
+    }
+
+    /**
+     * Timestamp when this level was passed (all subjects passed), or null if not passed.
+     * @param passedAt the value
+     */
+    public void setPassedAt(final long passedAt) {
+        this.passedAt = passedAt;
+    }
 
     /**
      * Timestamp when this level was started, or null if not started.
+     * @return the value
      */
-    @ColumnInfo(defaultValue = "0")
-    public long startedAt = 0L;
+    public long getStartedAt() {
+        return startedAt;
+    }
+
+    /**
+     * Timestamp when this level was started, or null if not started.
+     * @param startedAt the value
+     */
+    public void setStartedAt(final long startedAt) {
+        this.startedAt = startedAt;
+    }
 
     /**
      * Timestamp when this level was unlocked, or null if not unlocked.
+     * @return the value
      */
-    @ColumnInfo(defaultValue = "0")
-    public long unlockedAt = 0L;
+    public long getUnlockedAt() {
+        return unlockedAt;
+    }
+
+    /**
+     * Timestamp when this level was unlocked, or null if not unlocked.
+     * @param unlockedAt the value
+     */
+    public void setUnlockedAt(final long unlockedAt) {
+        this.unlockedAt = unlockedAt;
+    }
 
     /**
      * The level this record applies to.
+     * @return the value
      */
-    @ColumnInfo(defaultValue = "0")
-    public int level = 0;
+    public int getLevel() {
+        return level;
+    }
+
+    /**
+     * The level this record applies to.
+     * @param level the value
+     */
+    public void setLevel(final int level) {
+        this.level = level;
+    }
 
     /**
      * Get the timestamp since when the user reached this level.
@@ -79,7 +163,6 @@ public final class LevelProgression {
      *
      * @return the date
      */
-    @Ignore
     public long getSince() {
         if (unlockedAt != 0) {
             return unlockedAt;
