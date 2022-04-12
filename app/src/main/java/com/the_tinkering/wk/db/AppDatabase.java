@@ -376,12 +376,6 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("INSERT INTO migrate_temp SELECT * FROM log_record");
             database.execSQL("DROP TABLE log_record");
             database.execSQL("ALTER TABLE migrate_temp RENAME TO log_record");
-
-            database.execSQL("DROP TABLE IF EXISTS migrate_temp");
-            database.execSQL("CREATE TABLE IF NOT EXISTS `migrate_temp` (`name` TEXT NOT NULL, `value` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`name`))");
-            database.execSQL("INSERT INTO migrate_temp SELECT * FROM properties");
-            database.execSQL("DROP TABLE properties");
-            database.execSQL("ALTER TABLE migrate_temp RENAME TO properties");
         }
     };
 

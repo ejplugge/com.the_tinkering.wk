@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.db.model;
 
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -38,6 +37,5 @@ public final class Property {
      * The value.
      */
     @NonNull
-    @ColumnInfo(defaultValue = "")
     public String value = "";
 }

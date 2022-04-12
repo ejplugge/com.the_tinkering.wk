@@ -414,25 +414,6 @@ public final class DatabaseMigrationTest {
         cursor.close();
     }
 
-    private static void checkMigration_68_properties(final SupportSQLiteDatabase migratedDb) {
-        final Cursor cursor = migratedDb.query("SELECT name, value FROM properties ORDER BY name");
-        assertEquals(2, cursor.getColumnCount());
-        assertEquals(2, cursor.getCount());
-
-        cursor.moveToNext();
-        assertEquals("bar", cursor.getString(0));
-        assertEquals("baz", cursor.getString(1));
-
-        cursor.moveToNext();
-        assertEquals("foo", cursor.getString(0));
-        assertEquals("bar", cursor.getString(1));
-
-        cursor.moveToNext();
-        assertTrue(cursor.isAfterLast());
-
-        cursor.close();
-    }
-
     @Test
     public void testMigration_68() throws IOException {
         final SupportSQLiteDatabase db = testHelper.createDatabase(DATABASE_NAME_TEST, 68);
@@ -445,8 +426,6 @@ public final class DatabaseMigrationTest {
                 + " (2, null, null, null, null, null, null, 3)");
         db.execSQL("INSERT INTO log_record (id, timestamp, tag, length, message) VALUES (1, 2, 'tag', 3, 'message')");
         db.execSQL("INSERT INTO log_record (id, timestamp, tag, length, message) VALUES (2, null, null, 3, null)");
-        db.execSQL("INSERT INTO properties (name, value) VALUES ('foo', 'bar')");
-        db.execSQL("INSERT INTO properties (name, value) VALUES ('bar', 'baz')");
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_68_69);
@@ -456,6 +435,5 @@ public final class DatabaseMigrationTest {
         checkMigration_68_audioDownloadStatus(migratedDb);
         checkMigration_68_levelProgression(migratedDb);
         checkMigration_68_logRecord(migratedDb);
-        checkMigration_68_properties(migratedDb);
     }
 }
