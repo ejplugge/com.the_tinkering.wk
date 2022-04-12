@@ -23,11 +23,5 @@ public enum SubjectSource {
     /**
      * Subject's source is WaniKani.
      */
-    WANIKANI,
-
-    /**
-     * Subject's source is unknown. This can only realistically happen for subjects that haven't been properly
-     * loaded into the database yet.
-      */
-    UNKNOWN
+    WANIKANI
 }

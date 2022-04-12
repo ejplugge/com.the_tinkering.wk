@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 69,
-    "identityHash": "f3c9e5b61ffaf69e7603ad59e73dfa2e",
+    "identityHash": "970e5a9131e4724b4ea7d5f73f4b3666",
     "entities": [
       {
         "tableName": "task_definition",
@@ -71,7 +71,7 @@
       },
       {
         "tableName": "subject",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `source` TEXT NOT NULL DEFAULT 'UNKNOWN', `type` TEXT NOT NULL DEFAULT 'UNKNOWN', `srsSystemId` INTEGER NOT NULL DEFAULT 0, `hiddenAt` INTEGER NOT NULL DEFAULT 0, `lessonPosition` INTEGER NOT NULL DEFAULT 0, `level` INTEGER NOT NULL DEFAULT 0, `characters` TEXT, `slug` TEXT, `documentUrl` TEXT, `meanings` TEXT, `meaningMnemonic` TEXT, `meaningHint` TEXT, `auxiliaryMeanings` TEXT, `readings` TEXT, `readingMnemonic` TEXT, `readingHint` TEXT, `componentSubjectIds` TEXT, `amalgamationSubjectIds` TEXT, `visuallySimilarSubjectIds` TEXT, `partsOfSpeech` TEXT, `contextSentences` TEXT, `pronunciationAudios` TEXT, `searchTarget` TEXT, `smallSearchTarget` TEXT, `assignmentId` INTEGER NOT NULL DEFAULT 0, `availableAt` INTEGER NOT NULL DEFAULT 0, `burnedAt` INTEGER NOT NULL DEFAULT 0, `passedAt` INTEGER NOT NULL DEFAULT 0, `resurrectedAt` INTEGER NOT NULL DEFAULT 0, `startedAt` INTEGER NOT NULL DEFAULT 0, `unlockedAt` INTEGER NOT NULL DEFAULT 0, `srsStageId` INTEGER NOT NULL DEFAULT -999, `lastIncorrectAnswer` INTEGER NOT NULL DEFAULT 0, `assignmentPatched` INTEGER NOT NULL DEFAULT 0, `studyMaterialId` INTEGER NOT NULL DEFAULT 0, `meaningNote` TEXT, `meaningSynonyms` TEXT, `readingNote` TEXT, `studyMaterialPatched` INTEGER NOT NULL DEFAULT 0, `reviewStatisticId` INTEGER NOT NULL DEFAULT 0, `meaningCorrect` INTEGER NOT NULL DEFAULT 0, `meaningIncorrect` INTEGER NOT NULL DEFAULT 0, `meaningMaxStreak` INTEGER NOT NULL DEFAULT 0, `meaningCurrentStreak` INTEGER NOT NULL DEFAULT 0, `readingCorrect` INTEGER NOT NULL DEFAULT 0, `readingIncorrect` INTEGER NOT NULL DEFAULT 0, `readingMaxStreak` INTEGER NOT NULL DEFAULT 0, `readingCurrentStreak` INTEGER NOT NULL DEFAULT 0, `percentageCorrect` INTEGER NOT NULL DEFAULT 0, `leechScore` INTEGER NOT NULL DEFAULT 0, `statisticPatched` INTEGER NOT NULL DEFAULT 0, `frequency` INTEGER NOT NULL DEFAULT 0, `joyoGrade` INTEGER NOT NULL DEFAULT 0, `jlptLevel` INTEGER NOT NULL DEFAULT 0, `pitchInfo` TEXT, `strokeData` TEXT, `numStars` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `object` TEXT, `typeCode` INTEGER NOT NULL, `hiddenAt` INTEGER, `lessonPosition` INTEGER NOT NULL, `srsSystemId` INTEGER NOT NULL, `level` INTEGER NOT NULL, `characters` TEXT, `slug` TEXT, `documentUrl` TEXT, `meanings` TEXT, `meaningMnemonic` TEXT, `meaningHint` TEXT, `auxiliaryMeanings` TEXT, `readings` TEXT, `readingMnemonic` TEXT, `readingHint` TEXT, `componentSubjectIds` TEXT, `amalgamationSubjectIds` TEXT, `visuallySimilarSubjectIds` TEXT, `partsOfSpeech` TEXT, `contextSentences` TEXT, `pronunciationAudios` TEXT, `audioDownloadStatus` INTEGER NOT NULL, `searchTarget` TEXT, `smallSearchTarget` TEXT, `assignmentId` INTEGER NOT NULL, `availableAt` INTEGER, `burnedAt` INTEGER, `passedAt` INTEGER, `resurrectedAt` INTEGER, `startedAt` INTEGER, `unlockedAt` INTEGER, `passed` INTEGER NOT NULL, `resurrected` INTEGER NOT NULL, `srsStage` INTEGER NOT NULL, `levelProgressScore` INTEGER NOT NULL, `lastIncorrectAnswer` INTEGER, `assignmentPatched` INTEGER NOT NULL, `studyMaterialId` INTEGER NOT NULL, `meaningNote` TEXT, `meaningSynonyms` TEXT, `readingNote` TEXT, `studyMaterialPatched` INTEGER NOT NULL, `reviewStatisticId` INTEGER NOT NULL, `meaningCorrect` INTEGER NOT NULL, `meaningIncorrect` INTEGER NOT NULL, `meaningMaxStreak` INTEGER NOT NULL, `meaningCurrentStreak` INTEGER NOT NULL, `readingCorrect` INTEGER NOT NULL, `readingIncorrect` INTEGER NOT NULL, `readingMaxStreak` INTEGER NOT NULL, `readingCurrentStreak` INTEGER NOT NULL, `percentageCorrect` INTEGER NOT NULL, `leechScore` INTEGER NOT NULL, `statisticPatched` INTEGER NOT NULL, `frequency` INTEGER NOT NULL, `joyoGrade` INTEGER NOT NULL, `jlptLevel` INTEGER NOT NULL, `pitchInfo` TEXT, `strokeData` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -80,46 +80,40 @@
             "notNull": true
           },
           {
-            "fieldPath": "source",
-            "columnName": "source",
-            "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "'UNKNOWN'"
-          },
-          {
             "fieldPath": "type",
-            "columnName": "type",
+            "columnName": "object",
             "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "'UNKNOWN'"
+            "notNull": false
           },
           {
-            "fieldPath": "srsSystemId",
-            "columnName": "srsSystemId",
+            "fieldPath": "numStars",
+            "columnName": "typeCode",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "hiddenAt",
             "columnName": "hiddenAt",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": false
           },
           {
             "fieldPath": "lessonPosition",
             "columnName": "lessonPosition",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
+          },
+          {
+            "fieldPath": "srsSystemId",
+            "columnName": "srsSystemId",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "level",
             "columnName": "level",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "characters",
@@ -218,6 +212,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "unused3",
+            "columnName": "audioDownloadStatus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "searchTarget",
             "columnName": "searchTarget",
             "affinity": "TEXT",
@@ -233,78 +233,85 @@
             "fieldPath": "assignmentId",
             "columnName": "assignmentId",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "availableAt",
             "columnName": "availableAt",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": false
           },
           {
             "fieldPath": "burnedAt",
             "columnName": "burnedAt",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": false
           },
           {
             "fieldPath": "passedAt",
             "columnName": "passedAt",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": false
           },
           {
             "fieldPath": "resurrectedAt",
             "columnName": "resurrectedAt",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": false
           },
           {
             "fieldPath": "startedAt",
             "columnName": "startedAt",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": false
           },
           {
             "fieldPath": "unlockedAt",
             "columnName": "unlockedAt",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": false
+          },
+          {
+            "fieldPath": "unused5",
+            "columnName": "passed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unused2",
+            "columnName": "resurrected",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "srsStageId",
-            "columnName": "srsStageId",
+            "columnName": "srsStage",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "-999"
+            "notNull": true
+          },
+          {
+            "fieldPath": "unused4",
+            "columnName": "levelProgressScore",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "lastIncorrectAnswer",
             "columnName": "lastIncorrectAnswer",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": false
           },
           {
             "fieldPath": "assignmentPatched",
             "columnName": "assignmentPatched",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "studyMaterialId",
             "columnName": "studyMaterialId",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "meaningNote",
@@ -328,113 +335,97 @@
             "fieldPath": "studyMaterialPatched",
             "columnName": "studyMaterialPatched",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "reviewStatisticId",
             "columnName": "reviewStatisticId",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "meaningCorrect",
             "columnName": "meaningCorrect",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "meaningIncorrect",
             "columnName": "meaningIncorrect",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "meaningMaxStreak",
             "columnName": "meaningMaxStreak",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "meaningCurrentStreak",
             "columnName": "meaningCurrentStreak",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "readingCorrect",
             "columnName": "readingCorrect",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "readingIncorrect",
             "columnName": "readingIncorrect",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "readingMaxStreak",
             "columnName": "readingMaxStreak",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "readingCurrentStreak",
             "columnName": "readingCurrentStreak",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "percentageCorrect",
             "columnName": "percentageCorrect",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "leechScore",
             "columnName": "leechScore",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "statisticPatched",
             "columnName": "statisticPatched",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "frequency",
             "columnName": "frequency",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "joyoGrade",
             "columnName": "joyoGrade",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "jlptLevel",
             "columnName": "jlptLevel",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
+            "notNull": true
           },
           {
             "fieldPath": "pitchInfo",
@@ -447,13 +438,6 @@
             "columnName": "strokeData",
             "affinity": "TEXT",
             "notNull": false
-          },
-          {
-            "fieldPath": "numStars",
-            "columnName": "numStars",
-            "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -496,12 +480,28 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_subject_burnedAt` ON `${TABLE_NAME}` (`burnedAt`)"
           },
           {
-            "name": "index_subject_srsStageId",
+            "name": "index_subject_startedAt",
             "unique": false,
             "columnNames": [
-              "srsStageId"
+              "startedAt"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_subject_srsStageId` ON `${TABLE_NAME}` (`srsStageId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_subject_startedAt` ON `${TABLE_NAME}` (`startedAt`)"
+          },
+          {
+            "name": "index_subject_unlockedAt",
+            "unique": false,
+            "columnNames": [
+              "unlockedAt"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_subject_unlockedAt` ON `${TABLE_NAME}` (`unlockedAt`)"
+          },
+          {
+            "name": "index_subject_srsStage",
+            "unique": false,
+            "columnNames": [
+              "srsStage"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_subject_srsStage` ON `${TABLE_NAME}` (`srsStage`)"
           }
         ],
         "foreignKeys": []
@@ -924,7 +924,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f3c9e5b61ffaf69e7603ad59e73dfa2e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '970e5a9131e4724b4ea7d5f73f4b3666')"
     ]
   }
 }

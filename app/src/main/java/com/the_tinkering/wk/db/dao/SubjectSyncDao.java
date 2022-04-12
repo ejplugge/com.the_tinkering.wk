@@ -100,7 +100,7 @@ public abstract class SubjectSyncDao {
      * from the API, and the static reference data that is not user-specific.
      *
      * @param subjectId subject ID
-     * @param type subject field
+     * @param object subject field
      * @param characters subject field
      * @param slug subject field
      * @param documentUrl subject field
@@ -131,7 +131,7 @@ public abstract class SubjectSyncDao {
      * @return true if there was a record to update
      */
     @Query("UPDATE subject SET"
-            + " type = :type,"
+            + " object = :object,"
             + " characters = :characters,"
             + " slug = :slug,"
             + " documentUrl = :documentUrl,"
@@ -161,7 +161,7 @@ public abstract class SubjectSyncDao {
             + " srsSystemId = :srsSystemId"
             + " WHERE id = :subjectId")
     protected abstract int tryUpdateHelper(final long subjectId,
-                                           final SubjectType type,
+                                           final String object,
                                            @androidx.annotation.Nullable final String characters,
                                            @androidx.annotation.Nullable final String slug,
                                            @androidx.annotation.Nullable final String documentUrl,
@@ -197,10 +197,10 @@ public abstract class SubjectSyncDao {
      * @return true if there was a record to update
      */
     private boolean tryUpdate(final ApiSubject apiSubject) {
-        final SubjectType type = SubjectType.fromApiTypeName(apiSubject.getObject());
+        final @Nullable SubjectType type = Converters.stringToSubjectType(apiSubject.getObject());
         final int count = tryUpdateHelper(
                 apiSubject.getId(),
-                type,
+                apiSubject.getObject(),
                 apiSubject.getCharacters(),
                 apiSubject.getSlug(),
                 apiSubject.getDocumentUrl(),
@@ -237,7 +237,7 @@ public abstract class SubjectSyncDao {
      * from the API, and the static reference data that is not user-specific.
      *
      * @param subjectId the subject ID
-     * @param type subject field
+     * @param object subject field
      * @param characters subject field
      * @param slug subject field
      * @param documentUrl subject field
@@ -267,20 +267,27 @@ public abstract class SubjectSyncDao {
      * @param srsSystemId subject field
      */
     @Query("INSERT INTO subject"
-            + " (id, type, characters, slug, documentUrl, meaningMnemonic, meaningHint, readingMnemonic, readingHint, searchTarget, smallSearchTarget,"
+            + " (id, object, characters, slug, documentUrl, meaningMnemonic, meaningHint, readingMnemonic, readingHint, searchTarget, smallSearchTarget,"
             + " meanings, auxiliaryMeanings, readings, componentSubjectIds, amalgamationSubjectIds, visuallySimilarSubjectIds,"
             + " partsOfSpeech, contextSentences, pronunciationAudios,"
-            + " lessonPosition, level, hiddenAt, frequency, joyoGrade, jlptLevel, pitchInfo, strokeData, srsSystemId"
+            + " typeCode, lessonPosition, level, hiddenAt, frequency, joyoGrade, jlptLevel, pitchInfo, strokeData, srsSystemId,"
+            + " assignmentId, passed, resurrected, srsStage, assignmentPatched, studyMaterialId, studyMaterialPatched,"
+            + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
+            + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
+            + " statisticPatched, leechScore, levelProgressScore, audioDownloadStatus,"
+            + " resurrectedAt, burnedAt, unlockedAt, startedAt, passedAt, availableAt, lastIncorrectAnswer"
             + " )"
-            + " VALUES (:subjectId, :type, :characters, :slug, :documentUrl, :meaningMnemonic, :meaningHint, :readingMnemonic, :readingHint,"
+            + " VALUES (:subjectId, :object, :characters, :slug, :documentUrl, :meaningMnemonic, :meaningHint, :readingMnemonic, :readingHint,"
             + " :searchTarget, :smallSearchTarget,"
             + " :meanings, :auxiliaryMeanings, :readings, :componentSubjectIds, :amalgamationSubjectIds, :visuallySimilarSubjectIds,"
             + " :partsOfSpeech, :contextSentences, :pronunciationAudios,"
-            + " :lessonPosition, :level, :hiddenAt,"
-            + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :strokeData, :srsSystemId"
+            + " 0, :lessonPosition, :level, :hiddenAt,"
+            + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :strokeData, :srsSystemId,"
+            + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
+            + " 0, 0, 0, 0, 0, 0, 0"
             + ")")
     protected abstract void tryInsertHelper(final long subjectId,
-                                            final SubjectType type,
+                                            final String object,
                                             @androidx.annotation.Nullable final String characters,
                                             @androidx.annotation.Nullable final String slug,
                                             @androidx.annotation.Nullable final String documentUrl,
@@ -317,10 +324,10 @@ public abstract class SubjectSyncDao {
      */
     private boolean tryInsert(final ApiSubject apiSubject) {
         try {
-            final SubjectType type = SubjectType.fromApiTypeName(apiSubject.getObject());
+            final @Nullable SubjectType type = Converters.stringToSubjectType(apiSubject.getObject());
             tryInsertHelper(
                     apiSubject.getId(),
-                    type,
+                    apiSubject.getObject(),
                     apiSubject.getCharacters(),
                     apiSubject.getSlug(),
                     apiSubject.getDocumentUrl(),
@@ -363,7 +370,16 @@ public abstract class SubjectSyncDao {
      *
      * @param id the subject ID
      */
-    @Query("INSERT INTO subject (id) VALUES (:id)")
+    @Query("INSERT INTO subject (id,"
+            + " assignmentId, passed, resurrected, srsStage, assignmentPatched, studyMaterialId, studyMaterialPatched,"
+            + " reviewStatisticId, meaningCorrect, meaningIncorrect, meaningMaxStreak, meaningCurrentStreak,"
+            + " readingCorrect, readingIncorrect, readingMaxStreak, readingCurrentStreak, percentageCorrect,"
+            + " statisticPatched, frequency, joyoGrade, jlptLevel, levelProgressScore, leechScore, srsSystemId,"
+            + " resurrectedAt, burnedAt, unlockedAt, startedAt, passedAt, availableAt, hiddenAt, lastIncorrectAnswer"
+            + ") VALUES (:id,"
+            + " 0, 0, 0, -999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,"
+            + " 0, 0, 0, 0, 0, 0, 0, 0"
+            + ")")
     protected abstract void tryInsertHelperIdOnly(final long id);
 
     /**
@@ -419,7 +435,7 @@ public abstract class SubjectSyncDao {
      */
     @Query("UPDATE subject SET"
             + " assignmentId = :assignmentId,"
-            + " srsStageId = :srsStageId,"
+            + " srsStage = :srsStageId,"
             + " availableAt = :availableAt,"
             + " burnedAt = :burnedAt,"
             + " passedAt = :passedAt,"
@@ -660,7 +676,7 @@ public abstract class SubjectSyncDao {
      * @param resurrectedAt assignment field
      */
     @Query("UPDATE subject SET"
-            + " srsStageId = :srsStageId,"
+            + " srsStage = :srsStageId,"
             + " unlockedAt = :unlockedAt,"
             + " startedAt = :startedAt,"
             + " availableAt = :availableAt,"
@@ -837,7 +853,7 @@ public abstract class SubjectSyncDao {
      * @return the list
      */
     @Query("SELECT * FROM subject"
-            + " WHERE hiddenAt = 0 AND type != 'UNKNOWN'"
+            + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND (resurrectedAt != 0 OR burnedAt = 0)"
             + " AND unlockedAt != 0 AND startedAt = 0"
@@ -913,7 +929,7 @@ public abstract class SubjectSyncDao {
      * @return the list
      */
     @Query("SELECT * FROM subject"
-            + " WHERE hiddenAt = 0 AND type != 'UNKNOWN'"
+            + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND availableAt != 0 AND availableAt < :cutoff")
     protected abstract List<SubjectEntity> getPendingReviewItemsHelper(final int maxLevel, final int userLevel, final long cutoff);

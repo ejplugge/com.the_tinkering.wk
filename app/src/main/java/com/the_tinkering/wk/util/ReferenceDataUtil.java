@@ -583,8 +583,8 @@ public final class ReferenceDataUtil {
      * @param characters the subject's characters
      * @return the frequency or 0 if not found
      */
-    public static int getFrequency(final SubjectType type, final @Nullable String characters) {
-        if (characters == null || type != SubjectType.WANIKANI_KANJI) {
+    public static int getFrequency(final @Nullable SubjectType type, final @Nullable String characters) {
+        if (characters == null || type == null || !type.isKanji()) {
             return 0;
         }
         loadFrequencyMap();
@@ -602,8 +602,8 @@ public final class ReferenceDataUtil {
      * @param characters the subject's characters
      * @return the frequency or 0 if not found
      */
-    public static int getJoyoGrade(final SubjectType type, final @Nullable String characters) {
-        if (characters == null || type != SubjectType.WANIKANI_KANJI || !type.isKanji()) {
+    public static int getJoyoGrade(final @Nullable SubjectType type, final @Nullable String characters) {
+        if (characters == null || type == null || !type.isKanji()) {
             return 0;
         }
         loadJoyoGradeMap();
@@ -621,8 +621,8 @@ public final class ReferenceDataUtil {
      * @param characters the subject's characters
      * @return the frequency or 0 if not found
      */
-    public static int getJlptLevel(final SubjectType type, final @Nullable String characters) {
-        if (characters == null || (type != SubjectType.WANIKANI_KANJI && type != SubjectType.WANIKANI_VOCAB)) {
+    public static int getJlptLevel(final @Nullable SubjectType type, final @Nullable String characters) {
+        if (characters == null || type == null || !(type.isKanji() || type.isVocabulary())) {
             return 0;
         }
         loadJlptLevelMaps();
@@ -649,8 +649,8 @@ public final class ReferenceDataUtil {
      * @param characters the subject's characters
      * @return the pitch info or null if not found
      */
-    public static @Nullable String getPitchInfo(final SubjectType type, final @Nullable String characters) {
-        if (characters == null || !type.canHavePitchInfo()) {
+    public static @Nullable String getPitchInfo(final @Nullable SubjectType type, final @Nullable String characters) {
+        if (characters == null || type == null || !type.canHavePitchInfo()) {
             return null;
         }
         loadPitchInfoMap();
@@ -675,7 +675,7 @@ public final class ReferenceDataUtil {
      * @param characters the subject's characters
      * @return the stroke data or null if not found
      */
-    public static @Nullable String getStrokeData(final SubjectType type, final long id, final @Nullable String characters) {
+    public static @Nullable String getStrokeData(final @Nullable SubjectType type, final long id, final @Nullable String characters) {
         if (STROKE_DATA_OVERRIDE.containsKey(id)) {
             try {
                 return Converters.getObjectMapper().writeValueAsString(STROKE_DATA_OVERRIDE.get(id));
@@ -686,7 +686,7 @@ public final class ReferenceDataUtil {
             }
         }
 
-        if (characters == null || id == -1 || !type.canHaveStrokeData()) {
+        if (characters == null || type == null || id == -1 || !type.canHaveStrokeData()) {
             return null;
         }
         loadStrokeDataMap();

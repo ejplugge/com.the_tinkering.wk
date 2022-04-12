@@ -44,7 +44,7 @@ public abstract class SubjectDao {
      * @param characters the character to look for
      * @return the subject or null if not found
      */
-    @Query("SELECT * FROM subject WHERE type = 'WANIKANI_KANJI' AND hiddenAt = 0 AND characters = :characters LIMIT 1")
+    @Query("SELECT * FROM subject WHERE object = 'kanji' AND hiddenAt = 0 AND characters = :characters LIMIT 1")
     protected abstract @Nullable SubjectEntity getKanjiByCharactersHelper(String characters);
 
     /**
@@ -110,7 +110,7 @@ public abstract class SubjectDao {
      * @param id the subject ID
      * @param numStars the new rating
      */
-    @Query("UPDATE subject SET numStars = :numStars WHERE id = :id")
+    @Query("UPDATE subject SET typeCode = :numStars WHERE id = :id")
     protected abstract void updateStarsHelper(final long id, final int numStars);
 
     /**

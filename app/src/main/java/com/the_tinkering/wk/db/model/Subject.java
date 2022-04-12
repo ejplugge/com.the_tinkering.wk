@@ -127,7 +127,11 @@ public final class Subject implements PronunciationAudioOwner {
      * @return the type
      */
     public SubjectType getType() {
-        return entity.type;
+        final @Nullable SubjectType type = entity.type;
+        if (type == null) {
+            return SubjectType.WANIKANI_RADICAL;
+        }
+        return type;
     }
 
     /**

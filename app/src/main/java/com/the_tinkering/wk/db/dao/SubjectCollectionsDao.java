@@ -54,7 +54,7 @@ public abstract class SubjectCollectionsDao {
      * @return the list
      */
     @Query("SELECT * FROM subject"
-            + " WHERE hiddenAt = 0 AND type != 'UNKNOWN'"
+            + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND unlockedAt != 0 AND unlockedAt >= :cutoff"
             + " ORDER BY unlockedAt DESC, level DESC, lessonPosition DESC, id DESC LIMIT 10")
     public abstract List<SubjectEntity> getRecentUnlocksHelper(final long cutoff);
@@ -75,7 +75,7 @@ public abstract class SubjectCollectionsDao {
      * @return the list
      */
     @Query("SELECT * FROM subject"
-            + " WHERE hiddenAt = 0 AND type != 'UNKNOWN'"
+            + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND id IN (SELECT id FROM session_item)")
     public abstract List<SubjectEntity> getSessionSubjectsHelper();
 
@@ -131,7 +131,7 @@ public abstract class SubjectCollectionsDao {
      * @return the list
      */
     @Query("SELECT * FROM subject"
-            + " WHERE hiddenAt = 0 AND type != 'UNKNOWN'"
+            + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND (resurrectedAt != 0 OR burnedAt = 0)"
             + " AND unlockedAt != 0 AND startedAt = 0"
@@ -159,7 +159,7 @@ public abstract class SubjectCollectionsDao {
      * @return the list
      */
     @Query("SELECT * FROM subject"
-            + " WHERE hiddenAt = 0 AND type != 'UNKNOWN'"
+            + " WHERE hiddenAt = 0 AND object IS NOT NULL"
             + " AND level <= :maxLevel AND level <= :userLevel"
             + " AND availableAt != 0 AND availableAt < :cutoff")
     protected abstract List<SubjectEntity> getUpcomingReviewItemsHelper(final int maxLevel, final int userLevel, final long cutoff);
@@ -184,7 +184,7 @@ public abstract class SubjectCollectionsDao {
      * @return the kanji subjects for this level
      */
     @Query("SELECT * FROM subject"
-            + " WHERE hiddenAt = 0 AND type = 'WANIKANI_KANJI'"
+            + " WHERE hiddenAt = 0 AND object = 'kanji'"
             + " AND level = :level"
             + " ORDER BY lessonPosition, id")
     protected abstract List<SubjectEntity> getKanjiForLevelHelper(final int level);
@@ -205,7 +205,7 @@ public abstract class SubjectCollectionsDao {
      * @return the candidates
      */
     @Query("SELECT * FROM subject"
-            + " WHERE hiddenAt = 0 AND type = 'WANIKANI_VOCAB'"
+            + " WHERE hiddenAt = 0 AND object = 'vocabulary'"
             + " AND (pitchInfo IS NULL OR pitchInfo = '' OR pitchInfo LIKE '@%')")
     protected abstract List<SubjectEntity> getPitchInfoDownloadCandidatesHelper();
 
@@ -225,7 +225,7 @@ public abstract class SubjectCollectionsDao {
      * @return the list of subjects
      */
     @Query("SELECT * FROM subject"
-            + " WHERE id in (:ids) AND hiddenAt = 0 AND type != 'UNKNOWN'")
+            + " WHERE id in (:ids) AND hiddenAt = 0 AND object IS NOT NULL")
     protected abstract List<SubjectEntity> getByIdsHelper(Collection<Long> ids);
 
     /**
@@ -275,7 +275,7 @@ public abstract class SubjectCollectionsDao {
      * @return the list of subjects
      */
     @Query("SELECT * FROM subject"
-            + " WHERE level = :level AND type = :type AND hiddenAt = 0")
+            + " WHERE level = :level AND object = :type AND hiddenAt = 0")
     protected abstract List<SubjectEntity> getLevelProgressSubjectsHelper(int level, SubjectType type);
 
     /**
@@ -334,6 +334,6 @@ public abstract class SubjectCollectionsDao {
      * @param numStars the number of stars
      * @return the list of IDs
      */
-    @Query("SELECT id FROM subject WHERE numStars = :numStars ORDER BY id")
+    @Query("SELECT id FROM subject WHERE typeCode = :numStars ORDER BY id")
     public abstract List<Long> getStarredSubjectIds(final int numStars);
 }

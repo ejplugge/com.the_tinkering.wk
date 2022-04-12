@@ -206,7 +206,7 @@ public final class SearchUtil {
 
         final StringBuilder sb = new StringBuilder();
         final String[] args = new String[terms.size()];
-        sb.append("SELECT * FROM subject WHERE hiddenAt=0 AND type != 'UNKNOWN'");
+        sb.append("SELECT * FROM subject WHERE hiddenAt=0 AND object IS NOT NULL");
         int i = 0;
         for (final String term: terms) {
             sb.append(" AND smallSearchTarget LIKE ?");
@@ -217,7 +217,7 @@ public final class SearchUtil {
 
         if (subjects.size() < MAX_SEARCH_HITS) {
             final StringBuilder sb2 = new StringBuilder();
-            sb2.append("SELECT * FROM subject WHERE hiddenAt=0 AND type != 'UNKNOWN'");
+            sb2.append("SELECT * FROM subject WHERE hiddenAt=0 AND object IS NOT NULL");
             for (int j=0; j<terms.size(); j++) {
                 sb2.append(" AND searchTarget LIKE ?");
             }
@@ -249,7 +249,7 @@ public final class SearchUtil {
 
         final StringBuilder sb = new StringBuilder();
         final String[] args = new String[terms.size()];
-        sb.append("SELECT * FROM subject WHERE hiddenAt=0 AND type != 'UNKNOWN'");
+        sb.append("SELECT * FROM subject WHERE hiddenAt=0 AND object IS NOT NULL");
         int i = 0;
         for (final String term: terms) {
             sb.append(" AND searchTarget LIKE ?");
@@ -276,7 +276,7 @@ public final class SearchUtil {
     private static List<Subject> searchSubjects(final AdvancedSearchParameters parameters) {
         final StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT * FROM subject WHERE hiddenAt = 0 AND type != 'UNKNOWN'");
+        sb.append("SELECT * FROM subject WHERE hiddenAt = 0 AND object IS NOT NULL");
 
         if (parameters.minLevel != null) {
             sb.append(" AND level >= ");
@@ -343,7 +343,7 @@ public final class SearchUtil {
                 starRatingFragments.add(rating.toString());
             }
             if (!starRatingFragments.isEmpty()) {
-                sb.append(" AND numStars IN ");
+                sb.append(" AND typeCode IN ");
                 sb.append(join(", ", "(", ")", starRatingFragments));
             }
         }
@@ -359,10 +359,10 @@ public final class SearchUtil {
 
         final Collection<String> itemTypeFragments = new ArrayList<>();
         for (final SubjectType itemType: parameters.itemTypes) {
-            itemTypeFragments.add("'" + itemType.name() + "'");
+            itemTypeFragments.add("'" + itemType.getDbTypeName() + "'");
         }
         if (!itemTypeFragments.isEmpty()) {
-            sb.append(" AND type IN ");
+            sb.append(" AND object IN ");
             sb.append(join(", ", "(", ")", itemTypeFragments));
         }
 
