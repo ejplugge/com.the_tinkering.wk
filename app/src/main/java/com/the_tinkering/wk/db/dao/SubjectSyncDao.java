@@ -30,7 +30,6 @@ import com.the_tinkering.wk.api.model.ApiSubject;
 import com.the_tinkering.wk.db.Converters;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.db.model.SubjectEntity;
-import com.the_tinkering.wk.enums.SubjectSource;
 import com.the_tinkering.wk.enums.SubjectType;
 import com.the_tinkering.wk.livedata.SubjectChangeWatcher;
 import com.the_tinkering.wk.model.SrsSystem;
@@ -101,7 +100,6 @@ public abstract class SubjectSyncDao {
      * from the API, and the static reference data that is not user-specific.
      *
      * @param subjectId subject ID
-     * @param source subject field
      * @param type subject field
      * @param characters subject field
      * @param slug subject field
@@ -133,7 +131,6 @@ public abstract class SubjectSyncDao {
      * @return true if there was a record to update
      */
     @Query("UPDATE subject SET"
-            + " source = :source,"
             + " type = :type,"
             + " characters = :characters,"
             + " slug = :slug,"
@@ -164,7 +161,6 @@ public abstract class SubjectSyncDao {
             + " srsSystemId = :srsSystemId"
             + " WHERE id = :subjectId")
     protected abstract int tryUpdateHelper(final long subjectId,
-                                           final SubjectSource source,
                                            final SubjectType type,
                                            @androidx.annotation.Nullable final String characters,
                                            @androidx.annotation.Nullable final String slug,
@@ -204,7 +200,6 @@ public abstract class SubjectSyncDao {
         final SubjectType type = SubjectType.fromApiTypeName(apiSubject.getObject());
         final int count = tryUpdateHelper(
                 apiSubject.getId(),
-                type.getSource(),
                 type,
                 apiSubject.getCharacters(),
                 apiSubject.getSlug(),
@@ -242,7 +237,6 @@ public abstract class SubjectSyncDao {
      * from the API, and the static reference data that is not user-specific.
      *
      * @param subjectId the subject ID
-     * @param source subject field
      * @param type subject field
      * @param characters subject field
      * @param slug subject field
@@ -273,12 +267,12 @@ public abstract class SubjectSyncDao {
      * @param srsSystemId subject field
      */
     @Query("INSERT INTO subject"
-            + " (id, source, type, characters, slug, documentUrl, meaningMnemonic, meaningHint, readingMnemonic, readingHint, searchTarget, smallSearchTarget,"
+            + " (id, type, characters, slug, documentUrl, meaningMnemonic, meaningHint, readingMnemonic, readingHint, searchTarget, smallSearchTarget,"
             + " meanings, auxiliaryMeanings, readings, componentSubjectIds, amalgamationSubjectIds, visuallySimilarSubjectIds,"
             + " partsOfSpeech, contextSentences, pronunciationAudios,"
             + " lessonPosition, level, hiddenAt, frequency, joyoGrade, jlptLevel, pitchInfo, strokeData, srsSystemId"
             + " )"
-            + " VALUES (:subjectId, :source, :type, :characters, :slug, :documentUrl, :meaningMnemonic, :meaningHint, :readingMnemonic, :readingHint,"
+            + " VALUES (:subjectId, :type, :characters, :slug, :documentUrl, :meaningMnemonic, :meaningHint, :readingMnemonic, :readingHint,"
             + " :searchTarget, :smallSearchTarget,"
             + " :meanings, :auxiliaryMeanings, :readings, :componentSubjectIds, :amalgamationSubjectIds, :visuallySimilarSubjectIds,"
             + " :partsOfSpeech, :contextSentences, :pronunciationAudios,"
@@ -286,7 +280,6 @@ public abstract class SubjectSyncDao {
             + " :frequency, :joyoGrade, :jlptLevel, :pitchInfo, :strokeData, :srsSystemId"
             + ")")
     protected abstract void tryInsertHelper(final long subjectId,
-                                            final SubjectSource source,
                                             final SubjectType type,
                                             @androidx.annotation.Nullable final String characters,
                                             @androidx.annotation.Nullable final String slug,
@@ -327,7 +320,6 @@ public abstract class SubjectSyncDao {
             final SubjectType type = SubjectType.fromApiTypeName(apiSubject.getObject());
             tryInsertHelper(
                     apiSubject.getId(),
-                    type.getSource(),
                     type,
                     apiSubject.getCharacters(),
                     apiSubject.getSlug(),
