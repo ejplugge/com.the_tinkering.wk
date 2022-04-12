@@ -16,47 +16,36 @@
 
 package com.the_tinkering.wk.db.model;
 
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import javax.annotation.Nullable;
 
 /**
  * Room entity for the log_record table. This is where debug log records are stored.
  * Each row also contains the length of its message, to make it easier to trim excess
  * entries.
  */
-@Entity(tableName = "log_record")
 public final class LogRecord {
     /**
      * Primary key.
      */
-    @PrimaryKey(autoGenerate = true)
     public long id = 0L;
 
     /**
      * Timestamp when the event was generated.
      */
-    @ColumnInfo(defaultValue = "0")
     public long timestamp = 0L;
 
     /**
      * The tag (class name) for this record.
      */
-    @ColumnInfo(defaultValue = "")
-    @NonNull
-    public String tag = "";
+    public @Nullable String tag;
 
     /**
      * The length of the message string.
      */
-    @ColumnInfo(defaultValue = "0")
     public int length = 0;
 
     /**
      * The log message.
      */
-    @ColumnInfo(defaultValue = "")
-    @NonNull
-    public String message = "";
+    public @Nullable String message;
 }

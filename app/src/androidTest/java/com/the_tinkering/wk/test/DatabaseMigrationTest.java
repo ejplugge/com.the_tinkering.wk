@@ -16,8 +16,6 @@
 
 package com.the_tinkering.wk.test;
 
-import android.database.Cursor;
-
 import androidx.room.Room;
 import androidx.room.testing.MigrationTestHelper;
 import androidx.sqlite.db.SupportSQLiteDatabase;
@@ -56,7 +54,6 @@ import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_67_68;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_68_69;
 import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test class to verify database migrations.
@@ -337,103 +334,13 @@ public final class DatabaseMigrationTest {
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
     }
 
-    private static void checkMigration_68_audioDownloadStatus(final SupportSQLiteDatabase migratedDb) {
-        final Cursor cursor = migratedDb.query("SELECT level, numTotal, numNoAudio, numMissingAudio, numPartialAudio, numFullAudio"
-                + " FROM audio_download_status");
-        assertEquals(6, cursor.getColumnCount());
-        assertEquals(1, cursor.getCount());
-
-        cursor.moveToNext();
-        assertEquals(1, cursor.getInt(0));
-        assertEquals(2, cursor.getInt(1));
-        assertEquals(3, cursor.getInt(2));
-        assertEquals(4, cursor.getInt(3));
-        assertEquals(5, cursor.getInt(4));
-        assertEquals(6, cursor.getInt(5));
-
-        cursor.moveToNext();
-        assertTrue(cursor.isAfterLast());
-
-        cursor.close();
-    }
-
-    private static void checkMigration_68_levelProgression(final SupportSQLiteDatabase migratedDb) {
-        final Cursor cursor = migratedDb.query("SELECT id, abandonedAt, completedAt, createdAt, passedAt, startedAt, unlockedAt, level"
-                + " FROM level_progression ORDER BY id");
-        assertEquals(8, cursor.getColumnCount());
-        assertEquals(2, cursor.getCount());
-
-        cursor.moveToNext();
-        assertEquals(1, cursor.getLong(0));
-        assertEquals(2, cursor.getLong(1));
-        assertEquals(3, cursor.getLong(2));
-        assertEquals(4, cursor.getLong(3));
-        assertEquals(5, cursor.getLong(4));
-        assertEquals(6, cursor.getLong(5));
-        assertEquals(7, cursor.getLong(6));
-        assertEquals(8, cursor.getInt(7));
-
-        cursor.moveToNext();
-        assertEquals(2, cursor.getLong(0));
-        assertEquals(0, cursor.getLong(1));
-        assertEquals(0, cursor.getLong(2));
-        assertEquals(0, cursor.getLong(3));
-        assertEquals(0, cursor.getLong(4));
-        assertEquals(0, cursor.getLong(5));
-        assertEquals(0, cursor.getLong(6));
-        assertEquals(3, cursor.getInt(7));
-
-        cursor.moveToNext();
-        assertTrue(cursor.isAfterLast());
-
-        cursor.close();
-    }
-
-    private static void checkMigration_68_logRecord(final SupportSQLiteDatabase migratedDb) {
-        final Cursor cursor = migratedDb.query("SELECT id, timestamp, tag, length, message FROM log_record ORDER BY id");
-        assertEquals(5, cursor.getColumnCount());
-        assertEquals(2, cursor.getCount());
-
-        cursor.moveToNext();
-        assertEquals(1, cursor.getLong(0));
-        assertEquals(2, cursor.getLong(1));
-        assertEquals("tag", cursor.getString(2));
-        assertEquals(3, cursor.getInt(3));
-        assertEquals("message", cursor.getString(4));
-
-        cursor.moveToNext();
-        assertEquals(2, cursor.getLong(0));
-        assertEquals(0, cursor.getLong(1));
-        assertEquals("", cursor.getString(2));
-        assertEquals(3, cursor.getInt(3));
-        assertEquals("", cursor.getString(4));
-
-        cursor.moveToNext();
-        assertTrue(cursor.isAfterLast());
-
-        cursor.close();
-    }
-
     @Test
     public void testMigration_68() throws IOException {
         final SupportSQLiteDatabase db = testHelper.createDatabase(DATABASE_NAME_TEST, 68);
         assertEquals(68, db.getVersion());
-        db.execSQL("INSERT INTO audio_download_status (level, numTotal, numNoAudio, numMissingAudio, numPartialAudio, numFullAudio) VALUES"
-                + " (1, 2, 3, 4, 5, 6)");
-        db.execSQL("INSERT INTO level_progression (id, abandonedAt, completedAt, createdAt, passedAt, startedAt, unlockedAt, level) VALUES"
-                + " (1, 2, 3, 4, 5, 6, 7, 8)");
-        db.execSQL("INSERT INTO level_progression (id, abandonedAt, completedAt, createdAt, passedAt, startedAt, unlockedAt, level) VALUES"
-                + " (2, null, null, null, null, null, null, 3)");
-        db.execSQL("INSERT INTO log_record (id, timestamp, tag, length, message) VALUES (1, 2, 'tag', 3, 'message')");
-        db.execSQL("INSERT INTO log_record (id, timestamp, tag, length, message) VALUES (2, null, null, 3, null)");
         db.close();
 
         testHelper.runMigrationsAndValidate(DATABASE_NAME_TEST, LATEST_VERSION, true, MIGRATION_68_69);
         assertEquals(LATEST_VERSION, getMigratedRoomDatabase().getOpenHelper().getReadableDatabase().getVersion());
-
-        final SupportSQLiteDatabase migratedDb = getMigratedRoomDatabase().getOpenHelper().getReadableDatabase();
-        checkMigration_68_audioDownloadStatus(migratedDb);
-        checkMigration_68_levelProgression(migratedDb);
-        checkMigration_68_logRecord(migratedDb);
     }
 }
