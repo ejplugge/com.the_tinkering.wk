@@ -89,7 +89,8 @@ public final class SynonymRowView extends LinearLayout {
         arrowUp.setDelegate(this, R.id.arrowUp);
 
         if (attrs != null) {
-            try (final TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.SynonymRowView, 0, 0)) {
+            final TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.SynonymRowView, 0, 0);
+            try {
                 index = a.getInt(R.styleable.SynonymRowView_index, 0);
                 if (index == 0) {
                     arrowUp.setVisibility(INVISIBLE);
@@ -97,6 +98,7 @@ public final class SynonymRowView extends LinearLayout {
                 if (index == 9) {
                     arrowDown.setVisibility(INVISIBLE);
                 }
+            } finally {
                 a.recycle();
             }
         }

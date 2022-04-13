@@ -407,10 +407,12 @@ public class RigidGridLayout extends ViewGroup {
          */
         private LayoutParams(final Context context, final AttributeSet attrs) {
             super(context, attrs);
-            try (final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RigidGridLayout_Layout)) {
+            final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RigidGridLayout_Layout);
+            try {
                 columnSpan = a.getInt(R.styleable.RigidGridLayout_Layout_layout_columnSpan, 1);
                 nextRow = a.getBoolean(R.styleable.RigidGridLayout_Layout_layout_nextRow, false);
                 gravity = a.getInt(R.styleable.RigidGridLayout_Layout_android_layout_gravity, Gravity.TOP | Gravity.START);
+            } finally {
                 a.recycle();
             }
         }

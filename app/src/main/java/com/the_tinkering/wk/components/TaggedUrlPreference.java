@@ -94,8 +94,10 @@ public final class TaggedUrlPreference extends DialogPreference {
             setDialogLayoutResource(R.layout.pref_tagged_url);
             setSummaryProvider((SummaryProvider<TaggedUrlPreference>) preference -> getTag());
 
-            try (final TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.TaggedUrlPreference, 0, 0)) {
+            final TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.TaggedUrlPreference, 0, 0);
+            try {
                 defaultTag = orElse(a.getString(R.styleable.TaggedUrlPreference_defaultTag), "");
+            } finally {
                 a.recycle();
             }
         });
