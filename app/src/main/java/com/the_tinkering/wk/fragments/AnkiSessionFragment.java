@@ -16,6 +16,9 @@
 
 package com.the_tinkering.wk.fragments;
 
+import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +27,14 @@ import android.widget.LinearLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.the_tinkering.wk.GlobalSettings;
+import com.the_tinkering.wk.Identification;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.ActiveTheme;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.enums.QuestionType;
+import com.the_tinkering.wk.livedata.LiveLevelDuration;
 import com.the_tinkering.wk.model.FloatingUiState;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
@@ -38,8 +43,6 @@ import com.the_tinkering.wk.views.SubjectInfoView;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
-
 /**
  * Fragment for an Anki mode question.
  */
@@ -47,6 +50,7 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
     private @Nullable Question question = null;
     private @Nullable Subject subject = null;
     private boolean showingAnswer = false;
+    private boolean testMode = false;
 
     private final ViewProxy ankiShowAnswerButton = new ViewProxy();
     private final ViewProxy ankiNextButton = new ViewProxy();
@@ -98,6 +102,11 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
                 question = item.getQuestionByTypeStr(args.getString("questionType"));
             }
         }
+
+        LiveLevelDuration.getInstance().observe(this, t -> safe(() -> {
+            final @Nullable String username = t.getUsername();
+            testMode = !isEmpty(username) && username.equals(Identification.AUTHOR_USERNAME);
+        }));
     }
 
     @Override
@@ -194,7 +203,12 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
             }
             disableInteraction();
             showingAnswer = false;
-            session.submitAnkiCorrect();
+            // TODO revert before release
+            if (!testMode || question.getItem().hasIncorrectAnswers()) {
+                session.submitAnkiCorrect();
+            } else {
+                session.submitAnkiIncorrect();
+            }
         }));
 
         ankiIncorrectButton.setOnClickListener(v -> safe(() -> {
