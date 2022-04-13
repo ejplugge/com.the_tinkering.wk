@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 /**
  * Model class for SRS system records as reported by the API.
  */
-@SuppressWarnings("CanBeFinal")
+@SuppressWarnings({"CanBeFinal", "unused"})
 public final class ApiSrsSystem implements WaniKaniEntity {
     /**
      * The unique ID.

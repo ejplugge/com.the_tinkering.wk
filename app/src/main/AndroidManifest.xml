@@ -157,11 +157,6 @@
             <meta-data android:name="android.app.default_searchable" android:value=".activities.BrowseActivity"/>
         </activity>
 
-        <service android:name=".services.JobRunnerService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-        <service android:name=".services.ApiTaskService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
         <provider
             android:name=".db.SubjectContentProvider"
             android:authorities="@string/searchprovider_authority"
