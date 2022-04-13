@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.activities;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.the_tinkering.wk.StableIds.FONT_IMPORT_RESULT_CODE;
 import static com.the_tinkering.wk.util.FontStorageUtil.flushCache;
 import static com.the_tinkering.wk.util.FontStorageUtil.getNames;
 import static com.the_tinkering.wk.util.FontStorageUtil.getTypefaceConfiguration;
@@ -40,6 +39,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 
 import com.the_tinkering.wk.R;
@@ -151,52 +152,67 @@ public final class FontImportActivity extends AbstractActivity {
         });
     }
 
-    /**
-     * The chooser has delivered a result in the form of an intent. Parse it and import the file.
-     *
-     * @param requestCode the code for the request as set by this activity.
-     * @param resultCode code to indicate if the result is OK.
-     * @param data the intent produced by the chooser.
-     */
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final @Nullable Intent data) {
-        safe(() -> {
-            super.onActivityResult(requestCode, resultCode, data);
-
-            if (requestCode == FONT_IMPORT_RESULT_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-                final Uri uri = data.getData();
-                final @Nullable String fileName = resolveFileName(uri);
-                if (fileName == null) {
-                    return;
-                }
-                if (hasFontFile(fileName)) {
-                    new AlertDialog.Builder(this)
-                            .setTitle("Overwrite file?")
-                            .setMessage(String.format("A file named '%s' already exists. Do you want to overwrite it?", fileName))
-                            .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", (dialog, which) -> {})
-                            .setPositiveButton("Yes", (dialog, which) -> safe(() -> importFile(uri, fileName))).create().show();
-                }
-                else {
-                    importFile(uri, fileName);
-                }
-            }
-        });
-    }
-
     @TargetApi(19)
     private void importFontPost19() {
         final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, FONT_IMPORT_RESULT_CODE);
+
+        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        final Uri uri = result.getData().getData();
+                        final @Nullable String fileName = resolveFileName(uri);
+                        if (fileName == null) {
+                            return;
+                        }
+                        if (hasFontFile(fileName)) {
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Overwrite file?")
+                                    .setMessage(String.format("A file named '%s' already exists. Do you want to overwrite it?", fileName))
+                                    .setIcon(R.drawable.ic_baseline_warning_24px)
+                                    .setNegativeButton("No", (dialog, which) -> {})
+                                    .setPositiveButton("Yes", (dialog, which) -> safe(() -> importFile(uri, fileName))).create().show();
+                        }
+                        else {
+                            importFile(uri, fileName);
+                        }
+                    }
+                });
+
+        activityResultLauncher.launch(intent);
     }
 
     private void importFontPre19() {
         final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select a TTF font file to import"), FONT_IMPORT_RESULT_CODE);
+
+        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        final Uri uri = result.getData().getData();
+                        final @Nullable String fileName = resolveFileName(uri);
+                        if (fileName == null) {
+                            return;
+                        }
+                        if (hasFontFile(fileName)) {
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Overwrite file?")
+                                    .setMessage(String.format("A file named '%s' already exists. Do you want to overwrite it?", fileName))
+                                    .setIcon(R.drawable.ic_baseline_warning_24px)
+                                    .setNegativeButton("No", (dialog, which) -> {})
+                                    .setPositiveButton("Yes", (dialog, which) -> safe(() -> importFile(uri, fileName))).create().show();
+                        }
+                        else {
+                            importFile(uri, fileName);
+                        }
+                    }
+                });
+
+        activityResultLauncher.launch(Intent.createChooser(intent, "Select a TTF font file to import"));
     }
 
     /**

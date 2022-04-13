@@ -78,18 +78,19 @@ public final class HeaderItemViewHolder extends LogItemViewHolder implements Vie
             if (item == null) {
                 return;
             }
+            final int position = getBindingAdapterPosition();
             if (item.isCollapsed()) {
                 item.setCollapsed(false);
                 final int count = item.getCount() - 1;
-                adapter.notifyItemChanged(getAdapterPosition());
-                adapter.notifyItemRangeInserted(getAdapterPosition() + 1, count);
+                adapter.notifyItemChanged(position);
+                adapter.notifyItemRangeInserted(position + 1, count);
                 adapter.getCollapsedTags().remove(item.getTag());
             }
             else {
                 final int count = item.getCount() - 1;
                 item.setCollapsed(true);
-                adapter.notifyItemChanged(getAdapterPosition());
-                adapter.notifyItemRangeRemoved(getAdapterPosition() + 1, count);
+                adapter.notifyItemChanged(position);
+                adapter.notifyItemRangeRemoved(position + 1, count);
                 adapter.getCollapsedTags().add(item.getTag());
             }
         });

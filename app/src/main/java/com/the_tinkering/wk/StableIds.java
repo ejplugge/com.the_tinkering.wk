@@ -25,21 +25,6 @@ public final class StableIds {
     }
 
     /**
-     * Activity result code when importing a font file.
-     */
-    public static final int FONT_IMPORT_RESULT_CODE = 3;
-
-    /**
-     * Activity result code when importing search presets.
-     */
-    public static final int SEARCH_PRESET_IMPORT_RESULT_CODE = 4;
-
-    /**
-     * Activity result code when importing star ratings.
-     */
-    public static final int STAR_RATINGS_IMPORT_RESULT_CODE = 5;
-
-    /**
      * Request code for background alarm - old pre-19 variant.
      */
     public static final int BACKGROUND_ALARM_REQUEST_CODE_1 = 6;

@@ -16,6 +16,9 @@
 
 package com.the_tinkering.wk.activities;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -24,6 +27,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.FileProvider;
 
 import com.the_tinkering.wk.BuildConfig;
@@ -43,11 +48,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.StableIds.SEARCH_PRESET_IMPORT_RESULT_CODE;
-import static com.the_tinkering.wk.StableIds.STAR_RATINGS_IMPORT_RESULT_CODE;
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * An activity for importing and exporting some data that is not stored on the WK servers, and would
@@ -97,29 +97,6 @@ public final class DataImportExportActivity extends AbstractActivity {
     @Override
     protected void disableInteractionLocal() {
         //
-    }
-
-    /**
-     * The chooser has delivered a result in the form of an intent. Parse it and import the file.
-     *
-     * @param requestCode the code for the request as set by this activity.
-     * @param resultCode code to indicate if the result is OK.
-     * @param data the intent produced by the chooser.
-     */
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final @Nullable Intent data) {
-        safe(() -> {
-            super.onActivityResult(requestCode, resultCode, data);
-
-            if (requestCode == SEARCH_PRESET_IMPORT_RESULT_CODE
-                    && resultCode == RESULT_OK && data != null && data.getData() != null) {
-                importSearchPresetsResult(data.getData());
-            }
-            else if (requestCode == STAR_RATINGS_IMPORT_RESULT_CODE
-                    && resultCode == RESULT_OK && data != null && data.getData() != null) {
-                importStarRatingsResult(data.getData());
-            }
-        });
     }
 
     private void exportSearchPresets() throws IOException {
@@ -181,14 +158,32 @@ public final class DataImportExportActivity extends AbstractActivity {
         final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, SEARCH_PRESET_IMPORT_RESULT_CODE);
+
+        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        importSearchPresetsResult(result.getData().getData());
+                    }
+                });
+
+        activityResultLauncher.launch(intent);
     }
 
     private void importSearchPresetsPre19() {
         final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select a search presets JSON file to import"), SEARCH_PRESET_IMPORT_RESULT_CODE);
+
+        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        importSearchPresetsResult(result.getData().getData());
+                    }
+                });
+
+        activityResultLauncher.launch(Intent.createChooser(intent, "Select a search presets JSON file to import"));
     }
 
     private void importSearchPresets() {
@@ -268,14 +263,32 @@ public final class DataImportExportActivity extends AbstractActivity {
         final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, SEARCH_PRESET_IMPORT_RESULT_CODE);
+
+        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        importStarRatingsResult(result.getData().getData());
+                    }
+                });
+
+        activityResultLauncher.launch(intent);
     }
 
     private void importStarRatingsPre19() {
         final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select a star ratings JSON file to import"), SEARCH_PRESET_IMPORT_RESULT_CODE);
+
+        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        importStarRatingsResult(result.getData().getData());
+                    }
+                });
+
+        activityResultLauncher.launch(Intent.createChooser(intent, "Select a star ratings JSON file to import"));
     }
 
     private void importStarRatings() {

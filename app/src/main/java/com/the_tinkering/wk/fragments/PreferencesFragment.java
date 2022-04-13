@@ -247,7 +247,6 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
                     return;
                 }
                 final DialogFragment f = TaggedUrlPreferenceDialogFragment.newInstance(preference.getKey());
-                f.setTargetFragment(this, 0);
                 f.show(getParentFragmentManager(), "TaggedUrlPreference");
                 return;
             }
@@ -256,7 +255,6 @@ public final class PreferencesFragment extends PreferenceFragmentCompat {
                     return;
                 }
                 final DialogFragment f = NumberRangePreferenceDialogFragment.newInstance(preference.getKey());
-                f.setTargetFragment(this, 0);
                 f.show(getParentFragmentManager(), "NumberRangePreference");
                 return;
             }
