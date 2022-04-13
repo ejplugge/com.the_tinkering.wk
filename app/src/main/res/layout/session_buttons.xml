@@ -34,7 +34,6 @@
             android:id="@+id/startLessonsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="startLessonSession"
             android:text="Start lessons"
             android:visibility="gone"
             style="@style/WK.Button.Normal"/>
@@ -48,7 +47,6 @@
             android:id="@+id/startReviewsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="startReviewSession"
             android:text="Start reviews"
             android:visibility="gone"
             style="@style/WK.Button.Normal"/>
@@ -77,7 +75,6 @@
             android:id="@+id/resumeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="resumeSession"
             android:text="Resume session"
             android:visibility="gone"
             style="@style/WK.Button.Normal"/>

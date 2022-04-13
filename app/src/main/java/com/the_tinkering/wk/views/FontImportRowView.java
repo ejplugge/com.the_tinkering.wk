@@ -21,6 +21,7 @@ import android.util.AttributeSet;
 import android.widget.TableRow;
 
 import com.the_tinkering.wk.R;
+import com.the_tinkering.wk.activities.FontImportActivity;
 import com.the_tinkering.wk.proxy.ViewProxy;
 
 import javax.annotation.Nullable;
@@ -31,9 +32,12 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
  * A custom view that shows a row in the overview of imported fonts.
  */
 public final class FontImportRowView extends TableRow {
-    private @Nullable String name;
+    private @Nullable String name = null;
+    private @Nullable FontImportActivity activity = null;
 
     private final ViewProxy fontName = new ViewProxy();
+    private final ViewProxy fontSample = new ViewProxy();
+    private final ViewProxy deleteFont = new ViewProxy();
 
     /**
      * The constructor.
@@ -42,6 +46,9 @@ public final class FontImportRowView extends TableRow {
      */
     public FontImportRowView(final Context context) {
         super(context);
+        if (context instanceof FontImportActivity) {
+            activity = (FontImportActivity) context;
+        }
         init();
     }
 
@@ -53,6 +60,9 @@ public final class FontImportRowView extends TableRow {
      */
     public FontImportRowView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
+        if (context instanceof FontImportActivity) {
+            activity = (FontImportActivity) context;
+        }
         init();
     }
 
@@ -64,6 +74,20 @@ public final class FontImportRowView extends TableRow {
             inflate(getContext(), R.layout.font_import_row, this);
             setVisibility(GONE);
             fontName.setDelegate(this, R.id.fontName);
+            fontSample.setDelegate(this, R.id.fontSample);
+            deleteFont.setDelegate(this, R.id.deleteFont);
+
+            fontSample.setOnClickListener(v -> {
+                if (activity != null) {
+                    activity.showSample(this);
+                }
+            });
+
+            deleteFont.setOnClickListener(v -> {
+                if (activity != null) {
+                    activity.deleteFont(this);
+                }
+            });
         });
     }
 

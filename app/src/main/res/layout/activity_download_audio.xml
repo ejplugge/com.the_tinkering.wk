@@ -83,7 +83,6 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:text="Move"
-                    android:onClick="onMove"
                     style="@style/WK.Button.Normal"/>
 
                 <Button
@@ -95,7 +94,6 @@
                     android:text="Abort"
                     android:clickable="false"
                     android:enabled="false"
-                    android:onClick="onAbortMove"
                     style="@style/WK.Button.Normal"/>
 
             </LinearLayout>
@@ -117,7 +115,6 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="Abort"
-                android:onClick="onCancel"
                 android:visibility="gone"
                 style="@style/WK.Button.Normal"/>
 
@@ -128,7 +125,6 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="Delete all audio"
-                android:onClick="onDelete"
                 android:visibility="gone"
                 style="@style/WK.Button.Normal"/>
 

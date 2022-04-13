@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,6 +168,8 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
         resetColorButton.setDelegate(this, R.id.resetColorButton);
         colorPicker.setDelegate(this, R.id.colorPicker);
         colorPickerPreview.setDelegate(this, R.id.colorPickerPreview);
+
+        resetColorButton.setOnClickListener(v -> resetColor());
 
         final List<Integer> prefColors = GlobalSettings.Display.getThemeCustomizations(ActiveTheme.getCurrentTheme());
         for (int i=0; i<chosenColors.length && i<prefColors.size(); i++) {
@@ -344,10 +346,8 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
 
     /**
      * Handler for the reset color button.
-     *
-     * @param v the button
      */
-    public void resetColor(@SuppressWarnings("unused") final View v) {
+    private void resetColor() {
         safe(() -> {
             setColor(selection, 0, false);
             saveColors();

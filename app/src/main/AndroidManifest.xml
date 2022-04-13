@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+  ~ Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
     package="com.the_tinkering.wk"
     android:installLocation="auto">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18"/>
@@ -40,7 +40,9 @@
         tools:ignore="AllowBackup">
 
         <activity android:name=".activities.MainActivity"
-            android:label="@string/applabel">
+            android:label="@string/applabel"
+            android:exported="true"
+            tools:ignore="RedundantLabel">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -99,7 +101,8 @@
         <activity android:name=".activities.BrowseActivity"
             android:label="Browse / search"
             android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <data android:host="subject-info" android:scheme="@string/uri_scheme"/>
                 <action android:name="android.intent.action.VIEW"/>
@@ -177,7 +180,8 @@
         <receiver android:name=".services.BackgroundAlarmReceiverPost19"/>
         <receiver android:name=".services.BackgroundAlarmReceiverPost23"/>
 
-        <receiver android:name=".services.SessionWidgetProvider">
+        <receiver android:name=".services.SessionWidgetProvider"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="android.appwidget.action.APPWIDGET_DELETED" />

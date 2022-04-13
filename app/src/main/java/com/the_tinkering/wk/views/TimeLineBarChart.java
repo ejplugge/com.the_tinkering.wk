@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -493,6 +493,7 @@ public final class TimeLineBarChart extends View implements GestureDetector.OnGe
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
         final boolean result = safe(false, () -> {

@@ -43,7 +43,7 @@
         app:layout_constraintTop_toBottomOf="@id/fontName"
         style="@style/WK.TextView.XXLarge"/>
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/fontSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

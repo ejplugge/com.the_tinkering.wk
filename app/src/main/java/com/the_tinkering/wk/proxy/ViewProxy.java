@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,6 @@ import static com.the_tinkering.wk.util.TextUtil.renderHtml;
  * of the appropriate type.
  * Basically, this eliminates a lot of annoying boilerplate null checks and instanceof checks.
  */
-@SuppressWarnings("JavaDoc")
 public final class ViewProxy {
     private @Nullable WeakReference<View> delegateReference;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -313,108 +313,105 @@ public final class SearchResultFragment extends AbstractFragment {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search_result_refine: {
-                if (searchType != 1) {
-                    adapter.setShowingForm(!adapter.isShowingForm(), resultView.getLayoutManager());
-                }
-                return true;
+        final int itemId = item.getItemId();
+
+        if (itemId == R.id.action_search_result_refine) {
+            if (searchType != 1) {
+                adapter.setShowingForm(!adapter.isShowingForm(), resultView.getLayoutManager());
             }
-            case R.id.action_search_result_save_preset: {
-                final LayoutInflater layoutInflater = LayoutInflater.from(requireContext());
-                final View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
-                final ViewProxy textView = new ViewProxy(promptView, R.id.textView);
-                final ViewProxy editText = new ViewProxy(promptView, R.id.editText);
-                final ArrayAdapter<String> presetAdapter =
-                        new ArrayAdapter<>(requireContext(), R.layout.spinner_item, LiveSearchPresets.getInstance().getNames());
-                editText.setArrayAdapter(presetAdapter);
-                textView.setText("Choose a name for the search preset");
-                editText.setHint("Name");
-                if (!isEmpty(presetName)) {
-                    editText.setText(presetName);
-                }
-                final AlertDialog theDialog = new AlertDialog.Builder(requireContext())
-                        .setTitle("Preset name")
-                        .setView(promptView)
-                        .setNegativeButton("Cancel", (dialog, which) -> safe(this::hideSoftInput))
-                        .setPositiveButton("Save", (dialog, which) -> safe(() -> {
-                            final String name = editText.getText();
-                            if (!isEmpty(name)) {
-                                savePreset(editText.getText());
-                            }
-                            hideSoftInput();
-                        })).create();
-                editText.setOnEditorActionListener((v, actionId, event) -> safe(false, () -> {
-                    boolean ok = false;
-                    if (event == null && actionId != 0) {
-                        ok = true;
-                    }
-                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                        ok = true;
-                    }
-                    if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                        return true;
-                    }
-                    if (ok) {
+            return true;
+        }
+        if (itemId == R.id.action_search_result_save_preset) {
+            final LayoutInflater layoutInflater = LayoutInflater.from(requireContext());
+            final View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
+            final ViewProxy textView = new ViewProxy(promptView, R.id.textView);
+            final ViewProxy editText = new ViewProxy(promptView, R.id.editText);
+            final ArrayAdapter<String> presetAdapter =
+                    new ArrayAdapter<>(requireContext(), R.layout.spinner_item, LiveSearchPresets.getInstance().getNames());
+            editText.setArrayAdapter(presetAdapter);
+            textView.setText("Choose a name for the search preset");
+            editText.setHint("Name");
+            if (!isEmpty(presetName)) {
+                editText.setText(presetName);
+            }
+            final AlertDialog theDialog = new AlertDialog.Builder(requireContext())
+                    .setTitle("Preset name")
+                    .setView(promptView)
+                    .setNegativeButton("Cancel", (dialog, which) -> safe(this::hideSoftInput))
+                    .setPositiveButton("Save", (dialog, which) -> safe(() -> {
                         final String name = editText.getText();
                         if (!isEmpty(name)) {
                             savePreset(editText.getText());
                         }
                         hideSoftInput();
-                        theDialog.dismiss();
-                        return true;
-                    }
-                    return false;
-                }));
-                theDialog.show();
-                editText.requestFocus();
-                if (editText.getDelegate() != null) {
-                    showSoftInput(editText.getDelegate());
+                    })).create();
+            editText.setOnEditorActionListener((v, actionId, event) -> safe(false, () -> {
+                boolean ok = event == null && actionId != 0;
+                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    ok = true;
                 }
-                return true;
-            }
-            case R.id.action_search_result_self_study: {
-                final List<Subject> subjects = adapter.getSubjects();
-                runAsync(this, () -> {
-                    if (!subjects.isEmpty() && Session.getInstance().isInactive()) {
-                        Session.getInstance().startNewSelfStudySession(subjects);
+                if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    return true;
+                }
+                if (ok) {
+                    final String name = editText.getText();
+                    if (!isEmpty(name)) {
+                        savePreset(editText.getText());
                     }
-                    return null;
-                }, result -> goToActivity(SessionActivity.class));
-                return true;
+                    hideSoftInput();
+                    theDialog.dismiss();
+                    return true;
+                }
+                return false;
+            }));
+            theDialog.show();
+            editText.requestFocus();
+            if (editText.getDelegate() != null) {
+                showSoftInput(editText.getDelegate());
             }
-            case R.id.action_search_result_resurrect: {
-                goToResurrectActivity(adapter.getResurrectableSubjectIds());
-                return true;
-            }
-            case R.id.action_search_result_burn: {
-                goToBurnActivity(adapter.getBurnableSubjectIds());
-                return true;
-            }
-            case R.id.action_search_result_star0: {
-                updateStars(0);
-                return true;
-            }
-            case R.id.action_search_result_star1: {
-                updateStars(1);
-                return true;
-            }
-            case R.id.action_search_result_star2: {
-                updateStars(2);
-                return true;
-            }
-            case R.id.action_search_result_star3: {
-                updateStars(3);
-                return true;
-            }
-            case R.id.action_search_result_star4: {
-                updateStars(4);
-                return true;
-            }
-            case R.id.action_search_result_star5: {
-                updateStars(5);
-                return true;
-            }
+            return true;
+        }
+        if (itemId == R.id.action_search_result_self_study) {
+            final List<Subject> subjects = adapter.getSubjects();
+            runAsync(this, () -> {
+                if (!subjects.isEmpty() && Session.getInstance().isInactive()) {
+                    Session.getInstance().startNewSelfStudySession(subjects);
+                }
+                return null;
+            }, result -> goToActivity(SessionActivity.class));
+            return true;
+        }
+        if (itemId == R.id.action_search_result_resurrect) {
+            goToResurrectActivity(adapter.getResurrectableSubjectIds());
+            return true;
+        }
+        if (itemId == R.id.action_search_result_burn) {
+            goToBurnActivity(adapter.getBurnableSubjectIds());
+            return true;
+        }
+        if (itemId == R.id.action_search_result_star0) {
+            updateStars(0);
+            return true;
+        }
+        if (itemId == R.id.action_search_result_star1) {
+            updateStars(1);
+            return true;
+        }
+        if (itemId == R.id.action_search_result_star2) {
+            updateStars(2);
+            return true;
+        }
+        if (itemId == R.id.action_search_result_star3) {
+            updateStars(3);
+            return true;
+        }
+        if (itemId == R.id.action_search_result_star4) {
+            updateStars(4);
+            return true;
+        }
+        if (itemId == R.id.action_search_result_star5) {
+            updateStars(5);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

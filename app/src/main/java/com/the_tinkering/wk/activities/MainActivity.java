@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 package com.the_tinkering.wk.activities;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 import android.os.Bundle;
-import android.view.View;
 
 import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
@@ -60,9 +62,6 @@ import com.the_tinkering.wk.views.UpcomingReviewsView;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
-
 /**
  * The dashboard activity.
  *
@@ -89,6 +88,24 @@ public final class MainActivity extends AbstractActivity {
         apiErrorView.setDelegate(this, R.id.apiErrorView);
         apiKeyRejectedView.setDelegate(this, R.id.apiKeyRejectedView);
         keyboardHelpView.setDelegate(this, R.id.keyboardHelpView);
+
+        final ViewProxy retryApiErrorButton1 = new ViewProxy(this, R.id.retryApiErrorButton1);
+        final ViewProxy retryApiErrorButton2 = new ViewProxy(this, R.id.retryApiErrorButton2);
+        final ViewProxy goToSettingsButton = new ViewProxy(this, R.id.goToSettingsButton);
+        final ViewProxy viewKeyboardHelpButton = new ViewProxy(this, R.id.viewKeyboardHelpButton);
+        final ViewProxy dismissKeyboardHelpButton = new ViewProxy(this, R.id.dismissKeyboardHelpButton);
+        final ViewProxy startLessonsButton = new ViewProxy(this, R.id.startLessonsButton);
+        final ViewProxy startReviewsButton = new ViewProxy(this, R.id.startReviewsButton);
+        final ViewProxy resumeButton = new ViewProxy(this, R.id.resumeButton);
+
+        retryApiErrorButton1.setOnClickListener(v -> retryApiError());
+        retryApiErrorButton2.setOnClickListener(v -> retryApiError());
+        goToSettingsButton.setOnClickListener(v -> goToSettings());
+        viewKeyboardHelpButton.setOnClickListener(v -> viewKeyboardHelp());
+        dismissKeyboardHelpButton.setOnClickListener(v -> dismissKeyboardHelp());
+        startLessonsButton.setOnClickListener(v -> startLessonSession());
+        startReviewsButton.setOnClickListener(v -> startReviewSession());
+        resumeButton.setOnClickListener(v -> resumeSession());
 
         LiveApiState.getInstance().observe(this, t -> safe(() -> {
             apiErrorView.setVisibility(t == ApiState.ERROR);
@@ -224,38 +241,30 @@ public final class MainActivity extends AbstractActivity {
 
     /**
      * Handler for the API error retry button.
-     *
-     * @param view the button
      */
     @SuppressWarnings("MethodMayBeStatic")
-    public void retryApiError(@SuppressWarnings("unused") final View view) {
+    private void retryApiError() {
         safe(() -> JobRunnerService.schedule(RetryApiErrorJob.class, ""));
     }
 
     /**
      * Handler for the API error settings button.
-     *
-     * @param view the button
      */
-    public void goToSettings(@SuppressWarnings("unused") final View view) {
+    private void goToSettings() {
         safe(() -> goToPreferencesActivity("api_settings"));
     }
 
     /**
      * Handler for the keyboard help button.
-     *
-     * @param view the button
      */
-    public void viewKeyboardHelp(@SuppressWarnings("unused") final View view) {
+    private void viewKeyboardHelp() {
         safe(() -> goToActivity(KeyboardHelpActivity.class));
     }
 
     /**
      * Handler for dismissing the keyboard help view.
-     *
-     * @param view the button
      */
-    public void dismissKeyboardHelp(@SuppressWarnings("unused") final View view) {
+    private void dismissKeyboardHelp() {
         safe(() -> {
             GlobalSettings.Tutorials.setKeyboardHelpDismissed(true);
             keyboardHelpView.setVisibility(false);
@@ -264,10 +273,8 @@ public final class MainActivity extends AbstractActivity {
 
     /**
      * Handler for the start lessons button.
-     *
-     * @param view the button
      */
-    public void startLessonSession(@SuppressWarnings("unused") final View view) {
+    private void startLessonSession() {
         safe(() -> {
             if (!interactionEnabled) {
                 return;
@@ -288,10 +295,8 @@ public final class MainActivity extends AbstractActivity {
 
     /**
      * Handler for the start reviews button.
-     *
-     * @param view the button
      */
-    public void startReviewSession(@SuppressWarnings("unused") final View view) {
+    private void startReviewSession() {
         safe(() -> {
             if (!interactionEnabled) {
                 return;
@@ -312,10 +317,8 @@ public final class MainActivity extends AbstractActivity {
 
     /**
      * Handler for the resume session button.
-     *
-     * @param view the button
      */
-    public void resumeSession(@SuppressWarnings("unused") final View view) {
+    private void resumeSession() {
         safe(() -> {
             if (!interactionEnabled) {
                 return;

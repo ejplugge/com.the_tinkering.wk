@@ -531,7 +531,7 @@ public enum QuestionType {
      *
      * @return true if it is
      */
-    public boolean isMeaning() {
+    public final boolean isMeaning() {
         return meaning;
     }
 
@@ -540,7 +540,7 @@ public enum QuestionType {
      *
      * @return true if it is
      */
-    public boolean isReading() {
+    public final boolean isReading() {
         return reading;
     }
 
@@ -549,7 +549,7 @@ public enum QuestionType {
      *
      * @return true if it is
      */
-    public boolean isKana() {
+    public final boolean isKana() {
         return kana;
     }
 
@@ -558,7 +558,7 @@ public enum QuestionType {
      *
      * @return true if it is
      */
-    public boolean isAscii() {
+    public final boolean isAscii() {
         return ascii;
     }
 
@@ -566,7 +566,7 @@ public enum QuestionType {
      * Get the question slot in a session item that is occupied by this question type.
      * @return the slot number 1..4
      */
-    public int getSlot() {
+    public final int getSlot() {
         return slot;
     }
 
@@ -575,7 +575,7 @@ public enum QuestionType {
      *
      * @return the title
      */
-    public String getShortTitle() {
+    public final String getShortTitle() {
         return shortTitle;
     }
 

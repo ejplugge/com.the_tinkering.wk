@@ -18,6 +18,7 @@ package com.the_tinkering.wk.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -160,7 +161,7 @@ public final class SrsSystem implements Comparable<SrsSystem> {
      * After adding all stages, finish up the properties on the system and the stages.
      */
     public void finish() {
-        Collections.sort(stages, (o1, o2) -> Long.compare(o1.id, o2.id));
+        Collections.sort(stages, Comparator.comparingLong(o -> o.id));
         numPassedStages = 0;
         numPrePassedStages = 0;
         for (final Stage stage: stages) {

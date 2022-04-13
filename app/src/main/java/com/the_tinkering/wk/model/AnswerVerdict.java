@@ -18,6 +18,7 @@ package com.the_tinkering.wk.model;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -123,7 +124,7 @@ public final class AnswerVerdict {
     }
 
     @Override
-    public String toString() {
+    public @Nonnull String toString() {
         return String.format(Locale.ROOT, "Verdict:%s,%s,%s,%s,%s,%s", ok, retry, nearMatch, givenAnswer, matchedAnswer, digraphMatch);
     }
 }

@@ -24,6 +24,7 @@ import com.the_tinkering.wk.enums.QuestionType;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.enums.SessionItemState.ACTIVE;
@@ -67,7 +68,7 @@ public final class Question {
     }
 
     @Override
-    public String toString() {
+    public @Nonnull String toString() {
         return String.format(Locale.ROOT, "%s:%d", type, item.getId());
     }
 

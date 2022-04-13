@@ -54,11 +54,11 @@
                 style="@style/WK.TextView.Normal"/>
 
             <Button
+                android:id="@+id/keyboardSettingsButton1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:text="Keyboard settings"
-                android:onClick="goToKeyboardSettings"
                 style="@style/WK.Button.Normal"/>
 
             <TextView
@@ -75,17 +75,17 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/doItButton1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Do it"
-                    android:onClick="doIt1"
                     style="@style/WK.Button.Normal"/>
 
                 <Button
+                    android:id="@+id/keyboardSettingsButton2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Keyboard settings"
-                    android:onClick="goToKeyboardSettings"
                     style="@style/WK.Button.Normal"/>
 
             </LinearLayout>
@@ -104,17 +104,17 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/doItButton2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Do it"
-                    android:onClick="doIt2"
                     style="@style/WK.Button.Normal"/>
 
                 <Button
+                    android:id="@+id/keyboardSettingsButton3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Keyboard settings"
-                    android:onClick="goToKeyboardSettings"
                     style="@style/WK.Button.Normal"/>
 
             </LinearLayout>
@@ -133,17 +133,17 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/doItButton3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Do it"
-                    android:onClick="doIt3"
                     style="@style/WK.Button.Normal"/>
 
                 <Button
+                    android:id="@+id/keyboardSettingsButton4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Keyboard settings"
-                    android:onClick="goToKeyboardSettings"
                     style="@style/WK.Button.Normal"/>
 
             </LinearLayout>
@@ -162,17 +162,17 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/doItButton4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Do it"
-                    android:onClick="doIt4"
                     style="@style/WK.Button.Normal"/>
 
                 <Button
+                    android:id="@+id/keyboardSettingsButton5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Keyboard settings"
-                    android:onClick="goToKeyboardSettings"
                     style="@style/WK.Button.Normal"/>
 
             </LinearLayout>

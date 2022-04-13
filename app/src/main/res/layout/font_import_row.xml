@@ -31,15 +31,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sample"
-        android:onClick="showSample"
         android:layout_gravity="center_vertical|start"
         style="@style/WK.Button.Borderless"/>
 
     <Button
+        android:id="@+id/deleteFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Delete"
-        android:onClick="deleteFont"
         android:layout_gravity="center_vertical|start"
         style="@style/WK.Button.Borderless"/>
 

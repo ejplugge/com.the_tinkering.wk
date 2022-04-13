@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -412,10 +412,7 @@ public final class UnansweredSessionFragment extends AbstractSessionFragment {
         if (!active) {
             return false;
         }
-        boolean ok = false;
-        if (event == null && actionId != 0) {
-            ok = true;
-        }
+        boolean ok = event == null && actionId != 0;
         if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
             ok = true;
         }

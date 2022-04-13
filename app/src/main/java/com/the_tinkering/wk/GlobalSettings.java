@@ -1575,11 +1575,11 @@ public final class GlobalSettings {
                 if (isEmpty(value)) {
                     return 0;
                 }
-                final float n = Float.parseFloat(value);
-                if (n < 1) {
+                final float f = Float.parseFloat(value);
+                if (f < 1) {
                     return 0;
                 }
-                return n;
+                return f;
             }
             catch (final Exception e) {
                 return 0;
@@ -1931,15 +1931,6 @@ public final class GlobalSettings {
          */
         @SuppressWarnings("SameReturnValue")
         public static SubjectCardLayout getSubjectCardLayoutSearch() {
-//            final @Nullable String value = prefs().getString("exp_subject_card_layout_search", null);
-//            if (value != null) {
-//                try {
-//                    return SubjectCardLayout.valueOf(value);
-//                }
-//                catch (final Exception e) {
-//                    //
-//                }
-//            }
             return SubjectCardLayout.NORMAL;
         }
 
@@ -1950,15 +1941,6 @@ public final class GlobalSettings {
          */
         @SuppressWarnings("SameReturnValue")
         public static SubjectCardLayout getSubjectCardLayoutOther() {
-//            final @Nullable String value = prefs().getString("exp_subject_card_layout_grid", null);
-//            if (value != null) {
-//                try {
-//                    return SubjectCardLayout.valueOf(value);
-//                }
-//                catch (final Exception e) {
-//                    //
-//                }
-//            }
             return SubjectCardLayout.NORMAL;
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package com.the_tinkering.wk.activities;
 
+import static com.the_tinkering.wk.Constants.NO_API_KEY_HELP_DOCUMENT;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
 import com.the_tinkering.wk.GlobalSettings;
@@ -26,9 +28,6 @@ import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.proxy.ViewProxy;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.Constants.NO_API_KEY_HELP_DOCUMENT;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * A simple activity only used as a helper to get the user to supply an API key.
@@ -58,13 +57,15 @@ public final class NoApiKeyHelpActivity extends AbstractActivity {
         document.setTextHtml(NO_API_KEY_HELP_DOCUMENT);
         document.setLinkMovementMethod();
 
+        saveButton.setOnClickListener(v -> saveApiKey());
+
         apiKey.setOnEditorActionListener((v, actionId, event) -> safe(false, () -> {
             if (event == null && actionId == EditorInfo.IME_ACTION_DONE) {
-                saveApiKey(v);
+                saveApiKey();
                 return true;
             }
             if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                saveApiKey(v);
+                saveApiKey();
                 return true;
             }
             return false;
@@ -93,10 +94,8 @@ public final class NoApiKeyHelpActivity extends AbstractActivity {
 
     /**
      * Handler for the save button. Save the API key that was entered.
-     *
-     * @param view the button
      */
-    public void saveApiKey(@SuppressWarnings("unused") final View view) {
+    private void saveApiKey() {
         safe(() -> {
             if (!interactionEnabled) {
                 return;

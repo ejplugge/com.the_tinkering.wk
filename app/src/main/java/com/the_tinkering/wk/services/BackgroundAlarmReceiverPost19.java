@@ -72,8 +72,12 @@ public final class BackgroundAlarmReceiverPost19 extends BroadcastReceiver {
         if (alarmManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiverPost19.class);
+                int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    flags |= PendingIntent.FLAG_IMMUTABLE;
+                }
                 final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
-                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_2, intent, flags);
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
             }
         }
@@ -86,8 +90,12 @@ public final class BackgroundAlarmReceiverPost19 extends BroadcastReceiver {
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiverPost19.class);
+            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                flags |= PendingIntent.FLAG_IMMUTABLE;
+            }
             final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
-                    StableIds.BACKGROUND_ALARM_REQUEST_CODE_2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    StableIds.BACKGROUND_ALARM_REQUEST_CODE_2, intent, flags);
             alarmManager.cancel(pendingIntent);
         }
     }

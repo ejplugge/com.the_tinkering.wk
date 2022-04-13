@@ -17,7 +17,6 @@
 package com.the_tinkering.wk.activities;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -54,6 +53,15 @@ public final class KeyboardHelpActivity extends AbstractActivity {
         final ViewProxy document3 = new ViewProxy(this, R.id.document_3);
         final ViewProxy document4 = new ViewProxy(this, R.id.document_4);
         final ViewProxy document5 = new ViewProxy(this, R.id.document_5);
+        final ViewProxy keyboardSettingsButton1 = new ViewProxy(this, R.id.keyboardSettingsButton1);
+        final ViewProxy keyboardSettingsButton2 = new ViewProxy(this, R.id.keyboardSettingsButton2);
+        final ViewProxy keyboardSettingsButton3 = new ViewProxy(this, R.id.keyboardSettingsButton3);
+        final ViewProxy keyboardSettingsButton4 = new ViewProxy(this, R.id.keyboardSettingsButton4);
+        final ViewProxy keyboardSettingsButton5 = new ViewProxy(this, R.id.keyboardSettingsButton5);
+        final ViewProxy doItButton1 = new ViewProxy(this, R.id.doItButton1);
+        final ViewProxy doItButton2 = new ViewProxy(this, R.id.doItButton2);
+        final ViewProxy doItButton3 = new ViewProxy(this, R.id.doItButton3);
+        final ViewProxy doItButton4 = new ViewProxy(this, R.id.doItButton4);
 
         documentIntro.setTextHtml(KEYBOARD_HELP_DOCUMENT_INTRO);
         document1.setTextHtml(KEYBOARD_HELP_DOCUMENT_1);
@@ -61,6 +69,15 @@ public final class KeyboardHelpActivity extends AbstractActivity {
         document3.setTextHtml(KEYBOARD_HELP_DOCUMENT_3);
         document4.setTextHtml(KEYBOARD_HELP_DOCUMENT_4);
         document5.setTextHtml(KEYBOARD_HELP_DOCUMENT_5);
+        keyboardSettingsButton1.setOnClickListener(v -> goToKeyboardSettings());
+        keyboardSettingsButton2.setOnClickListener(v -> goToKeyboardSettings());
+        keyboardSettingsButton3.setOnClickListener(v -> goToKeyboardSettings());
+        keyboardSettingsButton4.setOnClickListener(v -> goToKeyboardSettings());
+        keyboardSettingsButton5.setOnClickListener(v -> goToKeyboardSettings());
+        doItButton1.setOnClickListener(v -> doIt1());
+        doItButton2.setOnClickListener(v -> doIt2());
+        doItButton3.setOnClickListener(v -> doIt3());
+        doItButton4.setOnClickListener(v -> doIt4());
     }
 
     @Override
@@ -85,19 +102,15 @@ public final class KeyboardHelpActivity extends AbstractActivity {
 
     /**
      * Handler for the 'keyboard settings' buttons.
-     *
-     * @param view the button
      */
-    public void goToKeyboardSettings(@SuppressWarnings("unused") final View view) {
+    private void goToKeyboardSettings() {
         safe(() -> goToPreferencesActivity("keyboard_settings"));
     }
 
     /**
      * Handler for the first 'do it' button.
-     *
-     * @param view the button
      */
-    public void doIt1(@SuppressWarnings("unused") final View view) {
+    private void doIt1() {
         safe(() -> {
             GlobalSettings.Keyboard.setForceVisiblePasswordMeaning(true);
             GlobalSettings.Keyboard.setForceVisiblePasswordReading(true);
@@ -113,10 +126,8 @@ public final class KeyboardHelpActivity extends AbstractActivity {
 
     /**
      * Handler for the second 'do it' button.
-     *
-     * @param view the button
      */
-    public void doIt2(@SuppressWarnings("unused") final View view) {
+    private void doIt2() {
         safe(() -> {
             GlobalSettings.Keyboard.setForceVisiblePasswordMeaning(true);
             GlobalSettings.Keyboard.setForceVisiblePasswordReading(true);
@@ -132,10 +143,8 @@ public final class KeyboardHelpActivity extends AbstractActivity {
 
     /**
      * Handler for the third 'do it' button.
-     *
-     * @param view the button
      */
-    public void doIt3(@SuppressWarnings("unused") final View view) {
+    private void doIt3() {
         safe(() -> {
             GlobalSettings.Keyboard.setForceVisiblePasswordMeaning(false);
             GlobalSettings.Keyboard.setForceVisiblePasswordReading(false);
@@ -147,11 +156,9 @@ public final class KeyboardHelpActivity extends AbstractActivity {
     }
 
     /**
-     * Handler for the third 'do it' button.
-     *
-     * @param view the button
+     * Handler for the fourth 'do it' button.
      */
-    public void doIt4(@SuppressWarnings("unused") final View view) {
+    private void doIt4() {
         safe(() -> {
             GlobalSettings.Keyboard.setForceAsciiMeaning(false);
             new AlertDialog.Builder(this)

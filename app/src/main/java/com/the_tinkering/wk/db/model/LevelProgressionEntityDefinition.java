@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 /**
  * Room entity for the level_progression table. See LogRecordEntityDefinition for an explanation of why this class exists.
  */
-@SuppressWarnings({"JavaDoc", "unused"})
+@SuppressWarnings("unused")
 @Entity(tableName = "level_progression")
 public final class LevelProgressionEntityDefinition {
     @PrimaryKey public long id = 0L;

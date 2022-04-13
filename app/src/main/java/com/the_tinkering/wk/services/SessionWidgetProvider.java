@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -84,7 +85,13 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
         final AppWidgetManager manager = AppWidgetManager.getInstance(context);
         final ComponentName name = new ComponentName(context, SessionWidgetProvider.class);
         final Intent intent = new Intent(context, MainActivity.class);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        final int flags;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags = PendingIntent.FLAG_IMMUTABLE;
+        } else {
+            flags = 0;
+        }
+        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, flags);
 
         final long upcoming = ctx.getUpcomingAvailableAt();
 

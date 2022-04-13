@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -114,6 +115,7 @@ public final class SwipingScrollView extends ScrollView {
         return super.onInterceptTouchEvent(ev);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(final MotionEvent ev) {
         handleTouchEvent(ev);

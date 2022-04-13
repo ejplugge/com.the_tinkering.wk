@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * TLDR: ignore this class except when modifying the database schema. Drop this class when the inevitable
  * upcoming schema overhaul is done.
  */
-@SuppressWarnings({"unused", "JavaDoc"})
+@SuppressWarnings("unused")
 @Entity(tableName = "log_record")
 public final class LogRecordEntityDefinition {
     @PrimaryKey(autoGenerate = true) public long id = 0L;

@@ -18,6 +18,8 @@ package com.the_tinkering.wk.model;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+
 /**
  * Details of a reading question match that highlight an incorrect answer that is only different
  * in the use of small vs. regular kana, most notably the common beginner mistake of niyuu vs. nyuu
@@ -57,7 +59,7 @@ public final class DigraphMatch {
     }
 
     @Override
-    public String toString() {
+    public @Nonnull String toString() {
         return String.format(Locale.ROOT, "Digraph:%c/%c", regularKana, smallKana);
     }
 }

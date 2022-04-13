@@ -28,6 +28,8 @@ import static com.the_tinkering.wk.util.ObjectSupport.isEmpty;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
+import javax.annotation.Nullable;
+
 /**
  * A custom preference that combines two non-negative number fields, each of which may be empty.
  * -1 is used as the special value for an empty field.
@@ -61,7 +63,7 @@ public final class NumberRangePreferenceDialogFragment extends PreferenceDialogF
     }
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(final @Nullable Bundle savedInstanceState) {
         safe(() -> {
             super.onCreate(savedInstanceState);
             if (savedInstanceState == null) {

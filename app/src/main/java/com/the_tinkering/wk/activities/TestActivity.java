@@ -16,8 +16,11 @@
 
 package com.the_tinkering.wk.activities;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
-import android.view.View;
 
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
@@ -39,16 +42,11 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
-import static java.util.Objects.requireNonNull;
-
 /**
  * A simple activity with a few test views, for generic testing purposes.
  * Unless the test option in the menu is activated, there is no path to
  * get here.
  */
-@SuppressWarnings("JavaDoc")
 public final class TestActivity extends AbstractActivity {
     private static final Logger LOGGER = Logger.get(TestActivity.class);
 
@@ -63,6 +61,12 @@ public final class TestActivity extends AbstractActivity {
     @Override
     protected void onCreateLocal(final @Nullable Bundle savedInstanceState) {
         document.setDelegate(this, R.id.document);
+
+        new ViewProxy(this, R.id.downloadPitchInfoButton).setOnClickListener(v -> downloadPitchInfo());
+        new ViewProxy(this, R.id.generatePitchInfoButton).setOnClickListener(v -> generatePitchInfo());
+        new ViewProxy(this, R.id.checkPitchInfoButton).setOnClickListener(v -> checkPitchInfo());
+        new ViewProxy(this, R.id.testButton).setOnClickListener(v -> theButton());
+        new ViewProxy(this, R.id.testButton2).setOnClickListener(v -> theButton2());
     }
 
     @Override
@@ -86,7 +90,7 @@ public final class TestActivity extends AbstractActivity {
     }
 
     @SuppressWarnings("MethodMayBeStatic")
-    public void downloadPitchInfo(@SuppressWarnings("unused") final View view) {
+    private void downloadPitchInfo() {
         if (activePitchInfoDownload) {
             activePitchInfoDownload = false;
             return;
@@ -114,9 +118,6 @@ public final class TestActivity extends AbstractActivity {
                     if (!subject.getType().canHavePitchInfo()) {
                         continue;
                     }
-//                    if (subject.getId() == 4549 || subject.getId() == 4551 || subject.getId() == 5294 || subject.getId() == 6091) {
-//                        continue;
-//                    }
                     final String characters = requireNonNull(subject.getCharacters());
 
                     if (!PitchInfoUtil.existsWeblioFile(characters)) {
@@ -133,7 +134,7 @@ public final class TestActivity extends AbstractActivity {
     }
 
     @SuppressWarnings("MethodMayBeStatic")
-    public void generatePitchInfo(@SuppressWarnings("unused") final View view) {
+    private void generatePitchInfo() {
         runAsync(() -> {
             final AppDatabase db = WkApplication.getDatabase();
             final int maxLevel = db.subjectAggregatesDao().getMaxLevel();
@@ -169,7 +170,7 @@ public final class TestActivity extends AbstractActivity {
     }
 
     @SuppressWarnings("MethodMayBeStatic")
-    public void checkPitchInfo(@SuppressWarnings("unused") final View view) {
+    private void checkPitchInfo() {
         runAsync(() -> {
             final AppDatabase db = WkApplication.getDatabase();
 
@@ -189,7 +190,7 @@ public final class TestActivity extends AbstractActivity {
         });
     }
 
-    public void theButton(@SuppressWarnings("unused") final View view) {
+    private void theButton() {
         safe(() -> {
             LOGGER.info("Test button clicked!");
             document.setText("Click!");
@@ -197,7 +198,7 @@ public final class TestActivity extends AbstractActivity {
         });
     }
 
-    public void theButton2(@SuppressWarnings("unused") final View view) {
+    private void theButton2() {
         safe(() -> {
             LOGGER.info("Test button 2 clicked!");
             document.setText("Click 2!");

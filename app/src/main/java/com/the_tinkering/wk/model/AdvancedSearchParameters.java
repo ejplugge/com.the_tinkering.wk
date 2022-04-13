@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 /**
  * Presets for the advanced search form.
  */
-@SuppressWarnings("JavaDoc")
 public final class AdvancedSearchParameters {
     public @Nullable Integer minLevel = null;
     public @Nullable Integer maxLevel = null;

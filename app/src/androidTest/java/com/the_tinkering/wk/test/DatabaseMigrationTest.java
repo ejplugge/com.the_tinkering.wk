@@ -16,21 +16,6 @@
 
 package com.the_tinkering.wk.test;
 
-import androidx.room.Room;
-import androidx.room.testing.MigrationTestHelper;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.filters.SmallTest;
-import androidx.test.platform.app.InstrumentationRegistry;
-
-import com.the_tinkering.wk.db.AppDatabase;
-
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.IOException;
-
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_48_49;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_49_50;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_50_51;
@@ -51,13 +36,26 @@ import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_64_65;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_65_66;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_66_67;
 import static com.the_tinkering.wk.db.AppDatabase.MIGRATION_67_68;
-import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
+
+import androidx.room.Room;
+import androidx.room.testing.MigrationTestHelper;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SmallTest;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.the_tinkering.wk.db.AppDatabase;
+
+import org.junit.Rule;
+import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * Test class to verify database migrations.
  */
-@SuppressWarnings({"JavaDoc", "resource"})
+@SuppressWarnings("resource")
 @SmallTest
 public final class DatabaseMigrationTest {
     private static final int LATEST_VERSION = 68;
@@ -67,8 +65,7 @@ public final class DatabaseMigrationTest {
     public MigrationTestHelper testHelper =
             new MigrationTestHelper(
                     InstrumentationRegistry.getInstrumentation(),
-                    requireNonNull(AppDatabase.class.getCanonicalName()),
-                new FrameworkSQLiteOpenHelperFactory());
+                    AppDatabase.class);
 
     private AppDatabase getMigratedRoomDatabase() {
         final AppDatabase database = Room.databaseBuilder(ApplicationProvider.getApplicationContext(),

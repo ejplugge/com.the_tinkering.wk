@@ -99,6 +99,7 @@ public final class WebClient {
         return lastLoginMessage;
     }
 
+    @SuppressWarnings("ConstantConditions")
     private boolean findAuthenticityToken(final @Nullable ResponseBody body) {
         return safe(false, () -> {
             if (body == null) {

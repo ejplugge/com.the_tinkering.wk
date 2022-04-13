@@ -52,7 +52,6 @@
                 android:id="@+id/downloadPitchInfoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="downloadPitchInfo"
                 android:text="Download pitch info"
                 style="@style/WK.Button.Normal"
                 tools:ignore="UnusedIds"/>
@@ -61,7 +60,6 @@
                 android:id="@+id/generatePitchInfoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="generatePitchInfo"
                 android:text="Generate pitch info"
                 style="@style/WK.Button.Normal"
                 tools:ignore="UnusedIds"/>
@@ -70,7 +68,6 @@
                 android:id="@+id/checkPitchInfoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="checkPitchInfo"
                 android:text="Check pitch info"
                 style="@style/WK.Button.Normal"
                 tools:ignore="UnusedIds"/>
@@ -79,7 +76,6 @@
                 android:id="@+id/testButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="theButton"
                 android:text="Test"
                 style="@style/WK.Button.Normal"
                 tools:ignore="UnusedIds"/>
@@ -88,7 +84,6 @@
                 android:id="@+id/testButton2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="theButton2"
                 android:text="Test 2"
                 style="@style/WK.Button.Normal"
                 tools:ignore="UnusedIds"/>

@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 /**
  * Room entity for the subject table. See LogRecordEntityDefinition for an explanation of why this class exists.
  */
-@SuppressWarnings({"JavaDoc", "unused"})
+@SuppressWarnings("unused")
 @Entity(tableName = "subject")
 public final class SubjectEntityDefinition {
     @PrimaryKey public long id = 0L;

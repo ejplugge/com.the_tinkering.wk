@@ -53,10 +53,10 @@
                 style="@style/WK.TextView.Normal"/>
 
             <Button
+                android:id="@+id/importFontButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Import"
-                android:onClick="importFont"
                 style="@style/WK.Button.Normal"/>
 
             <TableLayout

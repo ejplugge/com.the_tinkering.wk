@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.services;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -72,7 +73,7 @@ public final class NotificationWorker {
             final String name = "NewReviewsChannel";
             final String description = "New reviews available";
             final int importance = GlobalSettings.Other.getNotificationPriority().getManagerImportance();
-            final NotificationChannel channel = new NotificationChannel(name, name, importance);
+            @SuppressLint("WrongConstant") final NotificationChannel channel = new NotificationChannel(name, name, importance);
             channel.setDescription(description);
             final @Nullable NotificationManager notificationManager = WkApplication.getInstance().getSystemService(NotificationManager.class);
             if (notificationManager != null) {
@@ -82,7 +83,13 @@ public final class NotificationWorker {
 
         final Intent intent2 = new Intent(WkApplication.getInstance(), MainActivity.class);
         intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(WkApplication.getInstance(), 0, intent2, 0);
+        final int flags;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags = PendingIntent.FLAG_IMMUTABLE;
+        } else {
+            flags = 0;
+        }
+        final PendingIntent pendingIntent = PendingIntent.getActivity(WkApplication.getInstance(), 0, intent2, flags);
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(WkApplication.getInstance(), "NewReviewsChannel");
         builder.setSmallIcon(R.drawable.ic_notification);

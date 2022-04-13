@@ -19,7 +19,6 @@ package com.the_tinkering.wk.enums;
 /**
  * Update frequency for notifications.
  */
-@SuppressWarnings("JavaDoc")
 public enum NotificationUpdateFrequency {
     ONLY_NEW_REVIEWS,
     ONCE_PER_HOUR,

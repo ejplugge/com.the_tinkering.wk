@@ -440,10 +440,7 @@ public final class SubjectInfoView extends LinearLayout implements SubjectChange
         if (done) {
             return true;
         }
-        boolean ok = false;
-        if (event == null && actionId == EditorInfo.IME_ACTION_DONE) {
-            ok = true;
-        }
+        boolean ok = event == null && actionId == EditorInfo.IME_ACTION_DONE;
         if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
             ok = true;
         }

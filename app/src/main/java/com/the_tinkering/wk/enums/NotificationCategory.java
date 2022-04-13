@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import androidx.core.app.NotificationCompat;
 /**
  * Priority setting for notifications.
  */
-@SuppressWarnings({"JavaDoc", "unused"})
+@SuppressWarnings("unused")
 public enum NotificationCategory {
     CALL(NotificationCompat.CATEGORY_CALL),
     NAVIGATION(NotificationCompat.CATEGORY_NAVIGATION),

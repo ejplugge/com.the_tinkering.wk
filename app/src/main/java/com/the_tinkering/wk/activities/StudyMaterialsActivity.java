@@ -16,8 +16,10 @@
 
 package com.the_tinkering.wk.activities;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -35,9 +37,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Activity to show/edit the study materials for the current subject.
@@ -80,6 +79,12 @@ public final class StudyMaterialsActivity extends AbstractActivity {
         label.setDelegate(this, R.id.label);
         meaningNote.setDelegate(this, R.id.meaningNote);
         readingNote.setDelegate(this, R.id.readingNote);
+
+        final ViewProxy saveStudyMaterialsButton1 = new ViewProxy(this, R.id.saveStudyMaterialsButton1);
+        final ViewProxy saveStudyMaterialsButton2 = new ViewProxy(this, R.id.saveStudyMaterialsButton2);
+
+        saveStudyMaterialsButton1.setOnClickListener(v -> saveStudyMaterials());
+        saveStudyMaterialsButton2.setOnClickListener(v -> saveStudyMaterials());
 
         if (savedInstanceState != null && savedInstanceState.getBoolean("stateSaved", false)) {
             stateSaved = true;
@@ -158,10 +163,8 @@ public final class StudyMaterialsActivity extends AbstractActivity {
 
     /**
      * Handler for the Save button. Update the study materials, and push to the API.
-     *
-     * @param view the button
      */
-    public void saveStudyMaterials(@SuppressWarnings("unused") final View view) {
+    private void saveStudyMaterials() {
         safe(() -> {
             if (!interactionEnabled || currentSubject == null) {
                 return;

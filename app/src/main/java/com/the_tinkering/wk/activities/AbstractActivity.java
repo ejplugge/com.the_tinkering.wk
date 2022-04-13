@@ -370,178 +370,177 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
     }
 
     private boolean onOptionsItemSelectedHelper(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings: {
-                goToPreferencesActivity(null);
-                return true;
+        final int itemId = item.getItemId();
+
+        if (itemId == R.id.action_settings) {
+            goToPreferencesActivity(null);
+            return true;
+        }
+        if (itemId == R.id.action_search) {
+            startSearch(null, false, null, false);
+            return true;
+        }
+        if (itemId == R.id.action_mute) {
+            final boolean muted = !WkApplication.getDatabase().propertiesDao().getIsMuted();
+            WkApplication.getDatabase().propertiesDao().setIsMuted(muted);
+            final int imageId = muted
+                    ? R.drawable.ic_volume_off_24dp
+                    : R.drawable.ic_volume_up_24dp;
+            final String title = muted ? "Unmute" : "Mute";
+            item.setIcon(ContextCompat.getDrawable(this, imageId));
+            item.setTitle(title);
+            return true;
+        }
+        if (itemId == R.id.action_dashboard) {
+            goToMainActivity();
+            return true;
+        }
+        if (itemId == R.id.action_download_audio) {
+            goToActivity(DownloadAudioActivity.class);
+            return true;
+        }
+        if (itemId == R.id.action_browse) {
+            goToActivity(BrowseActivity.class);
+            return true;
+        }
+        if (itemId == R.id.action_view_last_finished) {
+            final long subjectId = Session.getInstance().getLastFinishedSubjectId();
+            if (subjectId != -1) {
+                goToSubjectInfo(subjectId, Collections.emptyList(), FragmentTransitionAnimation.RTL);
             }
-            case R.id.action_search: {
-                startSearch(null, false, null, false);
-                return true;
+            return true;
+        }
+        if (itemId == R.id.action_back_to_presentation) {
+            Session.getInstance().goBackToPresentation();
+            if (!(this instanceof SessionActivity)) {
+                goToActivity(SessionActivity.class);
             }
-            case R.id.action_mute: {
-                final boolean muted = !WkApplication.getDatabase().propertiesDao().getIsMuted();
-                WkApplication.getDatabase().propertiesDao().setIsMuted(muted);
-                final int imageId = muted
-                        ? R.drawable.ic_volume_off_24dp
-                        : R.drawable.ic_volume_up_24dp;
-                final String title = muted ? "Unmute" : "Mute";
-                item.setIcon(ContextCompat.getDrawable(this, imageId));
-                item.setTitle(title);
-                return true;
-            }
-            case R.id.action_dashboard: {
-                goToMainActivity();
-                return true;
-            }
-            case R.id.action_download_audio: {
-                goToActivity(DownloadAudioActivity.class);
-                return true;
-            }
-            case R.id.action_browse: {
-                goToActivity(BrowseActivity.class);
-                return true;
-            }
-            case R.id.action_view_last_finished: {
-                final long subjectId = Session.getInstance().getLastFinishedSubjectId();
-                if (subjectId != -1) {
-                    goToSubjectInfo(subjectId, Collections.emptyList(), FragmentTransitionAnimation.RTL);
+            return true;
+        }
+        if (itemId == R.id.action_session_log) {
+            goToSessionLog();
+            return true;
+        }
+        if (itemId == R.id.action_abandon_session) {
+            final Session session = Session.getInstance();
+            if (GlobalSettings.UiConfirmations.getUiConfirmAbandonSession()) {
+                final long numActive = session.getNumActiveItems();
+                final long numPending = session.getNumPendingItems();
+                final long numReported = session.getNumReportedItems();
+                final long numStarted = session.getNumStartedItems();
+                final long numNotStarted = numActive - numStarted;
+                String message = "Are you sure you want to abandon this session? If you do:";
+                if (numPending > 0) {
+                    message += String.format(Locale.ROOT, "\n- %d finished items will not be reported", numPending);
                 }
-                return true;
-            }
-            case R.id.action_back_to_presentation: {
-                Session.getInstance().goBackToPresentation();
-                if (!(this instanceof SessionActivity)) {
-                    goToActivity(SessionActivity.class);
+                if (numReported > 0) {
+                    message += String.format(Locale.ROOT, "\n- %d already finished items will still be reported", numReported);
                 }
-                return true;
-            }
-            case R.id.action_session_log: {
-                goToSessionLog();
-                return true;
-            }
-            case R.id.action_abandon_session: {
-                final Session session = Session.getInstance();
-                if (GlobalSettings.UiConfirmations.getUiConfirmAbandonSession()) {
-                    final long numActive = session.getNumActiveItems();
-                    final long numPending = session.getNumPendingItems();
-                    final long numReported = session.getNumReportedItems();
-                    final long numStarted = session.getNumStartedItems();
-                    final long numNotStarted = numActive - numStarted;
-                    String message = "Are you sure you want to abandon this session? If you do:";
-                    if (numPending > 0) {
-                        message += String.format(Locale.ROOT, "\n- %d finished items will not be reported", numPending);
-                    }
-                    if (numReported > 0) {
-                        message += String.format(Locale.ROOT, "\n- %d already finished items will still be reported", numReported);
-                    }
-                    if (numStarted > 0) {
-                        message += String.format(Locale.ROOT, "\n- %d partially quizzed items will not be reported", numStarted);
-                    }
-                    if (numNotStarted > 0) {
-                        message += String.format(Locale.ROOT, "\n- %d unquizzed items will not be reported", numNotStarted);
-                    }
-                    new AlertDialog.Builder(this)
-                            .setTitle("Abandon session?")
-                            .setMessage(message)
-                            .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", (dialog, which) -> {})
-                            .setNeutralButton("Yes and don't ask again", (dialog, which) -> safe(() -> {
-                                session.finish();
-                                Toast.makeText(this, "Session abandoned", Toast.LENGTH_SHORT).show();
-                                GlobalSettings.UiConfirmations.setUiConfirmAbandonSession(false);
-                            }))
-                            .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                                session.finish();
-                                Toast.makeText(this, "Session abandoned", Toast.LENGTH_SHORT).show();
-                            })).create().show();
+                if (numStarted > 0) {
+                    message += String.format(Locale.ROOT, "\n- %d partially quizzed items will not be reported", numStarted);
                 }
-                else {
-                    session.finish();
-                    Toast.makeText(this, "Session abandoned", Toast.LENGTH_SHORT).show();
+                if (numNotStarted > 0) {
+                    message += String.format(Locale.ROOT, "\n- %d unquizzed items will not be reported", numNotStarted);
                 }
-                return true;
-            }
-            case R.id.action_wrapup_session: {
-                final Session session = Session.getInstance();
-                if (GlobalSettings.UiConfirmations.getUiConfirmWrapupSession()) {
-                    final long numActive = session.getNumActiveItems();
-                    final long numStarted = session.getNumStartedItems();
-                    final long numNotStarted = numActive - numStarted;
-                    String message = "Are you sure you want to wrap up this session? If you do:";
-                    if (numStarted > 0) {
-                        message += String.format(Locale.ROOT, "\n- %d partially quizzed items will remain in the session", numStarted);
-                    }
-                    if (numNotStarted > 0) {
-                        message += String.format(Locale.ROOT, "\n- %d unquizzed items will be removed from the session", numNotStarted);
-                    }
-                    new AlertDialog.Builder(this)
-                            .setTitle("Wrap up session?")
-                            .setMessage(message)
-                            .setIcon(R.drawable.ic_baseline_warning_24px)
-                            .setNegativeButton("No", (dialog, which) -> {})
-                            .setNeutralButton("Yes and don't ask again", (dialog, which) -> safe(() -> {
-                                session.wrapup();
-                                Toast.makeText(this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
-                                GlobalSettings.UiConfirmations.setUiConfirmWrapupSession(false);
-                            }))
-                            .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                                session.wrapup();
-                                Toast.makeText(this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
-                            })).create().show();
-                }
-                else {
-                    session.wrapup();
-                    Toast.makeText(this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            }
-            case R.id.action_study_materials: {
-                final @Nullable Subject subject = getCurrentSubject();
-                if (subject != null && subject.getType().canHaveStudyMaterials()) {
-                    goToStudyMaterialsActivity(subject.getId());
-                }
-                return true;
-            }
-            case R.id.action_self_study: {
-                goToActivity(SelfStudyStartActivity.class);
-                return true;
-            }
-            case R.id.action_sync_now: {
-                JobRunnerService.schedule(SyncNowJob.class, "");
-                return true;
-            }
-            case R.id.action_flush_tasks: {
                 new AlertDialog.Builder(this)
-                        .setTitle("Flush background tasks?")
-                        .setMessage(renderHtml(FLUSH_TASKS_WARNING))
+                        .setTitle("Abandon session?")
+                        .setMessage(message)
                         .setIcon(R.drawable.ic_baseline_warning_24px)
-                        .setNegativeButton("No", (dialog, which) -> {})
+                        .setNegativeButton("No", (dialog, which) -> {
+                        })
+                        .setNeutralButton("Yes and don't ask again", (dialog, which) -> safe(() -> {
+                            session.finish();
+                            Toast.makeText(this, "Session abandoned", Toast.LENGTH_SHORT).show();
+                            GlobalSettings.UiConfirmations.setUiConfirmAbandonSession(false);
+                        }))
                         .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
-                            JobRunnerService.schedule(FlushTasksJob.class, "");
-                            Toast.makeText(this, "Background tasks flushed!", Toast.LENGTH_SHORT).show();
+                            session.finish();
+                            Toast.makeText(this, "Session abandoned", Toast.LENGTH_SHORT).show();
                         })).create().show();
-                return true;
+            } else {
+                session.finish();
+                Toast.makeText(this, "Session abandoned", Toast.LENGTH_SHORT).show();
             }
-            case R.id.action_about: {
-                goToActivity(AboutActivity.class);
-                return true;
+            return true;
+        }
+        if (itemId == R.id.action_wrapup_session) {
+            final Session session = Session.getInstance();
+            if (GlobalSettings.UiConfirmations.getUiConfirmWrapupSession()) {
+                final long numActive = session.getNumActiveItems();
+                final long numStarted = session.getNumStartedItems();
+                final long numNotStarted = numActive - numStarted;
+                String message = "Are you sure you want to wrap up this session? If you do:";
+                if (numStarted > 0) {
+                    message += String.format(Locale.ROOT, "\n- %d partially quizzed items will remain in the session", numStarted);
+                }
+                if (numNotStarted > 0) {
+                    message += String.format(Locale.ROOT, "\n- %d unquizzed items will be removed from the session", numNotStarted);
+                }
+                new AlertDialog.Builder(this)
+                        .setTitle("Wrap up session?")
+                        .setMessage(message)
+                        .setIcon(R.drawable.ic_baseline_warning_24px)
+                        .setNegativeButton("No", (dialog, which) -> {
+                        })
+                        .setNeutralButton("Yes and don't ask again", (dialog, which) -> safe(() -> {
+                            session.wrapup();
+                            Toast.makeText(this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
+                            GlobalSettings.UiConfirmations.setUiConfirmWrapupSession(false);
+                        }))
+                        .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                            session.wrapup();
+                            Toast.makeText(this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
+                        })).create().show();
+            } else {
+                session.wrapup();
+                Toast.makeText(this, "Session wrapping up...", Toast.LENGTH_SHORT).show();
             }
-            case R.id.action_support: {
-                goToActivity(SupportActivity.class);
-                return true;
+            return true;
+        }
+        if (itemId == R.id.action_study_materials) {
+            final @Nullable Subject subject = getCurrentSubject();
+            if (subject != null && subject.getType().canHaveStudyMaterials()) {
+                goToStudyMaterialsActivity(subject.getId());
             }
-            case R.id.action_test: {
-                Toast.makeText(this, "Test!", Toast.LENGTH_SHORT).show();
-                goToActivity(TestActivity.class);
-                return true;
-            }
-            case android.R.id.home: {
-                onBackPressed();
-                return true;
-            }
-            default:
-                break;
+            return true;
+        }
+        if (itemId == R.id.action_self_study) {
+            goToActivity(SelfStudyStartActivity.class);
+            return true;
+        }
+        if (itemId == R.id.action_sync_now) {
+            JobRunnerService.schedule(SyncNowJob.class, "");
+            return true;
+        }
+        if (itemId == R.id.action_flush_tasks) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Flush background tasks?")
+                    .setMessage(renderHtml(FLUSH_TASKS_WARNING))
+                    .setIcon(R.drawable.ic_baseline_warning_24px)
+                    .setNegativeButton("No", (dialog, which) -> {
+                    })
+                    .setPositiveButton("Yes", (dialog, which) -> safe(() -> {
+                        JobRunnerService.schedule(FlushTasksJob.class, "");
+                        Toast.makeText(this, "Background tasks flushed!", Toast.LENGTH_SHORT).show();
+                    })).create().show();
+            return true;
+        }
+        if (itemId == R.id.action_about) {
+            goToActivity(AboutActivity.class);
+            return true;
+        }
+        if (itemId == R.id.action_support) {
+            goToActivity(SupportActivity.class);
+            return true;
+        }
+        if (itemId == R.id.action_test) {
+            Toast.makeText(this, "Test!", Toast.LENGTH_SHORT).show();
+            goToActivity(TestActivity.class);
+            return true;
+        }
+        if (itemId == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

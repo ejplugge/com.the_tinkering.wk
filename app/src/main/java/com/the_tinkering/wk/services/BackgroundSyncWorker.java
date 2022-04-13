@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ import static com.the_tinkering.wk.Constants.SECOND;
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
+import javax.annotation.Nonnull;
+
 /**
  * The background worker that implements background sync.
  */
@@ -80,7 +82,7 @@ public final class BackgroundSyncWorker extends Worker {
      * @return the result of the work, always Success for this work.
      */
     @Override
-    public Result doWork() {
+    public @Nonnull Result doWork() {
         safe(() -> {
             if (GlobalSettings.Api.getEnableBackgroundSync()) {
                 final long topOfHour1 = getTopOfHour(System.currentTimeMillis());

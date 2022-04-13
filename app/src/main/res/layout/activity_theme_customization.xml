@@ -471,7 +471,6 @@
                     android:paddingEnd="4dp"
                     android:paddingRight="4dp"
                     android:text="Reset"
-                    android:onClick="resetColor"
                     style="@style/WK.Button.Borderless"
                     tools:ignore="RtlHardcoded"/>
 

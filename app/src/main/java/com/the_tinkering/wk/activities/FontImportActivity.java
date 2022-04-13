@@ -16,32 +16,6 @@
 
 package com.the_tinkering.wk.activities;
 
-import android.annotation.TargetApi;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.TableLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-
-import com.the_tinkering.wk.R;
-import com.the_tinkering.wk.WkApplication;
-import com.the_tinkering.wk.model.TypefaceConfiguration;
-import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.util.FontStorageUtil;
-import com.the_tinkering.wk.util.ViewUtil;
-import com.the_tinkering.wk.views.FontImportRowView;
-
-import java.io.InputStream;
-
-import javax.annotation.Nullable;
-
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.the_tinkering.wk.StableIds.FONT_IMPORT_RESULT_CODE;
 import static com.the_tinkering.wk.util.FontStorageUtil.flushCache;
@@ -55,11 +29,36 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static com.the_tinkering.wk.util.ObjectSupport.safeNullable;
 import static java.util.Objects.requireNonNull;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.widget.TableLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.the_tinkering.wk.R;
+import com.the_tinkering.wk.WkApplication;
+import com.the_tinkering.wk.model.TypefaceConfiguration;
+import com.the_tinkering.wk.proxy.ViewProxy;
+import com.the_tinkering.wk.util.FontStorageUtil;
+import com.the_tinkering.wk.views.FontImportRowView;
+
+import java.io.InputStream;
+
+import javax.annotation.Nullable;
+
 /**
  * An activity for importing fonts for quiz questions.
  */
 public final class FontImportActivity extends AbstractActivity {
     private final ViewProxy fontTable = new ViewProxy();
+    private final ViewProxy importFontButton = new ViewProxy();
 
     /**
      * The constructor.
@@ -71,6 +70,9 @@ public final class FontImportActivity extends AbstractActivity {
     @Override
     protected void onCreateLocal(final @Nullable Bundle savedInstanceState) {
         fontTable.setDelegate(this, R.id.fontTable);
+        importFontButton.setDelegate(this, R.id.importFontButton);
+
+        importFontButton.setOnClickListener(v -> importFont());
     }
 
     @Override
@@ -199,10 +201,8 @@ public final class FontImportActivity extends AbstractActivity {
 
     /**
      * Handler for the import button. Pop up the chooser.
-     *
-     * @param view the button.
      */
-    public void importFont(@SuppressWarnings("unused") final View view) {
+    private void importFont() {
         safe(() -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 importFontPost19();
@@ -215,12 +215,9 @@ public final class FontImportActivity extends AbstractActivity {
 
     /**
      * Handler for the show sample button. Load the font and pop up a dialog with a text sample.
-     *
-     * @param view the button.
      */
-    public void showSample(final View view) {
+    public void showSample(final @Nullable FontImportRowView row) {
         safe(() -> {
-            final @Nullable FontImportRowView row = ViewUtil.getNearestEnclosingViewOfType(view, FontImportRowView.class);
             if (row != null && row.getName() != null) {
                 try {
                     final TypefaceConfiguration typefaceConfiguration = requireNonNull(getTypefaceConfiguration(row.getName()));
@@ -251,12 +248,9 @@ public final class FontImportActivity extends AbstractActivity {
 
     /**
      * Handler for the delete button. Ask for confirmation and remove the file.
-     *
-     * @param view the button.
      */
-    public void deleteFont(final View view) {
+    public void deleteFont(final @Nullable FontImportRowView row) {
         safe(() -> {
-            final @Nullable FontImportRowView row = ViewUtil.getNearestEnclosingViewOfType(view, FontImportRowView.class);
             if (row != null && row.getName() != null) {
                 new AlertDialog.Builder(this)
                         .setTitle("Delete file?")

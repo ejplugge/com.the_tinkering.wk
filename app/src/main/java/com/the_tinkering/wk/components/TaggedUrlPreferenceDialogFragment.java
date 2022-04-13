@@ -28,6 +28,8 @@ import com.the_tinkering.wk.proxy.ViewProxy;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 import static java.util.Objects.requireNonNull;
 
+import javax.annotation.Nullable;
+
 /**
  * A custom preference that combines two related edittext preferences: a URL and a name/tag describing it.
  */
@@ -60,7 +62,7 @@ public final class TaggedUrlPreferenceDialogFragment extends PreferenceDialogFra
     }
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(final @Nullable Bundle savedInstanceState) {
         safe(() -> {
             super.onCreate(savedInstanceState);
             if (savedInstanceState == null) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+  ~ Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -97,7 +97,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start"
-                    android:onClick="start"
                     style="@style/WK.Button.Normal"/>
 
                 <Button
@@ -105,7 +104,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Stop"
-                    android:onClick="stop"
                     style="@style/WK.Button.Normal"/>
 
             </LinearLayout>

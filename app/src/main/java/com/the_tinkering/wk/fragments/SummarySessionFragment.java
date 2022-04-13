@@ -280,9 +280,9 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
             final @Nullable Object selection = incorrectStarSpinner.getSelection();
             if (selection instanceof CharSequence) {
                 int newNumStars = 0;
-                final CharSequence s = (CharSequence) selection;
-                for (int i=0; i<s.length(); i++) {
-                    if (s.charAt(i) == '★') {
+                final CharSequence cs = (CharSequence) selection;
+                for (int i=0; i<cs.length(); i++) {
+                    if (cs.charAt(i) == '★') {
                         newNumStars++;
                     }
                 }
@@ -294,9 +294,9 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
             final @Nullable Object selection = correctStarSpinner.getSelection();
             if (selection instanceof CharSequence) {
                 int newNumStars = 0;
-                final CharSequence s = (CharSequence) selection;
-                for (int i=0; i<s.length(); i++) {
-                    if (s.charAt(i) == '★') {
+                final CharSequence cs = (CharSequence) selection;
+                for (int i=0; i<cs.length(); i++) {
+                    if (cs.charAt(i) == '★') {
                         newNumStars++;
                     }
                 }
@@ -409,7 +409,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
             return;
         }
 
-        final int total = (int) session.getNumPendingItems();
+        final int total = session.getNumPendingItems();
         finishProgressBar.setMax(total);
         finishProgressBar.setProgress(0);
         finishProgressBar.setVisibility(View.VISIBLE);

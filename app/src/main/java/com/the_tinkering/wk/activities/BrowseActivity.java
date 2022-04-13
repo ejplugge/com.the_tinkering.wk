@@ -63,7 +63,7 @@ public final class BrowseActivity extends AbstractActivity {
 
             final long id = getIntent().getLongExtra("id", -1);
             if (id > 0) {
-                @Nullable long[] ids = getIntent().getLongArrayExtra("ids");
+                long[] ids = getIntent().getLongArrayExtra("ids");
                 if (ids == null) {
                     ids = new long[0];
                 }

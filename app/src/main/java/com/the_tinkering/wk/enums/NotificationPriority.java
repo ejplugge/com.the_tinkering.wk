@@ -21,7 +21,7 @@ import androidx.core.app.NotificationCompat;
 /**
  * Priority setting for notifications.
  */
-@SuppressWarnings({"JavaDoc", "unused"})
+@SuppressWarnings("unused")
 public enum NotificationPriority {
     MIN(1, NotificationCompat.PRIORITY_MIN),
     LOW(2, NotificationCompat.PRIORITY_LOW),

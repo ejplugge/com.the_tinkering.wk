@@ -76,7 +76,7 @@ import static com.the_tinkering.wk.util.TextUtil.renderHtml;
  */
 public final class PreferencesFragment extends PreferenceFragmentCompat {
     @Override
-    public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
+    public void onCreatePreferences(final @Nullable Bundle savedInstanceState, final @Nullable String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
     }
 

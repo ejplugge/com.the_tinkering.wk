@@ -40,10 +40,8 @@ import static com.the_tinkering.wk.util.ObjectSupport.safe;
  */
 public abstract class HeaderItemViewHolder extends ResultItemViewHolder implements View.OnClickListener {
     private final ViewProxy arrowHead = new ViewProxy();
-    @SuppressWarnings("JavaDoc")
     protected final ViewProxy title = new ViewProxy();
     private final ViewProxy details = new ViewProxy();
-    @SuppressWarnings("JavaDoc")
     protected int total = 0;
     private int locked = 0;
     private int initial = 0;

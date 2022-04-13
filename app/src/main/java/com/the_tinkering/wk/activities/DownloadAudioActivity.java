@@ -16,8 +16,13 @@
 
 package com.the_tinkering.wk.activities;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.the_tinkering.wk.Constants.DELETE_AUDIO_WARNING;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static com.the_tinkering.wk.util.TextUtil.renderHtml;
+
 import android.os.Bundle;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
@@ -38,12 +43,6 @@ import com.the_tinkering.wk.views.DownloadAudioBracketView;
 import java.util.Collection;
 
 import javax.annotation.Nullable;
-
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.the_tinkering.wk.Constants.DELETE_AUDIO_WARNING;
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
-import static com.the_tinkering.wk.util.TextUtil.renderHtml;
 
 /**
  * An activity for starting background downloads of pronunciation audio files.
@@ -77,6 +76,11 @@ public final class DownloadAudioActivity extends AbstractActivity {
         downloadAudioView.setDelegate(this, R.id.downloadAudioView);
 
         JobRunnerService.schedule(ScanAudioDownloadStatusJob.class, "");
+
+        moveButton.setOnClickListener(v -> onMove());
+        abortMoveButton.setOnClickListener(v -> onAbortMove());
+        cancelButton.setOnClickListener(v -> onCancel());
+        deleteButton.setOnClickListener(v -> onDelete());
 
         LiveAudioDownloadStatus.getInstance().observe(this, t -> safe(() -> {
             if (t != null) {
@@ -169,20 +173,16 @@ public final class DownloadAudioActivity extends AbstractActivity {
 
     /**
      * Handler for the abort button.
-     *
-     * @param view the button
      */
     @SuppressWarnings("MethodMayBeStatic")
-    public void onCancel(@SuppressWarnings("unused") final View view) {
+    private void onCancel() {
         safe(() -> JobRunnerService.schedule(AbortAudioDownloadJob.class, ""));
     }
 
     /**
      * Handler for the delete button.
-     *
-     * @param view the button
      */
-    public void onDelete(@SuppressWarnings("unused") final View view) {
+    private void onDelete() {
         safe(() -> new AlertDialog.Builder(this)
                 .setTitle("Delete all audio?")
                 .setMessage(renderHtml(DELETE_AUDIO_WARNING))
@@ -194,10 +194,8 @@ public final class DownloadAudioActivity extends AbstractActivity {
 
     /**
      * Handler for the move button.
-     *
-     * @param view the button
      */
-    public void onMove(@SuppressWarnings("unused") final View view) {
+    private void onMove() {
         safe(() -> {
             LiveAudioMoveStatus.getInstance().setActive(true);
             LiveAudioMoveStatus.getInstance().setNumDone(0);
@@ -230,11 +228,9 @@ public final class DownloadAudioActivity extends AbstractActivity {
 
     /**
      * Handler for the abort move button.
-     *
-     * @param view the button
      */
     @SuppressWarnings("MethodMayBeStatic")
-    public void onAbortMove(@SuppressWarnings("unused") final View view) {
+    private void onAbortMove() {
         safe(() -> {
             LiveAudioMoveStatus.getInstance().setActive(false);
             LiveAudioMoveStatus.getInstance().forceUpdate();

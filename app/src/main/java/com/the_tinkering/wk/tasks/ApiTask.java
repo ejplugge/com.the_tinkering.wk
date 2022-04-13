@@ -188,7 +188,6 @@ public abstract class ApiTask {
             }
             // Wait a bit, and then try again.
             final @Nullable JsonNode result = safeNullable(() -> {
-                //noinspection BusyWait
                 Thread.sleep(delay);
                 return getApiCall(uri);
             });
@@ -321,7 +320,6 @@ public abstract class ApiTask {
             }
             // Wait a bit, and then try again.
             final @Nullable JsonNode result = safeNullable(() -> {
-                //noinspection BusyWait
                 Thread.sleep(delay);
                 return postApiCall(uri, method, requestBody);
             });

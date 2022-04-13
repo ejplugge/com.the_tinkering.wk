@@ -70,7 +70,7 @@ public final class GetUserTask extends ApiTask {
             db.resetDatabase();
         }
 
-        final @Nullable int oldLevel = db.propertiesDao().getUserLevel();
+        final int oldLevel = db.propertiesDao().getUserLevel();
         if (oldLevel != user.getLevel()) {
             db.propertiesDao().setUserLevel(user.getLevel());
             db.propertiesDao().setForceLateRefresh(true);

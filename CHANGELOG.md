@@ -1,5 +1,7 @@
 
-### Version 2.3.0, 2020-XX-XX:
+### Version 2.3.0, 2022-XX-XX:
+
+- Update for Android 12 compatibility (to avoid the app being downrated as obsolete in the Play Store)
 
 ### Version 2.2.0, 2020-08-02:
 
@@ -737,4 +739,3 @@ Re-done changes from 1.16:
 - Added an option "meaning before reading"
 
 - A few layout and colour improvements
-

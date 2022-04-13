@@ -61,13 +61,13 @@
             android:text="There was an error talking to the WaniKani servers"/>
 
         <Button
+            android:id="@+id/retryApiErrorButton1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:onClick="retryApiError"
             android:text="Retry"/>
 
     </LinearLayout>
@@ -98,6 +98,7 @@
             android:text="WaniKani is not accepting your API token. Did you give your API token the correct permissions?"/>
 
         <Button
+            android:id="@+id/retryApiErrorButton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -105,10 +106,10 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="center_vertical"
-            android:onClick="retryApiError"
             android:text="Retry"/>
 
         <Button
+            android:id="@+id/goToSettingsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -116,7 +117,6 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="center_vertical"
-            android:onClick="goToSettings"
             android:text="Settings"/>
 
     </LinearLayout>
@@ -149,20 +149,20 @@
             style="@style/WK.TextView.CustomToast"/>
 
         <Button
+            android:id="@+id/viewKeyboardHelpButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/keyboardHelpLabel"
-            android:onClick="viewKeyboardHelp"
             android:text="View"
             style="@style/WK.Button.Borderless.CustomToast"/>
 
         <Button
+            android:id="@+id/dismissKeyboardHelpButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/keyboardHelpLabel"
-            android:onClick="dismissKeyboardHelp"
             android:text="Dismiss"
             style="@style/WK.Button.Borderless.CustomToast"/>
 

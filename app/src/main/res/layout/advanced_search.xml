@@ -161,7 +161,7 @@
             android:text="Only leeches:"
             style="@style/WK.TextView.Normal"/>
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/limitToLeeches"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -430,7 +430,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating0"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="☆ ☆ ☆ ☆ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starRating0" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/starRating0" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -438,7 +438,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating1"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ☆ ☆ ☆ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starRating1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/starRating1" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -446,7 +446,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating2"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ★ ☆ ☆ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starRating2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/starRating2" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -454,7 +454,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating3"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ★ ★ ☆ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starRating3" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/starRating3" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -462,7 +462,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating4"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ★ ★ ★ ☆:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starRating4" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/starRating4" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -470,7 +470,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/starRating5"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="★ ★ ★ ★ ★:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/starRating5" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/starRating5" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -495,7 +495,7 @@
         <TextView android:id="@+id/srsStage00Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage00"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 00:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage00" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage00" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -503,7 +503,7 @@
         <TextView android:id="@+id/srsStage01Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage01"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 01:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage01" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage01" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -511,7 +511,7 @@
         <TextView android:id="@+id/srsStage02Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage02"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 02:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage02" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage02" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -519,7 +519,7 @@
         <TextView android:id="@+id/srsStage03Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage03"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 03:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage03" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage03" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -527,7 +527,7 @@
         <TextView android:id="@+id/srsStage04Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage04"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 04:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage04" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage04" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -535,7 +535,7 @@
         <TextView android:id="@+id/srsStage05Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage05"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 05:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage05" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage05" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -543,7 +543,7 @@
         <TextView android:id="@+id/srsStage06Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage06"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 06:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage06" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage06" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -551,7 +551,7 @@
         <TextView android:id="@+id/srsStage07Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage07"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 07:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage07" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage07" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -559,7 +559,7 @@
         <TextView android:id="@+id/srsStage08Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage08"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 08:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage08" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage08" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -567,7 +567,7 @@
         <TextView android:id="@+id/srsStage09Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage09"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 09:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage09" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage09" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -575,7 +575,7 @@
         <TextView android:id="@+id/srsStage10Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage10"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 10:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage10" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage10" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -583,7 +583,7 @@
         <TextView android:id="@+id/srsStage11Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage11"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 11:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage11" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage11" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -591,7 +591,7 @@
         <TextView android:id="@+id/srsStage12Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage12"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 12:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage12" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage12" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -599,7 +599,7 @@
         <TextView android:id="@+id/srsStage13Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage13"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 13:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage13" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage13" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -607,7 +607,7 @@
         <TextView android:id="@+id/srsStage14Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage14"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 14:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage14" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage14" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -615,7 +615,7 @@
         <TextView android:id="@+id/srsStage15Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage15"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 15:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage15" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage15" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -623,7 +623,7 @@
         <TextView android:id="@+id/srsStage16Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage16"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 16:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage16" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage16" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -631,7 +631,7 @@
         <TextView android:id="@+id/srsStage17Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage17"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 17:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage17" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage17" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -639,7 +639,7 @@
         <TextView android:id="@+id/srsStage18Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage18"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 18:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage18" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage18" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -647,7 +647,7 @@
         <TextView android:id="@+id/srsStage19Label" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom" android:labelFor="@id/srsStage19"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Stage 19:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/srsStage19" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/srsStage19" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -672,7 +672,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Radical:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/itemTypeRadical" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/itemTypeRadical" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -680,7 +680,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Kanji:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/itemTypeKanji" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/itemTypeKanji" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -688,7 +688,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Vocabulary:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/itemTypeVocabulary" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/itemTypeVocabulary" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -713,7 +713,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="None:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/jlptLevelNone" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/jlptLevelNone" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -721,7 +721,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="N5:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/jlptLevelN5" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/jlptLevelN5" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -729,7 +729,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="N4:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/jlptLevelN4" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/jlptLevelN4" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -737,7 +737,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="N3:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/jlptLevelN3" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/jlptLevelN3" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -745,7 +745,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="N2:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/jlptLevelN2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/jlptLevelN2" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -753,7 +753,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="N1:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/jlptLevelN1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/jlptLevelN1" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -778,7 +778,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="None:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/joyoGradeNone" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/joyoGradeNone" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -786,7 +786,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="1:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/joyoGrade1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/joyoGrade1" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -794,7 +794,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="2:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/joyoGrade2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/joyoGrade2" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -802,7 +802,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="3:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/joyoGrade3" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/joyoGrade3" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -810,7 +810,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="4:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/joyoGrade4" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/joyoGrade4" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -818,7 +818,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="5:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/joyoGrade5" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/joyoGrade5" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -826,7 +826,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="6:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/joyoGrade6" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/joyoGrade6" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 
@@ -834,7 +834,7 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="end|bottom" android:gravity="end|bottom"
             android:layout_marginRight="4dp" android:layout_marginEnd="4dp" android:text="Middle school:" style="@style/WK.TextView.Normal"/>
-        <Switch android:id="@+id/joyoGrade7" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/joyoGrade7" android:layout_width="wrap_content" android:layout_height="wrap_content"
             style="@style/WK.Switch.Normal" android:layout_gravity="start|bottom"/>
     </TableRow>
 

@@ -618,7 +618,7 @@ public final class PseudoIme {
         }
 
         @Override
-        public CharSequence subSequence(final int start, final int end) {
+        public @Nonnull CharSequence subSequence(final int start, final int end) {
             return value.subSequence(start, end);
         }
 

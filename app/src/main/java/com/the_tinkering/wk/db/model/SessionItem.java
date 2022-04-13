@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.enums.SessionItemState.ABANDONED;
@@ -595,7 +596,7 @@ public final class SessionItem {
     }
 
     @Override
-    public String toString() {
+    public @Nonnull String toString() {
         return Long.toString(id);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Ernst Jan Plugge <rmc@dds.nl>
+ * Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,7 +144,7 @@ public final class SubjectInfoFragment extends AbstractFragment implements Swipi
         if (currentSubject == null || activity == null || args == null) {
             return;
         }
-        final @Nullable long[] ids = args.getLongArray("ids");
+        final long[] ids = args.getLongArray("ids");
         if (ids == null) {
             return;
         }
@@ -163,7 +163,7 @@ public final class SubjectInfoFragment extends AbstractFragment implements Swipi
         if (currentSubject == null || activity == null || args == null) {
             return;
         }
-        final @Nullable long[] ids = args.getLongArray("ids");
+        final long[] ids = args.getLongArray("ids");
         if (ids == null) {
             return;
         }

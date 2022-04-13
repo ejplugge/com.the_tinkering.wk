@@ -46,7 +46,7 @@ public final class SubjectContentProvider extends ContentProvider {
         return true;
     }
 
-    @SuppressWarnings("RedundantSuppression")
+    @SuppressWarnings({"RedundantSuppression", "ConstantConditions"})
     @Override
     public Cursor query(final Uri uri,
                         final @Nullable String[] projection,
