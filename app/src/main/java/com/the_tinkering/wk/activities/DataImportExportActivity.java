@@ -59,6 +59,9 @@ public final class DataImportExportActivity extends AbstractActivity {
     private final ViewProxy exportStarRatings = new ViewProxy();
     private final ViewProxy importStarRatings = new ViewProxy();
 
+    private @Nullable ActivityResultLauncher<Intent> searchPresetsActivityResultLauncher = null;
+    private @Nullable ActivityResultLauncher<Intent> starRatingsActivityResultLauncher = null;
+
     /**
      * The constructor.
      */
@@ -77,6 +80,22 @@ public final class DataImportExportActivity extends AbstractActivity {
         importSearchPresets.setOnClickListener(v -> safe(this::importSearchPresets));
         exportStarRatings.setOnClickListener(v -> safe(this::exportStarRatings));
         importStarRatings.setOnClickListener(v -> safe(this::importStarRatings));
+
+        searchPresetsActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        importSearchPresetsResult(result.getData().getData());
+                    }
+                });
+
+        starRatingsActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        importStarRatingsResult(result.getData().getData());
+                    }
+                });
     }
 
     @Override
@@ -159,15 +178,9 @@ public final class DataImportExportActivity extends AbstractActivity {
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
-                        importSearchPresetsResult(result.getData().getData());
-                    }
-                });
-
-        activityResultLauncher.launch(intent);
+        if (searchPresetsActivityResultLauncher != null) {
+            searchPresetsActivityResultLauncher.launch(intent);
+        }
     }
 
     private void importSearchPresetsPre19() {
@@ -175,15 +188,9 @@ public final class DataImportExportActivity extends AbstractActivity {
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
-                        importSearchPresetsResult(result.getData().getData());
-                    }
-                });
-
-        activityResultLauncher.launch(Intent.createChooser(intent, "Select a search presets JSON file to import"));
+        if (searchPresetsActivityResultLauncher != null) {
+            searchPresetsActivityResultLauncher.launch(Intent.createChooser(intent, "Select a search presets JSON file to import"));
+        }
     }
 
     private void importSearchPresets() {
@@ -264,15 +271,9 @@ public final class DataImportExportActivity extends AbstractActivity {
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
-                        importStarRatingsResult(result.getData().getData());
-                    }
-                });
-
-        activityResultLauncher.launch(intent);
+        if (starRatingsActivityResultLauncher != null) {
+            starRatingsActivityResultLauncher.launch(intent);
+        }
     }
 
     private void importStarRatingsPre19() {
@@ -280,15 +281,9 @@ public final class DataImportExportActivity extends AbstractActivity {
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
-                        importStarRatingsResult(result.getData().getData());
-                    }
-                });
-
-        activityResultLauncher.launch(Intent.createChooser(intent, "Select a star ratings JSON file to import"));
+        if (starRatingsActivityResultLauncher != null) {
+            starRatingsActivityResultLauncher.launch(Intent.createChooser(intent, "Select a star ratings JSON file to import"));
+        }
     }
 
     private void importStarRatings() {
