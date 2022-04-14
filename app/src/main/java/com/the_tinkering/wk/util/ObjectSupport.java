@@ -480,7 +480,10 @@ public final class ObjectSupport {
     }
 
     @SuppressWarnings("unused")
-    public static Map<String, Object> extractBundle(final Bundle bundle) {
+    public static @Nullable Map<String, Object> extractBundle(final @Nullable Bundle bundle) {
+        if (bundle == null) {
+            return null;
+        }
         final Map<String, Object> result = new HashMap<>();
         for (final String key: bundle.keySet()) {
             result.put(key, bundle.get(key));
