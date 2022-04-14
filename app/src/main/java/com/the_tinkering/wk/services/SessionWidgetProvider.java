@@ -16,6 +16,11 @@
 
 package com.the_tinkering.wk.services;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static com.the_tinkering.wk.Constants.DAY;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -44,11 +49,6 @@ import java.util.Locale;
 import java.util.concurrent.Semaphore;
 
 import javax.annotation.Nullable;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static com.the_tinkering.wk.Constants.DAY;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * Implementation of the app widget.
@@ -85,11 +85,9 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
         final AppWidgetManager manager = AppWidgetManager.getInstance(context);
         final ComponentName name = new ComponentName(context, SessionWidgetProvider.class);
         final Intent intent = new Intent(context, MainActivity.class);
-        final int flags;
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            flags = PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            flags = 0;
+            flags |= PendingIntent.FLAG_IMMUTABLE;
         }
         final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, flags);
 
