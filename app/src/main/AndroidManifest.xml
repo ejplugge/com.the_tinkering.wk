@@ -176,13 +176,9 @@
         <receiver android:name=".services.BackgroundAlarmReceiverPost19"/>
         <receiver android:name=".services.BackgroundAlarmReceiverPost23"/>
 
-        <receiver android:name=".services.SessionWidgetProvider"
-            android:exported="false">
+        <receiver android:name=".services.SessionWidgetProvider" android:exported="true">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
-                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
-                <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_OPTIONS_CHANGED" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/session_appwidget_info" />

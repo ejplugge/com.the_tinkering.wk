@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright 2019-2022 Ernst Jan Plugge <rmc@dds.nl>
   ~
@@ -15,11 +16,14 @@
   -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:initialKeyguardLayout="@layout/session_appwidget"
+    android:initialLayout="@layout/session_appwidget"
     android:minWidth="40dp"
     android:minHeight="40dp"
     android:targetCellWidth="1"
     android:targetCellHeight="1"
-    android:updatePeriodMillis="0"
     android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="3600000"
+    android:widgetCategory="home_screen"
     tools:ignore="UnusedAttribute">
 </appwidget-provider>

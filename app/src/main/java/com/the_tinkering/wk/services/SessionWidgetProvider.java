@@ -261,24 +261,4 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
     public void onAppWidgetOptionsChanged(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId, final Bundle newOptions) {
         safe(SessionWidgetProvider::processAlarmWithWakeLock);
     }
-
-    @Override
-    public void onDeleted(final Context context, final int[] appWidgetIds) {
-        safe(SessionWidgetProvider::processAlarmWithWakeLock);
-    }
-
-    @Override
-    public void onEnabled(final Context context) {
-        safe(SessionWidgetProvider::processAlarmWithWakeLock);
-    }
-
-    @Override
-    public void onDisabled(final Context context) {
-        safe(SessionWidgetProvider::processAlarmWithWakeLock);
-    }
-
-    @Override
-    public void onRestored(final Context context, final int[] oldWidgetIds, final int[] newWidgetIds) {
-        safe(SessionWidgetProvider::processAlarmWithWakeLock);
-    }
 }
