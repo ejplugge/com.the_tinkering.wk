@@ -21,6 +21,7 @@ import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiAssignment;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.TaskDefinition;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
@@ -97,7 +98,7 @@ public final class GetPatchedAssignmentsTask extends ApiTask {
             LiveCriticalCondition.getInstance().update();
             LiveBurnedItems.getInstance().update();
             LiveLevelDuration.getInstance().forceUpdate();
-            BackgroundAlarmReceiver.processAlarm(null);
+            LiveAlertContext.getInstance().update();
         }
     }
 }

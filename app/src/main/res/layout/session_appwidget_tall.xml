@@ -31,6 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="0"
+        android:paddingTop="4dp"
         android:gravity="center"
         android:visibility="gone"
         android:textColor="@color/wkDarkColorPrimary"

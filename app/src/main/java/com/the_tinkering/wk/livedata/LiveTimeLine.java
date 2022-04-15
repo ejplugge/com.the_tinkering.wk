@@ -16,6 +16,9 @@
 
 package com.the_tinkering.wk.livedata;
 
+import static com.the_tinkering.wk.Constants.DAY;
+import static com.the_tinkering.wk.Constants.HOUR;
+
 import android.annotation.SuppressLint;
 
 import com.the_tinkering.wk.GlobalSettings;
@@ -23,15 +26,11 @@ import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.model.TimeLine;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.util.AudioUtil;
 import com.the_tinkering.wk.util.PitchInfoUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static com.the_tinkering.wk.Constants.DAY;
-import static com.the_tinkering.wk.Constants.HOUR;
 
 /**
  * LiveData that tracks available and uncoming lessons and reviews, for the dashboard.
@@ -96,10 +95,6 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
         }
 
         instance.postValue(timeLine);
-
-        if (db.propertiesDao().getNotificationSet() && !timeLine.hasAvailableLessons() && !timeLine.hasAvailableReviews()) {
-            BackgroundAlarmReceiver.processAlarm(null);
-        }
 
         if (GlobalSettings.Api.getAutoDownloadAudio()) {
             final long lastAudioScanDate = db.propertiesDao().getLastAudioScanDate();

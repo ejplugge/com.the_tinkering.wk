@@ -16,20 +16,6 @@
 
 package com.the_tinkering.wk.jobs;
 
-import com.the_tinkering.wk.GlobalSettings;
-import com.the_tinkering.wk.WkApplication;
-import com.the_tinkering.wk.api.ApiState;
-import com.the_tinkering.wk.db.AppDatabase;
-import com.the_tinkering.wk.enums.OnlineStatus;
-import com.the_tinkering.wk.livedata.LiveApiState;
-import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
-import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.model.TimeLine;
-import com.the_tinkering.wk.services.ApiTaskService;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
-import com.the_tinkering.wk.util.DbLogger;
-import com.the_tinkering.wk.util.Logger;
-
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.Constants.MINUTE;
@@ -37,6 +23,20 @@ import static com.the_tinkering.wk.Constants.REFERENCE_DATA_VERSION;
 import static com.the_tinkering.wk.Constants.WEEK;
 import static com.the_tinkering.wk.enums.OnlineStatus.NO_CONNECTION;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
+import com.the_tinkering.wk.GlobalSettings;
+import com.the_tinkering.wk.WkApplication;
+import com.the_tinkering.wk.api.ApiState;
+import com.the_tinkering.wk.db.AppDatabase;
+import com.the_tinkering.wk.enums.OnlineStatus;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
+import com.the_tinkering.wk.livedata.LiveApiState;
+import com.the_tinkering.wk.livedata.LiveFirstTimeSetup;
+import com.the_tinkering.wk.livedata.LiveTimeLine;
+import com.the_tinkering.wk.model.TimeLine;
+import com.the_tinkering.wk.services.ApiTaskService;
+import com.the_tinkering.wk.util.DbLogger;
+import com.the_tinkering.wk.util.Logger;
 
 /**
  * Abstract base class for background jobs. These are actions that need to
@@ -169,7 +169,7 @@ public abstract class Job {
         }
         if (timeLineNeedsUpdate) {
             LiveTimeLine.getInstance().update();
-            BackgroundAlarmReceiver.processAlarm(null);
+            LiveAlertContext.getInstance().update();
             currentHour = nowHour;
             currentMinute = nowMinute;
         }

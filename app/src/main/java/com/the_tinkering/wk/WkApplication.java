@@ -37,6 +37,7 @@ import com.the_tinkering.wk.enums.OnlineStatus;
 import com.the_tinkering.wk.enums.SessionType;
 import com.the_tinkering.wk.enums.SubjectInfoDump;
 import com.the_tinkering.wk.jobs.NetworkStateChangedJob;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.livedata.LiveAudioDownloadStatus;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
@@ -56,6 +57,7 @@ import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.livedata.LiveVacationMode;
 import com.the_tinkering.wk.livedata.LiveWorkInfos;
 import com.the_tinkering.wk.model.Session;
+import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.util.AsyncTask;
 import com.the_tinkering.wk.util.DbLogger;
@@ -122,6 +124,7 @@ public final class WkApplication extends MultiDexApplication {
 
         LiveFirstTimeSetup.getInstance().observeForever(t -> safe(() -> {
             LiveTimeLine.getInstance().ping();
+            LiveAlertContext.getInstance().ping();
             LiveSrsBreakDown.getInstance().ping();
             LiveRecentUnlocks.getInstance().ping();
             LiveCriticalCondition.getInstance().ping();
@@ -342,6 +345,9 @@ public final class WkApplication extends MultiDexApplication {
                 if (LiveSessionProgress.getInstance().hasNullValue()) {
                     LiveSessionProgress.getInstance().update();
                 }
+                if (LiveAlertContext.getInstance().hasNullValue()) {
+                    LiveAlertContext.getInstance().update();
+                }
 
                 Session.getInstance().load();
             });
@@ -351,7 +357,7 @@ public final class WkApplication extends MultiDexApplication {
 
         @Override
         public void onPostExecute(final @Nullable Void result) {
-            //
+            LiveAlertContext.getInstance().observeForever(BackgroundAlarmReceiver::processAlarm);
         }
 
         @Override

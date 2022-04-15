@@ -16,26 +16,26 @@
 
 package com.the_tinkering.wk.jobs;
 
+import static com.the_tinkering.wk.Constants.SECOND;
+import static com.the_tinkering.wk.enums.SessionItemState.REPORTED;
+import static com.the_tinkering.wk.enums.SessionType.LESSON;
+import static com.the_tinkering.wk.enums.SessionType.REVIEW;
+import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
+
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.SessionType;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.SrsSystem;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.Constants.SECOND;
-import static com.the_tinkering.wk.enums.SessionItemState.REPORTED;
-import static com.the_tinkering.wk.enums.SessionType.LESSON;
-import static com.the_tinkering.wk.enums.SessionType.REVIEW;
-import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 
 /**
  * Job to report a session item as finished normally (not abandoned).
@@ -222,7 +222,7 @@ public final class ReportSessionItemJob extends Job {
                 LiveTimeLine.getInstance().update();
                 LiveSrsBreakDown.getInstance().update();
                 LiveLevelProgress.getInstance().update();
-                BackgroundAlarmReceiver.processAlarm(null);
+                LiveAlertContext.getInstance().update();
             }
         }
 
@@ -235,7 +235,7 @@ public final class ReportSessionItemJob extends Job {
                 LiveLevelProgress.getInstance().update();
                 LiveCriticalCondition.getInstance().update();
                 LiveBurnedItems.getInstance().update();
-                BackgroundAlarmReceiver.processAlarm(null);
+                LiveAlertContext.getInstance().update();
             }
         }
 

@@ -16,6 +16,13 @@
 
 package com.the_tinkering.wk.tasks;
 
+import static com.the_tinkering.wk.Constants.API_RETRY_DELAY;
+import static com.the_tinkering.wk.Constants.MINUTE;
+import static com.the_tinkering.wk.Constants.NUM_API_TRIES;
+import static com.the_tinkering.wk.enums.SessionType.LESSON;
+import static com.the_tinkering.wk.enums.SessionType.REVIEW;
+import static com.the_tinkering.wk.util.ObjectSupport.orElse;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
@@ -27,6 +34,7 @@ import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.db.model.TaskDefinition;
 import com.the_tinkering.wk.enums.SessionType;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
@@ -37,19 +45,11 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.util.Logger;
 
 import java.util.Locale;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.Constants.API_RETRY_DELAY;
-import static com.the_tinkering.wk.Constants.MINUTE;
-import static com.the_tinkering.wk.Constants.NUM_API_TRIES;
-import static com.the_tinkering.wk.enums.SessionType.LESSON;
-import static com.the_tinkering.wk.enums.SessionType.REVIEW;
-import static com.the_tinkering.wk.util.ObjectSupport.orElse;
 
 /**
  * Task to report a completed session item to the API. In case of a lesson
@@ -157,7 +157,7 @@ public final class ReportSessionItemTask extends ApiTask {
                             LiveCriticalCondition.getInstance().update();
                             LiveBurnedItems.getInstance().update();
                             LiveLevelDuration.getInstance().forceUpdate();
-                            BackgroundAlarmReceiver.processAlarm(null);
+                            LiveAlertContext.getInstance().update();
                         }
                     } catch (final Exception e) {
                         LOGGER.error(e, "Error parsing start-assignment response");
@@ -213,7 +213,7 @@ public final class ReportSessionItemTask extends ApiTask {
                 LiveCriticalCondition.getInstance().update();
                 LiveBurnedItems.getInstance().update();
                 LiveLevelDuration.getInstance().forceUpdate();
-                BackgroundAlarmReceiver.processAlarm(null);
+                LiveAlertContext.getInstance().update();
             }
         }
 

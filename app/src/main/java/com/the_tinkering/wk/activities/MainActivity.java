@@ -25,6 +25,7 @@ import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.jobs.RetryApiErrorJob;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
@@ -206,7 +207,7 @@ public final class MainActivity extends AbstractActivity {
             LiveTimeLine.getInstance().forceUpdate();
             LiveJoyoProgress.getInstance().forceUpdate();
             LiveJlptProgress.getInstance().forceUpdate();
-            BackgroundAlarmReceiver.processAlarm(null);
+            LiveAlertContext.getInstance().update();
         });
 
         keyboardHelpView.setVisibility(!GlobalSettings.Tutorials.getKeyboardHelpDismissed());

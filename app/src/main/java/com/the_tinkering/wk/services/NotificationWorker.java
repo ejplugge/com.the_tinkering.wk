@@ -16,14 +16,16 @@
 
 package com.the_tinkering.wk.services;
 
+import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -39,13 +41,8 @@ import com.the_tinkering.wk.model.AlertContext;
 import com.the_tinkering.wk.util.Logger;
 
 import java.util.Locale;
-import java.util.concurrent.Semaphore;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 /**
  * The worker that sets or cancels notifications as needed.
@@ -131,11 +128,15 @@ public final class NotificationWorker {
 
     private static void processAlarmHelper(final AlertContext ctx) {
         if (GlobalSettings.Other.getEnableNotifications()) {
+            final AppDatabase db = WkApplication.getDatabase();
             final NotificationUpdateFrequency frequency = GlobalSettings.Other.getNotificationUpdateFrequency();
             final long topOfHour1 = getTopOfHour(System.currentTimeMillis());
             boolean needsPost = false;
             boolean needsSound = false;
-            final AlertContext lastCtx = WkApplication.getDatabase().propertiesDao().getLastNotificationAlertContext();
+            if (db.propertiesDao().getNotificationSet() && ctx.getNumLessons() == 0 && ctx.getNumReviews() == 0) {
+                needsPost = true;
+            }
+            final AlertContext lastCtx = db.propertiesDao().getLastNotificationAlertContext();
             if (ctx.getNewestAvailableAt() > lastCtx.getNewestAvailableAt()) {
                 needsPost = true;
                 needsSound = true;
@@ -147,7 +148,7 @@ public final class NotificationWorker {
                 case ONLY_NEW_REVIEWS:
                     break;
                 case ONCE_PER_HOUR: {
-                    final long topOfHour2 = WkApplication.getDatabase().propertiesDao().getLastNotificationUpdate();
+                    final long topOfHour2 = db.propertiesDao().getLastNotificationUpdate();
                     if (topOfHour1 != topOfHour2 && (lastCtx.getNumLessons() != ctx.getNumLessons()
                             || lastCtx.getNumReviews() != ctx.getNumReviews())) {
                         needsPost = true;
@@ -163,8 +164,8 @@ public final class NotificationWorker {
             }
             if (needsPost) {
                 LOGGER.info("Notification update starts: %s %s", ctx.getNumLessons(), ctx.getNumReviews());
-                WkApplication.getDatabase().propertiesDao().setLastNotificationUpdate(topOfHour1);
-                WkApplication.getDatabase().propertiesDao().setLastNotificationAlertContext(ctx);
+                db.propertiesDao().setLastNotificationUpdate(topOfHour1);
+                db.propertiesDao().setLastNotificationAlertContext(ctx);
                 postOrCancelNotification(needsSound, ctx);
                 LOGGER.info("Notification update ends");
             }
@@ -176,12 +177,8 @@ public final class NotificationWorker {
      * widgets and/or notifications. Always runs on a background thread.
      *
      * @param ctx the details for the notifications
-     * @param semaphore the method will call release() on this semaphone when the work is done
      */
-    public static void processAlarm(final AlertContext ctx, final Semaphore semaphore) {
-        safe(() -> new Handler(Looper.getMainLooper()).post(() -> {
-            safe(() -> processAlarmHelper(ctx));
-            semaphore.release();
-        }));
+    public static void processAlarm(final AlertContext ctx) {
+        safe(() -> processAlarmHelper(ctx));
     }
 }

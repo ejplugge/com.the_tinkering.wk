@@ -20,6 +20,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.util.ObjectSupport.extractBundle;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 import android.annotation.SuppressLint;
@@ -32,22 +33,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.PowerManager;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
-import com.the_tinkering.wk.Constants;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.activities.MainActivity;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.model.AlertContext;
 import com.the_tinkering.wk.util.Logger;
 import com.the_tinkering.wk.util.TextUtil;
 
 import java.util.Locale;
-import java.util.concurrent.Semaphore;
 
 import javax.annotation.Nullable;
 
@@ -196,17 +193,6 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    private static void processAlarmWithWakeLock() {
-        @Nullable PowerManager.WakeLock wl = null;
-        final @Nullable PowerManager pm = (PowerManager) WkApplication.getInstance().getSystemService(Context.POWER_SERVICE);
-        if (pm != null) {
-            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "wk:wkw");
-            wl.acquire(Constants.MINUTE);
-        }
-
-        BackgroundAlarmReceiver.processAlarm(wl);
-    }
-
     /**
      * Does this device have any instances of the widget deployed?.
      *
@@ -229,38 +215,36 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
      * widgets and/or notifications. Always runs on a background thread.
      *
      * @param ctx the details for the widgets
-     * @param semaphore the method will call release() on this semaphone when the work is done
      */
-    public static void processAlarm(final AlertContext ctx, final Semaphore semaphore) {
-        safe(() -> new Handler(Looper.getMainLooper()).post(() -> {
-            safe(() -> {
-                if (hasWidgets()) {
-                    final AlertContext lastCtx = WkApplication.getDatabase().propertiesDao().getLastWidgetAlertContext();
-                    if (lastCtx.getNumLessons() != ctx.getNumLessons()
-                            || lastCtx.getNumReviews() != ctx.getNumReviews()
-                            || lastCtx.getUpcomingAvailableAt() != ctx.getUpcomingAvailableAt()
-                            || !widgetUpdatedThisProcess) {
-                        LOGGER.info("Widget update starts: %s %s '%s'", ctx.getNumLessons(), ctx.getNumReviews(),
-                                TextUtil.formatTimestampForApi(ctx.getUpcomingAvailableAt()));
-                        widgetUpdatedThisProcess = true;
-                        WkApplication.getDatabase().propertiesDao().setLastWidgetAlertContext(ctx);
-                        updateWidgets(ctx);
-                        LOGGER.info("Widget update ends");
-                    }
+    public static void processAlarm(final AlertContext ctx) {
+        safe(() -> {
+            if (hasWidgets()) {
+                final AlertContext lastCtx = WkApplication.getDatabase().propertiesDao().getLastWidgetAlertContext();
+                if (lastCtx.getNumLessons() != ctx.getNumLessons()
+                        || lastCtx.getNumReviews() != ctx.getNumReviews()
+                        || lastCtx.getUpcomingAvailableAt() != ctx.getUpcomingAvailableAt()
+                        || !widgetUpdatedThisProcess) {
+                    LOGGER.info("Widget update starts: %s %s '%s'", ctx.getNumLessons(), ctx.getNumReviews(),
+                            TextUtil.formatTimestampForApi(ctx.getUpcomingAvailableAt()));
+                    widgetUpdatedThisProcess = true;
+                    WkApplication.getDatabase().propertiesDao().setLastWidgetAlertContext(ctx);
+                    updateWidgets(ctx);
+                    LOGGER.info("Widget update ends");
                 }
-            });
-            semaphore.release();
-        }));
+            }
+        });
     }
 
     @Override
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-        safe(SessionWidgetProvider::processAlarmWithWakeLock);
+        updateWidgets(LiveAlertContext.getInstance().get());
+        runAsync(() -> LiveAlertContext.getInstance().update());
     }
 
     @Override
     public void onAppWidgetOptionsChanged(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId, final Bundle newOptions) {
-        safe(SessionWidgetProvider::processAlarmWithWakeLock);
+        updateWidgets(LiveAlertContext.getInstance().get());
+        runAsync(() -> LiveAlertContext.getInstance().update());
     }
 
     @Override

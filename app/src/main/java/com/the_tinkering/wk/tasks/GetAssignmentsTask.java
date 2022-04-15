@@ -16,11 +16,15 @@
 
 package com.the_tinkering.wk.tasks;
 
+import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.util.TextUtil.formatTimestampForApi;
+
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiAssignment;
 import com.the_tinkering.wk.db.AppDatabase;
 import com.the_tinkering.wk.db.model.TaskDefinition;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.livedata.LiveApiProgress;
 import com.the_tinkering.wk.livedata.LiveApiState;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
@@ -32,10 +36,6 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
-
-import static com.the_tinkering.wk.Constants.HOUR;
-import static com.the_tinkering.wk.util.TextUtil.formatTimestampForApi;
 
 /**
  * Task to fetch any assignments that have been updated since the last time this task was run.
@@ -91,7 +91,7 @@ public final class GetAssignmentsTask extends ApiTask {
             LiveCriticalCondition.getInstance().update();
             LiveBurnedItems.getInstance().update();
             LiveLevelDuration.getInstance().forceUpdate();
-            BackgroundAlarmReceiver.processAlarm(null);
+            LiveAlertContext.getInstance().update();
         }
     }
 }

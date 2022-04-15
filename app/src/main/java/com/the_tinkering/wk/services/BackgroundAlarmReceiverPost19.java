@@ -16,6 +16,11 @@
 
 package com.the_tinkering.wk.services;
 
+import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -23,22 +28,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.PowerManager;
 
-import com.the_tinkering.wk.Constants;
+import androidx.annotation.RequiresApi;
+
 import com.the_tinkering.wk.StableIds;
 import com.the_tinkering.wk.WkApplication;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.util.Logger;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.Constants.HOUR;
-import static com.the_tinkering.wk.services.BackgroundAlarmReceiver.isAlarmRequired;
-import static com.the_tinkering.wk.services.BackgroundAlarmReceiver.processAlarm;
-import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
-
-import androidx.annotation.RequiresApi;
 
 /**
  * The alarm receiver that gets triggered once per hour, and is responsible for
@@ -51,15 +49,7 @@ public final class BackgroundAlarmReceiverPost19 extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         safe(() -> {
             LOGGER.info("Background alarm post19 received");
-            if (isAlarmRequired()) {
-                @Nullable PowerManager.WakeLock wl = null;
-                final @Nullable PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                if (pm != null) {
-                    wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "wk:wk");
-                    wl.acquire(3 * Constants.MINUTE);
-                }
-                processAlarm(wl);
-            }
+            runAsync(() -> LiveAlertContext.getInstance().update());
         });
         safe(BackgroundAlarmReceiver::scheduleOrCancelAlarm);
     }

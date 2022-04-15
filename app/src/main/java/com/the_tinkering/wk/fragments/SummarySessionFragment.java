@@ -33,6 +33,7 @@ import com.the_tinkering.wk.db.model.SessionItem;
 import com.the_tinkering.wk.db.model.Subject;
 import com.the_tinkering.wk.enums.FragmentTransitionAnimation;
 import com.the_tinkering.wk.jobs.ReportSessionItemJob;
+import com.the_tinkering.wk.livedata.LiveAlertContext;
 import com.the_tinkering.wk.livedata.LiveBurnedItems;
 import com.the_tinkering.wk.livedata.LiveCriticalCondition;
 import com.the_tinkering.wk.livedata.LiveLevelProgress;
@@ -398,7 +399,7 @@ public final class SummarySessionFragment extends AbstractSessionFragment {
         LiveLevelProgress.getInstance().update();
         LiveCriticalCondition.getInstance().update();
         LiveBurnedItems.getInstance().update();
-        BackgroundAlarmReceiver.processAlarm(null);
+        LiveAlertContext.getInstance().update();
 
         return null;
     }
