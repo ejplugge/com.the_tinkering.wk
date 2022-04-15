@@ -37,6 +37,8 @@ import static com.the_tinkering.wk.services.BackgroundAlarmReceiver.processAlarm
 import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
+import androidx.annotation.RequiresApi;
+
 /**
  * The alarm receiver that gets triggered once per hour, and is responsible for
  * notifications, widgets and background sync.
@@ -58,7 +60,7 @@ public final class BackgroundAlarmReceiverPost23 extends BroadcastReceiver {
                 processAlarm(wl);
             }
         });
-        safe(BackgroundAlarmReceiverPost23::scheduleOrCancelAlarm);
+        safe(BackgroundAlarmReceiver::scheduleOrCancelAlarm);
     }
 
     /**
@@ -66,47 +68,31 @@ public final class BackgroundAlarmReceiverPost23 extends BroadcastReceiver {
      * of each hour, but depending on circumstances, the delivery of the alarm
      * can be delayed a bit by the device.
      */
-    private static void scheduleAlarm() {
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static void scheduleAlarm() {
         final long nextTrigger = getTopOfHour(System.currentTimeMillis()) + HOUR;
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiverPost23.class);
-                final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
-                        StableIds.BACKGROUND_ALARM_REQUEST_CODE_3, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
-            }
+            final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiverPost23.class);
+            final int flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+            final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
+                    StableIds.BACKGROUND_ALARM_REQUEST_CODE_3, intent, flags);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
         }
     }
 
     /**
      * Cancel the notification alarm.
      */
-    private static void cancelAlarm() {
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static void cancelAlarm() {
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiverPost23.class);
-            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                flags |= PendingIntent.FLAG_IMMUTABLE;
-            }
+            final int flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
             final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
                     StableIds.BACKGROUND_ALARM_REQUEST_CODE_3, intent, flags);
             alarmManager.cancel(pendingIntent);
         }
-    }
-
-    /**
-     * Schedule or cancel depending on user settings.
-     */
-    public static void scheduleOrCancelAlarm() {
-        safe(() -> {
-            if (isAlarmRequired()) {
-                scheduleAlarm();
-            }
-            else {
-                cancelAlarm();
-            }
-        });
     }
 }

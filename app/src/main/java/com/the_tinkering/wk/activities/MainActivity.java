@@ -39,8 +39,6 @@ import com.the_tinkering.wk.model.Session;
 import com.the_tinkering.wk.model.TimeLine;
 import com.the_tinkering.wk.proxy.ViewProxy;
 import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiverPost19;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiverPost23;
 import com.the_tinkering.wk.services.BackgroundSyncWorker;
 import com.the_tinkering.wk.services.JobRunnerService;
 import com.the_tinkering.wk.views.AvailableSessionsView;
@@ -196,8 +194,6 @@ public final class MainActivity extends AbstractActivity {
     @Override
     protected void onResumeLocal() {
         BackgroundAlarmReceiver.scheduleOrCancelAlarm();
-        BackgroundAlarmReceiverPost19.scheduleOrCancelAlarm();
-        BackgroundAlarmReceiverPost23.scheduleOrCancelAlarm();
         BackgroundSyncWorker.scheduleOrCancelWork();
 
         runAsync(() -> {

@@ -16,6 +16,7 @@
 
 package com.the_tinkering.wk.services;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -54,10 +55,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
      * @return true if it is
      */
     public static boolean isAlarmRequired() {
-        if (GlobalSettings.Other.getEnableNotifications()) {
-            return true;
-        }
-        return SessionWidgetProvider.hasWidgets();
+        return GlobalSettings.Other.getEnableNotifications() || SessionWidgetProvider.hasWidgets();
     }
 
     @Override
@@ -87,10 +85,8 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
-            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                flags |= PendingIntent.FLAG_IMMUTABLE;
-            }
+            final int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            @SuppressLint("UnspecifiedImmutableFlag")
             final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
                     StableIds.BACKGROUND_ALARM_REQUEST_CODE_1, intent, flags);
             alarmManager.set(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
@@ -104,10 +100,8 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
         final @Nullable AlarmManager alarmManager = (AlarmManager) WkApplication.getInstance().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             final Intent intent = new Intent(WkApplication.getInstance(), BackgroundAlarmReceiver.class);
-            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                flags |= PendingIntent.FLAG_IMMUTABLE;
-            }
+            final int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            @SuppressLint("UnspecifiedImmutableFlag")
             final PendingIntent pendingIntent = PendingIntent.getBroadcast(WkApplication.getInstance(),
                     StableIds.BACKGROUND_ALARM_REQUEST_CODE_1, intent, flags);
             alarmManager.cancel(pendingIntent);
@@ -120,10 +114,26 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
     public static void scheduleOrCancelAlarm() {
         safe(() -> {
             if (isAlarmRequired()) {
-                scheduleAlarm();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    BackgroundAlarmReceiverPost23.scheduleAlarm();
+                }
+                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    BackgroundAlarmReceiverPost19.scheduleAlarm();
+                }
+                else {
+                    scheduleAlarm();
+                }
             }
             else {
-                cancelAlarm();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    BackgroundAlarmReceiverPost23.cancelAlarm();
+                }
+                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    BackgroundAlarmReceiverPost19.cancelAlarm();
+                }
+                else {
+                    cancelAlarm();
+                }
             }
         });
     }

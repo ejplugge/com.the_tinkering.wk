@@ -28,8 +28,6 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiverPost19;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiverPost23;
 import com.the_tinkering.wk.services.BackgroundSyncWorker;
 
 /**
@@ -85,8 +83,6 @@ public final class SettingChangedJob extends Job {
                 break;
             case "enable_notifications":
                 BackgroundAlarmReceiver.scheduleOrCancelAlarm();
-                BackgroundAlarmReceiverPost19.scheduleOrCancelAlarm();
-                BackgroundAlarmReceiverPost23.scheduleOrCancelAlarm();
                 break;
             case "enable_background_sync":
                 BackgroundSyncWorker.scheduleOrCancelWork();

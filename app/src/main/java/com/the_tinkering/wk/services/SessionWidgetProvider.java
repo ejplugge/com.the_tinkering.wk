@@ -19,6 +19,7 @@ package com.the_tinkering.wk.services;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.the_tinkering.wk.Constants.DAY;
+import static com.the_tinkering.wk.util.ObjectSupport.extractBundle;
 import static com.the_tinkering.wk.util.ObjectSupport.safe;
 
 import android.annotation.SuppressLint;
@@ -260,5 +261,19 @@ public final class SessionWidgetProvider extends AppWidgetProvider {
     @Override
     public void onAppWidgetOptionsChanged(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId, final Bundle newOptions) {
         safe(SessionWidgetProvider::processAlarmWithWakeLock);
+    }
+
+    @Override
+    public void onReceive(final Context context, final Intent intent) {
+        super.onReceive(context, intent);
+
+        LOGGER.debug("Widget intent: action=%s component=%s data=%s flags=%s extras=%s",
+                intent.getAction(), intent.getComponent(), intent.getData(), intent.getFlags(), extractBundle(intent.getExtras()));
+
+        final Intent intent2 = new Intent("android.appwidget.action.APPWIDGET_UPDATE", null, context, SessionWidgetProvider.class);
+        intent2.putExtra("appWidgetIds", new int[] {1,2,3,4});
+
+        LOGGER.debug("Widget intent2: action=%s component=%s data=%s flags=%s extras=%s",
+                intent2.getAction(), intent2.getComponent(), intent2.getData(), intent2.getFlags(), extractBundle(intent2.getExtras()));
     }
 }
