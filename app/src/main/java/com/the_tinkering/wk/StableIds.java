@@ -25,6 +25,16 @@ public final class StableIds {
     }
 
     /**
+     * The ID for jobs running in the JobRunnerService.
+     */
+    public static final int JOB_RUNNER_SERVICE_JOB_ID = 1;
+
+    /**
+     * The ID for jobs running in the ApiTaskService.
+     */
+    public static final int API_TASK_SERVICE_JOB_ID = 2;
+
+    /**
      * Request code for background alarm - old pre-19 variant.
      */
     public static final int BACKGROUND_ALARM_REQUEST_CODE_1 = 6;
@@ -38,14 +48,4 @@ public final class StableIds {
      * Request code for background alarm - post-23 variant.
      */
     public static final int BACKGROUND_ALARM_REQUEST_CODE_3 = 8;
-
-    /**
-     * Notification ID for JobRynnerService. Only used if a job can't be expedited by the WorkManager.
-     */
-    public static final int JOB_RUNNER_SERVICE_NOTIFICATION_ID = 9;
-
-    /**
-     * Notification ID for ApiTaskService. Only used if a task can't be expedited by the WorkManager.
-     */
-    public static final int API_TASK_SERVICE_NOTIFICATION_ID = 10;
 }

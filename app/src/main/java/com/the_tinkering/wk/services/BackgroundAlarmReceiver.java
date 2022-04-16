@@ -50,7 +50,7 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
      *
      * @return true if it is
      */
-    public static boolean isAlarmRequired() {
+    private static boolean isAlarmRequired() {
         return GlobalSettings.Other.getEnableNotifications() || SessionWidgetProvider.hasWidgets();
     }
 

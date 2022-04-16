@@ -16,6 +16,11 @@
 
 package com.the_tinkering.wk.fragments;
 
+import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
+import static com.the_tinkering.wk.util.ObjectSupport.runAsyncWithProgress;
+import static com.the_tinkering.wk.util.ObjectSupport.safe;
+import static java.util.Objects.requireNonNull;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
@@ -41,7 +46,6 @@ import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
 import com.the_tinkering.wk.model.Question;
 import com.the_tinkering.wk.proxy.ViewProxy;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 import com.the_tinkering.wk.util.ThemeUtil;
 
 import java.util.Comparator;
@@ -52,11 +56,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
-
-import static com.the_tinkering.wk.util.ObjectSupport.runAsync;
-import static com.the_tinkering.wk.util.ObjectSupport.runAsyncWithProgress;
-import static com.the_tinkering.wk.util.ObjectSupport.safe;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Fragment for the session summary.

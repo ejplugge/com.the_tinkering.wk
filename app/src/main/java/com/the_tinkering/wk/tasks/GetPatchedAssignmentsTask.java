@@ -16,6 +16,8 @@
 
 package com.the_tinkering.wk.tasks;
 
+import static com.the_tinkering.wk.util.ObjectSupport.orElse;
+
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.api.ApiState;
 import com.the_tinkering.wk.api.model.ApiAssignment;
@@ -33,12 +35,9 @@ import com.the_tinkering.wk.livedata.LiveLevelProgress;
 import com.the_tinkering.wk.livedata.LiveRecentUnlocks;
 import com.the_tinkering.wk.livedata.LiveSrsBreakDown;
 import com.the_tinkering.wk.livedata.LiveTimeLine;
-import com.the_tinkering.wk.services.BackgroundAlarmReceiver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static com.the_tinkering.wk.util.ObjectSupport.orElse;
 
 /**
  * Task to fetch assignments for a specific set of subjects that have had theirs
