@@ -1,5 +1,5 @@
 
-### Version 2.3.0, 2022-XX-XX:
+### Version 2.3.0, 2022-04-17:
 
 - Update for Android 12 compatibility (to avoid the app being downrated as obsolete in the Play Store)
 
