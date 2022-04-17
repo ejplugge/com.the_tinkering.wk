@@ -55,7 +55,7 @@ import java.io.IOException;
 /**
  * Test class to verify database migrations.
  */
-@SuppressWarnings("resource")
+@SuppressWarnings({"resource", "JavaDoc"})
 @SmallTest
 public final class DatabaseMigrationTest {
     private static final int LATEST_VERSION = 68;

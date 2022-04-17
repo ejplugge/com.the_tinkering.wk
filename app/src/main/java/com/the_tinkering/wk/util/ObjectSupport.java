@@ -479,6 +479,13 @@ public final class ObjectSupport {
         return Collections.unmodifiableList(result);
     }
 
+    /**
+     * Extract a Map from bundle with the same key-value pairs for easier inspection,
+     * for example to get a more useful .toString().
+     *
+     * @param bundle The bundle to extract
+     * @return The extracted Map, null if the bundle was null
+     */
     @SuppressWarnings("unused")
     public static @Nullable Map<String, Object> extractBundle(final @Nullable Bundle bundle) {
         if (bundle == null) {

@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
  * A slightly modified version of JobIntentService now that Android's original
  * has been deprecated.
  */
-@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized", "SynchronizationOnStaticField"})
+@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized", "SynchronizationOnStaticField", "JavaDoc"})
 public abstract class JobIntentService extends Service {
     private @Nullable CompatJobEngine mJobImpl = null;
     private @Nullable WorkEnqueuer mCompatWorkEnqueuer = null;

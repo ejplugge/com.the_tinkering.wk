@@ -47,6 +47,7 @@ import javax.annotation.Nullable;
  * Unless the test option in the menu is activated, there is no path to
  * get here.
  */
+@SuppressWarnings("JavaDoc")
 public final class TestActivity extends AbstractActivity {
     private static final Logger LOGGER = Logger.get(TestActivity.class);
 

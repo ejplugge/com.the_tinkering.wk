@@ -79,6 +79,7 @@ import static com.the_tinkering.wk.util.TextUtil.renderHtml;
  * of the appropriate type.
  * Basically, this eliminates a lot of annoying boilerplate null checks and instanceof checks.
  */
+@SuppressWarnings("JavaDoc")
 public final class ViewProxy {
     private @Nullable WeakReference<View> delegateReference;
 

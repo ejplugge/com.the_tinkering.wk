@@ -214,6 +214,8 @@ public final class FontImportActivity extends AbstractActivity {
 
     /**
      * Handler for the show sample button. Load the font and pop up a dialog with a text sample.
+     *
+     * @param row The row to populate.
      */
     public void showSample(final @Nullable FontImportRowView row) {
         safe(() -> {
@@ -247,6 +249,8 @@ public final class FontImportActivity extends AbstractActivity {
 
     /**
      * Handler for the delete button. Ask for confirmation and remove the file.
+     *
+     * @param row The row to populate.
      */
     public void deleteFont(final @Nullable FontImportRowView row) {
         safe(() -> {

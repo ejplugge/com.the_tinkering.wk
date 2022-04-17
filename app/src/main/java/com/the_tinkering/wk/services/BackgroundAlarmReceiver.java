@@ -129,6 +129,8 @@ public final class BackgroundAlarmReceiver extends BroadcastReceiver {
     /**
      * Process a background alarm event, whether triggered by an actual system alarm, or a database update that can affect
      * widgets and/or notifications.
+     *
+     * @param ctx Data class for alert parameters.
      */
     public static void processAlarm(final AlertContext ctx) {
         runAsync(() -> {
