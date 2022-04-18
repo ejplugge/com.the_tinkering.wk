@@ -87,7 +87,7 @@ public abstract class AsyncTask<Result> {
                 }
             };
 
-    private static final Executor THREAD_POOL_EXECUTOR;
+    public static final Executor THREAD_POOL_EXECUTOR;
 
     static {
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
@@ -194,6 +194,16 @@ public abstract class AsyncTask<Result> {
      */
     public final void execute() {
         defaultExecutor.execute(future);
+    }
+
+    /**
+     * Run this task in the background. Can only be called once per instance.
+     * Run on the supplied executor instead of the normal serial executor.
+     *
+     * @param exec the task executor to use
+     */
+    public final void executeOnExecutor(final Executor exec) {
+        exec.execute(future);
     }
 
     /**

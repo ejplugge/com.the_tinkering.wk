@@ -403,7 +403,7 @@ public abstract class JobIntentService extends Service {
             if (mCompatWorkEnqueuer != null && reportStarted) {
                 mCompatWorkEnqueuer.serviceProcessingStarted();
             }
-            mCurProcessor.execute();
+            mCurProcessor.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
