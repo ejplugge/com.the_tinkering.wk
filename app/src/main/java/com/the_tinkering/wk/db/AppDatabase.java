@@ -75,6 +75,7 @@ import java.util.Locale;
 import javax.annotation.Nullable;
 
 import static com.the_tinkering.wk.Constants.DAY;
+import static com.the_tinkering.wk.Constants.HOUR;
 import static com.the_tinkering.wk.util.ObjectSupport.join;
 
 /**
@@ -635,6 +636,11 @@ public abstract class AppDatabase extends RoomDatabase {
         assertGetReviewStatisticsTask();
         assertGetStudyMaterialsTask();
         assertGetSummaryTask();
+        final long lastSubjectSyncSuccessDate = propertiesDao().getLastSubjectSyncSuccessDate(0);
+        if (lastSubjectSyncSuccessDate == 0
+                || System.currentTimeMillis() - lastSubjectSyncSuccessDate > HOUR) {
+            assertGetSubjectsTask();
+        }
         final long lastGetSrsSystemsSuccess = propertiesDao().getLastSrsSystemSyncSuccessDate();
         if (lastGetSrsSystemsSuccess == 0
                 || System.currentTimeMillis() - lastGetSrsSystemsSuccess > DAY) {
