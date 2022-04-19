@@ -537,6 +537,31 @@ public final class GlobalSettings {
     }
 
     /**
+     * Test mode on or off. What this means in practice depends on temporary testing code elsewhere.
+     *
+     * @return true if test mode is on
+     */
+    public static boolean getTestMode() {
+        return prefs().getBoolean("test_mode", false);
+    }
+
+    /**
+     * Test mode on or off. What this means in practice depends on temporary testing code elsewhere.
+     *
+     * @param value true if test mode should be turned on
+     */
+    public static void setTestMode(final boolean value) {
+        try {
+            final SharedPreferences.Editor editor = prefs().edit();
+            editor.putBoolean("test_mode", value);
+            editor.apply();
+        }
+        catch (final Exception e) {
+            //
+        }
+    }
+
+    /**
      * Api settings.
      */
     public static final class Api {

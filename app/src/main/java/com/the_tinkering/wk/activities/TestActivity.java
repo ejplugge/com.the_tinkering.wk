@@ -22,6 +22,7 @@ import static java.util.Objects.requireNonNull;
 
 import android.os.Bundle;
 
+import com.the_tinkering.wk.GlobalSettings;
 import com.the_tinkering.wk.R;
 import com.the_tinkering.wk.WkApplication;
 import com.the_tinkering.wk.db.AppDatabase;
@@ -68,6 +69,10 @@ public final class TestActivity extends AbstractActivity {
         new ViewProxy(this, R.id.checkPitchInfoButton).setOnClickListener(v -> checkPitchInfo());
         new ViewProxy(this, R.id.testButton).setOnClickListener(v -> theButton());
         new ViewProxy(this, R.id.testButton2).setOnClickListener(v -> theButton2());
+
+        final ViewProxy testModeSwitch = new ViewProxy(this, R.id.testModeSwitch);
+        testModeSwitch.setChecked(GlobalSettings.getTestMode());
+        testModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> safe(() -> GlobalSettings.setTestMode(isChecked)));
     }
 
     @Override

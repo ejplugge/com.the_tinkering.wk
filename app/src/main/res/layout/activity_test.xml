@@ -48,6 +48,13 @@
             android:orientation="vertical"
             tools:ignore="UnusedIds">
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/testModeSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/WK.Switch.Normal"
+                android:text="Test mode"/>
+
             <Button
                 android:id="@+id/downloadPitchInfoButton"
                 android:layout_width="wrap_content"
