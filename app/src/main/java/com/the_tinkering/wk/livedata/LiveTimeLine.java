@@ -18,6 +18,7 @@ package com.the_tinkering.wk.livedata;
 
 import static com.the_tinkering.wk.Constants.DAY;
 import static com.the_tinkering.wk.Constants.HOUR;
+import static com.the_tinkering.wk.util.ObjectSupport.getTopOfHour;
 
 import android.annotation.SuppressLint;
 
@@ -84,7 +85,7 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
                 scanSubjects.add(subject);
             });
 
-            final long longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, cutoff);
+            final long longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, getTopOfHour(cutoff));
             timeLine.setLongTermUpcomingReviewDate(longDate);
             if (longDate == 0) {
                 timeLine.setNumLongTermUpcomingReviews(0);

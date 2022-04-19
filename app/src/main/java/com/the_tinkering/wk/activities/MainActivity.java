@@ -207,7 +207,7 @@ public final class MainActivity extends AbstractActivity {
             LiveTimeLine.getInstance().forceUpdate();
             LiveJoyoProgress.getInstance().forceUpdate();
             LiveJlptProgress.getInstance().forceUpdate();
-            LiveAlertContext.getInstance().update();
+            LiveAlertContext.getInstance().forceUpdate();
         });
 
         keyboardHelpView.setVisibility(!GlobalSettings.Tutorials.getKeyboardHelpDismissed());
