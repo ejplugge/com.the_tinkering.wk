@@ -138,6 +138,11 @@ public final class SessionActivity extends AbstractActivity {
         }
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return false;
+    }
+
     private void playAudio(final @Nullable Question question, final @Nullable Subject subject, final @Nullable String lastMatchedAnswer) {
         if (FloatingUiState.audioPlayed || question == null || subject == null || !question.getType().isReading()) {
             return;

@@ -100,6 +100,11 @@ public final class KeyboardHelpActivity extends AbstractActivity {
         //
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
+
     /**
      * Handler for the 'keyboard settings' buttons.
      */

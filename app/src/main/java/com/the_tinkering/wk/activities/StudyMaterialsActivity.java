@@ -125,6 +125,11 @@ public final class StudyMaterialsActivity extends AbstractActivity {
     }
 
     @Override
+    protected boolean showWithoutApiKey() {
+        return false;
+    }
+
+    @Override
     protected void onSaveInstanceState(final Bundle outState) {
         safe(() -> {
             super.onSaveInstanceState(outState);

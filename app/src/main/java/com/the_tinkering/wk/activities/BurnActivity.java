@@ -113,6 +113,11 @@ public final class BurnActivity extends AbstractActivity {
         //
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return false;
+    }
+
     @SuppressLint("NewApi")
     @SuppressWarnings("SameReturnValue")
     private @Nullable Void doInBackground(final Consumer<Object[]> publisher) {

@@ -129,6 +129,11 @@ public final class DownloadAudioActivity extends AbstractActivity {
         //
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return false;
+    }
+
     private void updateOverviewDisplay(final Collection<AudioDownloadStatus> overview) {
         final int audioCount = LiveTaskCounts.getInstance().get().getAudioCount();
 

@@ -118,6 +118,11 @@ public final class DataImportExportActivity extends AbstractActivity {
         //
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
+
     private void exportSearchPresets() throws IOException {
         final File baseDir = getFilesDir();
         final File sharedDir = new File(baseDir, "shared");

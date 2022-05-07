@@ -95,6 +95,11 @@ public final class TestActivity extends AbstractActivity {
         //
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
+
     @SuppressWarnings("MethodMayBeStatic")
     private void downloadPitchInfo() {
         if (activePitchInfoDownload) {

@@ -194,7 +194,11 @@ public final class AnkiSessionFragment extends AbstractSessionFragment {
             }
             disableInteraction();
             showingAnswer = false;
-            session.submitAnkiCorrect();
+            if (GlobalSettings.getTestMode() && !question.getItem().hasIncorrectAnswers()) {
+                session.submitAnkiIncorrect();
+            } else {
+                session.submitAnkiCorrect();
+            }
         }));
 
         ankiIncorrectButton.setOnClickListener(v -> safe(() -> {

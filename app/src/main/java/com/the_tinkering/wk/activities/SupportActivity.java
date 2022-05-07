@@ -62,4 +62,9 @@ public final class SupportActivity extends AbstractActivity {
     protected void disableInteractionLocal() {
         //
     }
+
+    @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
 }

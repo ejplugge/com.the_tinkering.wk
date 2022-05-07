@@ -121,6 +121,11 @@ public final class FontImportActivity extends AbstractActivity {
         //
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
+
     private void updateFileList() {
         fontTable.removeAllViews();
         for (final String name: getNames()) {

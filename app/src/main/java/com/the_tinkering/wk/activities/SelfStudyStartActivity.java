@@ -242,6 +242,11 @@ public final class SelfStudyStartActivity extends AbstractActivity {
         presetButton.disableInteraction();
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return false;
+    }
+
     private void startSession(final int searchType, final String searchParameters, final boolean saveSelfStudyPreset) {
         runAsync(this, () -> {
             if (saveSelfStudyPreset && searchType == 2) {

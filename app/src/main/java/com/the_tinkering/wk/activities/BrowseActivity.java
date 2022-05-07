@@ -126,6 +126,11 @@ public final class BrowseActivity extends AbstractActivity {
         //
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return false;
+    }
+
     private void loadOverviewFragment() {
         final Fragment fragment = new BrowseOverviewFragment();
         final FragmentManager manager = getSupportFragmentManager();

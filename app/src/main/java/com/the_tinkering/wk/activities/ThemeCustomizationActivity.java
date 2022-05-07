@@ -236,6 +236,11 @@ public final class ThemeCustomizationActivity extends AbstractActivity {
     }
 
     @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
+
+    @Override
     public void onSaveInstanceState(final Bundle outState, final PersistableBundle outPersistentState) {
         safe(() -> {
             super.onSaveInstanceState(outState, outPersistentState);

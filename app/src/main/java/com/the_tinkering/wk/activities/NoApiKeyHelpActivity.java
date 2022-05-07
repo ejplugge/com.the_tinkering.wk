@@ -92,6 +92,11 @@ public final class NoApiKeyHelpActivity extends AbstractActivity {
         saveButton.disableInteraction();
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
+
     /**
      * Handler for the save button. Save the API key that was entered.
      */

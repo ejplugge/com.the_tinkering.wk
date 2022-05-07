@@ -88,6 +88,11 @@ public final class FontSelectionActivity extends AbstractActivity {
         //
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
+
     private void addStaticRow(final ViewProxy layout, final int fontId, final int fontResourceId, final CharSequence name) {
         final FontSelectionRowView row = new FontSelectionRowView(this);
         row.setFontId(Integer.toString(fontId));

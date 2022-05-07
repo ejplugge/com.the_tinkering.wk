@@ -236,6 +236,11 @@ public final class MainActivity extends AbstractActivity {
         }
     }
 
+    @Override
+    protected boolean showWithoutApiKey() {
+        return false;
+    }
+
     /**
      * Handler for the API error retry button.
      */

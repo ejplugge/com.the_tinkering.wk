@@ -247,7 +247,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
 
             PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
-            if (!(this instanceof NoApiKeyHelpActivity)) {
+            if (!showWithoutApiKey()) {
                 final @Nullable String apiKey = GlobalSettings.Api.getApiKey();
                 if (isEmpty(apiKey)) {
                     goToActivity(NoApiKeyHelpActivity.class);
@@ -846,4 +846,11 @@ public abstract class AbstractActivity extends AppCompatActivity implements Shar
      * See disableInteraction(), this is the part that must be implemented by each subclass.
      */
     protected abstract void disableInteractionLocal();
+
+    /**
+     * Can this activity be activated without entering an API key?
+     *
+     * @return False if showing this activity should bounde to the NoApiKeyHelpActivity.
+     */
+    protected abstract boolean showWithoutApiKey();
 }

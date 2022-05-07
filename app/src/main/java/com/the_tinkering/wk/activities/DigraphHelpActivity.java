@@ -68,4 +68,9 @@ public final class DigraphHelpActivity extends AbstractActivity {
     protected void disableInteractionLocal() {
         //
     }
+
+    @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
 }

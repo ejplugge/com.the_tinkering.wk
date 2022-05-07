@@ -85,6 +85,11 @@ public final class PreferencesActivity extends AbstractActivity implements Prefe
     }
 
     @Override
+    protected boolean showWithoutApiKey() {
+        return true;
+    }
+
+    @Override
     public boolean onPreferenceStartScreen(final PreferenceFragmentCompat caller, final PreferenceScreen pref) {
         safe(() -> {
             final PreferencesFragment fragment = new PreferencesFragment();
