@@ -127,26 +127,24 @@ public abstract class SubjectCollectionsDao {
      * Room-generated method: get a list of all subjects available for lesson.
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @return the list
      */
     @Query("SELECT * FROM subject"
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :maxLevel AND level <= :userLevel"
+            + " AND level <= :maxLevel"
             + " AND (resurrectedAt != 0 OR burnedAt = 0)"
             + " AND unlockedAt != 0 AND startedAt = 0"
             + " ORDER BY level, lessonPosition, id")
-    protected abstract List<SubjectEntity> getAvailableLessonItemsHelper(final int maxLevel, final int userLevel);
+    protected abstract List<SubjectEntity> getAvailableLessonItemsHelper(final int maxLevel);
 
     /**
      * Get a list of all subjects available for lesson.
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @return the list
      */
-    public final List<Subject> getAvailableLessonItems(final int maxLevel, final int userLevel) {
-        return buildList(getAvailableLessonItemsHelper(maxLevel, userLevel));
+    public final List<Subject> getAvailableLessonItems(final int maxLevel) {
+        return buildList(getAvailableLessonItemsHelper(maxLevel));
     }
 
     /**
@@ -154,27 +152,25 @@ public abstract class SubjectCollectionsDao {
      * becomes/became available before the given cutoff date.
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @param cutoff the cutoff date
      * @return the list
      */
     @Query("SELECT * FROM subject"
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :maxLevel AND level <= :userLevel"
+            + " AND level <= :maxLevel"
             + " AND availableAt != 0 AND availableAt < :cutoff")
-    protected abstract List<SubjectEntity> getUpcomingReviewItemsHelper(final int maxLevel, final int userLevel, final long cutoff);
+    protected abstract List<SubjectEntity> getUpcomingReviewItemsHelper(final int maxLevel, final long cutoff);
 
     /**
      * Get a list of all subjects available for review, where the review
      * becomes/became available before the given cutoff date.
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @param cutoff the cutoff date
      * @return the list
      */
-    public final List<Subject> getUpcomingReviewItems(final int maxLevel, final int userLevel, final long cutoff) {
-        return buildList(getUpcomingReviewItemsHelper(maxLevel, userLevel, cutoff));
+    public final List<Subject> getUpcomingReviewItems(final int maxLevel, final long cutoff) {
+        return buildList(getUpcomingReviewItemsHelper(maxLevel, cutoff));
     }
 
     /**

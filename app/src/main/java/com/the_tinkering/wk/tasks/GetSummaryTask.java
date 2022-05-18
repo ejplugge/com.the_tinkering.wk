@@ -69,7 +69,6 @@ public final class GetSummaryTask extends ApiTask {
             return;
         }
 
-        final int userLevel = db.propertiesDao().getUserLevel();
         final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
 
         final Collection<Long> subjectIds = new HashSet<>();
@@ -78,11 +77,11 @@ public final class GetSummaryTask extends ApiTask {
                 continue;
             }
             for (final long id: session.getSubjectIds()) {
-                db.subjectSyncDao().forceLessonAvailable(id, session.getAvailableAt(), userLevel, maxLevel);
+                db.subjectSyncDao().forceLessonAvailable(id, session.getAvailableAt(), maxLevel);
                 subjectIds.add(id);
             }
         }
-        db.subjectSyncDao().forceLessonUnavailableExcept(userLevel, maxLevel, subjectIds);
+        db.subjectSyncDao().forceLessonUnavailableExcept(maxLevel, subjectIds);
 
         subjectIds.clear();
         for (final ApiSummarySession session: summary.getReviews()) {
@@ -90,11 +89,11 @@ public final class GetSummaryTask extends ApiTask {
                 continue;
             }
             for (final long id: session.getSubjectIds()) {
-                db.subjectSyncDao().forceReviewAvailable(id, session.getAvailableAt(), userLevel, maxLevel);
+                db.subjectSyncDao().forceReviewAvailable(id, session.getAvailableAt(), maxLevel);
                 subjectIds.add(id);
             }
         }
-        db.subjectSyncDao().forceUpcomingReviewUnavailableExcept(userLevel, maxLevel, subjectIds);
+        db.subjectSyncDao().forceUpcomingReviewUnavailableExcept(maxLevel, subjectIds);
 
         db.propertiesDao().setLastApiSuccessDate(System.currentTimeMillis());
         db.propertiesDao().setLastSummarySyncSuccessDate(System.currentTimeMillis());

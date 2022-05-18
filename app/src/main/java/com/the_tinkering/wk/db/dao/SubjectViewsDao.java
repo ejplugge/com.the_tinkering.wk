@@ -66,27 +66,12 @@ public abstract class SubjectViewsDao {
     /**
      * Room-generated method: get summary records describing the SRS stages and the number of subjects in each stage.
      *
-     * @param userLevel the user's level
      * @return the list of overview items
      */
     @Query("SELECT srsSystemId AS systemId, srsStage AS stageId, COUNT(id) AS count FROM subject WHERE "
-            + "hiddenAt = 0 AND object IS NOT NULL AND level <= :userLevel "
-            + "GROUP BY srsSystemId, srsStage")
-    public abstract List<SrsBreakDownItem> getSrsBreakDownItems(int userLevel);
-
-    /**
-     * Room-generated method: get the number of locked subjects.
-     * Note: unlocked items that have been moved to a level greater than the user's level
-     * are also counted as locked by this method, and they are excluded from the previous
-     * two methods.
-     *
-     * @param userLevel the user's level
-     * @return the number
-     */
-    @Query("SELECT COUNT(id) AS count FROM subject WHERE "
             + "hiddenAt = 0 AND object IS NOT NULL "
-            + "AND level > :userLevel")
-    public abstract int getSrsBreakDownOverLevel(int userLevel);
+            + "GROUP BY srsSystemId, srsStage")
+    public abstract List<SrsBreakDownItem> getSrsBreakDownItems();
 
     /**
      * Room-generated method: get summary records describing the number of subjects per level/type pair.

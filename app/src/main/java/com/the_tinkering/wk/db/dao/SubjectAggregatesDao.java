@@ -34,30 +34,28 @@ public abstract class SubjectAggregatesDao {
      * Room-generated method: get the next timestamp when a review becomes available, after the given cutoff date.
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @param cutoff the cutoff date
      * @return the available timestamp or null if there are no long-term upcoming reviews
      */
     @Query("SELECT availableAt FROM subject"
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :maxLevel AND level <= :userLevel"
+            + " AND level <= :maxLevel"
             + " AND availableAt != 0 AND availableAt >= :cutoff"
             + " ORDER BY availableAt LIMIT 1")
-    public abstract long getNextLongTermReviewDate(final int maxLevel, final int userLevel, final long cutoff);
+    public abstract long getNextLongTermReviewDate(final int maxLevel, final long cutoff);
 
     /**
      * Room-generated method: get the number of reviews that will become available at the specified time.
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @param targetDate the date for reviews to become available at
      * @return the count
      */
     @Query("SELECT COUNT(id) FROM subject"
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :maxLevel AND level <= :userLevel"
+            + " AND level <= :maxLevel"
             + " AND availableAt = :targetDate")
-    public abstract int getNextLongTermReviewCount(final int maxLevel, final int userLevel, final long targetDate);
+    public abstract int getNextLongTermReviewCount(final int maxLevel, final long targetDate);
 
     /**
      * Room-generated method: get statistics for widgets and notifications.
@@ -70,21 +68,20 @@ public abstract class SubjectAggregatesDao {
      * </ul>
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @param cutoff the current date
      * @return a POJO containing the results
      */
     @Query("SELECT numLessons, numReviews, newestAvailableAt, upcomingAvailableAt FROM "
             + "(SELECT COUNT(*) AS numLessons FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
-            + "AND level <= :maxLevel AND level <= :userLevel AND unlockedAt!=0 AND startedAt=0 AND (resurrectedAt!=0 OR burnedAt=0)), "
+            + "AND level <= :maxLevel AND unlockedAt!=0 AND startedAt=0 AND (resurrectedAt!=0 OR burnedAt=0)), "
             + "(SELECT COUNT(*) AS numReviews FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
-            + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt < :cutoff), "
+            + "AND level <= :maxLevel AND availableAt!=0 AND availableAt < :cutoff), "
             + "(SELECT MAX(availableAt) AS newestAvailableAt FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
-            + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt < :cutoff), "
+            + "AND level <= :maxLevel AND availableAt!=0 AND availableAt < :cutoff), "
             + "(SELECT MIN(availableAt) AS upcomingAvailableAt FROM subject WHERE hiddenAt=0 AND object IS NOT NULL "
-            + "AND level <= :maxLevel AND level <= :userLevel AND availableAt!=0 AND availableAt > :cutoff)"
+            + "AND level <= :maxLevel AND availableAt!=0 AND availableAt > :cutoff)"
             + ";")
-    public abstract AlertContext getAlertContext(int maxLevel, int userLevel, long cutoff);
+    public abstract AlertContext getAlertContext(int maxLevel, long cutoff);
 
     /**
      * Room-generated method: get the date the user reached a level by looking at the earliest unlockedAt date

@@ -53,13 +53,11 @@ public final class LiveSrsBreakDown extends ConservativeLiveData<SrsBreakDown> {
     @Override
     protected void updateLocal() {
         final AppDatabase db = WkApplication.getDatabase();
-        final int userLevel = db.propertiesDao().getUserLevel();
         final SrsBreakDown breakDown = new SrsBreakDown();
-        db.subjectViewsDao().getSrsBreakDownItems(userLevel).forEach(item -> {
+        db.subjectViewsDao().getSrsBreakDownItems().forEach(item -> {
             final SrsSystem.Stage stage = SrsSystemRepository.getSrsSystem(item.getSystemId()).getStage(item.getStageId());
             breakDown.addCount(stage, item.getCount());
         });
-        breakDown.setOverLevel(db.subjectViewsDao().getSrsBreakDownOverLevel(userLevel));
         instance.postValue(breakDown);
     }
 

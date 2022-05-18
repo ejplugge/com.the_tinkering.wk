@@ -26,16 +26,6 @@ import javax.annotation.Nullable;
  */
 public final class SrsBreakDown {
     private final Map<SrsSystem.Stage, Integer> counts = new HashMap<>();
-    private int overLevel = 0;
-
-    /**
-     * The number of subjects that are over the user's level.
-     *
-     * @param overLevel the number of subjects
-     */
-    public void setOverLevel(final int overLevel) {
-        this.overLevel = overLevel;
-    }
 
     /**
      * Add a count of subjects that are in a specific stage.
@@ -65,9 +55,6 @@ public final class SrsBreakDown {
                 count += entry.getValue();
             }
         }
-        if (bucket == 0) {
-            count += overLevel;
-        }
         return count;
     }
 
@@ -84,9 +71,6 @@ public final class SrsBreakDown {
             if (entry.getKey().getPost60ShallowBucket() == bucket) {
                 count += entry.getValue();
             }
-        }
-        if (bucket == 0) {
-            count += overLevel;
         }
         return count;
     }

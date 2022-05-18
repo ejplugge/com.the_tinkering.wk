@@ -815,12 +815,11 @@ public abstract class SubjectSyncDao {
      *
      * @param id the subject ID
      * @param unlockedAt the date to simulate for the unlock of this subject, if not set
-     * @param userLevel the user's level
      * @param maxLevel the max level granted by the user's subscription
      */
-    public final void forceLessonAvailable(final long id, final long unlockedAt, final int userLevel, final int maxLevel) {
+    public final void forceLessonAvailable(final long id, final long unlockedAt, final int maxLevel) {
         final @Nullable Subject subject = getById(id);
-        if (subject == null || unlockedAt == 0 || subject.getLevel() > userLevel || subject.getLevel() > maxLevel) {
+        if (subject == null || unlockedAt == 0 || subject.getLevel() > maxLevel) {
             return;
         }
 
@@ -849,27 +848,25 @@ public abstract class SubjectSyncDao {
      * Room-generated method: get a list of all subjects available for lesson.
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @return the list
      */
     @Query("SELECT * FROM subject"
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :maxLevel AND level <= :userLevel"
+            + " AND level <= :maxLevel"
             + " AND (resurrectedAt != 0 OR burnedAt = 0)"
             + " AND unlockedAt != 0 AND startedAt = 0"
             + " ORDER BY level, lessonPosition, id")
-    protected abstract List<SubjectEntity> getAvailableLessonItemsHelper(final int maxLevel, final int userLevel);
+    protected abstract List<SubjectEntity> getAvailableLessonItemsHelper(final int maxLevel);
 
     /**
      * For selected subjects, forcibly patch them so no lesson is available for them.
      * This is part of fixing up sync problems from the summary API endpoint.
      *
-     * @param userLevel the user's level
      * @param maxLevel the max level granted by the user's subscription
      * @param subjectIds the subject IDs to remove from the lesson pool
      */
-    public final void forceLessonUnavailableExcept(final int userLevel, final int maxLevel, final Collection<Long> subjectIds) {
-        for (final SubjectEntity subject: getAvailableLessonItemsHelper(userLevel, maxLevel)) {
+    public final void forceLessonUnavailableExcept(final int maxLevel, final Collection<Long> subjectIds) {
+        for (final SubjectEntity subject: getAvailableLessonItemsHelper(maxLevel)) {
             if (!subjectIds.contains(subject.id)) {
                 patchAssignment(subject.id, subject.srsStageId, subject.unlockedAt, subject.unlockedAt,
                         subject.availableAt, subject.passedAt, subject.burnedAt, subject.resurrectedAt);
@@ -883,12 +880,11 @@ public abstract class SubjectSyncDao {
      *
      * @param id the subject ID
      * @param availableAt the date to force for the availability of the review
-     * @param userLevel the user's level
      * @param maxLevel the max level granted by the user's subscription
      */
-    public final void forceReviewAvailable(final long id, final long availableAt, final int userLevel, final int maxLevel) {
+    public final void forceReviewAvailable(final long id, final long availableAt, final int maxLevel) {
         final @Nullable Subject subject = getById(id);
-        if (subject == null || availableAt == 0 || subject.getLevel() > userLevel || subject.getLevel() > maxLevel) {
+        if (subject == null || availableAt == 0 || subject.getLevel() > maxLevel) {
             return;
         }
 
@@ -924,28 +920,25 @@ public abstract class SubjectSyncDao {
      * becomes/became available before the given cutoff date.
      *
      * @param maxLevel the maximum level available on the user's subscription
-     * @param userLevel the user's level
      * @param cutoff the cutoff date
      * @return the list
      */
     @Query("SELECT * FROM subject"
             + " WHERE hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :maxLevel AND level <= :userLevel"
+            + " AND level <= :maxLevel"
             + " AND availableAt != 0 AND availableAt < :cutoff")
-    protected abstract List<SubjectEntity> getPendingReviewItemsHelper(final int maxLevel, final int userLevel, final long cutoff);
+    protected abstract List<SubjectEntity> getPendingReviewItemsHelper(final int maxLevel, final long cutoff);
 
     /**
      * For selected subjects, forcibly patch them so no review is available for them in the next hour.
      * This is part of fixing up sync problems from the summary API endpoint.
      *
-     * @param userLevel the user's level
      * @param maxLevel the max level granted by the user's subscription
      * @param subjectIds the subject IDs to remove from the review pool
      */
-    public final void forceUpcomingReviewUnavailableExcept(final int userLevel, final int maxLevel,
-                                                           final Collection<Long> subjectIds) {
+    public final void forceUpcomingReviewUnavailableExcept(final int maxLevel, final Collection<Long> subjectIds) {
         final long cutoff = System.currentTimeMillis() + Constants.HOUR;
-        for (final SubjectEntity subject: getPendingReviewItemsHelper(maxLevel, userLevel, cutoff)) {
+        for (final SubjectEntity subject: getPendingReviewItemsHelper(maxLevel, cutoff)) {
             if (!subjectIds.contains(subject.id)) {
                 patchAssignment(subject.id, subject.srsStageId, subject.unlockedAt, subject.startedAt,
                         0, subject.passedAt, subject.burnedAt, subject.resurrectedAt);

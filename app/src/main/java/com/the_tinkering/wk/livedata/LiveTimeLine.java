@@ -73,25 +73,25 @@ public final class LiveTimeLine extends ConservativeLiveData<TimeLine> {
         final Collection<Subject> scanSubjects = new ArrayList<>();
 
         if (!vacationMode) {
-            db.subjectCollectionsDao().getAvailableLessonItems(maxLevel, userLevel).forEach(subject -> {
+            db.subjectCollectionsDao().getAvailableLessonItems(maxLevel).forEach(subject -> {
                 timeLine.addLesson(subject);
                 scanSubjects.add(subject);
             });
 
             final long ahead = size * HOUR;
             final long cutoff = System.currentTimeMillis() + ahead;
-            db.subjectCollectionsDao().getUpcomingReviewItems(maxLevel, userLevel, cutoff).forEach(subject -> {
+            db.subjectCollectionsDao().getUpcomingReviewItems(maxLevel, cutoff).forEach(subject -> {
                 timeLine.addReview(subject, !subject.isPassed() && levelUpIds.contains(subject.getId()));
                 scanSubjects.add(subject);
             });
 
-            final long longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, userLevel, getTopOfHour(cutoff));
+            final long longDate = db.subjectAggregatesDao().getNextLongTermReviewDate(maxLevel, getTopOfHour(cutoff));
             timeLine.setLongTermUpcomingReviewDate(longDate);
             if (longDate == 0) {
                 timeLine.setNumLongTermUpcomingReviews(0);
             }
             else {
-                timeLine.setNumLongTermUpcomingReviews(db.subjectAggregatesDao().getNextLongTermReviewCount(maxLevel, userLevel, longDate));
+                timeLine.setNumLongTermUpcomingReviews(db.subjectAggregatesDao().getNextLongTermReviewCount(maxLevel, longDate));
             }
         }
 

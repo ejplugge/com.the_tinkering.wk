@@ -49,9 +49,8 @@ public final class LiveAlertContext extends ConservativeLiveData<AlertContext> {
     protected void updateLocal() {
         final AppDatabase db = WkApplication.getDatabase();
         final int maxLevel = db.propertiesDao().getUserMaxLevelGranted();
-        final int userLevel = db.propertiesDao().getUserLevel();
         final long now = System.currentTimeMillis();
-        final AlertContext ctx = db.subjectAggregatesDao().getAlertContext(maxLevel, userLevel, now);
+        final AlertContext ctx = db.subjectAggregatesDao().getAlertContext(maxLevel, now);
         instance.postValue(ctx);
     }
 
