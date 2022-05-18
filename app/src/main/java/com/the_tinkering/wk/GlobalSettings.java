@@ -914,6 +914,15 @@ public final class GlobalSettings {
         }
 
         /**
+         * Show the level progression bars on the dashboard for levels beyond the user's level.
+         *
+         * @return the value
+         */
+        public static boolean getShowOverLevelProgression() {
+            return prefs().getBoolean("show_over_level_progression", false);
+        }
+
+        /**
          * Show the post-60 progression bar on the dashboard.
          *
          * @return the value

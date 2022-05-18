@@ -76,26 +76,34 @@ public abstract class SubjectViewsDao {
     /**
      * Room-generated method: get summary records describing the number of subjects per level/type pair.
      *
-     * @param userLevel the user's level
      * @return the list of overview items
      */
     @Query("SELECT level, object AS type, COUNT(id) AS count FROM subject"
             + " WHERE subject.hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :userLevel"
             + " GROUP BY level, object")
-    public abstract List<LevelProgressItem> getLevelProgressTotalItems(int userLevel);
+    public abstract List<LevelProgressItem> getLevelProgressTotalItems();
 
     /**
      * Room-generated method: get summary records describing the number of passed subjects per level/type pair.
      *
-     * @param userLevel the user's level
      * @return the list of overview items
      */
     @Query("SELECT level, object AS type, COUNT(id) AS count FROM subject"
             + " WHERE subject.hiddenAt = 0 AND object IS NOT NULL"
-            + " AND level <= :userLevel AND passedAt != 0"
+            + " AND passedAt != 0"
             + " GROUP BY level, object")
-    public abstract List<LevelProgressItem> getLevelProgressPassedItems(int userLevel);
+    public abstract List<LevelProgressItem> getLevelProgressPassedItems();
+
+    /**
+     * Room-generated method: get summary records describing the number of locked subjects per level/type pair.
+     *
+     * @return the list of overview items
+     */
+    @Query("SELECT level, object AS type, COUNT(id) AS count FROM subject"
+            + " WHERE subject.hiddenAt = 0 AND object IS NOT NULL"
+            + " AND (unlockedAt = 0 OR unlockedAt IS NULL)"
+            + " GROUP BY level, object")
+    public abstract List<LevelProgressItem> getLevelProgressLockedItems();
 
     /**
      * Room-generated method: get a list of all subject IDs in the database.

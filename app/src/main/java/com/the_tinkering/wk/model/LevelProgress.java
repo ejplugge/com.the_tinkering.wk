@@ -49,10 +49,10 @@ public final class LevelProgress {
     /**
      * The constructor.
      *
-     * @param userLevel the user's level
+     * @param maxLevel the user's level
      */
-    public LevelProgress(final int userLevel) {
-        for (int i=1; i<=userLevel; i++) {
+    public LevelProgress(final int maxLevel) {
+        for (int i=1; i<=maxLevel; i++) {
             for (final SubjectType type: SubjectType.values()) {
                 entries.add(new BarEntry(i, type));
             }
@@ -95,19 +95,28 @@ public final class LevelProgress {
     }
 
     /**
-     * Clean up the chart by removing bars where everything has already been passed.
+     * Set the locked subject count for each bar in the overview from the aggregate database data supplied.
+     *
+     * @param item the count of subjects for a specific level/type combination
      */
-    public void removePassedBars() {
-        int i = 0;
-        while (i < entries.size()) {
-            final BarEntry entry = entries.get(i);
-            if (entry.totalCount == 0 || entry.numPassed >= entry.totalCount) {
-                entries.remove(i);
-            }
-            else {
-                i++;
+    public void setNumLocked(final LevelProgressItem item) {
+        for (final BarEntry entry: entries) {
+            if (entry.level == item.getLevel() && entry.type == item.getType()) {
+                entry.numLocked = item.getCount();
             }
         }
+    }
+
+    /**
+     * Clean up the chart by removing bars where everything has already been passed or where
+     * everything is locked.
+     *
+     * @param userLevel the user's level
+     */
+    public void removePassedAndLockedBars(final int userLevel) {
+        entries.removeIf(entry -> entry.totalCount == 0
+                || entry.numPassed >= entry.totalCount
+                || (entry.level > userLevel && entry.numLocked >= entry.totalCount));
     }
 
     /**
@@ -118,6 +127,7 @@ public final class LevelProgress {
         private final SubjectType type;
         private final int[] buckets = new int[10];
         private int numPassed = 0;
+        private int numLocked = 0;
         private int totalCount = 0;
 
         /**

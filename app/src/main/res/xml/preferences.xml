@@ -218,6 +218,13 @@
             app:defaultValue="true"/>
 
         <SwitchPreferenceCompat
+            app:key="show_over_level_progression"
+            app:title="Show level progression bars for levels higher than your own"
+            app:singleLineTitle="false"
+            android:summary="This can happen if you unlocked subjects in the past that have since been moved above your level."
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
             app:key="show_post60_progression"
             app:title="Show post-60 progression bar"
             app:singleLineTitle="false"
