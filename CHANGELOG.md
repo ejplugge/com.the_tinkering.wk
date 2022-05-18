@@ -1,4 +1,17 @@
 
+### Version 2.4.0, 2022-04-17:
+
+- Bug fixes for regressions introduced in the Android 12 update.
+
+- Include items beyond the user's level in lesson/review sessions and the SRS Breakdown, matching a
+  recent change on the site.
+  
+- Allow navigating to the settings screen while the app is waiting for the user to supply their
+  API key.
+  
+- Layout fix in the browse and self-study screens to make sure the search presets can be managed if there
+  is a preset with a very long name.
+
 ### Version 2.3.0, 2022-04-17:
 
 - Update for Android 12 compatibility (to avoid the app being downrated as obsolete in the Play Store)

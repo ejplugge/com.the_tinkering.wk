@@ -147,13 +147,15 @@ public final class SelfStudyStartActivity extends AbstractActivity {
             if (LiveSearchPresets.getInstance().getNames().isEmpty()) {
                 presetHeader.setVisibility(false);
                 presetDivider.setVisibility(false);
-                presetSpinner.setParentVisibility(false);
+                presetSpinner.setVisibility(false);
+                presetButton.setParentVisibility(false);
             }
             else {
                 updatePresetAdapter();
                 presetHeader.setVisibility(true);
                 presetDivider.setVisibility(true);
-                presetSpinner.setParentVisibility(true);
+                presetSpinner.setVisibility(true);
+                presetButton.setParentVisibility(true);
             }
         })));
 
