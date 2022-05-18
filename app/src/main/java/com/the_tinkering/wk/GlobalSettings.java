@@ -1043,7 +1043,25 @@ public final class GlobalSettings {
         }
 
         /**
-         * Swap the legacy names and mnemonics for old radicals.
+         * Hide WaniKani's meaning mnemonic if a user note is present
+         *
+         * @return the value
+         */
+        public static boolean getHideMeaningMnemonic() {
+            return prefs().getBoolean("hide_meaning_mnemonic", false);
+        }
+
+        /**
+         * Hide WaniKani's reading mnemonic if a user note is present
+         *
+         * @return the value
+         */
+        public static boolean getHideReadingMnemonic() {
+            return prefs().getBoolean("hide_reading_mnemonic", false);
+        }
+
+        /**
+         * Show the legacy names and mnemonics for old radicals.
          *
          * @return the value
          */

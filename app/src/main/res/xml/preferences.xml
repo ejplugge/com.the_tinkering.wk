@@ -306,6 +306,18 @@
             android:summary="This replaces tags such as &lt;kanji&gt; with appropriate colouring instead of just making the text bold"/>
 
         <SwitchPreferenceCompat
+            app:key="hide_meaning_mnemonic"
+            app:title="Hide WaniKani's meaning mnemonic if a user note is present"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="hide_reading_mnemonic"
+            app:title="Hide WaniKani's reading mnemonic if a user note is present"
+            app:singleLineTitle="false"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
             app:key="show_legacy"
             app:title="Show old names and mnemonics for radicals from before the December 2018 content update"
             app:singleLineTitle="false"

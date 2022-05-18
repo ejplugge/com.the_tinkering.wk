@@ -1,5 +1,5 @@
 
-### Version 2.4.0, 2022-04-17:
+### Version 2.4.0, 2022-XX-XX:
 
 - Bug fixes for regressions introduced in the Android 12 update.
 
@@ -11,6 +11,8 @@
   
 - Layout fix in the browse and self-study screens to make sure the search presets can be managed if there
   is a preset with a very long name.
+  
+- Add an option to hide WaniKani's mnemonics if a user note is present.
 
 ### Version 2.3.0, 2022-04-17:
 
